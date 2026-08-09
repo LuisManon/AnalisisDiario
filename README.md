@@ -1,6 +1,6 @@
-# Loto Mas Lab
+# Analisis Diario
 
-App web local para analizar resultados de Loto Mas, comparar frecuencia por dia y simular 5 jugadas contra el ultimo sorteo cargado.
+App web para analizar resultados de Loto Mas, La Primera y Loteka Repartidera con historiales JSON, frecuencias, diagramas y sugerencias estadisticas.
 
 ## Requisitos
 
@@ -46,13 +46,38 @@ http://10.0.0.49:3000
 
 ## Datos
 
-Los resultados estan en:
+Los resultados locales estan en:
 
 ```txt
 data/results.json
+data/la-primera-results.json
+data/loteka-repartidera-results.json
 ```
 
-Actualmente contiene 100 sorteos entre `2025-06-04` y `2026-05-30`, tomados de LotteryTexts Past Results para Loto Mas. El endpoint `/api/update` queda preparado para conectar una fuente oficial o confiable y agregar nuevos sorteos sin duplicar fechas.
+En desarrollo local, los endpoints escriben directamente estos archivos JSON.
+
+En Vercel, el sistema puede guardar cambios permanentemente en GitHub usando variables de entorno.
+
+## Persistencia En Vercel
+
+Para que los endpoints guarden nuevos resultados permanentemente en el repo, agrega estas variables en Vercel:
+
+```txt
+GITHUB_TOKEN=token_personal_de_github
+GITHUB_REPOSITORY=LuisManon/AnalisisDiario
+GITHUB_BRANCH=main
+GITHUB_COMMITTER_NAME=Analisis Diario
+GITHUB_COMMITTER_EMAIL=tu-email-de-github
+```
+
+El token necesita permiso de lectura y escritura sobre Contents del repositorio. Con un Fine-grained personal access token:
+
+```txt
+Repository access: AnalisisDiario
+Permissions: Contents read and write
+```
+
+Despues de guardar las variables, redeploya el proyecto en Vercel.
 
 ## Funciones incluidas
 
@@ -62,4 +87,5 @@ Actualmente contiene 100 sorteos entre `2025-06-04` y `2026-05-30`, tomados de L
 - Top 5 del numero Mas.
 - Historial visual con bolitas.
 - Simulador de minimo 5 jugadas.
-- API local para resultados, simulacion y actualizacion.
+- Pestañas para La Primera y Loteka.
+- API para resultados, simulacion, actualizacion y persistencia.
