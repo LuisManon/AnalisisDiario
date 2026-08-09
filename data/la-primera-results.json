@@ -1,0 +1,4841 @@
+[
+  {
+    "date": "2026-08-09",
+    "session": "dia",
+    "number": 89,
+    "drawId": 810,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-08",
+    "session": "dia",
+    "number": 8,
+    "drawId": 809,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-08",
+    "session": "noche",
+    "number": 30,
+    "drawId": 804,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-07",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-07",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-06",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-06",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-05",
+    "session": "dia",
+    "number": 65,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-05",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-04",
+    "session": "dia",
+    "number": 79,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-04",
+    "session": "noche",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-03",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-03",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-02",
+    "session": "dia",
+    "number": 74,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-02",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-01",
+    "session": "dia",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-01",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-31",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-31",
+    "session": "noche",
+    "number": 45,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-30",
+    "session": "dia",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-30",
+    "session": "noche",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-29",
+    "session": "dia",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-29",
+    "session": "noche",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-28",
+    "session": "dia",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-28",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-27",
+    "session": "dia",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-27",
+    "session": "noche",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-26",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-26",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-25",
+    "session": "dia",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-25",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-24",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-24",
+    "session": "noche",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-23",
+    "session": "dia",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-23",
+    "session": "noche",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-22",
+    "session": "dia",
+    "number": 59,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-22",
+    "session": "noche",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-21",
+    "session": "dia",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-21",
+    "session": "noche",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-20",
+    "session": "dia",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-20",
+    "session": "noche",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-19",
+    "session": "dia",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-19",
+    "session": "noche",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-18",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-18",
+    "session": "noche",
+    "number": 67,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-17",
+    "session": "dia",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-17",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-16",
+    "session": "dia",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-16",
+    "session": "noche",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-15",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-15",
+    "session": "noche",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-14",
+    "session": "dia",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-14",
+    "session": "noche",
+    "number": 89,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-13",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-13",
+    "session": "noche",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-12",
+    "session": "dia",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-12",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-11",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-11",
+    "session": "noche",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-10",
+    "session": "dia",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-10",
+    "session": "noche",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-09",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-09",
+    "session": "noche",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-08",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-08",
+    "session": "noche",
+    "number": 60,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-07",
+    "session": "dia",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-07",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-06",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-06",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-05",
+    "session": "dia",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-05",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-04",
+    "session": "dia",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-04",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-03",
+    "session": "dia",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-03",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-02",
+    "session": "dia",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-02",
+    "session": "noche",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-01",
+    "session": "dia",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-07-01",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-30",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-30",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-29",
+    "session": "dia",
+    "number": 90,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-29",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-28",
+    "session": "dia",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-28",
+    "session": "noche",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-27",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-27",
+    "session": "noche",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-26",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-26",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-25",
+    "session": "dia",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-25",
+    "session": "noche",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-24",
+    "session": "dia",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-24",
+    "session": "noche",
+    "number": 19,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-23",
+    "session": "dia",
+    "number": 30,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-23",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-22",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-22",
+    "session": "noche",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-21",
+    "session": "dia",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-21",
+    "session": "noche",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-20",
+    "session": "dia",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-20",
+    "session": "noche",
+    "number": 34,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-19",
+    "session": "dia",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-19",
+    "session": "noche",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-18",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-18",
+    "session": "noche",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-17",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-17",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-16",
+    "session": "dia",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-16",
+    "session": "noche",
+    "number": 45,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-15",
+    "session": "dia",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-15",
+    "session": "noche",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-14",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-14",
+    "session": "noche",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-13",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-13",
+    "session": "noche",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-12",
+    "session": "dia",
+    "number": 65,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-12",
+    "session": "noche",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-11",
+    "session": "dia",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-11",
+    "session": "noche",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-10",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-10",
+    "session": "noche",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-09",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-09",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-08",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-08",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-07",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-07",
+    "session": "noche",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-06",
+    "session": "dia",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-06",
+    "session": "noche",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-05",
+    "session": "dia",
+    "number": 19,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-05",
+    "session": "noche",
+    "number": 24,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-04",
+    "session": "dia",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-04",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-03",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-03",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-02",
+    "session": "dia",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-02",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-01",
+    "session": "dia",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-06-01",
+    "session": "noche",
+    "number": 89,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-31",
+    "session": "dia",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-31",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-30",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-30",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-29",
+    "session": "dia",
+    "number": 65,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-29",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-28",
+    "session": "dia",
+    "number": 11,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-28",
+    "session": "noche",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-27",
+    "session": "dia",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-27",
+    "session": "noche",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-26",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-26",
+    "session": "noche",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-25",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-25",
+    "session": "noche",
+    "number": 14,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-24",
+    "session": "dia",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-24",
+    "session": "noche",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-23",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-23",
+    "session": "noche",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-22",
+    "session": "dia",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-22",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-21",
+    "session": "dia",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-21",
+    "session": "noche",
+    "number": 67,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-20",
+    "session": "dia",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-20",
+    "session": "noche",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-19",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-19",
+    "session": "noche",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-18",
+    "session": "dia",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-18",
+    "session": "noche",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-17",
+    "session": "dia",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-17",
+    "session": "noche",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-16",
+    "session": "dia",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-16",
+    "session": "noche",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-15",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-15",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-14",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-14",
+    "session": "noche",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-13",
+    "session": "dia",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-13",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-12",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-12",
+    "session": "noche",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-11",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-11",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-10",
+    "session": "dia",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-10",
+    "session": "noche",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-09",
+    "session": "dia",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-09",
+    "session": "noche",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-08",
+    "session": "dia",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-08",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-07",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-07",
+    "session": "noche",
+    "number": 24,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-06",
+    "session": "dia",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-06",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-05",
+    "session": "dia",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-05",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-04",
+    "session": "dia",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-04",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-03",
+    "session": "dia",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-03",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-02",
+    "session": "dia",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-02",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-01",
+    "session": "dia",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-05-01",
+    "session": "noche",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-30",
+    "session": "dia",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-30",
+    "session": "noche",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-29",
+    "session": "dia",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-29",
+    "session": "noche",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-28",
+    "session": "dia",
+    "number": 24,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-28",
+    "session": "noche",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-27",
+    "session": "dia",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-27",
+    "session": "noche",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-26",
+    "session": "dia",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-26",
+    "session": "noche",
+    "number": 30,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-25",
+    "session": "dia",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-25",
+    "session": "noche",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-24",
+    "session": "dia",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-24",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-23",
+    "session": "dia",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-23",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-22",
+    "session": "dia",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-22",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-21",
+    "session": "dia",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-21",
+    "session": "noche",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-20",
+    "session": "dia",
+    "number": 60,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-20",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-19",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-19",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-18",
+    "session": "dia",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-18",
+    "session": "noche",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-17",
+    "session": "dia",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-17",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-16",
+    "session": "dia",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-16",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-15",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-15",
+    "session": "noche",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-14",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-14",
+    "session": "noche",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-13",
+    "session": "dia",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-13",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-12",
+    "session": "dia",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-12",
+    "session": "noche",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-11",
+    "session": "dia",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-11",
+    "session": "noche",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-10",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-10",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-09",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-09",
+    "session": "noche",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-08",
+    "session": "dia",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-08",
+    "session": "noche",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-07",
+    "session": "dia",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-07",
+    "session": "noche",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-06",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-06",
+    "session": "noche",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-05",
+    "session": "dia",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-05",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-04",
+    "session": "dia",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-04",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-02",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-02",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-01",
+    "session": "dia",
+    "number": 11,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-04-01",
+    "session": "noche",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-31",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-31",
+    "session": "noche",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-30",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-30",
+    "session": "noche",
+    "number": 19,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-29",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-29",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-28",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-28",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-27",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-27",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-26",
+    "session": "dia",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-26",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-25",
+    "session": "dia",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-25",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-24",
+    "session": "dia",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-24",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-23",
+    "session": "dia",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-23",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-22",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-22",
+    "session": "noche",
+    "number": 45,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-21",
+    "session": "dia",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-21",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-20",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-20",
+    "session": "noche",
+    "number": 59,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-19",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-19",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-18",
+    "session": "dia",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-18",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-17",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-17",
+    "session": "noche",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-16",
+    "session": "dia",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-16",
+    "session": "noche",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-15",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-15",
+    "session": "noche",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-14",
+    "session": "dia",
+    "number": 19,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-14",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-13",
+    "session": "dia",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-13",
+    "session": "noche",
+    "number": 59,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-12",
+    "session": "dia",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-12",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-11",
+    "session": "dia",
+    "number": 14,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-11",
+    "session": "noche",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-10",
+    "session": "dia",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-10",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-09",
+    "session": "dia",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-09",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-08",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-08",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-07",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-07",
+    "session": "noche",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-06",
+    "session": "dia",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-06",
+    "session": "noche",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-05",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-05",
+    "session": "noche",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-04",
+    "session": "dia",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-04",
+    "session": "noche",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-03",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-03",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-02",
+    "session": "dia",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-02",
+    "session": "noche",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-01",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-03-01",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-28",
+    "session": "dia",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-28",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-27",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-27",
+    "session": "noche",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-26",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-26",
+    "session": "noche",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-25",
+    "session": "dia",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-25",
+    "session": "noche",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-24",
+    "session": "dia",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-24",
+    "session": "noche",
+    "number": 19,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-23",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-23",
+    "session": "noche",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-22",
+    "session": "dia",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-22",
+    "session": "noche",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-21",
+    "session": "dia",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-21",
+    "session": "noche",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-20",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-20",
+    "session": "noche",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-19",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-19",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-18",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-18",
+    "session": "noche",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-17",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-17",
+    "session": "noche",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-16",
+    "session": "dia",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-16",
+    "session": "noche",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-15",
+    "session": "dia",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-15",
+    "session": "noche",
+    "number": 4,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-14",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-14",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-13",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-13",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-12",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-12",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-11",
+    "session": "dia",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-11",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-10",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-10",
+    "session": "noche",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-09",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-09",
+    "session": "noche",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-08",
+    "session": "dia",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-08",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-07",
+    "session": "dia",
+    "number": 74,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-07",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-06",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-06",
+    "session": "noche",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-05",
+    "session": "dia",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-05",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-04",
+    "session": "dia",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-04",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-03",
+    "session": "dia",
+    "number": 89,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-03",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-02",
+    "session": "dia",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-02",
+    "session": "noche",
+    "number": 34,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-01",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-02-01",
+    "session": "noche",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-31",
+    "session": "dia",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-31",
+    "session": "noche",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-30",
+    "session": "dia",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-30",
+    "session": "noche",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-29",
+    "session": "dia",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-29",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-28",
+    "session": "dia",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-28",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-27",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-27",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-26",
+    "session": "dia",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-26",
+    "session": "noche",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-25",
+    "session": "dia",
+    "number": 74,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-25",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-24",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-24",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-23",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-23",
+    "session": "noche",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-22",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-22",
+    "session": "noche",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-21",
+    "session": "dia",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-21",
+    "session": "noche",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-20",
+    "session": "dia",
+    "number": 90,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-20",
+    "session": "noche",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-19",
+    "session": "dia",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-19",
+    "session": "noche",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-18",
+    "session": "dia",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-18",
+    "session": "noche",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-17",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-17",
+    "session": "noche",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-16",
+    "session": "dia",
+    "number": 4,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-16",
+    "session": "noche",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-15",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-15",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-14",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-14",
+    "session": "noche",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-13",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-13",
+    "session": "noche",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-12",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-12",
+    "session": "noche",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-11",
+    "session": "dia",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-11",
+    "session": "noche",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-10",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-10",
+    "session": "noche",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-09",
+    "session": "dia",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-09",
+    "session": "noche",
+    "number": 4,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-08",
+    "session": "dia",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-08",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-07",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-07",
+    "session": "noche",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-06",
+    "session": "dia",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-06",
+    "session": "noche",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-05",
+    "session": "dia",
+    "number": 90,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-05",
+    "session": "noche",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-04",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-04",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-03",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-03",
+    "session": "noche",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-02",
+    "session": "dia",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-02",
+    "session": "noche",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-01-01",
+    "session": "dia",
+    "number": 60,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-31",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-31",
+    "session": "noche",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-30",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-30",
+    "session": "noche",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-29",
+    "session": "dia",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-29",
+    "session": "noche",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-28",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-28",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-27",
+    "session": "dia",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-27",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-26",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-26",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-25",
+    "session": "dia",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-25",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-24",
+    "session": "dia",
+    "number": 74,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-24",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-23",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-23",
+    "session": "noche",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-22",
+    "session": "dia",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-22",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-21",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-21",
+    "session": "noche",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-20",
+    "session": "dia",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-20",
+    "session": "noche",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-19",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-19",
+    "session": "noche",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-18",
+    "session": "dia",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-18",
+    "session": "noche",
+    "number": 50,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-17",
+    "session": "dia",
+    "number": 30,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-17",
+    "session": "noche",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-16",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-16",
+    "session": "noche",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-15",
+    "session": "dia",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-15",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-14",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-14",
+    "session": "noche",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-13",
+    "session": "dia",
+    "number": 45,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-13",
+    "session": "noche",
+    "number": 16,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-12",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-12",
+    "session": "noche",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-11",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-11",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-10",
+    "session": "dia",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-10",
+    "session": "noche",
+    "number": 48,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-09",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-09",
+    "session": "noche",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-08",
+    "session": "dia",
+    "number": 13,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-08",
+    "session": "noche",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-07",
+    "session": "dia",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-07",
+    "session": "noche",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-06",
+    "session": "dia",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-06",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-05",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-05",
+    "session": "noche",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-04",
+    "session": "dia",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-04",
+    "session": "noche",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-03",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-03",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-02",
+    "session": "dia",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-02",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-01",
+    "session": "dia",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-12-01",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-30",
+    "session": "dia",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-30",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-29",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-29",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-28",
+    "session": "dia",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-28",
+    "session": "noche",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-27",
+    "session": "dia",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-27",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-26",
+    "session": "dia",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-26",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-25",
+    "session": "dia",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-25",
+    "session": "noche",
+    "number": 36,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-24",
+    "session": "dia",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-24",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-23",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-23",
+    "session": "noche",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-22",
+    "session": "dia",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-22",
+    "session": "noche",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-21",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-21",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-20",
+    "session": "dia",
+    "number": 67,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-20",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-19",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-19",
+    "session": "noche",
+    "number": 65,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-18",
+    "session": "dia",
+    "number": 79,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-18",
+    "session": "noche",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-17",
+    "session": "dia",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-17",
+    "session": "noche",
+    "number": 79,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-16",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-16",
+    "session": "noche",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-15",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-15",
+    "session": "noche",
+    "number": 13,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-14",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-14",
+    "session": "noche",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-13",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-13",
+    "session": "noche",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-12",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-12",
+    "session": "noche",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-11",
+    "session": "dia",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-11",
+    "session": "noche",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-10",
+    "session": "dia",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-10",
+    "session": "noche",
+    "number": 39,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-09",
+    "session": "dia",
+    "number": 30,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-09",
+    "session": "noche",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-08",
+    "session": "dia",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-08",
+    "session": "noche",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-07",
+    "session": "dia",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-07",
+    "session": "noche",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-06",
+    "session": "dia",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-06",
+    "session": "noche",
+    "number": 61,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-05",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-05",
+    "session": "noche",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-04",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-04",
+    "session": "noche",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-03",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-03",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-02",
+    "session": "dia",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-02",
+    "session": "noche",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-01",
+    "session": "dia",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-11-01",
+    "session": "noche",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-31",
+    "session": "dia",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-31",
+    "session": "noche",
+    "number": 42,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-30",
+    "session": "dia",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-30",
+    "session": "noche",
+    "number": 0,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-29",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-29",
+    "session": "noche",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-28",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-28",
+    "session": "noche",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-27",
+    "session": "dia",
+    "number": 13,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-27",
+    "session": "noche",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-26",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-26",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-25",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-25",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-24",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-24",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-23",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-23",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-22",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-22",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-21",
+    "session": "dia",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-21",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-20",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-20",
+    "session": "noche",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-19",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-19",
+    "session": "noche",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-18",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-18",
+    "session": "noche",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-17",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-17",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-16",
+    "session": "dia",
+    "number": 2,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-16",
+    "session": "noche",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-15",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-15",
+    "session": "noche",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-14",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-14",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-13",
+    "session": "dia",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-13",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-12",
+    "session": "dia",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-12",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-11",
+    "session": "dia",
+    "number": 11,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-11",
+    "session": "noche",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-10",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-10",
+    "session": "noche",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-09",
+    "session": "dia",
+    "number": 52,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-09",
+    "session": "noche",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-08",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-08",
+    "session": "noche",
+    "number": 57,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-07",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-07",
+    "session": "noche",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-06",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-06",
+    "session": "noche",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-05",
+    "session": "dia",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-05",
+    "session": "noche",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-04",
+    "session": "dia",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-04",
+    "session": "noche",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-03",
+    "session": "dia",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-03",
+    "session": "noche",
+    "number": 4,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-02",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-02",
+    "session": "noche",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-01",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-10-01",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-30",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-30",
+    "session": "noche",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-29",
+    "session": "dia",
+    "number": 13,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-29",
+    "session": "noche",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-28",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-28",
+    "session": "noche",
+    "number": 21,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-27",
+    "session": "dia",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-27",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-26",
+    "session": "dia",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-26",
+    "session": "noche",
+    "number": 20,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-25",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-25",
+    "session": "noche",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-24",
+    "session": "dia",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-24",
+    "session": "noche",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-23",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-23",
+    "session": "noche",
+    "number": 25,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-22",
+    "session": "dia",
+    "number": 74,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-22",
+    "session": "noche",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-21",
+    "session": "dia",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-21",
+    "session": "noche",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-20",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-20",
+    "session": "noche",
+    "number": 59,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-19",
+    "session": "dia",
+    "number": 43,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-19",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-18",
+    "session": "dia",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-18",
+    "session": "noche",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-17",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-17",
+    "session": "noche",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-16",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-16",
+    "session": "noche",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-15",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-15",
+    "session": "noche",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-14",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-14",
+    "session": "noche",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-13",
+    "session": "dia",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-13",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-12",
+    "session": "dia",
+    "number": 67,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-12",
+    "session": "noche",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-11",
+    "session": "dia",
+    "number": 30,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-11",
+    "session": "noche",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-10",
+    "session": "dia",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-10",
+    "session": "noche",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-09",
+    "session": "dia",
+    "number": 38,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-09",
+    "session": "noche",
+    "number": 88,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-08",
+    "session": "dia",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-08",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-07",
+    "session": "dia",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-07",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-06",
+    "session": "dia",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-06",
+    "session": "noche",
+    "number": 4,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-05",
+    "session": "dia",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-05",
+    "session": "noche",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-04",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-04",
+    "session": "noche",
+    "number": 15,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-03",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-03",
+    "session": "noche",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-02",
+    "session": "dia",
+    "number": 7,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-02",
+    "session": "noche",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-01",
+    "session": "dia",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-09-01",
+    "session": "noche",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-31",
+    "session": "dia",
+    "number": 77,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-31",
+    "session": "noche",
+    "number": 80,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-30",
+    "session": "dia",
+    "number": 47,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-30",
+    "session": "noche",
+    "number": 37,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-29",
+    "session": "dia",
+    "number": 28,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-29",
+    "session": "noche",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-28",
+    "session": "dia",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-28",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-27",
+    "session": "dia",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-27",
+    "session": "noche",
+    "number": 67,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-26",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-26",
+    "session": "noche",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-25",
+    "session": "dia",
+    "number": 33,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-25",
+    "session": "noche",
+    "number": 82,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-24",
+    "session": "dia",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-24",
+    "session": "noche",
+    "number": 3,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-23",
+    "session": "dia",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-23",
+    "session": "noche",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-22",
+    "session": "dia",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-22",
+    "session": "noche",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-21",
+    "session": "dia",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-21",
+    "session": "noche",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-20",
+    "session": "dia",
+    "number": 85,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-20",
+    "session": "noche",
+    "number": 92,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-19",
+    "session": "dia",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-19",
+    "session": "noche",
+    "number": 8,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-18",
+    "session": "dia",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-18",
+    "session": "noche",
+    "number": 1,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-17",
+    "session": "dia",
+    "number": 13,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-17",
+    "session": "noche",
+    "number": 26,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-16",
+    "session": "dia",
+    "number": 83,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-16",
+    "session": "noche",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-15",
+    "session": "dia",
+    "number": 10,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-15",
+    "session": "noche",
+    "number": 69,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-14",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-14",
+    "session": "noche",
+    "number": 17,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-13",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-13",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-12",
+    "session": "dia",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-12",
+    "session": "noche",
+    "number": 99,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-11",
+    "session": "dia",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-11",
+    "session": "noche",
+    "number": 34,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-10",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-10",
+    "session": "noche",
+    "number": 49,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-09",
+    "session": "dia",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-09",
+    "session": "noche",
+    "number": 90,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-08",
+    "session": "dia",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-08",
+    "session": "noche",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-07",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-07",
+    "session": "noche",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-06",
+    "session": "dia",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-06",
+    "session": "noche",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-05",
+    "session": "dia",
+    "number": 95,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-05",
+    "session": "noche",
+    "number": 35,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-04",
+    "session": "dia",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-04",
+    "session": "noche",
+    "number": 78,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-03",
+    "session": "dia",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-03",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-02",
+    "session": "dia",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-02",
+    "session": "noche",
+    "number": 81,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-01",
+    "session": "dia",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-08-01",
+    "session": "noche",
+    "number": 89,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-31",
+    "session": "dia",
+    "number": 46,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-31",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-30",
+    "session": "dia",
+    "number": 94,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-30",
+    "session": "noche",
+    "number": 96,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-29",
+    "session": "dia",
+    "number": 60,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-29",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-28",
+    "session": "dia",
+    "number": 62,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-28",
+    "session": "noche",
+    "number": 34,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-27",
+    "session": "dia",
+    "number": 90,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-27",
+    "session": "noche",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-26",
+    "session": "dia",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-26",
+    "session": "noche",
+    "number": 5,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-25",
+    "session": "dia",
+    "number": 58,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-25",
+    "session": "noche",
+    "number": 40,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-24",
+    "session": "dia",
+    "number": 45,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-24",
+    "session": "noche",
+    "number": 32,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-23",
+    "session": "dia",
+    "number": 22,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-23",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-22",
+    "session": "dia",
+    "number": 55,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-22",
+    "session": "noche",
+    "number": 75,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-21",
+    "session": "dia",
+    "number": 24,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-21",
+    "session": "noche",
+    "number": 12,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-20",
+    "session": "dia",
+    "number": 79,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-20",
+    "session": "noche",
+    "number": 87,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-19",
+    "session": "dia",
+    "number": 84,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-19",
+    "session": "noche",
+    "number": 27,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-18",
+    "session": "dia",
+    "number": 63,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-18",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-17",
+    "session": "dia",
+    "number": 97,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-17",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-16",
+    "session": "dia",
+    "number": 64,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-16",
+    "session": "noche",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-15",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-15",
+    "session": "noche",
+    "number": 60,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-14",
+    "session": "dia",
+    "number": 72,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-14",
+    "session": "noche",
+    "number": 68,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-13",
+    "session": "dia",
+    "number": 98,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-13",
+    "session": "noche",
+    "number": 23,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-12",
+    "session": "dia",
+    "number": 29,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-12",
+    "session": "noche",
+    "number": 44,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-11",
+    "session": "dia",
+    "number": 51,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-11",
+    "session": "noche",
+    "number": 91,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-10",
+    "session": "dia",
+    "number": 93,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-10",
+    "session": "noche",
+    "number": 56,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-09",
+    "session": "dia",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-09",
+    "session": "noche",
+    "number": 53,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-08",
+    "session": "dia",
+    "number": 66,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-08",
+    "session": "noche",
+    "number": 89,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-07",
+    "session": "dia",
+    "number": 6,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-07",
+    "session": "noche",
+    "number": 9,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-06",
+    "session": "dia",
+    "number": 71,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-06",
+    "session": "noche",
+    "number": 54,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-05",
+    "session": "dia",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-05",
+    "session": "noche",
+    "number": 24,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-04",
+    "session": "dia",
+    "number": 70,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-04",
+    "session": "noche",
+    "number": 73,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-03",
+    "session": "dia",
+    "number": 18,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-03",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-02",
+    "session": "dia",
+    "number": 86,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-02",
+    "session": "noche",
+    "number": 41,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-01",
+    "session": "dia",
+    "number": 76,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2025-07-01",
+    "session": "noche",
+    "number": 31,
+    "source": "https://laprimera.do/resultados/"
+  }
+]
