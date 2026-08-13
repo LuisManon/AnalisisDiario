@@ -2,6 +2,8 @@ import { drawSchema } from "./validation";
 import type { DrawResult } from "./types";
 
 const officialSourceUrl = "https://www.leidsa.com/results";
+const officialHomeSourceUrl = "https://www.leidsa.com/";
+const dominicanasSourceUrl = "https://www.loteriasdominicanas.com.do/loteria-leidsa/loto-mas";
 const backupSourceUrl = "https://www.yelu.do/leidsa/results/loto-mas";
 const months: Record<string, number> = {
   enero: 0,
@@ -32,6 +34,21 @@ function normalizeDrawDate(dateText: string) {
   return date.toISOString().slice(0, 10);
 }
 
+function parseDateFromInput(html: string) {
+  const match = html.match(/<input[^>]+name="fecha"[^>]+value="(\d{4}-\d{2}-\d{2})"/);
+  return match?.[1] ?? null;
+}
+
+function buildDrawResult(date: string, numbers: number[], plus: number, source: string) {
+  return drawSchema.safeParse({
+    date,
+    day: new Date(`${date}T00:00:00Z`).getUTCDay() === 3 ? "miercoles" : "sabado",
+    numbers,
+    plus,
+    source
+  });
+}
+
 export function parseRemoteResults(html: string): DrawResult[] {
   const results: DrawResult[] = [];
   const rowPattern =
@@ -55,8 +72,9 @@ export function parseRemoteResults(html: string): DrawResult[] {
 }
 
 export function parseOfficialLatestResult(html: string): DrawResult[] {
-  const match = html.match(
-    /"gameFamilyName":\\"Loto\\","gameProvider":\\"Leidsa\\"[\s\S]*?"previousDrawDetails":\{"drawId":\\"[^"]+\\","drawnValues":\[([0-9,]+)\],"bonusRoundsValues":\[([0-9,]+)\],"drawTimestamp":\\"([^"]+)\\"/
+  const normalized = html.replace(/\\"/g, '"');
+  const match = normalized.match(
+    /"slug":"leidsa-loto"[\s\S]*?"previousDrawDetails":\{"drawId":"[^"]+","drawnValues":\[([0-9,]+)\],"bonusRoundsValues":\[([0-9,]+)\],"drawTimestamp":"([^"]+)"/
   );
   if (!match) return [];
 
@@ -68,9 +86,22 @@ export function parseOfficialLatestResult(html: string): DrawResult[] {
     day: timestamp.getUTCDay() === 3 ? "miercoles" : "sabado",
     numbers: match[1].split(",").map(Number),
     plus: Number(match[2].split(",")[0]),
-    source: officialSourceUrl
+    source: html.includes("leidsa-loto") ? officialHomeSourceUrl : officialSourceUrl
   });
 
+  return parsed.success ? [parsed.data] : [];
+}
+
+export function parseDominicanasLatestResult(html: string): DrawResult[] {
+  const date = parseDateFromInput(html);
+  const section = html.match(/<div class="balls" aria-label="Números ganadores de Loto Más">([\s\S]*?)<\/div>/)?.[1];
+  if (!date || !section) return [];
+
+  const values = [...section.matchAll(/<span class="ball b\d+[^"]*">\s*(\d+)\s*<\/span>/g)].map((match) => Number(match[1]));
+  if (values.length < 7) return [];
+
+  const numbers = values.slice(0, 6).sort((a, b) => a - b);
+  const parsed = buildDrawResult(date, numbers, values[6], dominicanasSourceUrl);
   return parsed.success ? [parsed.data] : [];
 }
 
@@ -98,16 +129,23 @@ async function fetchAndParse(url: string, parser: (html: string) => DrawResult[]
 export async function fetchRemoteResults() {
   const attempts = await Promise.allSettled([
     fetchAndParse(officialSourceUrl, parseOfficialLatestResult),
+    fetchAndParse(officialHomeSourceUrl, parseOfficialLatestResult),
+    fetchAndParse(dominicanasSourceUrl, parseDominicanasLatestResult),
     fetchAndParse(backupSourceUrl, parseRemoteResults)
   ]);
-  const results = [attempts[1], attempts[0]].flatMap((attempt) => (attempt.status === "fulfilled" ? attempt.value : []));
+  const results = [attempts[3], attempts[2], attempts[1], attempts[0]].flatMap((attempt) =>
+    attempt.status === "fulfilled" ? attempt.value : []
+  );
 
   if (!results.length) {
     throw new Error("No se pudo consultar ninguna fuente remota de resultados.");
   }
 
+  const sourceUrls = [officialSourceUrl, officialHomeSourceUrl, dominicanasSourceUrl, backupSourceUrl];
+  const sourceIndex = attempts.findIndex((attempt) => attempt.status === "fulfilled");
+
   return {
     results,
-    sourceUrl: attempts[0].status === "fulfilled" ? officialSourceUrl : backupSourceUrl
+    sourceUrl: sourceUrls[sourceIndex] ?? backupSourceUrl
   };
 }
