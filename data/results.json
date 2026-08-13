@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-08-12",
+    "day": "miercoles",
+    "numbers": [
+      26,
+      32,
+      35,
+      37,
+      38,
+      39
+    ],
+    "plus": 6,
+    "source": "https://www.leidsa.com/"
+  },
+  {
     "date": "2026-08-08",
     "day": "sabado",
     "numbers": [
