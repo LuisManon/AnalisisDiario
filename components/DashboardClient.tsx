@@ -433,7 +433,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       </section>
       <section className="card scatterSection">
         <div className="scatterControls">
-          <label htmlFor="scatterYear">Anio</label>
+          <label htmlFor="scatterYear">Año</label>
           <select id="scatterYear" value={scatterYear} onChange={(event) => setScatterYear(event.target.value)}>
             <option value="todos">Todos</option>
             {availableYears.map((year) => (
@@ -458,7 +458,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       </section>
       <section className="card rangeMapSection">
         <div className="scatterControls">
-          <label htmlFor="rangeYear">Anio</label>
+          <label htmlFor="rangeYear">Año</label>
           <select id="rangeYear" value={rangeYear} onChange={(event) => setRangeYear(event.target.value)}>
             <option value="todos">Todos</option>
             {availableYears.map((year) => (

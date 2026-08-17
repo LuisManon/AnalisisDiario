@@ -2704,4 +2704,84 @@ h3 {
     height: 42px;
     margin-top: 0;
   }
+
+  .recommendationItem {
+    gap: 7px;
+    grid-template-columns: 20px minmax(0, 1fr) 58px;
+    padding-bottom: 12px;
+  }
+
+  .recommendationItem > span:first-child {
+    font-size: 0.72rem;
+  }
+
+  .recommendationBalls {
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+
+  .recommendationBalls .ball {
+    font-size: 0.6rem;
+    height: 27px;
+    width: 27px;
+  }
+
+  .recommendationActions {
+    display: contents;
+  }
+
+  .recommendationActions .scoreBadge {
+    align-self: center;
+    font-size: 0.65rem;
+    grid-column: 3;
+    grid-row: 1;
+    padding: 6px 4px;
+  }
+
+  .recommendationActions .miniButton {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    min-height: 34px;
+    width: 100%;
+  }
+
+  .scatterSection .scatterControls {
+    align-items: center;
+    display: grid;
+    gap: 8px 10px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    justify-content: stretch;
+  }
+
+  .scatterSection .scatterControls select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .scatterSection .scatterControls > span {
+    grid-column: 1 / -1;
+    text-align: right;
+  }
+
+  .lotoTheme .history {
+    gap: 0;
+  }
+
+  .lotoTheme .historyRow {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 13px 0;
+    position: relative;
+  }
+
+  .lotoTheme .historyRow:not(:last-child)::after {
+    background: rgba(33, 73, 154, 0.22);
+    bottom: 0;
+    content: "";
+    height: 1px;
+    left: 12%;
+    position: absolute;
+    width: 76%;
+  }
 }
