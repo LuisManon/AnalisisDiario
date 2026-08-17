@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { DrawBalls } from "./DrawBalls";
 import {
   analyzeCombined,
@@ -44,6 +45,28 @@ function MetricCards({ metric }: { metric: AnalysisMetric }) {
       <div><span>Atraso actual</span><strong>{metricValue(metric.currentDelay, " sorteos")}</strong></div>
       <div><span>Estado</span><StatusBadge status={metric.status} /></div>
     </div>
+  );
+}
+
+function SearchAccordion({
+  title,
+  summary,
+  children,
+  defaultOpen = false
+}: {
+  title: string;
+  summary?: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details className="numberAccordion" open={defaultOpen}>
+      <summary>
+        <span>{title}</span>
+        {summary ? <small>{summary}</small> : null}
+      </summary>
+      <div className="numberAccordionBody">{children}</div>
+    </details>
   );
 }
 
@@ -106,58 +129,61 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
         <p>Análisis estadístico histórico de números principales y número Más.</p>
       </section>
       <section className="card numberSearch">
-        <div className="numberSearchFilters">
-          <label>
-            Número principal
-            <input type="number" min="1" max="40" value={mainNumber} disabled={!includeMain} onChange={(event) => { setMainNumber(Math.min(40, Math.max(1, Number(event.target.value)))); resetPage(); }} />
-          </label>
-          <label>
-            Número Más
-            <input type="number" min="1" max="12" value={plusNumber} disabled={!includePlus} onChange={(event) => { setPlusNumber(Math.min(12, Math.max(1, Number(event.target.value)))); resetPage(); }} />
-          </label>
-          <label>
-            Tipo de búsqueda
-            <select value={type} onChange={(event) => {
-              const nextType = event.target.value as SearchType;
-              setType(nextType);
-              if (nextType === "plus") setPosition("plus");
-              if (nextType === "main" && position === "plus") setPosition("any");
-              resetPage();
-            }}>
-              <option value="main">Solo números principales</option>
-              <option value="plus">Solo número Más</option>
-              <option value="both">Principales + número Más</option>
-            </select>
-          </label>
-          <label>
-            Posición
-            <select disabled={type === "plus"} value={position} onChange={(event) => { setPosition(event.target.value as SearchPosition); resetPage(); }}>
-              <option value="any">Cualquier posición</option>
-              {[1, 2, 3, 4, 5, 6].map((value) => <option value={value} key={value}>Posición {value}</option>)}
-              <option value="plus">Número Más</option>
-            </select>
-          </label>
-          <label>
-            Día del sorteo
-            <select value={day} onChange={(event) => { setDay(event.target.value as DayFilter); resetPage(); }}>
-              <option value="todos">Todos</option>
-              <option value="miercoles">Miércoles</option>
-              <option value="sabado">Sábado</option>
-            </select>
-          </label>
-        </div>
-
-        <div className="numberSearchTitle">
-          <div>
-            <span className="panelLabel">Resumen principal</span>
-            <h3>{subject} · {positionLabel} · {formatDay(day)}</h3>
+        <SearchAccordion title="Filtros de búsqueda" summary={`${subject} · ${positionLabel} · ${formatDay(day)}`} defaultOpen>
+          <div className="numberSearchFilters">
+            <label>
+              Número principal
+              <input type="number" min="1" max="40" value={mainNumber} disabled={!includeMain} onChange={(event) => { setMainNumber(Math.min(40, Math.max(1, Number(event.target.value)))); resetPage(); }} />
+            </label>
+            <label>
+              Número Más
+              <input type="number" min="1" max="12" value={plusNumber} disabled={!includePlus} onChange={(event) => { setPlusNumber(Math.min(12, Math.max(1, Number(event.target.value)))); resetPage(); }} />
+            </label>
+            <label>
+              Tipo de búsqueda
+              <select value={type} onChange={(event) => {
+                const nextType = event.target.value as SearchType;
+                setType(nextType);
+                if (nextType === "plus") setPosition("plus");
+                if (nextType === "main" && position === "plus") setPosition("any");
+                resetPage();
+              }}>
+                <option value="main">Solo números principales</option>
+                <option value="plus">Solo número Más</option>
+                <option value="both">Principales + número Más</option>
+              </select>
+            </label>
+            <label>
+              Posición
+              <select disabled={type === "plus"} value={position} onChange={(event) => { setPosition(event.target.value as SearchPosition); resetPage(); }}>
+                <option value="any">Cualquier posición</option>
+                {[1, 2, 3, 4, 5, 6].map((value) => <option value={value} key={value}>Posición {value}</option>)}
+                <option value="plus">Número Más</option>
+              </select>
+            </label>
+            <label>
+              Día del sorteo
+              <select value={day} onChange={(event) => { setDay(event.target.value as DayFilter); resetPage(); }}>
+                <option value="todos">Todos</option>
+                <option value="miercoles">Miércoles</option>
+                <option value="sabado">Sábado</option>
+              </select>
+            </label>
           </div>
-          <StatusBadge status={primaryMetric.status} />
-        </div>
-        <MetricCards metric={primaryMetric} />
+        </SearchAccordion>
 
-        <div className="numberAnalysisBand">
-          <h3>Métricas adicionales</h3>
+        <SearchAccordion title="Resumen principal" summary={`${primaryMetric.appearances} apariciones · ${primaryMetric.percentage}%`} defaultOpen>
+          <div className="numberSearchTitle">
+            <div>
+              <span className="panelLabel">Resumen principal</span>
+              <h3>{subject} · {positionLabel} · {formatDay(day)}</h3>
+            </div>
+            <StatusBadge status={primaryMetric.status} />
+          </div>
+          <MetricCards metric={primaryMetric} />
+        </SearchAccordion>
+
+        <SearchAccordion title="Métricas adicionales" summary={`Atraso ${metricValue(primaryMetric.currentDelay)} · últimos 20: ${primaryMetric.recent[20].percentage}%`}>
           <div className="additionalMetrics">
             <span>Promedio entre apariciones <strong>{metricValue(primaryMetric.averageGap, " sorteos")}</strong></span>
             <span>Máximo atraso histórico <strong>{metricValue(primaryMetric.maxGap, " sorteos")}</strong></span>
@@ -167,11 +193,10 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
               <span key={size}>Últimos {size} <strong>{primaryMetric.recent[size].appearances} · {primaryMetric.recent[size].percentage}%</strong></span>
             ))}
           </div>
-        </div>
+        </SearchAccordion>
 
         {includeMain ? (
-          <div className="numberTableBlock">
-            <h3>Análisis por posición</h3>
+          <SearchAccordion title="Análisis por posición" summary="Frecuencia por P1, P2, P3, P4, P5 y P6">
             <div className="numberTableWrap">
               <table className="numberTable">
                 <thead><tr><th>Posición</th><th>Veces</th><th>Porcentaje</th><th>Última fecha</th><th>Atraso</th><th>Estado</th></tr></thead>
@@ -186,11 +211,10 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
                 </tbody>
               </table>
             </div>
-          </div>
+          </SearchAccordion>
         ) : null}
 
-        <div className="numberTableBlock">
-          <h3>Análisis por día</h3>
+        <SearchAccordion title="Análisis por día" summary="Miércoles vs. sábado">
           <div className="numberTableWrap">
             <table className="numberTable">
               <thead><tr><th>Día</th><th>Sorteos</th><th>Veces</th><th>Porcentaje</th><th>Última fecha</th><th>Atraso</th><th>Estado</th></tr></thead>
@@ -205,10 +229,10 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
               </tbody>
             </table>
           </div>
-        </div>
+        </SearchAccordion>
 
         {includePlus ? (
-          <div className="plusAnalysisBlock">
+          <SearchAccordion title={`Número Más ${plusNumber}`} summary={`${plusMetric.appearances} apariciones · ${plusMetric.percentage}%`}>
             <div className="numberSearchTitle">
               <div><span className="panelLabel">Número Más</span><h3>Análisis separado del Más {plusNumber}</h3></div>
               <StatusBadge status={plusMetric.status} />
@@ -222,10 +246,10 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
               <span>Atraso actual <strong>{metricValue(plusMetric.currentDelay, " sorteos")}</strong></span>
               <span>Histórica vs. reciente <strong>{plusMetric.percentage}% vs. {plusMetric.recent[20].percentage}%</strong></span>
             </div>
-          </div>
+          </SearchAccordion>
         ) : null}
 
-        <div className="numberTableBlock">
+        <SearchAccordion title="Historial de apariciones" summary={`${history.length} resultados`}>
           <div className="numberHistoryHeader">
             <h3>Historial de apariciones</h3>
             <span>{history.length} resultados</span>
@@ -246,13 +270,15 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
             <span>Página {currentPage} de {pageCount}</span>
             <button className="secondaryButton" disabled={currentPage === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>Siguiente</button>
           </nav>
-        </div>
+        </SearchAccordion>
 
-        <div className="numberInterpretation">
-          <span className="panelLabel">Interpretación automática</span>
-          <p>{interpretation}</p>
-          <small>Análisis histórico informativo. No predice ni garantiza resultados futuros.</small>
-        </div>
+        <SearchAccordion title="Interpretación automática" summary={statusLabels[primaryMetric.status]} defaultOpen>
+          <div className="numberInterpretation">
+            <span className="panelLabel">Interpretación automática</span>
+            <p>{interpretation}</p>
+            <small>Análisis histórico informativo. No predice ni garantiza resultados futuros.</small>
+          </div>
+        </SearchAccordion>
       </section>
     </>
   );

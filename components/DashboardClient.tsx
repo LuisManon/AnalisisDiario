@@ -24,6 +24,9 @@ type VirtualEvaluation = {
   total: number;
 } | null;
 
+const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
+const plusColor = "#ee1f2d";
+
 function formatDay(day: string) {
   return day === "miercoles" ? "Miercoles" : day === "sabado" ? "Sabado" : "Todos";
 }
@@ -55,6 +58,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [scatterYear, setScatterYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
   const [scatterDay, setScatterDay] = useState<DayFilter>("todos");
   const [scatterSeries, setScatterSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]);
+  const [rangeYear, setRangeYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
+  const [rangeDay, setRangeDay] = useState<DayFilter>("todos");
+  const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]);
   const [ticket, setTicket] = useState<VirtualTicket>({
     drawDate: getNextGameDate(),
     day: getDrawDay(getNextGameDate()),
@@ -82,6 +88,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     const byYear = scatterYear === "todos" ? data.results : data.results.filter((result) => result.date.startsWith(scatterYear));
     return scatterDay === "todos" ? byYear : byYear.filter((result) => result.day === scatterDay);
   }, [data.results, scatterDay, scatterYear]);
+  const rangeResults = useMemo(() => {
+    const byYear = rangeYear === "todos" ? data.results : data.results.filter((result) => result.date.startsWith(rangeYear));
+    return rangeDay === "todos" ? byYear : byYear.filter((result) => result.day === rangeDay);
+  }, [data.results, rangeDay, rangeYear]);
   const recommendations = useMemo(
     () => buildRecommendedPlays(data.results, day, 5),
     [data.results, day]
@@ -262,38 +272,40 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </div>
       </section>
 
-      <section className="sectionHeader">
-        <h2>Top 5 por posicion</h2>
-        <p>Cada columna calcula repeticion respetando la posicion exacta del sorteo.</p>
-      </section>
-      <section className="positionGrid">
-        {stats.byPosition.map((position) => (
-          <article className="card" key={position.position}>
-            <h3>Posicion {position.position}</h3>
+      <details className="topPositionsAccordion" open>
+        <summary>
+          <span>Top 5 por posicion</span>
+          <small>Cada columna calcula repeticion respetando la posicion exacta del sorteo.</small>
+        </summary>
+        <section className="positionGrid topPositionsGrid">
+          {stats.byPosition.map((position) => (
+            <article className="card" key={position.position}>
+              <h3>Posicion {position.position}</h3>
+              <div className="rankList">
+                {position.top.map((entry) => (
+                  <div className="rankItem" key={entry.number}>
+                    <Ball value={entry.number} />
+                    <div className="bar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
+                    <strong>{entry.count}</strong>
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+          <article className="card plusCard">
+            <h3>Numero Mas</h3>
             <div className="rankList">
-              {position.top.map((entry) => (
+              {stats.plusTop.map((entry) => (
                 <div className="rankItem" key={entry.number}>
-                  <Ball value={entry.number} />
-                  <div className="bar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
+                  <Ball value={entry.number} plus />
+                  <div className="bar redBar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
                   <strong>{entry.count}</strong>
                 </div>
               ))}
             </div>
           </article>
-        ))}
-        <article className="card plusCard">
-          <h3>Numero Mas</h3>
-          <div className="rankList">
-            {stats.plusTop.map((entry) => (
-              <div className="rankItem" key={entry.number}>
-                <Ball value={entry.number} plus />
-                <div className="bar redBar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
-                <strong>{entry.count}</strong>
-              </div>
-            ))}
-          </div>
-        </article>
-      </section>
+        </section>
+      </details>
 
       <section className="sectionHeader">
         <h2>Simulador de 5 jugadas</h2>
@@ -396,6 +408,31 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </div>
         <SeriesFilter selected={scatterSeries} onChange={setScatterSeries} />
         <ScatterPlot results={scatterResults} selectedSeries={scatterSeries} />
+      </section>
+
+      <section className="sectionHeader">
+        <h2>Mapa de rangos</h2>
+        <p>Rango normal por posicion, ignorando salidas poco comunes para no deformar el analisis.</p>
+      </section>
+      <section className="card rangeMapSection">
+        <div className="scatterControls">
+          <label htmlFor="rangeYear">Anio</label>
+          <select id="rangeYear" value={rangeYear} onChange={(event) => setRangeYear(event.target.value)}>
+            <option value="todos">Todos</option>
+            {availableYears.map((year) => (
+              <option value={year} key={year}>{year}</option>
+            ))}
+          </select>
+          <label htmlFor="rangeDay">Dia</label>
+          <select id="rangeDay" value={rangeDay} onChange={(event) => setRangeDay(event.target.value as DayFilter)}>
+            <option value="todos">Todos</option>
+            <option value="miercoles">Miercoles</option>
+            <option value="sabado">Sabado</option>
+          </select>
+          <span>{rangeResults.length} sorteos analizados</span>
+        </div>
+        <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} />
+        <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
       </section>
 
       <section className="sectionHeader">
@@ -570,7 +607,6 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
   const xFor = (index: number) => padding.left + (ordered.length <= 1 ? plotWidth / 2 : (index / (ordered.length - 1)) * plotWidth);
   const yFor = (number: number) => padding.top + ((40 - number) / 39) * plotHeight;
   const yTicks = [1, 5, 10, 15, 20, 25, 30, 35, 40];
-  const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
   const dateTicks = ordered
     .map((result, index) => ({ result, index }))
     .filter((_, index, source) => index === 0 || index === source.length - 1 || index % Math.max(1, Math.floor(source.length / 6)) === 0);
@@ -735,6 +771,136 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
         )}
       </div>
     </div>
+  );
+}
+
+function percentile(values: number[], ratio: number) {
+  if (!values.length) return 0;
+  const index = Math.round((values.length - 1) * ratio);
+  return values[Math.min(values.length - 1, Math.max(0, index))];
+}
+
+function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
+  const mainRows = [0, 1, 2, 3, 4, 5]
+    .filter((position) => selectedSeries.includes(`P${position + 1}`))
+    .map((position) => {
+      const values = results.map((result) => result.numbers[position]).sort((a, b) => a - b);
+      const low = values.length < 10 ? values[0] ?? 0 : percentile(values, 0.1);
+      const high = values.length < 10 ? values[values.length - 1] ?? 0 : percentile(values, 0.9);
+      const omitted = values.filter((value) => value < low || value > high).length;
+      const average = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+      return {
+        key: `P${position + 1}`,
+        label: `Posicion ${position + 1}`,
+        shortLabel: `P${position + 1}`,
+        color: positionColors[position],
+        maxNumber: 40,
+        low,
+        high,
+        omitted,
+        samples: values.length,
+        average
+      };
+    });
+
+  if (!selectedSeries.includes("Mas")) return mainRows;
+
+  const plusValues = results.map((result) => result.plus).sort((a, b) => a - b);
+  const low = plusValues.length < 10 ? plusValues[0] ?? 0 : percentile(plusValues, 0.1);
+  const high = plusValues.length < 10 ? plusValues[plusValues.length - 1] ?? 0 : percentile(plusValues, 0.9);
+  return [
+    ...mainRows,
+    {
+      key: "Mas",
+      label: "Numero Mas",
+      shortLabel: "Mas",
+      color: plusColor,
+      maxNumber: 12,
+      low,
+      high,
+      omitted: plusValues.filter((value) => value < low || value > high).length,
+      samples: plusValues.length,
+      average: plusValues.length ? plusValues.reduce((sum, value) => sum + value, 0) / plusValues.length : 0
+    }
+  ];
+}
+
+function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selectedSeries: string[] }) {
+  const rows = buildRangeRows(results, selectedSeries);
+  const hasOnlyPlus = rows.length === 1 && rows[0].key === "Mas";
+  const maxNumber = hasOnlyPlus ? 12 : 40;
+  const ticks = maxNumber === 12 ? [1, 3, 6, 9, 12] : [1, 5, 10, 15, 20, 25, 30, 35, 40];
+
+  if (!results.length) {
+    return <div className="emptyChart rangeMapEmpty">No hay sorteos suficientes para calcular rangos.</div>;
+  }
+
+  if (!rows.length) {
+    return <div className="emptyChart rangeMapEmpty">Selecciona al menos una posicion para ver el mapa de rangos.</div>;
+  }
+
+  return (
+    <section className="rangeMap" aria-label="Mapa de rangos por posicion">
+      <div className="rangeMapHeader">
+        <div>
+          <span className="panelLabel">Mapa de rangos</span>
+          <h3>Rango normal de salida por posicion</h3>
+        </div>
+        <p>
+          Usa percentiles 10-90: ignora salidas poco comunes para que una bola aislada no altere el rango visual.
+        </p>
+        <div className="rangeInfo">
+          <button type="button" aria-label="Informacion del mapa de rangos">i</button>
+          <div className="rangeInfoTooltip" role="tooltip">
+            <strong>Como se calcula el mapa de rangos</strong>
+            <span>El Mapa de rangos calcula el rango normal usando percentiles 10-90.</span>
+            <span>Ignora el 10% mas bajo y el 10% mas alto.</span>
+            <span>Usa el 80% central de la data para definir el rango tipico.</span>
+            <span>Las salidas fuera de ese rango se cuentan como fuera del rango, pero no deforman la linea.</span>
+            <span>Ejemplo: si P1 casi siempre cae entre 01 y 10, pero una vez salio 18, ese 18 no expande el rango normal hasta 18.</span>
+            <span>Esto solo afecta el analisis visual del mapa. Todavia no altera el algoritmo de Jugadas recomendadas.</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="rangeAxis" aria-hidden="true">
+        {ticks.map((tick) => (
+          <span key={tick} style={{ left: `${((tick - 1) / (maxNumber - 1)) * 100}%` }}>{String(tick).padStart(2, "0")}</span>
+        ))}
+      </div>
+
+      <div className="rangeRows">
+        {rows.map((row) => {
+          const left = ((row.low - 1) / (maxNumber - 1)) * 100;
+          const right = ((Math.min(row.high, maxNumber) - 1) / (maxNumber - 1)) * 100;
+          return (
+            <article className="rangeRow" key={row.key}>
+              <div className="rangeLabel">
+                <i style={{ background: row.color }} />
+                <strong>{row.shortLabel}</strong>
+                <span>{row.label}</span>
+              </div>
+              <div className="rangeTrack">
+                <div
+                  className="rangeBandGlow"
+                  style={{ left: `${left}%`, width: `${Math.max(1.5, right - left)}%`, background: row.color }}
+                />
+                <div
+                  className="rangeBand"
+                  style={{ left: `${left}%`, width: `${Math.max(1.5, right - left)}%`, background: row.color }}
+                />
+                <span className="rangeStart" style={{ left: `${left}%` }}>{String(row.low).padStart(2, "0")}</span>
+                <span className="rangeEnd" style={{ left: `${right}%` }}>{String(row.high).padStart(2, "0")}</span>
+              </div>
+              <div className="rangeStats">
+                <strong>{String(row.low).padStart(2, "0")} - {String(row.high).padStart(2, "0")}</strong>
+                <span>Prom. {row.average.toFixed(1)} · {row.omitted} fuera del rango · {row.samples} sorteos</span>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 

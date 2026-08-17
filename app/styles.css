@@ -371,6 +371,70 @@ h3 {
   gap: 14px;
 }
 
+.topPositionsAccordion {
+  background: #fffdf3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 30px 0 28px;
+  overflow: hidden;
+}
+
+.topPositionsAccordion summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  list-style: none;
+  min-height: 58px;
+  padding: 14px 16px;
+}
+
+.topPositionsAccordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.topPositionsAccordion summary::after {
+  align-items: center;
+  background: var(--blue);
+  border-radius: 50%;
+  color: #ffffff;
+  content: "+";
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  line-height: 1;
+  width: 26px;
+}
+
+.topPositionsAccordion[open] summary::after {
+  content: "-";
+}
+
+.topPositionsAccordion summary span {
+  color: var(--blue);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.topPositionsAccordion summary small {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  justify-self: end;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topPositionsGrid {
+  border-top: 1px solid var(--line);
+  padding: 16px;
+}
+
 .card {
   padding: 18px;
 }
@@ -643,13 +707,77 @@ h3 {
   margin-bottom: 28px;
 }
 
+.numberAccordion {
+  background: #fffdf3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.numberAccordion:first-child {
+  margin-top: 0;
+}
+
+.numberAccordion summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  list-style: none;
+  min-height: 54px;
+  padding: 14px 16px;
+}
+
+.numberAccordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.numberAccordion summary::after {
+  align-items: center;
+  background: var(--blue);
+  border-radius: 50%;
+  color: #ffffff;
+  content: "+";
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  line-height: 1;
+  width: 26px;
+}
+
+.numberAccordion[open] summary::after {
+  content: "-";
+}
+
+.numberAccordion summary span {
+  color: var(--blue);
+  font-weight: 900;
+}
+
+.numberAccordion summary small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  justify-self: end;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.numberAccordionBody {
+  border-top: 1px solid var(--line);
+  padding: 16px;
+}
+
 .numberSearchFilters {
-  border-bottom: 1px solid var(--line);
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin-bottom: 20px;
-  padding-bottom: 18px;
 }
 
 .numberSearchFilters label {
@@ -747,13 +875,8 @@ h3 {
   color: #55594f;
 }
 
-.numberAnalysisBand,
-.numberTableBlock,
-.plusAnalysisBlock,
 .numberInterpretation {
-  border-top: 1px solid var(--line);
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 0;
 }
 
 .numberAnalysisBand h3,
@@ -857,8 +980,6 @@ h3 {
 
 .numberInterpretation {
   background: #f1f3ed;
-  margin-left: -18px;
-  margin-right: -18px;
   padding: 18px;
 }
 
@@ -948,6 +1069,10 @@ h3 {
 }
 
 .scatterSection {
+  margin-bottom: 28px;
+}
+
+.rangeMapSection {
   margin-bottom: 28px;
 }
 
@@ -1154,6 +1279,239 @@ h3 {
   display: flex;
   justify-content: center;
   min-height: 240px;
+}
+
+.rangeMap {
+  margin-top: 2px;
+}
+
+.rangeMapHeader {
+  align-items: end;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.65fr);
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.rangeMapHeader h3 {
+  margin-bottom: 0;
+}
+
+.rangeMapHeader p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-bottom: 0;
+  padding-right: 34px;
+  text-align: right;
+}
+
+.rangeInfo {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 8;
+}
+
+.rangeInfo button {
+  align-items: center;
+  background: var(--blue);
+  border: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: help;
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  line-height: 1;
+  width: 26px;
+}
+
+.rangeInfoTooltip {
+  background: rgba(23, 24, 20, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 18px 38px rgba(23, 24, 20, 0.22);
+  color: #ffffff;
+  display: grid;
+  gap: 7px;
+  max-width: min(440px, calc(100vw - 42px));
+  opacity: 0;
+  padding: 13px 14px;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 34px;
+  transform: translateY(-4px);
+  transition: opacity 140ms ease, transform 140ms ease;
+  width: 420px;
+}
+
+.rangeInfo:hover .rangeInfoTooltip,
+.rangeInfo:focus-within .rangeInfoTooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.rangeInfoTooltip strong {
+  color: #ffffff;
+  font-size: 0.92rem;
+}
+
+.rangeInfoTooltip span {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.rangeAxis {
+  height: 28px;
+  margin-left: 152px;
+  margin-right: 245px;
+  position: relative;
+}
+
+.rangeAxis::before {
+  background: linear-gradient(90deg, rgba(14, 124, 102, 0.18), rgba(238, 31, 45, 0.16));
+  border-radius: 999px;
+  content: "";
+  height: 4px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 14px;
+}
+
+.rangeAxis span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.rangeRows {
+  display: grid;
+  gap: 12px;
+}
+
+.rangeRow {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 138px minmax(220px, 1fr) 230px;
+}
+
+.rangeLabel {
+  align-items: center;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 12px 38px minmax(0, 1fr);
+}
+
+.rangeLabel i {
+  border-radius: 50%;
+  display: block;
+  height: 12px;
+  width: 12px;
+}
+
+.rangeLabel strong {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.rangeLabel span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rangeTrack {
+  background: linear-gradient(90deg, #e6f1dc, #fff8d8 54%, #f9dddd);
+  border: 1px solid rgba(14, 124, 102, 0.16);
+  border-radius: 999px;
+  height: 20px;
+  position: relative;
+}
+
+.rangeTrack::before {
+  background: rgba(255, 255, 255, 0.68);
+  border-radius: 999px;
+  content: "";
+  height: 6px;
+  left: 8px;
+  position: absolute;
+  right: 8px;
+  top: 6px;
+}
+
+.rangeBandGlow,
+.rangeBand {
+  border-radius: 999px;
+  position: absolute;
+}
+
+.rangeBandGlow {
+  filter: blur(9px);
+  height: 26px;
+  opacity: 0.45;
+  top: -4px;
+}
+
+.rangeBand {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  height: 12px;
+  opacity: 0.86;
+  top: 3px;
+}
+
+.rangeStart,
+.rangeEnd {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: 4px 6px;
+  position: absolute;
+  top: 24px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.rangeStats {
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+  text-align: right;
+}
+
+.rangeStats strong {
+  color: var(--green-dark);
+  font-size: 0.94rem;
+}
+
+.rangeStats span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.rangeMapEmpty {
+  margin-top: 18px;
+  min-height: 118px;
 }
 
 .primeraTheme {
@@ -1699,6 +2057,35 @@ h3 {
   .numberMetricGrid > div:nth-child(-n + 3) {
     border-bottom: 1px solid var(--line);
   }
+
+  .rangeMapHeader,
+  .rangeRow {
+    grid-template-columns: 1fr;
+  }
+
+  .rangeMapHeader p,
+  .rangeStats {
+    justify-items: start;
+    padding-right: 0;
+    text-align: left;
+  }
+
+  .rangeInfo {
+    top: 2px;
+  }
+
+  .rangeInfoTooltip {
+    right: -2px;
+  }
+
+  .rangeAxis {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .rangeTrack {
+    margin-bottom: 28px;
+  }
 }
 
 @media (max-width: 620px) {
@@ -1748,12 +2135,24 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .rangeLabel {
+    grid-template-columns: 12px 40px minmax(0, 1fr);
+  }
+
   .positionTag {
     text-align: left;
   }
 
   .historyControls {
     flex-wrap: wrap;
+  }
+
+  .topPositionsAccordion summary {
+    grid-template-columns: minmax(0, 1fr) 26px;
+  }
+
+  .topPositionsAccordion summary small {
+    display: none;
   }
 
   .sectionHeader {
