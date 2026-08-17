@@ -60,7 +60,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [scatterSeries, setScatterSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]);
   const [rangeYear, setRangeYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
   const [rangeDay, setRangeDay] = useState<DayFilter>("todos");
-  const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]);
+  const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6"]);
   const [ticket, setTicket] = useState<VirtualTicket>({
     drawDate: getNextGameDate(),
     day: getDrawDay(getNextGameDate()),
@@ -277,33 +277,75 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <span>Top 5 por posicion</span>
           <small>Cada columna calcula repeticion respetando la posicion exacta del sorteo.</small>
         </summary>
-        <section className="positionGrid topPositionsGrid">
-          {stats.byPosition.map((position) => (
-            <article className="card" key={position.position}>
-              <h3>Posicion {position.position}</h3>
-              <div className="rankList">
-                {position.top.map((entry) => (
-                  <div className="rankItem" key={entry.number}>
-                    <Ball value={entry.number} />
-                    <div className="bar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
-                    <strong>{entry.count}</strong>
+        <section className="topPositionsBoard">
+          <div className="topPositionsGuide">
+            <span><i className="guideRank">#</i> Orden por frecuencia</span>
+            <span><i className="guideBar" /> La barra compara con el lider de cada posicion</span>
+            <span><b>{stats.drawCount}</b> sorteos en el filtro actual</span>
+          </div>
+          <div className="topPositionsGrid">
+            {stats.byPosition.map((position, positionIndex) => {
+              const maxCount = Math.max(1, ...position.top.map((entry) => entry.count));
+              const color = positionColors[positionIndex];
+              return (
+                <article className="positionRankingCard" key={position.position} style={{ borderTopColor: color }}>
+                  <header className="positionRankingHeader">
+                    <span className="positionColorDot" style={{ backgroundColor: color }} />
+                    <div>
+                      <span>P{position.position}</span>
+                      <h3>Posicion {position.position}</h3>
+                    </div>
+                  </header>
+                  <div className="positionRankingList">
+                    {position.top.map((entry, rank) => (
+                      <div className="positionRankingItem" key={entry.number}>
+                        <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
+                        <Ball value={entry.number} />
+                        <div className="positionFrequency">
+                          <div className="positionFrequencyMeta">
+                            <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
+                            <strong>{entry.count} salidas</strong>
+                          </div>
+                          <div className="positionBar">
+                            <span style={{ backgroundColor: color, width: `${(entry.count / maxCount) * 100}%` }} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </article>
+              );
+            })}
+            <article className="positionRankingCard positionRankingPlus" style={{ borderTopColor: plusColor }}>
+              <header className="positionRankingHeader">
+                <span className="positionColorDot" style={{ backgroundColor: plusColor }} />
+                <div>
+                  <span>MAS</span>
+                  <h3>Numero Mas</h3>
+                </div>
+              </header>
+              <div className="positionRankingList">
+                {stats.plusTop.map((entry, rank) => {
+                  const maxCount = Math.max(1, ...stats.plusTop.map((item) => item.count));
+                  return (
+                    <div className="positionRankingItem" key={entry.number}>
+                      <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
+                      <Ball value={entry.number} plus />
+                      <div className="positionFrequency">
+                        <div className="positionFrequencyMeta">
+                          <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
+                          <strong>{entry.count} salidas</strong>
+                        </div>
+                        <div className="positionBar positionBarPlus">
+                          <span style={{ width: `${(entry.count / maxCount) * 100}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </article>
-          ))}
-          <article className="card plusCard">
-            <h3>Numero Mas</h3>
-            <div className="rankList">
-              {stats.plusTop.map((entry) => (
-                <div className="rankItem" key={entry.number}>
-                  <Ball value={entry.number} plus />
-                  <div className="bar redBar"><span style={{ width: `${Math.max(18, entry.count * 28)}%` }} /></div>
-                  <strong>{entry.count}</strong>
-                </div>
-              ))}
-            </div>
-          </article>
+          </div>
         </section>
       </details>
 
@@ -431,7 +473,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </select>
           <span>{rangeResults.length} sorteos analizados</span>
         </div>
-        <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} />
+        <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} options={["P1", "P2", "P3", "P4", "P5", "P6"]} />
         <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
       </section>
 
@@ -566,9 +608,15 @@ function RecommendationBalls({
   );
 }
 
-function SeriesFilter({ selected, onChange }: { selected: string[]; onChange: (series: string[]) => void }) {
-  const options = ["P1", "P2", "P3", "P4", "P5", "P6", "Mas"];
-
+function SeriesFilter({
+  selected,
+  onChange,
+  options = ["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]
+}: {
+  selected: string[];
+  onChange: (series: string[]) => void;
+  options?: string[];
+}) {
   function toggle(option: string) {
     if (selected.includes(option)) {
       onChange(selected.filter((item) => item !== option));
@@ -781,7 +829,7 @@ function percentile(values: number[], ratio: number) {
 }
 
 function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
-  const mainRows = [0, 1, 2, 3, 4, 5]
+  return [0, 1, 2, 3, 4, 5]
     .filter((position) => selectedSeries.includes(`P${position + 1}`))
     .map((position) => {
       const values = results.map((result) => result.numbers[position]).sort((a, b) => a - b);
@@ -794,7 +842,6 @@ function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
         label: `Posicion ${position + 1}`,
         shortLabel: `P${position + 1}`,
         color: positionColors[position],
-        maxNumber: 40,
         low,
         high,
         omitted,
@@ -802,34 +849,12 @@ function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
         average
       };
     });
-
-  if (!selectedSeries.includes("Mas")) return mainRows;
-
-  const plusValues = results.map((result) => result.plus).sort((a, b) => a - b);
-  const low = plusValues.length < 10 ? plusValues[0] ?? 0 : percentile(plusValues, 0.1);
-  const high = plusValues.length < 10 ? plusValues[plusValues.length - 1] ?? 0 : percentile(plusValues, 0.9);
-  return [
-    ...mainRows,
-    {
-      key: "Mas",
-      label: "Numero Mas",
-      shortLabel: "Mas",
-      color: plusColor,
-      maxNumber: 12,
-      low,
-      high,
-      omitted: plusValues.filter((value) => value < low || value > high).length,
-      samples: plusValues.length,
-      average: plusValues.length ? plusValues.reduce((sum, value) => sum + value, 0) / plusValues.length : 0
-    }
-  ];
 }
 
 function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selectedSeries: string[] }) {
   const rows = buildRangeRows(results, selectedSeries);
-  const hasOnlyPlus = rows.length === 1 && rows[0].key === "Mas";
-  const maxNumber = hasOnlyPlus ? 12 : 40;
-  const ticks = maxNumber === 12 ? [1, 3, 6, 9, 12] : [1, 5, 10, 15, 20, 25, 30, 35, 40];
+  const maxNumber = 40;
+  const ticks = [1, 5, 10, 15, 20, 25, 30, 35, 40];
 
   if (!results.length) {
     return <div className="emptyChart rangeMapEmpty">No hay sorteos suficientes para calcular rangos.</div>;

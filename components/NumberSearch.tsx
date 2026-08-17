@@ -77,6 +77,7 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
   const [position, setPosition] = useState<SearchPosition>("any");
   const [day, setDay] = useState<DayFilter>("todos");
   const [page, setPage] = useState(1);
+  const [hasSearched, setHasSearched] = useState(false);
   const pageSize = 5;
   const effectiveType = position === "plus" ? "plus" : type;
   const includeMain = effectiveType !== "plus";
@@ -122,6 +123,21 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
     setPage(1);
   }
 
+  function markQueryPending() {
+    resetPage();
+    setHasSearched(false);
+  }
+
+  function clearSearch() {
+    setMainNumber(14);
+    setPlusNumber(8);
+    setType("main");
+    setPosition("any");
+    setDay("todos");
+    setPage(1);
+    setHasSearched(false);
+  }
+
   return (
     <>
       <section className="sectionHeader">
@@ -129,15 +145,16 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
         <p>Análisis estadístico histórico de números principales y número Más.</p>
       </section>
       <section className="card numberSearch">
-        <SearchAccordion title="Filtros de búsqueda" summary={`${subject} · ${positionLabel} · ${formatDay(day)}`} defaultOpen>
-          <div className="numberSearchFilters">
+        <SearchAccordion title="Filtros de búsqueda" summary={hasSearched ? `${subject} · ${positionLabel} · ${formatDay(day)}` : "Configura los criterios y pulsa Buscar"} defaultOpen>
+          <form onSubmit={(event) => { event.preventDefault(); setPage(1); setHasSearched(true); }}>
+            <div className="numberSearchFilters">
             <label>
               Número principal
-              <input type="number" min="1" max="40" value={mainNumber} disabled={!includeMain} onChange={(event) => { setMainNumber(Math.min(40, Math.max(1, Number(event.target.value)))); resetPage(); }} />
+              <input type="number" min="1" max="40" value={mainNumber} disabled={!includeMain} onChange={(event) => { setMainNumber(Math.min(40, Math.max(1, Number(event.target.value)))); markQueryPending(); }} />
             </label>
             <label>
               Número Más
-              <input type="number" min="1" max="12" value={plusNumber} disabled={!includePlus} onChange={(event) => { setPlusNumber(Math.min(12, Math.max(1, Number(event.target.value)))); resetPage(); }} />
+              <input type="number" min="1" max="12" value={plusNumber} disabled={!includePlus} onChange={(event) => { setPlusNumber(Math.min(12, Math.max(1, Number(event.target.value)))); markQueryPending(); }} />
             </label>
             <label>
               Tipo de búsqueda
@@ -146,7 +163,7 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
                 setType(nextType);
                 if (nextType === "plus") setPosition("plus");
                 if (nextType === "main" && position === "plus") setPosition("any");
-                resetPage();
+                markQueryPending();
               }}>
                 <option value="main">Solo números principales</option>
                 <option value="plus">Solo número Más</option>
@@ -155,7 +172,7 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
             </label>
             <label>
               Posición
-              <select disabled={type === "plus"} value={position} onChange={(event) => { setPosition(event.target.value as SearchPosition); resetPage(); }}>
+              <select disabled={type === "plus"} value={position} onChange={(event) => { setPosition(event.target.value as SearchPosition); markQueryPending(); }}>
                 <option value="any">Cualquier posición</option>
                 {[1, 2, 3, 4, 5, 6].map((value) => <option value={value} key={value}>Posición {value}</option>)}
                 <option value="plus">Número Más</option>
@@ -163,15 +180,22 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
             </label>
             <label>
               Día del sorteo
-              <select value={day} onChange={(event) => { setDay(event.target.value as DayFilter); resetPage(); }}>
+              <select value={day} onChange={(event) => { setDay(event.target.value as DayFilter); markQueryPending(); }}>
                 <option value="todos">Todos</option>
                 <option value="miercoles">Miércoles</option>
                 <option value="sabado">Sábado</option>
               </select>
             </label>
-          </div>
+            </div>
+            <div className="numberSearchActions">
+              <button className="primaryButton" type="submit">Buscar</button>
+              <button className="secondaryButton" type="button" onClick={clearSearch}>Limpiar filtro</button>
+            </div>
+          </form>
         </SearchAccordion>
 
+        {hasSearched ? (
+          <>
         <SearchAccordion title="Resumen principal" summary={`${primaryMetric.appearances} apariciones · ${primaryMetric.percentage}%`} defaultOpen>
           <div className="numberSearchTitle">
             <div>
@@ -279,6 +303,8 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
             <small>Análisis histórico informativo. No predice ni garantiza resultados futuros.</small>
           </div>
         </SearchAccordion>
+          </>
+        ) : null}
       </section>
     </>
   );

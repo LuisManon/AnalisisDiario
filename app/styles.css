@@ -430,9 +430,193 @@ h3 {
   white-space: nowrap;
 }
 
-.topPositionsGrid {
+.topPositionsBoard {
   border-top: 1px solid var(--line);
+  background:
+    radial-gradient(circle at top left, rgba(14, 124, 102, 0.07), transparent 34%),
+    #f8f8f2;
   padding: 16px;
+}
+
+.topPositionsGuide {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.76rem;
+  font-weight: 700;
+  gap: 10px 22px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+
+.topPositionsGuide span {
+  align-items: center;
+  display: inline-flex;
+  gap: 7px;
+}
+
+.guideRank {
+  align-items: center;
+  background: var(--blue);
+  border-radius: 50%;
+  color: white;
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-style: normal;
+  height: 19px;
+  justify-content: center;
+  width: 19px;
+}
+
+.guideBar {
+  background: linear-gradient(90deg, var(--green) 68%, rgba(14, 124, 102, 0.13) 68%);
+  border-radius: 999px;
+  display: inline-block;
+  height: 6px;
+  width: 34px;
+}
+
+.topPositionsGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.positionRankingCard {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(20, 39, 71, 0.1);
+  border-radius: 12px;
+  border-top: 4px solid;
+  box-shadow: 0 8px 22px rgba(20, 39, 71, 0.06);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.positionRankingHeader {
+  align-items: center;
+  border-bottom: 1px solid rgba(20, 39, 71, 0.08);
+  display: flex;
+  gap: 10px;
+  padding: 13px 14px 11px;
+}
+
+.positionColorDot {
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(20, 39, 71, 0.12);
+  height: 16px;
+  width: 16px;
+}
+
+.positionRankingHeader div > span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.positionRankingHeader h3 {
+  font-size: 1rem;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.positionRankingList {
+  display: grid;
+  padding: 6px 12px 10px;
+}
+
+.positionRankingItem {
+  align-items: center;
+  border-bottom: 1px solid rgba(20, 39, 71, 0.065);
+  display: grid;
+  gap: 9px;
+  grid-template-columns: 22px 42px minmax(0, 1fr);
+  min-height: 62px;
+}
+
+.positionRankingItem:last-child {
+  border-bottom: 0;
+}
+
+.rankNumber {
+  align-items: center;
+  background: #ecece4;
+  border-radius: 50%;
+  color: var(--muted);
+  display: inline-flex;
+  font-size: 0.68rem;
+  font-weight: 900;
+  height: 21px;
+  justify-content: center;
+  width: 21px;
+}
+
+.rankNumber1 {
+  background: #f3c94e;
+  color: #3e3104;
+}
+
+.rankNumber2 {
+  background: #d9dee5;
+  color: #33404f;
+}
+
+.rankNumber3 {
+  background: #dca66b;
+  color: #4e2d0a;
+}
+
+.positionFrequency {
+  min-width: 0;
+}
+
+.positionFrequencyMeta {
+  align-items: baseline;
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.positionFrequencyMeta span {
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.positionFrequencyMeta strong {
+  color: var(--blue);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.positionBar {
+  background: rgba(20, 39, 71, 0.09);
+  border-radius: 999px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.positionBar span {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  min-width: 8px;
+}
+
+.positionRankingPlus {
+  background: linear-gradient(180deg, #fffafa, #ffffff 38%);
+}
+
+.positionBarPlus span {
+  background: var(--red);
 }
 
 .card {
@@ -801,6 +985,20 @@ h3 {
 .numberSearchFilters input:disabled {
   background: #ecefe8;
   color: var(--muted);
+}
+
+.numberSearchActions {
+  align-items: center;
+  border-top: 1px solid rgba(20, 39, 71, 0.08);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+.numberSearchActions button {
+  min-width: 132px;
 }
 
 .numberSearchTitle,
@@ -2042,6 +2240,10 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .topPositionsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .numberSearchFilters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2099,6 +2301,16 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .topPositionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topPositionsGuide {
+    align-items: flex-start;
+    display: grid;
+    gap: 8px;
+  }
+
   .historyRow .ballsRow,
   .pagination,
   .historyControls {
@@ -2119,6 +2331,16 @@ h3 {
   .numberMetricGrid,
   .additionalMetrics {
     grid-template-columns: 1fr;
+  }
+
+  .numberSearchActions {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .numberSearchActions button {
+    min-width: 0;
   }
 
   .numberMetricGrid > div,
