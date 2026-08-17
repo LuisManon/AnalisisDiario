@@ -12,6 +12,227 @@
   --ink: #21499a;
 }
 
+@media (max-width: 620px) {
+  .lotoTheme .heroPanel {
+    gap: 10px;
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .lotoTheme .heroPanel .ballsRow {
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+
+  .lotoTheme .heroPanel .ball {
+    font-size: 0.72rem;
+    height: 34px;
+    width: 34px;
+  }
+
+  .lotoTheme > .toolbar {
+    display: grid;
+    gap: 9px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .lotoTheme > .toolbar .segmented,
+  .lotoTheme > .toolbar .status {
+    grid-column: 1 / -1;
+  }
+
+  .lotoTheme > .toolbar > .secondaryButton,
+  .lotoTheme > .toolbar > .downloadButton {
+    font-size: 0.76rem;
+    min-width: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 100%;
+  }
+
+  .lotoTheme > .metricsGrid {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(33, 73, 154, 0.22);
+    border-radius: 8px;
+    display: grid;
+    gap: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: hidden;
+  }
+
+  .lotoTheme > .metricsGrid .metric {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    border-right: 1px solid rgba(33, 73, 154, 0.16);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 10px 4px;
+    text-align: center;
+  }
+
+  .lotoTheme > .metricsGrid .metric:last-child {
+    border-right: 0;
+  }
+
+  .lotoTheme > .metricsGrid .metric span {
+    font-size: 0.58rem;
+    line-height: 1.15;
+    margin-bottom: 5px;
+    min-height: 2.3em;
+  }
+
+  .lotoTheme > .metricsGrid .metric strong {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .topPositionsGuide {
+    display: none;
+  }
+
+  .topPositionsBoard {
+    padding: 10px;
+  }
+
+  .positionRankingCard {
+    border-radius: 9px;
+  }
+
+  .positionRankingHeader {
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  .positionRankingList {
+    display: grid;
+    gap: 3px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 8px 6px 10px;
+  }
+
+  .positionRankingItem {
+    border-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+  }
+
+  .positionRankingItem .rankNumber {
+    font-size: 0.58rem;
+    height: 17px;
+    order: 0;
+    width: 17px;
+  }
+
+  .positionRankingItem .ball {
+    font-size: 0.68rem;
+    height: 34px;
+    order: 1;
+    width: 34px;
+  }
+
+  .positionRankingItem .positionFrequency {
+    order: 2;
+    text-align: center;
+    width: 100%;
+  }
+
+  .positionRankingItem .positionFrequencyMeta {
+    display: block;
+    margin: 0;
+  }
+
+  .positionRankingItem .positionFrequencyMeta span,
+  .positionRankingItem .positionBar {
+    display: none;
+  }
+
+  .positionRankingItem .positionFrequencyMeta strong {
+    display: block;
+    font-size: 0.56rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .numberSearchActions {
+    align-items: stretch;
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .numberSearchActions button {
+    font-size: 0.8rem;
+    height: 42px;
+    min-width: 0;
+    padding: 0 8px;
+    width: 100%;
+  }
+
+  .scatterWrap {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: scroll;
+    padding-bottom: 9px;
+    scrollbar-color: var(--green) rgba(33, 73, 154, 0.12);
+    scrollbar-width: auto;
+  }
+
+  .scatterWrap::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .scatterWrap::-webkit-scrollbar-track {
+    background: rgba(33, 73, 154, 0.12);
+    border-radius: 999px;
+  }
+
+  .scatterWrap::-webkit-scrollbar-thumb {
+    background: var(--green);
+    border: 2px solid #f8f8f2;
+    border-radius: 999px;
+  }
+
+  .rangeMapSection .scatterControls {
+    align-items: center;
+    display: grid;
+    gap: 8px 10px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    justify-content: stretch;
+  }
+
+  .rangeMapSection .scatterControls select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .rangeMapSection .scatterControls > span {
+    grid-column: 1 / -1;
+    text-align: right;
+  }
+
+  .lotoTheme .historyRow {
+    gap: 9px;
+    padding: 11px 12px;
+  }
+
+  .lotoTheme .historyRow .ballsRow {
+    flex-wrap: nowrap;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+
+  .lotoTheme .historyRow .ball {
+    font-size: 0.68rem;
+    height: 33px;
+    width: 33px;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -2404,5 +2625,83 @@ h3 {
 
   .primeraHistory .historyRow .ballsRow {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 620px) {
+  .topPositionsGuide {
+    display: none;
+  }
+
+  .topPositionsBoard {
+    padding: 10px;
+  }
+
+  .positionRankingCard {
+    border-radius: 9px;
+  }
+
+  .positionRankingHeader {
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  .positionRankingList {
+    display: grid;
+    gap: 3px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 8px 6px 10px;
+  }
+
+  .positionRankingItem {
+    border-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+  }
+
+  .positionRankingItem .rankNumber {
+    font-size: 0.58rem;
+    height: 17px;
+    order: 0;
+    width: 17px;
+  }
+
+  .positionRankingItem .ball {
+    font-size: 0.68rem;
+    height: 34px;
+    order: 1;
+    width: 34px;
+  }
+
+  .positionRankingItem .positionFrequency {
+    order: 2;
+    text-align: center;
+    width: 100%;
+  }
+
+  .positionRankingItem .positionFrequencyMeta {
+    display: block;
+    margin: 0;
+  }
+
+  .positionRankingItem .positionFrequencyMeta span,
+  .positionRankingItem .positionBar {
+    display: none;
+  }
+
+  .positionRankingItem .positionFrequencyMeta strong {
+    display: block;
+    font-size: 0.56rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .numberSearchActions .primaryButton,
+  .numberSearchActions .secondaryButton {
+    height: 42px;
+    margin-top: 0;
   }
 }
