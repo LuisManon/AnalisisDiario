@@ -1,15 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
-import { drawSchema, laPrimeraDrawSchema, lotekaRepartideraDrawSchema } from "./validation";
-import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw } from "./types";
+import { drawSchema, laPrimeraDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
+import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
 
 const dataPath = path.join(process.cwd(), "data", "results.json");
 const laPrimeraDataPath = path.join(process.cwd(), "data", "la-primera-results.json");
 const lotekaRepartideraDataPath = path.join(process.cwd(), "data", "loteka-repartidera-results.json");
+const quinielaPaleDataPath = path.join(process.cwd(), "data", "quiniela-pale-results.json");
 const lotoMasRepoPath = "data/results.json";
 const laPrimeraRepoPath = "data/la-primera-results.json";
 const lotekaRepartideraRepoPath = "data/loteka-repartidera-results.json";
+const quinielaPaleRepoPath = "data/quiniela-pale-results.json";
 
 async function readJsonFile(localPath: string, repoPath: string) {
   if (isGitHubDataStoreEnabled()) {
@@ -75,6 +77,26 @@ export async function writeLotekaRepartideraResults(results: LotekaRepartideraDr
     lotekaRepartideraRepoPath,
     `${JSON.stringify(sorted, null, 2)}\n`,
     "Update Loteka Repartidera results"
+  );
+  return sorted;
+}
+
+export async function readQuinielaPaleResults(): Promise<QuinielaPaleDraw[]> {
+  const raw = await readJsonFile(quinielaPaleDataPath, quinielaPaleRepoPath);
+  const parsed = JSON.parse(raw);
+  const results = quinielaPaleDrawSchema.array().parse(parsed);
+  return results.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function writeQuinielaPaleResults(results: QuinielaPaleDraw[]) {
+  const unique = new Map<string, QuinielaPaleDraw>();
+  for (const result of results) unique.set(result.date, result);
+  const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date));
+  await writeJsonFile(
+    quinielaPaleDataPath,
+    quinielaPaleRepoPath,
+    `${JSON.stringify(sorted, null, 2)}\n`,
+    "Update Quiniela Pale results"
   );
   return sorted;
 }

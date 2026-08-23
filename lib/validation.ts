@@ -33,3 +33,13 @@ export const lotekaRepartideraDrawSchema = z.object({
   number: z.number().int().min(0).max(99),
   source: z.string().optional()
 });
+
+export const quinielaPaleDrawSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  numbers: z.tuple([
+    z.number().int().min(0).max(99),
+    z.number().int().min(0).max(99),
+    z.number().int().min(0).max(99)
+  ]),
+  source: z.string().optional()
+});

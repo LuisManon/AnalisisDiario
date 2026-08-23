@@ -46,3 +46,9 @@ export type LotekaRepartideraDraw = {
   number: number;
   source?: string;
 };
+
+export type QuinielaPaleDraw = {
+  date: string;
+  numbers: [number, number, number];
+  source?: string;
+};

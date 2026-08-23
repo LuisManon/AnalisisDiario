@@ -1,9 +1,10 @@
 import { AppShell } from "../components/AppShell";
-import { readLaPrimeraResults, readLotekaRepartideraResults, readResults } from "../lib/data";
+import { readLaPrimeraResults, readLotekaRepartideraResults, readQuinielaPaleResults, readResults } from "../lib/data";
 
 export default async function Home() {
   const results = await readResults();
   const laPrimeraResults = await readLaPrimeraResults();
   const lotekaRepartideraResults = await readLotekaRepartideraResults();
-  return <AppShell lotoResults={results} laPrimeraResults={laPrimeraResults} lotekaRepartideraResults={lotekaRepartideraResults} />;
+  const quinielaPaleResults = await readQuinielaPaleResults();
+  return <AppShell lotoResults={results} laPrimeraResults={laPrimeraResults} lotekaRepartideraResults={lotekaRepartideraResults} quinielaPaleResults={quinielaPaleResults} />;
 }

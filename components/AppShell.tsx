@@ -4,22 +4,24 @@ import { useEffect, useState } from "react";
 import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
 import { LotekaRepartideraDashboard } from "./LotekaRepartideraDashboard";
-import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw } from "../lib/types";
+import { QuinielaPaleDashboard } from "./QuinielaPaleDashboard";
+import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "../lib/types";
 
 type AppShellProps = {
   lotoResults: DrawResult[];
   laPrimeraResults: LaPrimeraDraw[];
   lotekaRepartideraResults: LotekaRepartideraDraw[];
+  quinielaPaleResults: QuinielaPaleDraw[];
 };
 
-type ActiveTab = "loto" | "primera" | "loteka";
+type ActiveTab = "loto" | "quiniela" | "primera" | "loteka";
 
-export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResults }: AppShellProps) {
+export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("loto");
 
   useEffect(() => {
     const stored = window.localStorage.getItem("activeLotteryTab");
-    if (stored === "loto" || stored === "primera" || stored === "loteka") setActiveTab(stored);
+    if (stored === "loto" || stored === "quiniela" || stored === "primera" || stored === "loteka") setActiveTab(stored);
   }, []);
 
   function changeTab(tab: ActiveTab) {
@@ -33,6 +35,9 @@ export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResul
         <button className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>
           Loto Mas
         </button>
+        <button className={activeTab === "quiniela" ? "active quinielaTab" : "quinielaTab"} onClick={() => changeTab("quiniela")}>
+          Quiniela Pale
+        </button>
         <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>
           La Primera
         </button>
@@ -42,6 +47,8 @@ export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResul
       </nav>
       {activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
+      ) : activeTab === "quiniela" ? (
+        <QuinielaPaleDashboard initialData={{ results: quinielaPaleResults }} />
       ) : activeTab === "primera" ? (
         <LaPrimeraDashboard initialData={{ results: laPrimeraResults }} />
       ) : (

@@ -292,6 +292,207 @@ main {
   border-color: #04acd0;
 }
 
+.appTabs .quinielaTab.active {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.appShell.quinielaShell {
+  background: #f4effa;
+  box-shadow: 0 0 0 100vmax #f4effa;
+  clip-path: inset(0 -100vmax);
+  min-height: 100vh;
+}
+
+.quinielaShell .appTabs {
+  background: #ffffff;
+  border-bottom: 5px solid #5b2a86;
+  box-shadow: 0 0 0 100vmax #ffffff;
+  clip-path: inset(0 -100vmax);
+  padding-bottom: 14px;
+}
+
+.quinielaTheme {
+  --bg: #ffca16;
+  --text: #21499a;
+  --muted: #31549b;
+  --line: rgba(33, 73, 154, 0.24);
+  --panel: rgba(255, 255, 255, 0.82);
+  color: var(--text);
+}
+
+.quinielaHero {
+  background: linear-gradient(135deg, #32124f, #673196 58%, #9b62c8);
+  color: white;
+}
+
+.quinielaHero h1,
+.quinielaHero p,
+.quinielaHero .eyebrow {
+  color: white;
+}
+
+.quinielaEyebrow {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.quinielaLatest {
+  background: rgba(255, 255, 255, 0.95);
+  color: #32124f;
+}
+
+.quinielaLatest small {
+  color: #725d82;
+  font-size: 0.7rem;
+}
+
+.quinielaBalls {
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 7px;
+}
+
+.quinielaBall {
+  align-items: center;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0 8%, #e2e2d3 35%, #aaa98d 70%, #6d6b56 100%);
+  border: 1px solid #77745f;
+  border-radius: 50%;
+  box-shadow: inset -4px -7px 14px rgba(0, 0, 0, 0.14), 0 5px 10px rgba(0, 0, 0, 0.08);
+  color: var(--blue);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 900;
+  height: 36px;
+  justify-content: center;
+  position: relative;
+  width: 36px;
+}
+
+.quinielaBall.p1,
+.quinielaBall.p2,
+.quinielaBall.p3 { border-color: #77745f; }
+
+.quinielaBallWinner {
+  border-color: rgba(205, 151, 0, 0.72);
+  filter: drop-shadow(0 0 3px rgba(255, 211, 48, 0.72)) drop-shadow(0 0 7px rgba(255, 218, 79, 0.3));
+}
+
+.quinielaBallWinner::after {
+  content: "👑";
+  font-size: 0.62rem;
+  position: absolute;
+  right: -5px;
+  top: -8px;
+}
+
+.quinielaFilters,
+.toolbarActions,
+.quinielaSearchBar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quinielaFilters select,
+.quinielaSearchBar input {
+  background: white;
+  border: 1px solid rgba(33, 73, 154, 0.24);
+  border-radius: 8px;
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.quinielaMetricDate {
+  font-size: 0.95rem !important;
+  line-height: 1.2;
+}
+
+.quinielaPositionGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quinielaPositionCard {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.quinielaPositionCard h3 { margin: 0 0 10px; }
+
+.quinielaRank {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 26px 38px 1fr;
+  padding: 8px 0;
+}
+
+.quinielaRank span { color: var(--muted); font-size: 0.76rem; }
+
+.quinielaRecommendation {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 26px minmax(0, 1fr) 64px;
+  padding: 10px 0;
+}
+
+.quinielaRecommendation > div { display: grid; gap: 7px; }
+
+.quinielaInfo {
+  align-items: center;
+  background: var(--blue);
+  border-radius: 50%;
+  color: white;
+  display: inline-flex;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  width: 26px;
+}
+
+.quinielaPairs { display: grid; gap: 8px; margin-top: 14px; }
+.quinielaPairs > div { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 10px; grid-template-columns: 28px 90px 1fr; padding: 9px 0; }
+.quinielaPairs span { color: var(--muted); font-size: 0.78rem; }
+
+.quinielaSearchResults { display: grid; gap: 8px; margin-top: 14px; }
+.quinielaSearchResults > div { align-items: center; border-bottom: 1px solid var(--line); display: flex; gap: 14px; padding: 8px 0; }
+
+.quinielaScatterScroll { overflow-x: auto; }
+.quinielaScatterScroll svg { min-width: 680px; width: 100%; }
+.quinielaScatterScroll text { fill: var(--muted); font-size: 10px; }
+
+.quinielaRanges { display: grid; gap: 18px; margin-top: 22px; }
+.quinielaRanges > div { align-items: center; display: grid; gap: 10px; grid-template-columns: 28px minmax(0, 1fr) 70px; }
+.quinielaRangeTrack { background: rgba(33, 73, 154, 0.12); border-radius: 999px; height: 11px; position: relative; }
+.quinielaRangeTrack i { border-radius: inherit; height: 100%; position: absolute; }
+
+.quinielaHistory article { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 12px 0; }
+.quinielaHistory article > div:first-child { display: grid; gap: 3px; }
+.quinielaHistory article span { color: var(--muted); font-size: 0.74rem; }
+
+@media (max-width: 720px) {
+  .quinielaPositionGrid { grid-template-columns: 1fr; }
+  .quinielaFilters,
+  .toolbarActions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .quinielaFilters select,
+  .toolbarActions button { width: 100%; }
+  .quinielaSearchBar { display: grid; grid-template-columns: 1fr 1fr; }
+  .quinielaSearchBar input { grid-column: 1 / -1; width: 100%; }
+  .quinielaBall { font-size: 0.67rem; height: 31px; width: 31px; }
+  .quinielaHistory article { gap: 10px; }
+  .quinielaHistory article > div:first-child span { display: none; }
+}
+
 .appShell.primeraShell {
   background: #f7f7f7;
   box-shadow: 0 0 0 100vmax #f7f7f7;
@@ -2963,5 +3164,23 @@ h3 {
     left: 12%;
     position: absolute;
     width: 76%;
+  }
+
+  .quinielaTheme > .toolbar .quinielaFilters,
+  .quinielaTheme > .toolbar .toolbarActions {
+    display: contents;
+  }
+
+  .quinielaTheme > .toolbar .quinielaFilters select,
+  .quinielaTheme > .toolbar .toolbarActions button {
+    font-size: 0.72rem;
+    min-width: 0;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 100%;
+  }
+
+  .quinielaTheme > .toolbar .status {
+    grid-column: 1 / -1;
   }
 }

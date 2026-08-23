@@ -1,6 +1,6 @@
 # Analisis Diario
 
-App web para analizar resultados de Loto Mas, La Primera y Loteka Repartidera con historiales JSON, frecuencias, diagramas y sugerencias estadisticas.
+App web para analizar resultados de Loto Mas, Quiniela Pale de LEIDSA, La Primera y Loteka Repartidera con historiales JSON, frecuencias, diagramas y sugerencias estadisticas.
 
 ## Requisitos
 
@@ -52,6 +52,7 @@ Los resultados locales estan en:
 data/results.json
 data/la-primera-results.json
 data/loteka-repartidera-results.json
+data/quiniela-pale-results.json
 ```
 
 En desarrollo local, los endpoints escriben directamente estos archivos JSON.
