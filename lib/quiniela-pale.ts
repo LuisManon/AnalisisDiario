@@ -107,6 +107,7 @@ export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate
   const maxPosition = Math.max(...dayPositions.flat(), 1);
   const random = seededRandom(`${targetDate}-${results[0]?.date}-${results.length}`);
   const existing = new Set(results.map((draw) => draw.numbers.join("-")));
+  const candidateKeys = new Set<string>();
   const candidates: Array<{ numbers: [number, number, number]; raw: number; lowAffinity: number }> = [];
 
   for (let iteration = 0; iteration < 6000; iteration += 1) {
@@ -130,7 +131,8 @@ export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate
     }
     const numbers = picked as [number, number, number];
     const key = numbers.join("-");
-    if (existing.has(key) || candidates.some((candidate) => candidate.numbers.join("-") === key)) continue;
+    if (existing.has(key) || candidateKeys.has(key)) continue;
+    candidateKeys.add(key);
     const positionScore = numbers.reduce((sum, number, position) => sum + dayPositions[position][number] / maxPosition, 0) / 3;
     const dayScore = numbers.reduce((sum, number) => sum + day[number] / maxDay, 0) / 3;
     const generalScore = numbers.reduce((sum, number) => sum + general[number] / maxGeneral, 0) / 3;

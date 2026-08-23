@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   buildQuinielaPairs,
   buildQuinielaStats,
@@ -59,6 +59,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const [searchNumber, setSearchNumber] = useState("32");
   const [activeSearch, setActiveSearch] = useState<number | null>(null);
   const [historyPage, setHistoryPage] = useState(1);
+  const [analysisReady, setAnalysisReady] = useState(false);
   const targetDate = useMemo(() => {
     const scheduled = getNextQuinielaDate();
     const latestDate = results[0]?.date;
@@ -70,13 +71,18 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const years = useMemo(() => [...new Set(results.map((draw) => draw.date.slice(0, 4)))].sort((a, b) => b.localeCompare(a)), [results]);
   const filtered = useMemo(() => results.filter((draw) => (year === "todos" || draw.date.startsWith(year)) && (day === "todos" || weekday(draw.date) === Number(day))), [results, year, day]);
   const stats = useMemo(() => buildQuinielaStats(filtered), [filtered]);
-  const suggestions = useMemo(() => buildQuinielaSuggestions(results, targetDate, 5), [results, targetDate]);
+  const suggestions = useMemo(() => analysisReady ? buildQuinielaSuggestions(results, targetDate, 5) : [], [analysisReady, results, targetDate]);
   const pairs = useMemo(() => buildQuinielaPairs(filtered, 5), [filtered]);
   const latest = results[0];
   const ranges = useMemo(() => [0, 1, 2].map((position) => compactRange(filtered.map((draw) => draw.numbers[position]))), [filtered]);
   const searchMatches = useMemo(() => activeSearch === null ? [] : results.filter((draw) => draw.numbers.includes(activeSearch)), [results, activeSearch]);
   const historyPages = Math.max(1, Math.ceil(filtered.length / 10));
   const history = filtered.slice((historyPage - 1) * 10, historyPage * 10);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setAnalysisReady(true), 250);
+    return () => window.clearTimeout(timeout);
+  }, []);
 
   async function updateResults() {
     setUpdating(true);
@@ -101,6 +107,29 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
     link.download = `quiniela-pale-${results[0]?.date ?? "historial"}.json`;
     link.click();
     URL.revokeObjectURL(link.href);
+  }
+
+  if (!analysisReady) {
+    return (
+      <main className="lotoTheme quinielaTheme quinielaPageLoading" role="status" aria-live="polite">
+        <section className="hero">
+          <div>
+            <p className="eyebrow">Quiniela Pale Lab local</p>
+            <h1>Cargando analisis de Quiniela Pale</h1>
+            <p className="subcopy">Preparando frecuencias, posiciones, pares y jugadas recomendadas.</p>
+          </div>
+          <div className="heroPanel quinielaLoadingPanel">
+            <span className="quinielaLoadingSpinner" />
+            <strong>Analizando {results.length} sorteos...</strong>
+            <small>La interfaz aparecera en un momento.</small>
+          </div>
+        </section>
+        <section className="metricsGrid quinielaLoadingMetrics">
+          {[0, 1, 2, 3].map((item) => <div className="metric" key={item}><i /></div>)}
+        </section>
+        <section className="card quinielaLoadingCard"><i /><i /><i /></section>
+      </main>
+    );
   }
 
   return (
@@ -151,7 +180,14 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
         <article className="card">
           <div className="recommendationTitleRow"><h2>Jugadas recomendadas</h2><span className="quinielaInfo" title="Puntajes relativos basados en frecuencia, posicion, retraso, pares y afinidad del dia.">i</span></div>
           <p className="muted">Analisis inclinado al proximo sorteo del {getQuinielaTargetLabel(targetDate)}.</p>
-          <div className="recommendationList">{suggestions.map((play) => <div className="quinielaRecommendation" key={play.id}><span>#{play.id}</span><div><span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span><div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} winner={latest?.numbers.includes(number)} />)}</div></div><b className="scoreBadge">{play.score} pts</b></div>)}</div>
+          {analysisReady ? (
+            <div className="recommendationList">{suggestions.map((play) => <div className="quinielaRecommendation" key={play.id}><span>#{play.id}</span><div><span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span><div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} winner={latest?.numbers.includes(number)} />)}</div></div><b className="scoreBadge">{play.score} pts</b></div>)}</div>
+          ) : (
+            <div className="quinielaAnalysisLoading" role="status" aria-live="polite">
+              <span className="quinielaLoadingSpinner" />
+              <div><strong>Analizando jugadas recomendadas...</strong><small>Calculando afinidad del dia, posiciones y combinaciones.</small></div>
+            </div>
+          )}
           <p className="recommendationDisclaimer">Apoyo estadistico; no predice ni garantiza resultados.</p>
         </article>
         <article className="card"><h2>Pares frecuentes para Pale</h2><p className="muted">Dos numeros que han coincidido dentro del mismo sorteo, sin importar posicion.</p><div className="quinielaPairs">{pairs.map((pair, index) => <div key={pair.numbers.join("-")}><b>#{index + 1}</b><div className="quinielaBalls">{pair.numbers.map((number) => <QBall key={number} number={number} winner={latest?.numbers.includes(number)} />)}</div><span>{pair.count} coincidencias</span></div>)}</div></article>

@@ -448,6 +448,78 @@ main {
 
 .quinielaRecommendation > div { display: grid; gap: 7px; }
 
+.quinielaAnalysisLoading {
+  align-items: center;
+  background: rgba(33, 73, 154, 0.055);
+  border: 1px solid rgba(33, 73, 154, 0.16);
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 92px;
+  padding: 16px;
+}
+
+.quinielaAnalysisLoading > div {
+  display: grid;
+  gap: 4px;
+}
+
+.quinielaAnalysisLoading small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.quinielaLoadingSpinner {
+  animation: quinielaSpin 0.8s linear infinite;
+  border: 3px solid rgba(33, 73, 154, 0.18);
+  border-radius: 50%;
+  border-top-color: var(--blue);
+  flex: 0 0 auto;
+  height: 28px;
+  width: 28px;
+}
+
+@keyframes quinielaSpin {
+  to { transform: rotate(360deg); }
+}
+
+.quinielaLoadingPanel {
+  align-items: center;
+  text-align: center;
+}
+
+.quinielaLoadingPanel small {
+  color: var(--muted);
+}
+
+.quinielaLoadingMetrics .metric i,
+.quinielaLoadingCard i {
+  animation: quinielaPulse 1s ease-in-out infinite alternate;
+  background: rgba(33, 73, 154, 0.12);
+  border-radius: 999px;
+  display: block;
+  height: 14px;
+}
+
+.quinielaLoadingMetrics .metric i {
+  width: 70%;
+}
+
+.quinielaLoadingCard {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.quinielaLoadingCard i:nth-child(1) { width: 34%; }
+.quinielaLoadingCard i:nth-child(2) { width: 82%; }
+.quinielaLoadingCard i:nth-child(3) { width: 66%; }
+
+@keyframes quinielaPulse {
+  to { opacity: 0.42; }
+}
+
 .quinielaInfo {
   align-items: center;
   background: var(--blue);
