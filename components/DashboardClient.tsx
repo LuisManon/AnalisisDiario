@@ -5,7 +5,7 @@ import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { buildRecommendedPlays, formatMoney, getDrawDay, getNextGameDate, type VirtualTicket } from "../lib/game";
+import { buildRecommendedPlays, formatMoney, getDrawDay, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
 import type { DayFilter, DrawResult, Play, RecommendedPlay, SimulationResult } from "../lib/types";
 
 type ApiState = {
@@ -93,8 +93,8 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     return rangeDay === "todos" ? byYear : byYear.filter((result) => result.day === rangeDay);
   }, [data.results, rangeDay, rangeYear]);
   const recommendations = useMemo(
-    () => buildRecommendedPlays(data.results, day, 5),
-    [data.results, day]
+    () => buildRecommendedPlays(data.results, ticket.day, 5),
+    [data.results, ticket.day]
   );
   const activePageSize = historyPageSize === "todos" ? filteredHistory.length || defaultHistoryPageSize : historyPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
@@ -376,19 +376,53 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </article>
 
         <article className="card">
-          <h2>Jugadas recomendadas</h2>
-          <p className="muted">Analisis estadistico para {formatDay(day)}: frecuencia, retraso, tendencias recientes, grupos y balance historico.</p>
-          <div className="recommendationList">
-            {recommendations.map((play) => (
-              <div className="recommendationItem" key={play.id}>
-                <span>#{play.id}</span>
-                <RecommendationBalls play={play} results={data.results} dayFilter={day} />
-                <div className="recommendationActions">
-                  <span className="scoreBadge" title="Puntaje relativo dentro de los candidatos analizados">{play.score} pts</span>
-                  <button className="miniButton" disabled={!ticketEditable} onClick={() => useRecommendedPlay(play)}>Usar</button>
-                </div>
+          <div className="recommendationTitleRow">
+            <h2>Jugadas recomendadas</h2>
+            <details className="recommendationPrizeInfo">
+              <summary aria-label="Consultar tabla de premios">i</summary>
+              <div className="recommendationPrizePanel">
+                <strong>Tabla de premios Loto Más</strong>
+                <small>Premios mínimos informados para cada combinación.</small>
+                <table>
+                  <tbody>
+                    {virtualPrizeTable.map((prize) => (
+                      <tr key={`${prize.matches}-${prize.plus}`}>
+                        <td>{prize.label}</td>
+                        <th>{formatMoney(prize.amount)}</th>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <small>Los premios de 6 aciertos y 6 + Más se muestran como montos garantizados.</small>
               </div>
-            ))}
+            </details>
+          </div>
+          <p className="muted">Analisis inclinado al proximo sorteo del {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)}: afinidad por dia, rangos por posicion, frecuencia, retraso y diversidad.</p>
+          <div className="recommendationList">
+            {recommendations.map((play) => {
+              const matches = latest ? play.numbers.filter((number) => latest.numbers.includes(number)).length : 0;
+              const plusMatched = Boolean(latest && play.plus === latest.plus);
+              const prize = getVirtualPrize(matches, plusMatched);
+              return (
+                <div className="recommendationItem" key={play.id}>
+                  <span>#{play.id}</span>
+                  <div className="recommendationNumbers">
+                    <div className="recommendationProfileRow">
+                      <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span>
+                      <small>{play.profile === "fuerte" ? `${play.daySupportCount}/6 con respaldo del ${formatDay(ticket.day)}` : play.profile === "equilibrada" ? `Balance ${formatDay(ticket.day)} + historial general` : `${6 - play.daySupportCount} de baja afinidad del ${formatDay(ticket.day)}`}</small>
+                    </div>
+                    <RecommendationBalls play={play} results={data.results} dayFilter={ticket.day} />
+                    <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
+                      {prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
+                    </span>
+                  </div>
+                  <div className="recommendationActions">
+                    <span className="scoreBadge" title="Puntaje relativo dentro de los candidatos analizados">{play.score} pts</span>
+                    <button className="miniButton" disabled={!ticketEditable} onClick={() => useRecommendedPlay(play)}>Usar</button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <p className="recommendationDisclaimer">
             Recomendaciones basadas en patrones historicos. No predicen ni garantizan resultados.

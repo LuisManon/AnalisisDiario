@@ -1047,6 +1047,140 @@ h3 {
   padding-right: 4px;
 }
 
+.recommendationTitleRow {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.recommendationTitleRow h2 {
+  margin-bottom: 8px;
+}
+
+.recommendationPrizeInfo {
+  position: relative;
+  z-index: 20;
+}
+
+.recommendationPrizeInfo summary {
+  align-items: center;
+  background: var(--blue);
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  list-style: none;
+  width: 26px;
+}
+
+.recommendationPrizeInfo summary::-webkit-details-marker {
+  display: none;
+}
+
+.recommendationPrizePanel {
+  background: #fffef8;
+  border: 1px solid rgba(33, 73, 154, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 16px 38px rgba(20, 39, 71, 0.2);
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  position: absolute;
+  right: 0;
+  top: 34px;
+  width: min(330px, calc(100vw - 64px));
+}
+
+.recommendationPrizePanel > strong {
+  color: var(--blue);
+}
+
+.recommendationPrizePanel small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.recommendationPrizePanel table {
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.recommendationPrizePanel td,
+.recommendationPrizePanel th {
+  border-bottom: 1px solid rgba(33, 73, 154, 0.12);
+  padding: 6px 0;
+}
+
+.recommendationPrizePanel th {
+  color: var(--blue);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.recommendationNumbers {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.recommendationProfileRow {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+}
+
+.recommendationProfileRow small {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.recommendationProfile {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.recommendationProfile.fuerte {
+  background: rgba(0, 132, 61, 0.1);
+  border-color: rgba(0, 132, 61, 0.22);
+  color: var(--green-dark);
+}
+
+.recommendationProfile.equilibrada {
+  background: rgba(33, 73, 154, 0.09);
+  border-color: rgba(33, 73, 154, 0.2);
+  color: var(--blue);
+}
+
+.recommendationProfile.exploratoria {
+  background: rgba(205, 139, 22, 0.12);
+  border-color: rgba(205, 139, 22, 0.25);
+  color: #87580b;
+}
+
+.recommendationPrize {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.recommendationPrize.won {
+  color: #087149;
+}
+
 .recommendationItem {
   align-items: center;
   border-bottom: 1px solid var(--line);

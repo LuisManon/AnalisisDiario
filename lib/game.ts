@@ -9,15 +9,14 @@ export type VirtualTicket = {
 };
 
 export const virtualPrizeTable = [
-  { matches: 6, plus: true, amount: 100_000_000, label: "6 aciertos + Mas" },
-  { matches: 6, plus: false, amount: 25_000_000, label: "6 aciertos" },
-  { matches: 5, plus: true, amount: 100_000, label: "5 aciertos + Mas" },
-  { matches: 5, plus: false, amount: 25_000, label: "5 aciertos" },
-  { matches: 4, plus: true, amount: 2_500, label: "4 aciertos + Mas" },
-  { matches: 4, plus: false, amount: 500, label: "4 aciertos" },
-  { matches: 3, plus: true, amount: 200, label: "3 aciertos + Mas" },
-  { matches: 3, plus: false, amount: 50, label: "3 aciertos" },
-  { matches: 0, plus: true, amount: 25, label: "Solo Mas" }
+  { matches: 6, plus: true, amount: 150_000_000, label: "6 aciertos + Más" },
+  { matches: 6, plus: false, amount: 20_000_000, label: "6 aciertos" },
+  { matches: 5, plus: true, amount: 1_000_000, label: "5 aciertos + Más" },
+  { matches: 5, plus: false, amount: 50_000, label: "5 aciertos" },
+  { matches: 4, plus: true, amount: 10_000, label: "4 aciertos + Más" },
+  { matches: 4, plus: false, amount: 1_000, label: "4 aciertos" },
+  { matches: 3, plus: true, amount: 1_000, label: "3 aciertos + Más" },
+  { matches: 3, plus: false, amount: 100, label: "3 aciertos" }
 ];
 
 export function formatMoney(amount: number) {
@@ -99,6 +98,7 @@ export function getGameWindow(drawDate: string, now = getDominicanNow()) {
 export type RecommendationWeights = {
   generalFrequency: number;
   dayFrequency: number;
+  dayAffinity: number;
   hotNumbers: number;
   coldNumbers: number;
   delay: number;
@@ -108,12 +108,16 @@ export type RecommendationWeights = {
   rangeBalance: number;
   typicalSum: number;
   positionFrequency: number;
+  positionRange: number;
+  recentRepeatPenalty: number;
+  portfolioDiversity: number;
 };
 
 export const recommendationWeights: RecommendationWeights = {
   generalFrequency: 1.1,
   dayFrequency: 1.35,
-  hotNumbers: 1.1,
+  dayAffinity: 1.1,
+  hotNumbers: 0.85,
   coldNumbers: 0.55,
   delay: 0.8,
   frequentPairs: 1.2,
@@ -121,15 +125,22 @@ export const recommendationWeights: RecommendationWeights = {
   parityBalance: 0.9,
   rangeBalance: 0.8,
   typicalSum: 1,
-  positionFrequency: 0.9
+  positionFrequency: 0.9,
+  positionRange: 1.15,
+  recentRepeatPenalty: 1.3,
+  portfolioDiversity: 0.72
 } as const;
 
 type NumberMetrics = {
   general: number[];
   scoped: number[];
+  dayAffinity: number[];
+  lowDayAffinity: boolean[];
   hot: number[];
   cold: number[];
   delay: number[];
+  repeatSupport: number[];
+  recentPenalty: number[];
   positionGeneral: number[][];
   positionScoped: number[][];
 };
@@ -153,6 +164,8 @@ function buildNumberMetrics(results: DrawResult[], scoped: DrawResult[]): Number
   const recent = scoped.slice(0, Math.min(16, scoped.length));
   const hotCounts = countNumbers(recent, (draw) => draw.numbers);
   const lastIndexes = Array(41).fill(scoped.length + 4) as number[];
+  const repeatHits = Array(41).fill(0) as number[];
+  const repeatOpportunities = Array(41).fill(0) as number[];
 
   scoped.forEach((draw, drawIndex) => {
     draw.numbers.forEach((number) => {
@@ -160,20 +173,80 @@ function buildNumberMetrics(results: DrawResult[], scoped: DrawResult[]): Number
     });
   });
 
+  for (let olderIndex = 1; olderIndex < scoped.length; olderIndex += 1) {
+    const olderDraw = scoped[olderIndex];
+    const followingDraw = scoped[olderIndex - 1];
+    for (const number of olderDraw.numbers) {
+      repeatOpportunities[number] += 1;
+      if (followingDraw.numbers.includes(number)) repeatHits[number] += 1;
+    }
+  }
+
+  const expectedRepeatRate = 6 / 40;
+  const repeatSupport = Array.from({ length: 41 }, (_, number) => {
+    if (number === 0) return 0;
+    const smoothedRate = (repeatHits[number] + expectedRepeatRate * 8) / (repeatOpportunities[number] + 8);
+    return Math.min(1, smoothedRate / (expectedRepeatRate * 2));
+  });
+  const recentPenalty = Array(41).fill(0) as number[];
+  scoped[0]?.numbers.forEach((number) => {
+    recentPenalty[number] = 1 - repeatSupport[number];
+  });
+  scoped[1]?.numbers.forEach((number) => {
+    recentPenalty[number] = Math.max(recentPenalty[number], (1 - repeatSupport[number]) * 0.35);
+  });
+
   const positionCounts = (draws: DrawResult[]) =>
     Array.from({ length: 6 }, (_, position) =>
       normalize(countNumbers(draws, (draw) => [draw.numbers[position]]))
     );
 
+  const general = normalize(generalCounts);
+  const scopedFrequency = normalize(scopedCounts);
+  const dayAffinity = normalize(scopedCounts.map((count, number) => {
+    if (number === 0) return 0;
+    const generalRate = generalCounts[number] / Math.max(results.length, 1);
+    const smoothedDayRate = (count + generalRate * 8) / (scoped.length + 8);
+    return smoothedDayRate * (0.65 + 0.35 * Math.sqrt(general[number]));
+  }));
+  const positiveAffinity = dayAffinity.slice(1).filter((value) => value > 0).sort((a, b) => a - b);
+  const lowAffinityLimit = percentile(positiveAffinity, 0.2);
+
   return {
-    general: normalize(generalCounts),
-    scoped: normalize(scopedCounts),
+    general,
+    scoped: scopedFrequency,
+    dayAffinity,
+    lowDayAffinity: dayAffinity.map((value, number) => number > 0 && (scopedCounts[number] === 0 || value <= lowAffinityLimit)),
     hot: normalize(hotCounts),
     cold: normalize(generalCounts.map((count, number) => number === 0 ? 0 : 1 / (count + 1))),
     delay: normalize(lastIndexes),
+    repeatSupport,
+    recentPenalty,
     positionGeneral: positionCounts(results),
     positionScoped: positionCounts(scoped)
   };
+}
+
+function percentile(values: number[], ratio: number) {
+  if (!values.length) return 0;
+  const index = Math.round((values.length - 1) * ratio);
+  return values[Math.min(values.length - 1, Math.max(0, index))];
+}
+
+function buildPositionRanges(draws: DrawResult[]) {
+  return Array.from({ length: 6 }, (_, position) => {
+    const values = draws.map((draw) => draw.numbers[position]).sort((a, b) => a - b);
+    return {
+      low: values.length < 10 ? values[0] ?? 1 : percentile(values, 0.1),
+      high: values.length < 10 ? values[values.length - 1] ?? 40 : percentile(values, 0.9)
+    };
+  });
+}
+
+function positionRangeScore(number: number, range: { low: number; high: number }) {
+  if (number >= range.low && number <= range.high) return 1;
+  const distance = number < range.low ? range.low - number : number - range.high;
+  return Math.max(0.12, Math.exp(-distance / 4) * 0.65);
 }
 
 function combinationKey(numbers: number[]) {
@@ -282,6 +355,34 @@ function obviousPenalty(numbers: number[]) {
   return (oddCount === 0 || oddCount === 6 ? 1.4 : 0) + (longestRun >= 4 ? 1.2 : 0) + (closeGaps >= 4 ? 0.8 : 0);
 }
 
+function portfolioPenalty(numbers: number[], selected: Array<{ numbers: number[] }>) {
+  if (!selected.length) return 0;
+  const positionReuse = numbers.map((number, position) =>
+    selected.filter((play) => play.numbers[position] === number).length
+  );
+  const numberReuse = numbers.map((number) =>
+    selected.filter((play) => play.numbers.includes(number)).length
+  );
+  return average(positionReuse.map((reuse, position) => reuse * 1.35 + numberReuse[position] * 0.35));
+}
+
+type RecommendationProfile = RecommendedPlay["profile"];
+
+function profileFit(
+  candidate: { dayAffinity: number; generalSupport: number; exploratoryCount: number },
+  profile: RecommendationProfile
+) {
+  if (profile === "fuerte") {
+    return candidate.dayAffinity * 0.95 - candidate.exploratoryCount * 1.4;
+  }
+  if (profile === "equilibrada") {
+    const agreement = 1 - Math.min(1, Math.abs(candidate.dayAffinity - candidate.generalSupport));
+    return agreement * 0.7 + candidate.dayAffinity * 0.25 - candidate.exploratoryCount * 0.35;
+  }
+  const controlledExploration = candidate.exploratoryCount === 1 ? 1 : candidate.exploratoryCount === 2 ? 0.8 : 0;
+  return controlledExploration * 0.9 + (1 - candidate.dayAffinity) * 0.3;
+}
+
 export function buildRecommendedPlays(
   results: DrawResult[],
   day: DayFilter,
@@ -295,21 +396,30 @@ export function buildRecommendedPlays(
   const pairs = buildGroupCounts(analysis, 2);
   const triples = buildGroupCounts(analysis, 3);
   const typical = distribution(analysis);
+  const positionRanges = buildPositionRanges(analysis);
   const historical = new Set(ordered.map((draw) => combinationKey(draw.numbers)));
   const individual = Array(41).fill(0) as number[];
 
   for (let number = 1; number <= 40; number += 1) {
     individual[number] =
-      weights.generalFrequency * metrics.general[number] +
-      weights.dayFrequency * metrics.scoped[number] +
-      weights.hotNumbers * metrics.hot[number] +
+      weights.generalFrequency * Math.sqrt(metrics.general[number]) +
+      weights.dayFrequency * Math.sqrt(metrics.scoped[number]) +
+      weights.dayAffinity * Math.sqrt(metrics.dayAffinity[number]) +
+      weights.hotNumbers * Math.sqrt(metrics.hot[number]) +
       weights.coldNumbers * metrics.cold[number] +
-      weights.delay * metrics.delay[number];
+      weights.delay * metrics.delay[number] -
+      weights.recentRepeatPenalty * metrics.recentPenalty[number];
   }
 
   const maxIndividual = Math.max(...individual, 1);
   const random = seededRandom(`${ordered[0]?.date ?? "empty"}-${day}-${ordered.length}`);
-  const candidates = new Map<string, { numbers: number[]; rawScore: number }>();
+  const candidates = new Map<string, {
+    numbers: number[];
+    rawScore: number;
+    dayAffinity: number;
+    generalSupport: number;
+    exploratoryCount: number;
+  }>();
 
   for (let iteration = 0; iteration < 5000; iteration += 1) {
     const numbers = weightedCandidate(individual, random);
@@ -322,6 +432,7 @@ export function buildRecommendedPlays(
     const positionScore = average(numbers.map((number, position) =>
       (metrics.positionGeneral[position][number] + metrics.positionScoped[position][number]) / 2
     ));
+    const rangeScore = average(numbers.map((number, position) => positionRangeScore(number, positionRanges[position])));
     const sumScore = Math.exp(-0.5 * ((sum - typical.mean) / typical.deviation) ** 2);
     const rawScore =
       average(numbers.map((number) => individual[number] / maxIndividual)) +
@@ -330,25 +441,54 @@ export function buildRecommendedPlays(
       weights.parityBalance * typical.parity[oddCount] +
       weights.rangeBalance * typical.ranges[lowCount] +
       weights.typicalSum * sumScore +
-      weights.positionFrequency * positionScore -
+      weights.positionFrequency * positionScore +
+      weights.positionRange * rangeScore -
       obviousPenalty(numbers);
-    candidates.set(key, { numbers, rawScore });
+    candidates.set(key, {
+      numbers,
+      rawScore,
+      dayAffinity: average(numbers.map((number) => metrics.dayAffinity[number])),
+      generalSupport: average(numbers.map((number) => metrics.general[number])),
+      exploratoryCount: numbers.filter((number) => metrics.lowDayAffinity[number]).length
+    });
   }
 
   const ranked = [...candidates.values()].sort((a, b) => b.rawScore - a.rawScore);
-  const selected: typeof ranked = [];
-  for (const candidate of ranked) {
-    if (selected.every((existing) => candidate.numbers.filter((number) => existing.numbers.includes(number)).length <= 4)) {
-      selected.push(candidate);
+  const selected: Array<(typeof ranked)[number] & { profile: RecommendationProfile }> = [];
+  const candidatePool = ranked.slice(0, Math.min(1200, ranked.length));
+  const requestedProfiles: RecommendationProfile[] = ["fuerte", "fuerte", "fuerte", "equilibrada", "exploratoria"];
+  while (selected.length < count) {
+    const profile = requestedProfiles[selected.length] ?? "equilibrada";
+    const next = candidatePool
+      .filter((candidate) => !selected.some((play) => play.numbers === candidate.numbers))
+      .filter((candidate) => selected.every((existing) => candidate.numbers.filter((number) => existing.numbers.includes(number)).length <= 4))
+      .filter((candidate) => profile !== "fuerte" || candidate.exploratoryCount === 0)
+      .filter((candidate) => profile !== "exploratoria" || (candidate.exploratoryCount >= 1 && candidate.exploratoryCount <= 2))
+      .map((candidate) => ({
+        candidate,
+        adjustedScore:
+          candidate.rawScore +
+          profileFit(candidate, profile) -
+          weights.portfolioDiversity * portfolioPenalty(candidate.numbers, selected)
+      }))
+      .sort((a, b) => b.adjustedScore - a.adjustedScore || b.candidate.rawScore - a.candidate.rawScore)[0]?.candidate;
+    if (!next) break;
+    selected.push({ ...next, profile });
+  }
+  for (const candidate of candidatePool) {
+    if (selected.length >= count) break;
+    if (!selected.some((play) => play.numbers === candidate.numbers)) {
+      selected.push({ ...candidate, profile: requestedProfiles[selected.length] ?? "equilibrada" });
     }
-    if (selected.length === count) break;
   }
-  for (const candidate of ranked) {
-    if (selected.length === count) break;
-    if (!selected.includes(candidate)) selected.push(candidate);
-  }
+  const profileOrder: Record<RecommendationProfile, number> = {
+    fuerte: 0,
+    equilibrada: 1,
+    exploratoria: 2
+  };
+  selected.sort((a, b) => profileOrder[a.profile] - profileOrder[b.profile] || b.rawScore - a.rawScore);
 
-  const bestScore = selected[0]?.rawScore ?? 1;
+  const bestScore = Math.max(...selected.map((candidate) => candidate.rawScore), 1);
   const plusCounts = normalize(countNumbers(analysis, (draw) => [draw.plus]));
   const plusDelay = Array.from({ length: 13 }, (_, number) => {
     const index = analysis.findIndex((draw) => draw.plus === number);
@@ -362,7 +502,9 @@ export function buildRecommendedPlays(
     id: index + 1,
     numbers: candidate.numbers,
     plus: plusRanking[index % plusRanking.length],
-    score: Math.round(Math.max(0, Math.min(100, (candidate.rawScore / bestScore) * 100)))
+    score: Math.round(Math.max(0, Math.min(100, (candidate.rawScore / bestScore) * 100))),
+    profile: candidate.profile,
+    daySupportCount: 6 - candidate.exploratoryCount
   }));
 }
 

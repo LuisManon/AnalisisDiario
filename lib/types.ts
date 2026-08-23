@@ -16,6 +16,8 @@ export type Play = {
 
 export type RecommendedPlay = Play & {
   score: number;
+  profile: "fuerte" | "equilibrada" | "exploratoria";
+  daySupportCount: number;
 };
 
 export type DayFilter = DrawDay | "todos";
