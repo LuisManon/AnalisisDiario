@@ -105,29 +105,44 @@ export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate
   const maxDay = Math.max(...day, 1);
   const maxRecent = Math.max(...recent, 1);
   const maxPosition = Math.max(...dayPositions.flat(), 1);
+  const generalPositionMax = generalPositions.map((counts) => Math.max(...counts, 1));
+  const positionDelay = Array.from({ length: 3 }, (_, position) =>
+    Array.from({ length: 100 }, (_, number) =>
+      Math.min(lastSeen(analysis, number, position) / Math.max(analysis.length, 1), 1)
+    )
+  );
+  const positionWeights = Array.from({ length: 3 }, (_, position) =>
+    Array.from({ length: 100 }, (_, number) =>
+      0.06 +
+      (dayPositions[position][number] / maxPosition) * 1.5 +
+      (generalPositions[position][number] / generalPositionMax[position]) * 0.75 +
+      (day[number] / maxDay) * 0.8 +
+      (general[number] / maxGeneral) * 0.45 +
+      (recent[number] / maxRecent) * 0.35 +
+      positionDelay[position][number] * 0.35
+    )
+  );
   const random = seededRandom(`${targetDate}-${results[0]?.date}-${results.length}`);
   const existing = new Set(results.map((draw) => draw.numbers.join("-")));
   const candidateKeys = new Set<string>();
   const candidates: Array<{ numbers: [number, number, number]; raw: number; lowAffinity: number }> = [];
 
-  for (let iteration = 0; iteration < 6000; iteration += 1) {
+  for (let iteration = 0; iteration < 4000; iteration += 1) {
     const picked: number[] = [];
     for (let position = 0; position < 3; position += 1) {
-      const weights = Array.from({ length: 100 }, (_, number) => {
-        if (picked.includes(number)) return 0;
-        const delay = Math.min(lastSeen(analysis, number, position) / Math.max(analysis.length, 1), 1);
-        return 0.06 +
-          (dayPositions[position][number] / maxPosition) * 1.5 +
-          (generalPositions[position][number] / Math.max(...generalPositions[position], 1)) * 0.75 +
-          (day[number] / maxDay) * 0.8 +
-          (general[number] / maxGeneral) * 0.45 +
-          (recent[number] / maxRecent) * 0.35 + delay * 0.35;
-      });
-      const total = weights.reduce((sum, value) => sum + value, 0);
+      const weights = positionWeights[position];
+      const total = weights.reduce((sum, value, number) => picked.includes(number) ? sum : sum + value, 0);
       let point = random() * total;
-      let number = weights.findIndex((weight) => (point -= weight) <= 0);
-      if (number < 0) number = 0;
-      picked.push(number);
+      let selectedNumber = 0;
+      for (let number = 0; number < 100; number += 1) {
+        if (picked.includes(number)) continue;
+        point -= weights[number];
+        if (point <= 0) {
+          selectedNumber = number;
+          break;
+        }
+      }
+      picked.push(selectedNumber);
     }
     const numbers = picked as [number, number, number];
     const key = numbers.join("-");

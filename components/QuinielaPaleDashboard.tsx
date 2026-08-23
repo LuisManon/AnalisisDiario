@@ -80,7 +80,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const history = filtered.slice((historyPage - 1) * 10, historyPage * 10);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setAnalysisReady(true), 250);
+    const timeout = window.setTimeout(() => setAnalysisReady(true), 50);
     return () => window.clearTimeout(timeout);
   }, []);
 
