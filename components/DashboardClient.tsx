@@ -856,10 +856,24 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
   );
 }
 
-function percentile(values: number[], ratio: number) {
-  if (!values.length) return 0;
-  const index = Math.round((values.length - 1) * ratio);
-  return values[Math.min(values.length - 1, Math.max(0, index))];
+function shortestCoverageRange(values: number[], coverage = 0.8) {
+  if (!values.length) return { low: 0, high: 0 };
+  if (values.length < 10) return { low: values[0], high: values[values.length - 1] };
+
+  const sampleSize = Math.max(1, Math.ceil(values.length * coverage));
+  let low = values[0];
+  let high = values[sampleSize - 1];
+
+  for (let start = 1; start + sampleSize <= values.length; start += 1) {
+    const candidateLow = values[start];
+    const candidateHigh = values[start + sampleSize - 1];
+    if (candidateHigh - candidateLow < high - low) {
+      low = candidateLow;
+      high = candidateHigh;
+    }
+  }
+
+  return { low, high };
 }
 
 function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
@@ -867,8 +881,7 @@ function buildRangeRows(results: DrawResult[], selectedSeries: string[]) {
     .filter((position) => selectedSeries.includes(`P${position + 1}`))
     .map((position) => {
       const values = results.map((result) => result.numbers[position]).sort((a, b) => a - b);
-      const low = values.length < 10 ? values[0] ?? 0 : percentile(values, 0.1);
-      const high = values.length < 10 ? values[values.length - 1] ?? 0 : percentile(values, 0.9);
+      const { low, high } = shortestCoverageRange(values);
       const omitted = values.filter((value) => value < low || value > high).length;
       const average = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
       return {
@@ -906,17 +919,17 @@ function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selected
           <h3>Rango normal de salida por posicion</h3>
         </div>
         <p>
-          Usa percentiles 10-90: ignora salidas poco comunes para que una bola aislada no altere el rango visual.
+          Calcula por posicion el intervalo mas compacto que concentra el 80% de sus apariciones.
         </p>
         <div className="rangeInfo">
           <button type="button" aria-label="Informacion del mapa de rangos">i</button>
           <div className="rangeInfoTooltip" role="tooltip">
             <strong>Como se calcula el mapa de rangos</strong>
-            <span>El Mapa de rangos calcula el rango normal usando percentiles 10-90.</span>
-            <span>Ignora el 10% mas bajo y el 10% mas alto.</span>
-            <span>Usa el 80% central de la data para definir el rango tipico.</span>
-            <span>Las salidas fuera de ese rango se cuentan como fuera del rango, pero no deforman la linea.</span>
-            <span>Ejemplo: si P1 casi siempre cae entre 01 y 10, pero una vez salio 18, ese 18 no expande el rango normal hasta 18.</span>
+            <span>Cada posicion se calcula por separado usando solamente sus propias salidas.</span>
+            <span>Busca el intervalo numerico mas corto que contiene al menos el 80% de las apariciones de esa posicion.</span>
+            <span>Una bola frecuente se mantiene aunque este en un extremo, como el 40 en P6.</span>
+            <span>Las salidas aisladas quedan fuera y se cuentan como fuera del rango, pero no deforman la linea.</span>
+            <span>Ejemplo: si P1 se concentra entre 01 y 10, una salida aislada del 18 no extiende su rango normal.</span>
             <span>Esto solo afecta el analisis visual del mapa. Todavia no altera el algoritmo de Jugadas recomendadas.</span>
           </div>
         </div>
