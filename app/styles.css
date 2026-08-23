@@ -909,6 +909,42 @@ h3 {
   color: white;
 }
 
+.ballWinnerLoto {
+  border-color: rgba(205, 151, 0, 0.72);
+  filter: drop-shadow(0 0 3px rgba(255, 211, 48, 0.72)) drop-shadow(0 0 7px rgba(255, 218, 79, 0.3));
+}
+
+.ballWinnerPlus {
+  border-color: rgba(255, 126, 132, 0.9);
+  filter: drop-shadow(0 0 3px rgba(255, 126, 132, 0.68)) drop-shadow(0 0 7px rgba(255, 174, 178, 0.3));
+}
+
+.ballWinnerLoto,
+.ballWinnerPlus,
+.primeraBallWinner,
+.lotekaBallWinner {
+  overflow: visible;
+  position: relative;
+}
+
+.ballWinnerLoto::after,
+.ballWinnerPlus::after,
+.primeraBallWinner::after,
+.lotekaBallWinner::after {
+  content: "👑";
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 400;
+  line-height: 1;
+  pointer-events: none;
+  position: absolute;
+  right: -6px;
+  text-shadow: none;
+  top: -7px;
+  transform: rotate(10deg);
+  z-index: 3;
+}
+
 .lotoTheme .hero h1,
 .lotoTheme h2,
 .lotoTheme h3,
@@ -2111,6 +2147,11 @@ h3 {
   outline-color: #333333;
 }
 
+.primeraBallWinner {
+  border-color: rgba(255, 116, 116, 0.88);
+  filter: drop-shadow(0 0 3px rgba(255, 91, 91, 0.58)) drop-shadow(0 0 8px rgba(255, 150, 150, 0.28));
+}
+
 .primeraSuggestionList {
   display: grid;
   gap: 10px;
@@ -2296,6 +2337,11 @@ h3 {
   line-height: 1;
   text-align: center;
   width: 46px;
+}
+
+.lotekaBallWinner {
+  border-color: rgba(84, 198, 231, 0.9);
+  filter: drop-shadow(0 0 3px rgba(66, 190, 230, 0.58)) drop-shadow(0 0 8px rgba(131, 220, 245, 0.3));
 }
 
 .lotekaBar span,

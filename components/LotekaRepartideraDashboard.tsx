@@ -40,8 +40,8 @@ function formatShortDate(date: string) {
   return `${day}-${month}-${year}`;
 }
 
-function LotekaBall({ number }: { number: number }) {
-  return <span className="lotekaBall">{formatLotekaNumber(number)}</span>;
+function LotekaBall({ number, winner = false }: { number: number; winner?: boolean }) {
+  return <span className={`lotekaBall ${winner ? "lotekaBallWinner" : ""}`}>{formatLotekaNumber(number)}</span>;
 }
 
 function getPreviousOccurrence(results: LotekaRepartideraDraw[], draw: LotekaRepartideraDraw) {
@@ -189,8 +189,8 @@ export function LotekaRepartideraDashboard({ initialData }: Props) {
       </section>
 
       <section className="twoColumn">
-        <FrequencyCard title="Top 10 numeros calientes" results={results} />
-        <SuggestionCard baseDate={latest?.date ?? ""} suggestions={suggestions} />
+        <FrequencyCard title="Top 10 numeros calientes" results={results} winningNumber={latest?.number} />
+        <SuggestionCard baseDate={latest?.date ?? ""} suggestions={suggestions} winningNumber={latest?.number} />
       </section>
 
       <section className="card scatterSection lotekaScatter">
@@ -289,7 +289,7 @@ export function LotekaRepartideraDashboard({ initialData }: Props) {
                 <span>{formatLongDate(draw.date)}</span>
               </div>
               <div className="ballsRow">
-                <LotekaBall number={draw.number} />
+                <LotekaBall number={draw.number} winner={draw.number === latest?.number} />
               </div>
             </article>
           ))}
@@ -329,7 +329,7 @@ function LotekaSkeleton({ message }: { message: string }) {
   );
 }
 
-function FrequencyCard({ title, results }: { title: string; results: LotekaRepartideraDraw[] }) {
+function FrequencyCard({ title, results, winningNumber }: { title: string; results: LotekaRepartideraDraw[]; winningNumber?: number }) {
   const frequency = buildLotekaRepartideraStats(results).topHot;
   const max = Math.max(1, frequency[0]?.count ?? 1);
 
@@ -340,7 +340,7 @@ function FrequencyCard({ title, results }: { title: string; results: LotekaRepar
       <div className="rankList">
         {frequency.map((item) => (
           <div className="rankItem" key={item.number}>
-            <LotekaBall number={item.number} />
+            <LotekaBall number={item.number} winner={item.number === winningNumber} />
             <div className="bar lotekaBar"><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
             <strong>{item.count}</strong>
           </div>
@@ -352,10 +352,12 @@ function FrequencyCard({ title, results }: { title: string; results: LotekaRepar
 
 function SuggestionCard({
   baseDate,
-  suggestions
+  suggestions,
+  winningNumber
 }: {
   baseDate: string;
   suggestions: ReturnType<typeof buildLotekaRepartideraSuggestions>;
+  winningNumber?: number;
 }) {
   return (
     <div className="card lotekaCard">
@@ -364,7 +366,7 @@ function SuggestionCard({
         {suggestions.map((item, index) => (
           <article key={item.number} className="primeraSuggestion">
             <span>{index + 1}</span>
-            <LotekaBall number={item.number} />
+            <LotekaBall number={item.number} winner={item.number === winningNumber} />
             <div>
               <strong>Score {item.score}</strong>
               <small>

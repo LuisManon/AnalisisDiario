@@ -283,7 +283,7 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
               {visibleHistory.map((row) => (
                 <article key={`${row.date}-${row.positions.join("-")}`}>
                   <div><strong>{formatDate(row.date)}</strong><span>{formatDay(row.day)} · Sorteo #{row.drawId}</span></div>
-                  <DrawBalls numbers={row.numbers} plus={row.plus} />
+                  <DrawBalls numbers={row.numbers} plus={row.plus} winningNumbers={results[0]?.numbers} winningPlus={results[0]?.plus} />
                   <strong className="positionTag">{row.positions.join(", ")}</strong>
                 </article>
               ))}

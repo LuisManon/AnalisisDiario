@@ -102,8 +102,8 @@ function getPreviousOccurrence(results: LaPrimeraDraw[], draw: LaPrimeraDraw) {
   };
 }
 
-function QuinielonBall({ number, tone = "red" }: { number: number; tone?: "red" | "dark" }) {
-  return <span className={tone === "red" ? "primeraBall" : "primeraBall dark"}>{formatQuinielonNumber(number)}</span>;
+function QuinielonBall({ number, tone = "red", winner = false }: { number: number; tone?: "red" | "dark"; winner?: boolean }) {
+  return <span className={`${tone === "red" ? "primeraBall" : "primeraBall dark"} ${winner ? "primeraBallWinner" : ""}`}>{formatQuinielonNumber(number)}</span>;
 }
 
 export function LaPrimeraDashboard({ initialData }: Props) {
@@ -264,13 +264,13 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       </section>
 
       <section className="twoColumn">
-        <FrequencyCard title="Top 10 calientes Dia" results={filterLaPrimeraResults(results, "dia")} />
-        <FrequencyCard title="Top 10 calientes Noche" results={filterLaPrimeraResults(results, "noche")} />
+        <FrequencyCard title="Top 10 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
+        <FrequencyCard title="Top 10 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
       </section>
 
       <section className="twoColumn">
-        <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} />
-        <SuggestionCard title="5 sugerencias Noche" baseDate={nightSuggestionDate} suggestions={nightSuggestions} />
+        <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} winningNumber={stats.latestBySession.dia?.number} />
+        <SuggestionCard title="5 sugerencias Noche" baseDate={nightSuggestionDate} suggestions={nightSuggestions} winningNumber={stats.latestBySession.noche?.number} />
       </section>
 
       <section className="card scatterSection primeraScatter">
@@ -369,7 +369,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
                 <span>{formatLongDate(draw.date)}</span>
               </div>
               <div className="ballsRow">
-                <QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} />
+                <QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} winner={draw.number === stats.latestBySession[draw.session]?.number} />
               </div>
             </article>
           ))}
@@ -416,7 +416,7 @@ function LaPrimeraSkeleton({ message }: { message: string }) {
   );
 }
 
-function FrequencyCard({ title, results }: { title: string; results: LaPrimeraDraw[] }) {
+function FrequencyCard({ title, results, winningNumber }: { title: string; results: LaPrimeraDraw[]; winningNumber?: number }) {
   const frequency = buildLaPrimeraStats(results, "todos").topHot;
   const max = Math.max(1, frequency[0]?.count ?? 1);
 
@@ -426,7 +426,7 @@ function FrequencyCard({ title, results }: { title: string; results: LaPrimeraDr
       <div className="rankList">
         {frequency.map((item) => (
           <div className="rankItem" key={item.number}>
-            <QuinielonBall number={item.number} />
+            <QuinielonBall number={item.number} winner={item.number === winningNumber} />
             <div className="bar primeraBar"><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
             <strong>{item.count}</strong>
           </div>
@@ -439,11 +439,13 @@ function FrequencyCard({ title, results }: { title: string; results: LaPrimeraDr
 function SuggestionCard({
   baseDate,
   title,
-  suggestions
+  suggestions,
+  winningNumber
 }: {
   baseDate: string;
   title: string;
   suggestions: ReturnType<typeof buildLaPrimeraSuggestions>;
+  winningNumber?: number;
 }) {
   return (
     <div className="card primeraCard">
@@ -452,7 +454,7 @@ function SuggestionCard({
         {suggestions.map((item, index) => (
           <article key={item.number} className="primeraSuggestion">
             <span>{index + 1}</span>
-            <QuinielonBall number={item.number} />
+            <QuinielonBall number={item.number} winner={item.number === winningNumber} />
             <div>
               <strong>Score {item.score}</strong>
               <small>

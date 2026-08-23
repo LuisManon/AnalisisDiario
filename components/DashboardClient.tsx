@@ -300,7 +300,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                     {position.top.map((entry, rank) => (
                       <div className="positionRankingItem" key={entry.number}>
                         <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
-                        <Ball value={entry.number} />
+                        <Ball value={entry.number} winner={latest?.numbers.includes(entry.number)} />
                         <div className="positionFrequency">
                           <div className="positionFrequencyMeta">
                             <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
@@ -330,7 +330,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                   return (
                     <div className="positionRankingItem" key={entry.number}>
                       <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
-                      <Ball value={entry.number} plus />
+                      <Ball value={entry.number} plus winner={entry.number === latest?.plus} />
                       <div className="positionFrequency">
                         <div className="positionFrequencyMeta">
                           <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
@@ -402,7 +402,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <>
             <div className="drawSummary">
               <span>{ticketEvaluation.draw.date}</span>
-              <DrawBalls numbers={ticketEvaluation.draw.numbers} plus={ticketEvaluation.draw.plus} />
+              <DrawBalls numbers={ticketEvaluation.draw.numbers} plus={ticketEvaluation.draw.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
             </div>
             <strong className="totalPrize">Premio virtual total: {formatMoney(ticketEvaluation.total)}</strong>
             <div className="simulation">
@@ -412,9 +412,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                   <span>{result.matchedNumbers.length} aciertos {result.plusMatched ? "+ Mas" : ""} · {result.prize.label} · {formatMoney(result.prize.amount)}</span>
                   <div className="ballsRow small">
                     {result.play.numbers.map((number) => (
-                      <Ball key={number} value={number} muted={!result.matchedNumbers.includes(number)} />
+                      <Ball key={number} value={number} muted={!result.matchedNumbers.includes(number)} winner={result.matchedNumbers.includes(number)} />
                     ))}
-                    <Ball value={result.play.plus} plus muted={!result.plusMatched} />
+                    <Ball value={result.play.plus} plus muted={!result.plusMatched} winner={result.plusMatched} />
                   </div>
                 </div>
               ))}
@@ -499,7 +499,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
               <strong>{result.date}</strong>
               <span>{formatLongDate(result.date)}</span>
             </div>
-            <DrawBalls numbers={result.numbers} plus={result.plus} />
+            <DrawBalls numbers={result.numbers} plus={result.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
           </article>
         ))}
       </section>
@@ -577,7 +577,7 @@ function RecommendationBalls({
           onMouseEnter={(event) => showTooltip(event, number, position)}
           onMouseMove={(event) => showTooltip(event, number, position)}
         >
-          <Ball value={number} />
+          <Ball value={number} winner={results[0]?.numbers.includes(number)} />
         </span>
       ))}
       <span
@@ -585,7 +585,7 @@ function RecommendationBalls({
         onMouseEnter={(event) => showTooltip(event, play.plus, "plus")}
         onMouseMove={(event) => showTooltip(event, play.plus, "plus")}
       >
-        <Ball value={play.plus} plus />
+        <Ball value={play.plus} plus winner={play.plus === results[0]?.plus} />
       </span>
       {tooltip ? (
         <div className="recommendationTooltip" style={{ left: tooltip.x, top: tooltip.y }}>
