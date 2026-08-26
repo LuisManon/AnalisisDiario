@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-08-25",
+    "session": "dia",
+    "number": 39,
+    "drawId": 826,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-08-25",
+    "session": "noche",
+    "number": 77,
+    "drawId": 821,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
     "date": "2026-08-24",
     "session": "dia",
     "number": 58,
