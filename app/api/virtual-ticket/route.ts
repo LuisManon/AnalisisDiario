@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { readResults } from "../../../lib/data";
 import {
-  buildRecommendedPlays,
   evaluateVirtualTicket,
   getDrawDay,
   getGameWindow,
@@ -9,6 +8,7 @@ import {
   getDominicanNow
 } from "../../../lib/game";
 import { readVirtualTicket, writeVirtualTicket } from "../../../lib/virtual-ticket-store";
+import { getOrCreateRecommendationSnapshot } from "../../../lib/recommendation-store";
 import { playSchema } from "../../../lib/validation";
 
 export async function GET(request: Request) {
@@ -16,18 +16,26 @@ export async function GET(request: Request) {
   const drawDate = searchParams.get("drawDate") || getNextGameDate();
   const results = await readResults();
   const day = getDrawDay(drawDate);
+  const currentRecommendations = await getOrCreateRecommendationSnapshot(drawDate, results);
+  const previousDraw = results.find((result) => result.date < drawDate);
+  const previousRecommendations = previousDraw
+    ? await getOrCreateRecommendationSnapshot(previousDraw.date, results)
+    : null;
   const existing = await readVirtualTicket(drawDate);
   const ticket = existing ?? {
     drawDate,
     day,
-    plays: buildRecommendedPlays(results, day, 5),
+    plays: currentRecommendations.plays,
     submittedAt: null
   };
   const draw = results.find((result) => result.date === drawDate);
 
   return NextResponse.json({
     ticket,
-    recommendations: buildRecommendedPlays(results, day, 5),
+    recommendations: currentRecommendations,
+    previousRecommendations: previousRecommendations
+      ? { ...previousRecommendations, draw: previousDraw }
+      : null,
     window: getGameWindow(drawDate),
     evaluation: evaluateVirtualTicket(ticket, draw),
     now: getDominicanNow().toISOString()

@@ -1255,6 +1255,26 @@ h3 {
   margin-bottom: 14px;
 }
 
+.ticketPanel {
+  margin-bottom: 14px;
+}
+
+.recommendationComparison {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.reviewedBadge {
+  background: rgba(33, 73, 154, 0.1);
+  border: 1px solid rgba(33, 73, 154, 0.2);
+  border-radius: 999px;
+  color: var(--blue);
+  font-size: 0.74rem;
+  padding: 7px 9px;
+}
+
 .gameHeader {
   align-items: start;
   display: flex;
@@ -2905,7 +2925,8 @@ h3 {
 
   .hero,
   .twoColumn,
-  .gameGrid {
+  .gameGrid,
+  .recommendationComparison {
     grid-template-columns: 1fr;
   }
 

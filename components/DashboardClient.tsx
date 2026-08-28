@@ -23,6 +23,13 @@ type VirtualEvaluation = {
   results: Array<SimulationResult & { prize: { amount: number; label: string } }>;
   total: number;
 } | null;
+type RecommendationSnapshot = {
+  drawDate: string;
+  day: "miercoles" | "sabado";
+  generatedAt: string;
+  plays: RecommendedPlay[];
+};
+type PreviousRecommendations = RecommendationSnapshot & { draw: DrawResult };
 
 const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
 const plusColor = "#ee1f2d";
@@ -70,6 +77,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [ticketMessage, setTicketMessage] = useState("Cargando juego virtual...");
   const [ticketEditable, setTicketEditable] = useState(true);
   const [ticketEvaluation, setTicketEvaluation] = useState<VirtualEvaluation>(null);
+  const [recommendations, setRecommendations] = useState<RecommendedPlay[]>(() =>
+    buildRecommendedPlays(initialData.results.filter((result) => result.date < getNextGameDate()), getDrawDay(getNextGameDate()), 5)
+  );
+  const [previousRecommendations, setPreviousRecommendations] = useState<PreviousRecommendations | null>(null);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setIsPageLoading(false), 500);
@@ -92,10 +103,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     const byYear = rangeYear === "todos" ? data.results : data.results.filter((result) => result.date.startsWith(rangeYear));
     return rangeDay === "todos" ? byYear : byYear.filter((result) => result.day === rangeDay);
   }, [data.results, rangeDay, rangeYear]);
-  const recommendations = useMemo(
-    () => buildRecommendedPlays(data.results, ticket.day, 5),
-    [data.results, ticket.day]
-  );
   const activePageSize = historyPageSize === "todos" ? filteredHistory.length || defaultHistoryPageSize : historyPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
@@ -107,6 +114,8 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         setTicket(payload.ticket);
         setTicketEditable(payload.window.isEditable);
         setTicketEvaluation(payload.evaluation);
+        setRecommendations(payload.recommendations?.plays ?? []);
+        setPreviousRecommendations(payload.previousRecommendations ?? null);
         setTicketMessage(
           payload.window.isEditable
             ? "Puedes editar y reenviar hasta las 5:00 PM del dia del sorteo."
@@ -353,7 +362,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         <h2>Simulador de 5 jugadas</h2>
         <p>5 jugadas remotas para el proximo sorteo. Se bloquean al enviarlas o despues de las 5:00 PM.</p>
       </section>
-      <section className="gameGrid">
+      <section className="ticketPanel">
         <article className="card">
           <div className="gameHeader">
             <div>
@@ -374,10 +383,17 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
           <button className="primaryButton" onClick={submitTicket} disabled={!ticketEditable}>Enviar jugadas virtuales</button>
         </article>
+      </section>
 
+      <section className="recommendationComparison">
+        <RecommendationSnapshotCard
+          snapshot={previousRecommendations}
+          results={data.results}
+          title="Recomendaciones del sorteo anterior"
+        />
         <article className="card">
           <div className="recommendationTitleRow">
-            <h2>Jugadas recomendadas</h2>
+            <h2>Recomendaciones del próximo sorteo</h2>
             <details className="recommendationPrizeInfo">
               <summary aria-label="Consultar tabla de premios">i</summary>
               <div className="recommendationPrizePanel">
@@ -400,8 +416,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <p className="muted">Analisis inclinado al proximo sorteo del {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)}: afinidad por dia, rangos por posicion, frecuencia, retraso y diversidad.</p>
           <div className="recommendationList">
             {recommendations.map((play) => {
-              const matches = latest ? play.numbers.filter((number) => latest.numbers.includes(number)).length : 0;
-              const plusMatched = Boolean(latest && play.plus === latest.plus);
+              const currentDraw = data.results.find((result) => result.date === ticket.drawDate);
+              const matches = currentDraw ? play.numbers.filter((number) => currentDraw.numbers.includes(number)).length : 0;
+              const plusMatched = Boolean(currentDraw && play.plus === currentDraw.plus);
               const prize = getVirtualPrize(matches, plusMatched);
               return (
                 <div className="recommendationItem" key={play.id}>
@@ -411,9 +428,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                       <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span>
                       <small>{play.profile === "fuerte" ? `${play.daySupportCount}/6 con respaldo del ${formatDay(ticket.day)}` : play.profile === "equilibrada" ? `Balance ${formatDay(ticket.day)} + historial general` : `${6 - play.daySupportCount} de baja afinidad del ${formatDay(ticket.day)}`}</small>
                     </div>
-                    <RecommendationBalls play={play} results={data.results} dayFilter={ticket.day} />
+                    <RecommendationBalls play={play} results={data.results} dayFilter={ticket.day} winningDraw={currentDraw} />
                     <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
-                      {prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
+                      {!currentDraw ? "Pendiente de resultado" : prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
                     </span>
                   </div>
                   <div className="recommendationActions">
@@ -558,14 +575,74 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   );
 }
 
+function RecommendationSnapshotCard({
+  snapshot,
+  results,
+  title
+}: {
+  snapshot: PreviousRecommendations | null;
+  results: DrawResult[];
+  title: string;
+}) {
+  if (!snapshot) {
+    return (
+      <article className="card recommendationHistoryCard">
+        <h2>{title}</h2>
+        <p className="muted">Todavía no hay un sorteo anterior disponible para comparar.</p>
+      </article>
+    );
+  }
+
+  const analysisResults = results.filter((result) => result.date < snapshot.drawDate);
+  return (
+    <article className="card recommendationHistoryCard">
+      <div className="recommendationTitleRow">
+        <div>
+          <span className="panelLabel">Sorteo anterior evaluado</span>
+          <h2>{title}</h2>
+        </div>
+        <strong className="reviewedBadge">Revisado</strong>
+      </div>
+      <p className="muted">{formatDay(snapshot.day)} {formatShortDate(snapshot.drawDate)} · recomendaciones congeladas antes del sorteo.</p>
+      <div className="recommendationList">
+        {snapshot.plays.map((play) => {
+          const matches = play.numbers.filter((number) => snapshot.draw.numbers.includes(number)).length;
+          const plusMatched = play.plus === snapshot.draw.plus;
+          const prize = getVirtualPrize(matches, plusMatched);
+          return (
+            <div className="recommendationItem" key={play.id}>
+              <span>#{play.id}</span>
+              <div className="recommendationNumbers">
+                <div className="recommendationProfileRow">
+                  <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span>
+                </div>
+                <RecommendationBalls play={play} results={analysisResults} dayFilter={snapshot.day} winningDraw={snapshot.draw} />
+                <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
+                  {prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
+                </span>
+              </div>
+              <div className="recommendationActions">
+                <span className="scoreBadge">{play.score} pts</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="recommendationDisclaimer">Este registro no cambia cuando se agregan resultados posteriores.</p>
+    </article>
+  );
+}
+
 function RecommendationBalls({
   play,
   results,
-  dayFilter
+  dayFilter,
+  winningDraw
 }: {
   play: RecommendedPlay;
   results: DrawResult[];
   dayFilter: DayFilter;
+  winningDraw?: DrawResult;
 }) {
   const analysisYear = results[0]?.date.slice(0, 4) ?? String(new Date().getFullYear());
   const [tooltip, setTooltip] = useState<null | {
@@ -611,7 +688,7 @@ function RecommendationBalls({
           onMouseEnter={(event) => showTooltip(event, number, position)}
           onMouseMove={(event) => showTooltip(event, number, position)}
         >
-          <Ball value={number} winner={results[0]?.numbers.includes(number)} />
+          <Ball value={number} winner={winningDraw?.numbers.includes(number)} />
         </span>
       ))}
       <span
@@ -619,7 +696,7 @@ function RecommendationBalls({
         onMouseEnter={(event) => showTooltip(event, play.plus, "plus")}
         onMouseMove={(event) => showTooltip(event, play.plus, "plus")}
       >
-        <Ball value={play.plus} plus winner={play.plus === results[0]?.plus} />
+        <Ball value={play.plus} plus winner={play.plus === winningDraw?.plus} />
       </span>
       {tooltip ? (
         <div className="recommendationTooltip" style={{ left: tooltip.x, top: tooltip.y }}>
