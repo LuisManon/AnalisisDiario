@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
@@ -51,6 +51,16 @@ function formatLongDate(date: string) {
 function formatShortDate(date: string) {
   const [year, month, day] = date.split("-");
   return `${day}-${month}-${year}`;
+}
+
+function getProfileExplanation(profile: RecommendedPlay["profile"], day: string) {
+  if (profile === "fuerte") {
+    return `Prioriza números con alta afinidad para el ${formatDay(day)}, frecuencia por posición, retraso y combinaciones históricas frecuentes. Evita números con apoyo bajo para ese día.`;
+  }
+  if (profile === "equilibrada") {
+    return `Combina la afinidad del ${formatDay(day)} con el historial general, equilibrando frecuencia, posiciones, pares, rangos, suma típica y diversidad frente a las demás jugadas.`;
+  }
+  return `Incluye de forma controlada uno o dos números con baja afinidad para el ${formatDay(day)}, sin abandonar los rangos, posiciones y combinaciones respaldados por el historial.`;
 }
 
 export function DashboardClient({ initialData }: DashboardClientProps) {
@@ -238,6 +248,20 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
             <>
               <strong>{latest.date} · {formatDay(latest.day)}</strong>
               <DrawBalls numbers={latest.numbers} plus={latest.plus} />
+              <details className="latestPrizeTable">
+                <summary>Ver tabla de premios</summary>
+                <table>
+                  <tbody>
+                    {virtualPrizeTable.map((prize) => (
+                      <tr key={`${prize.matches}-${prize.plus}`}>
+                        <td>{prize.label}</td>
+                        <th>{formatMoney(prize.amount)}</th>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <small>Premios mínimos usados para la evaluación virtual.</small>
+              </details>
             </>
           ) : (
             <strong>Sin datos</strong>
@@ -425,7 +449,14 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                   <span>#{play.id}</span>
                   <div className="recommendationNumbers">
                     <div className="recommendationProfileRow">
-                      <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span>
+                      <span
+                        className={`recommendationProfile ${play.profile}`}
+                        tabIndex={0}
+                        title={getProfileExplanation(play.profile, ticket.day)}
+                        aria-label={getProfileExplanation(play.profile, ticket.day)}
+                      >
+                        {play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}
+                      </span>
                       <small>{play.profile === "fuerte" ? `${play.daySupportCount}/6 con respaldo del ${formatDay(ticket.day)}` : play.profile === "equilibrada" ? `Balance ${formatDay(ticket.day)} + historial general` : `${6 - play.daySupportCount} de baja afinidad del ${formatDay(ticket.day)}`}</small>
                     </div>
                     <RecommendationBalls play={play} results={data.results} dayFilter={ticket.day} winningDraw={currentDraw} />
@@ -614,7 +645,14 @@ function RecommendationSnapshotCard({
               <span>#{play.id}</span>
               <div className="recommendationNumbers">
                 <div className="recommendationProfileRow">
-                  <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span>
+                  <span
+                    className={`recommendationProfile ${play.profile}`}
+                    tabIndex={0}
+                    title={getProfileExplanation(play.profile, snapshot.day)}
+                    aria-label={getProfileExplanation(play.profile, snapshot.day)}
+                  >
+                    {play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}
+                  </span>
                 </div>
                 <RecommendationBalls play={play} results={analysisResults} dayFilter={snapshot.day} winningDraw={snapshot.draw} />
                 <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
@@ -749,6 +787,9 @@ function SeriesFilter({
 }
 
 function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selectedSeries: string[] }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [scrollMaximum, setScrollMaximum] = useState(0);
   const [hoverInfo, setHoverInfo] = useState<null | {
     x: number;
     y: number;
@@ -757,13 +798,16 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
     number: number;
     position: string;
   }>(null);
-  const width = 960;
-  const height = 470;
-  const padding = { top: 34, right: 34, bottom: 82, left: 54 };
+  const width = Math.max(960, results.length * 18 + 110);
+  const height = 530;
+  const padding = { top: 34, right: 54, bottom: 120, left: 54 };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
+  const pointInset = 14;
   const ordered = [...results].sort((a, b) => a.date.localeCompare(b.date));
-  const xFor = (index: number) => padding.left + (ordered.length <= 1 ? plotWidth / 2 : (index / (ordered.length - 1)) * plotWidth);
+  const xFor = (index: number) => padding.left + (ordered.length <= 1
+    ? plotWidth / 2
+    : pointInset + (index / (ordered.length - 1)) * (plotWidth - pointInset * 2));
   const yFor = (number: number) => padding.top + ((40 - number) / 39) * plotHeight;
   const yTicks = [1, 5, 10, 15, 20, 25, 30, 35, 40];
   const dateTicks = ordered
@@ -776,11 +820,32 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
   const normalPointCount = ordered.length * visiblePositions.length;
   const plusPointCount = showPlus ? ordered.length : 0;
 
+  useEffect(() => {
+    function measureScroll() {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      setScrollMaximum(maximum);
+      setScrollPosition(Math.min(viewport.scrollLeft, maximum));
+    }
+
+    measureScroll();
+    window.addEventListener("resize", measureScroll);
+    return () => window.removeEventListener("resize", measureScroll);
+  }, [width]);
+
+  function moveScroll(value: number) {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    viewport.scrollLeft = value;
+    setScrollPosition(value);
+  }
+
   function showTooltip(
     event: ReactMouseEvent<SVGCircleElement>,
     info: { date: string; day: string; number: number; position: string }
   ) {
-    const wrapper = event.currentTarget.closest<HTMLElement>(".scatterWrap");
+    const wrapper = event.currentTarget.closest<HTMLElement>(".scatterViewport");
     if (!wrapper) return;
 
     const box = wrapper.getBoundingClientRect();
@@ -814,20 +879,25 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
 
   return (
     <div className="scatterWrap">
-      {hoverInfo ? (
-        <div className="chartTooltip" style={{ left: hoverInfo.x, top: hoverInfo.y }}>
-          <strong>{hoverInfo.position}</strong>
-          <span>Fecha: {hoverInfo.date}</span>
-          <span>Dia: {hoverInfo.day}</span>
-          <span>Numero: {String(hoverInfo.number).padStart(2, "0")}</span>
-        </div>
-      ) : null}
       <div className="chartSummary">
         <span>Rango: <strong>{firstDate}</strong> a <strong>{lastDate}</strong></span>
         <span>Sorteos: <strong>{ordered.length}</strong></span>
         <span>Puntos: <strong>{normalPointCount + plusPointCount}</strong></span>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Diagrama de dispersion de resultados">
+      <div
+        className="scatterViewport"
+        ref={viewportRef}
+        onScroll={(event) => setScrollPosition(event.currentTarget.scrollLeft)}
+      >
+        {hoverInfo ? (
+          <div className="chartTooltip" style={{ left: hoverInfo.x, top: hoverInfo.y }}>
+            <strong>{hoverInfo.position}</strong>
+            <span>Fecha: {hoverInfo.date}</span>
+            <span>Dia: {hoverInfo.day}</span>
+            <span>Numero: {String(hoverInfo.number).padStart(2, "0")}</span>
+          </div>
+        ) : null}
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Diagrama de dispersion de resultados">
         <rect className="chartPlotBg" x={padding.left} y={padding.top} width={plotWidth} height={plotHeight} rx="8" />
         {yTicks.map((tick) => (
           <g key={tick}>
@@ -838,7 +908,7 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
         {dateTicks.map(({ result, index }) => (
           <g key={result.date}>
             <line className="chartGrid vertical" x1={xFor(index)} x2={xFor(index)} y1={padding.top} y2={height - padding.bottom} />
-            <text className="chartDate angled" x={xFor(index)} y={height - 54} textAnchor="end" transform={`rotate(-38 ${xFor(index)} ${height - 54})`}>
+            <text className="chartDate angled" x={xFor(index)} y={height - 92} textAnchor="end" transform={`rotate(-38 ${xFor(index)} ${height - 92})`}>
               {result.date.slice(5)}
             </text>
           </g>
@@ -916,9 +986,24 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
             </g>
           );
         })}
-        <text className="chartDate endpoint" x={padding.left} y={height - 38}>{firstDate}</text>
-        <text className="chartDate endpoint" x={width - padding.right} y={height - 38} textAnchor="end">{lastDate}</text>
-      </svg>
+        <text className="chartDate endpoint" x={padding.left} y={height - 52}>{firstDate}</text>
+        <text className="chartDate endpoint" x={width - padding.right} y={height - 52} textAnchor="end">{lastDate}</text>
+        </svg>
+      </div>
+      <div className="scatterScrollControl">
+        <span>Inicio</span>
+        <input
+          aria-label="Desplazar horizontalmente el diagrama"
+          type="range"
+          min="0"
+          max={Math.max(1, scrollMaximum)}
+          step="1"
+          value={Math.min(scrollPosition, Math.max(1, scrollMaximum))}
+          disabled={scrollMaximum === 0}
+          onChange={(event) => moveScroll(Number(event.target.value))}
+        />
+        <span>Final</span>
+      </div>
       <div className="chartLegend">
         {positionColors.map((color, index) => selectedSeries.includes(`P${index + 1}`) ? (
           <span key={color}><i className="legendDot" style={{ background: color }} /> P{index + 1}</span>

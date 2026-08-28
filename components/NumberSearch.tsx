@@ -71,8 +71,8 @@ function SearchAccordion({
 }
 
 export function NumberSearch({ results }: { results: DrawResult[] }) {
-  const [mainNumber, setMainNumber] = useState(14);
-  const [plusNumber, setPlusNumber] = useState(8);
+  const [mainNumberInput, setMainNumberInput] = useState("14");
+  const [plusNumberInput, setPlusNumberInput] = useState("8");
   const [type, setType] = useState<SearchType>("main");
   const [position, setPosition] = useState<SearchPosition>("any");
   const [day, setDay] = useState<DayFilter>("todos");
@@ -82,6 +82,8 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
   const effectiveType = position === "plus" ? "plus" : type;
   const includeMain = effectiveType !== "plus";
   const includePlus = effectiveType !== "main";
+  const mainNumber = Math.min(40, Math.max(1, Number(mainNumberInput) || 1));
+  const plusNumber = Math.min(12, Math.max(1, Number(plusNumberInput) || 1));
 
   const primaryMetric = useMemo(() => {
     if (effectiveType === "main") return analyzeMain(results, mainNumber, day, position);
@@ -129,8 +131,8 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
   }
 
   function clearSearch() {
-    setMainNumber(14);
-    setPlusNumber(8);
+    setMainNumberInput("14");
+    setPlusNumberInput("8");
     setType("main");
     setPosition("any");
     setDay("todos");
@@ -146,15 +148,37 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
       </section>
       <section className="card numberSearch">
         <SearchAccordion title="Filtros de búsqueda" summary={hasSearched ? `${subject} · ${positionLabel} · ${formatDay(day)}` : "Configura los criterios y pulsa Buscar"} defaultOpen>
-          <form onSubmit={(event) => { event.preventDefault(); setPage(1); setHasSearched(true); }}>
+          <form onSubmit={(event) => {
+            event.preventDefault();
+            setMainNumberInput(String(mainNumber));
+            setPlusNumberInput(String(plusNumber));
+            setPage(1);
+            setHasSearched(true);
+          }}>
             <div className="numberSearchFilters">
             <label>
               Número principal
-              <input type="number" min="1" max="40" value={mainNumber} disabled={!includeMain} onChange={(event) => { setMainNumber(Math.min(40, Math.max(1, Number(event.target.value)))); markQueryPending(); }} />
+              <input
+                type="number"
+                min="1"
+                max="40"
+                value={mainNumberInput}
+                disabled={!includeMain}
+                onChange={(event) => { setMainNumberInput(event.target.value); markQueryPending(); }}
+                onBlur={() => setMainNumberInput(String(mainNumber))}
+              />
             </label>
             <label>
               Número Más
-              <input type="number" min="1" max="12" value={plusNumber} disabled={!includePlus} onChange={(event) => { setPlusNumber(Math.min(12, Math.max(1, Number(event.target.value)))); markQueryPending(); }} />
+              <input
+                type="number"
+                min="1"
+                max="12"
+                value={plusNumberInput}
+                disabled={!includePlus}
+                onChange={(event) => { setPlusNumberInput(event.target.value); markQueryPending(); }}
+                onBlur={() => setPlusNumberInput(String(plusNumber))}
+              />
             </label>
             <label>
               Tipo de búsqueda

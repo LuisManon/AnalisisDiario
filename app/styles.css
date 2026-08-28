@@ -174,7 +174,7 @@
     width: 100%;
   }
 
-  .scatterWrap {
+  .scatterViewport {
     -webkit-overflow-scrolling: touch;
     overflow-x: scroll;
     padding-bottom: 9px;
@@ -182,16 +182,16 @@
     scrollbar-width: auto;
   }
 
-  .scatterWrap::-webkit-scrollbar {
+  .scatterViewport::-webkit-scrollbar {
     height: 10px;
   }
 
-  .scatterWrap::-webkit-scrollbar-track {
+  .scatterViewport::-webkit-scrollbar-track {
     background: rgba(33, 73, 154, 0.12);
     border-radius: 999px;
   }
 
-  .scatterWrap::-webkit-scrollbar-thumb {
+  .scatterViewport::-webkit-scrollbar-thumb {
     background: var(--green);
     border: 2px solid #f8f8f2;
     border-radius: 999px;
@@ -715,6 +715,44 @@ h3 {
   background: rgba(255, 255, 255, 0.68);
   border-color: rgba(33, 73, 154, 0.28);
   box-shadow: inset 0 5px 0 var(--red);
+}
+
+.latestPrizeTable {
+  border-top: 1px solid rgba(33, 73, 154, 0.2);
+  padding-top: 10px;
+}
+
+.latestPrizeTable summary {
+  color: var(--blue);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.latestPrizeTable table {
+  border-collapse: collapse;
+  font-size: 0.7rem;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.latestPrizeTable td,
+.latestPrizeTable th {
+  border-bottom: 1px solid rgba(33, 73, 154, 0.12);
+  padding: 5px 0;
+}
+
+.latestPrizeTable th {
+  color: var(--blue);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.latestPrizeTable small {
+  color: var(--muted);
+  display: block;
+  font-size: 0.66rem;
+  margin-top: 7px;
 }
 
 .lotoTheme .card,
@@ -1445,6 +1483,11 @@ h3 {
   white-space: nowrap;
 }
 
+.recommendationProfile[title] {
+  cursor: help;
+  outline-offset: 2px;
+}
+
 .recommendationProfile.fuerte {
   background: rgba(0, 132, 61, 0.1);
   border-color: rgba(0, 132, 61, 0.22);
@@ -2016,8 +2059,47 @@ h3 {
 }
 
 .scatterWrap {
+  position: relative;
+}
+
+.scatterViewport {
+  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
   position: relative;
+  scrollbar-width: none;
+}
+
+.scatterViewport::-webkit-scrollbar {
+  display: none;
+}
+
+.scatterScrollControl {
+  align-items: center;
+  color: var(--muted);
+  display: grid;
+  font-size: 0.72rem;
+  font-weight: 700;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin-top: 8px;
+  padding: 2px 4px 8px;
+}
+
+.scatterScrollControl input {
+  accent-color: var(--green);
+  cursor: grab;
+  height: 20px;
+  margin: 0;
+  width: 100%;
+}
+
+.scatterScrollControl input:active {
+  cursor: grabbing;
+}
+
+.scatterScrollControl input:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 
 .chartTooltip {
@@ -2060,8 +2142,7 @@ h3 {
 
 .scatterWrap svg {
   display: block;
-  min-width: 860px;
-  width: 100%;
+  max-width: none;
 }
 
 .chartPlotBg {
