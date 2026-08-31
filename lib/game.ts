@@ -66,6 +66,21 @@ export function getNextGameDate(now = getDominicanNow()) {
   return formatLocalDate(date);
 }
 
+export function getLatestExpectedDrawDate(now = getDominicanNow()) {
+  const date = new Date(now);
+  const drawMinutes = 21 * 60;
+
+  for (let offset = 0; offset <= 7; offset += 1) {
+    const candidate = new Date(date);
+    candidate.setDate(date.getDate() - offset);
+    if (!isDrawWeekday(candidate)) continue;
+    if (offset === 0 && now.getHours() * 60 + now.getMinutes() < drawMinutes) continue;
+    return formatLocalDate(candidate);
+  }
+
+  return null;
+}
+
 export function getDrawDay(date: string): DrawDay {
   const day = new Date(`${date}T00:00:00`).getDay();
   return day === 6 ? "sabado" : "miercoles";

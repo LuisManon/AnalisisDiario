@@ -5,7 +5,7 @@ import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { buildRecommendedPlays, formatMoney, getDrawDay, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
+import { buildRecommendedPlays, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
 import type { DayFilter, DrawResult, Play, RecommendedPlay, SimulationResult } from "../lib/types";
 
 type ApiState = {
@@ -91,8 +91,16 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     buildRecommendedPlays(initialData.results.filter((result) => result.date < getNextGameDate()), getDrawDay(getNextGameDate()), 5)
   );
   const [previousRecommendations, setPreviousRecommendations] = useState<PreviousRecommendations | null>(null);
+  const automaticUpdateStarted = useRef(false);
 
   useEffect(() => {
+    if (automaticUpdateStarted.current) return;
+    automaticUpdateStarted.current = true;
+    const expectedDate = getLatestExpectedDrawDate();
+    if (expectedDate && (!initialData.results[0]?.date || initialData.results[0].date < expectedDate)) {
+      void checkUpdate();
+      return;
+    }
     const timeout = window.setTimeout(() => setIsPageLoading(false), 500);
     return () => window.clearTimeout(timeout);
   }, []);

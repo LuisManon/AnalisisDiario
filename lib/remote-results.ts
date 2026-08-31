@@ -34,11 +34,6 @@ function normalizeDrawDate(dateText: string) {
   return date.toISOString().slice(0, 10);
 }
 
-function parseDateFromInput(html: string) {
-  const match = html.match(/<input[^>]+name="fecha"[^>]+value="(\d{4}-\d{2}-\d{2})"/);
-  return match?.[1] ?? null;
-}
-
 function buildDrawResult(date: string, numbers: number[], plus: number, source: string) {
   return drawSchema.safeParse({
     date,
@@ -93,11 +88,13 @@ export function parseOfficialLatestResult(html: string): DrawResult[] {
 }
 
 export function parseDominicanasLatestResult(html: string): DrawResult[] {
-  const date = parseDateFromInput(html);
-  const section = html.match(/<div class="balls" aria-label="Números ganadores de Loto Más">([\s\S]*?)<\/div>/)?.[1];
-  if (!date || !section) return [];
+  const article = html.match(
+    /<article\b[^>]*data-fecha-resultado="(\d{4}-\d{2}-\d{2})"[^>]*>[\s\S]*?<div class="balls[^"]*" aria-label="Números ganadores de Loto Más">([\s\S]*?)<\/div>[\s\S]*?<\/article>/
+  );
+  if (!article) return [];
 
-  const values = [...section.matchAll(/<span class="ball b\d+[^"]*">\s*(\d+)\s*<\/span>/g)].map((match) => Number(match[1]));
+  const [, date, section] = article;
+  const values = [...section.matchAll(/<span class="ball b\d+[^"]*"[^>]*data-value="(\d+)"[^>]*>/g)].map((match) => Number(match[1]));
   if (values.length < 7) return [];
 
   const numbers = values.slice(0, 6).sort((a, b) => a - b);
