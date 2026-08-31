@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-08-29",
+    "day": "sabado",
+    "numbers": [
+      10,
+      11,
+      17,
+      24,
+      25,
+      31
+    ],
+    "plus": 10,
+    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/loto-mas"
+  },
+  {
     "date": "2026-08-26",
     "day": "miercoles",
     "numbers": [
