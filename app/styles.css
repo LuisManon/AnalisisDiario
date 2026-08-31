@@ -1297,6 +1297,13 @@ h3 {
   margin-bottom: 14px;
 }
 
+.simulatorAccordion .ticketPanel {
+  background: #f8f8f2;
+  border-top: 1px solid var(--line);
+  margin-bottom: 0;
+  padding: 16px;
+}
+
 .recommendationComparison {
   display: grid;
   gap: 14px;
@@ -1715,17 +1722,21 @@ h3 {
 }
 
 .numberSearchActions {
-  align-items: center;
+  align-items: stretch;
   border-top: 1px solid rgba(20, 39, 71, 0.08);
-  display: flex;
+  display: grid;
   gap: 10px;
+  grid-template-columns: repeat(2, 160px);
   justify-content: flex-end;
   margin-top: 16px;
   padding-top: 14px;
 }
 
 .numberSearchActions button {
-  min-width: 132px;
+  height: 42px;
+  margin-top: 0;
+  min-width: 0;
+  width: 100%;
 }
 
 .numberSearchTitle,

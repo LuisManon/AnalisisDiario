@@ -390,12 +390,13 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </section>
       </details>
 
-      <section className="sectionHeader">
-        <h2>Simulador de 5 jugadas</h2>
-        <p>5 jugadas remotas para el proximo sorteo. Se bloquean al enviarlas o despues de las 5:00 PM.</p>
-      </section>
-      <section className="ticketPanel">
-        <article className="card">
+      <details className="topPositionsAccordion simulatorAccordion">
+        <summary>
+          <span>Simulador de 5 jugadas</span>
+          <small>5 jugadas para el proximo sorteo. Se bloquean al enviarlas o despues de las 5:00 PM.</small>
+        </summary>
+        <section className="ticketPanel">
+          <article className="card">
           <div className="gameHeader">
             <div>
               <span className="panelLabel">Sorteo virtual</span>
@@ -414,8 +415,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
             ))}
           </div>
           <button className="primaryButton" onClick={submitTicket} disabled={!ticketEditable}>Enviar jugadas virtuales</button>
-        </article>
-      </section>
+          </article>
+        </section>
+      </details>
 
       <section className="recommendationComparison">
         <RecommendationSnapshotCard

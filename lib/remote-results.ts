@@ -34,6 +34,15 @@ function normalizeDrawDate(dateText: string) {
   return date.toISOString().slice(0, 10);
 }
 
+function normalizeIsoDrawDate(dateText: string) {
+  const date = new Date(`${dateText}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return null;
+  while (date.getUTCDay() !== 3 && date.getUTCDay() !== 6) {
+    date.setUTCDate(date.getUTCDate() - 1);
+  }
+  return date.toISOString().slice(0, 10);
+}
+
 function buildDrawResult(date: string, numbers: number[], plus: number, source: string) {
   return drawSchema.safeParse({
     date,
@@ -93,7 +102,9 @@ export function parseDominicanasLatestResult(html: string): DrawResult[] {
   );
   if (!article) return [];
 
-  const [, date, section] = article;
+  const [, remoteDate, section] = article;
+  const date = normalizeIsoDrawDate(remoteDate);
+  if (!date) return [];
   const values = [...section.matchAll(/<span class="ball b\d+[^"]*"[^>]*data-value="(\d+)"[^>]*>/g)].map((match) => Number(match[1]));
   if (values.length < 7) return [];
 
