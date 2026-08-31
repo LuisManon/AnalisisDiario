@@ -894,11 +894,12 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
         <span>Sorteos: <strong>{ordered.length}</strong></span>
         <span>Puntos: <strong>{normalPointCount + plusPointCount}</strong></span>
       </div>
-      <div
-        className="scatterViewport"
-        ref={viewportRef}
-        onScroll={(event) => setScrollPosition(event.currentTarget.scrollLeft)}
-      >
+      <div className="scatterChartArea">
+        <div
+          className="scatterViewport"
+          ref={viewportRef}
+          onScroll={(event) => setScrollPosition(event.currentTarget.scrollLeft)}
+        >
         {hoverInfo ? (
           <div className="chartTooltip" style={{ left: hoverInfo.x, top: hoverInfo.y }}>
             <strong>{hoverInfo.position}</strong>
@@ -998,6 +999,17 @@ function ScatterPlot({ results, selectedSeries }: { results: DrawResult[]; selec
         })}
         <text className="chartDate endpoint" x={padding.left} y={height - 52}>{firstDate}</text>
         <text className="chartDate endpoint" x={width - padding.right} y={height - 52} textAnchor="end">{lastDate}</text>
+          </svg>
+        </div>
+        <svg className="scatterFixedAxis" width={padding.left} height={height} viewBox={`0 0 ${padding.left} ${height}`} aria-hidden="true">
+          <rect className="scatterFixedAxisBg" width={padding.left} height={height} />
+          {yTicks.map((tick) => (
+            <text className="chartTick" x={padding.left - 12} y={yFor(tick) + 4} textAnchor="end" key={tick}>{tick}</text>
+          ))}
+          <line className="chartAxis" x1={padding.left - 1} x2={padding.left - 1} y1={padding.top} y2={height - padding.bottom} />
+          <text className="chartAxisLabel" x="18" y={padding.top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 18 ${padding.top + plotHeight / 2})`}>
+            Numero sorteado
+          </text>
         </svg>
       </div>
       <div className="scatterScrollControl">
