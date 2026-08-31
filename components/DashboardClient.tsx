@@ -5,7 +5,7 @@ import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { buildRecommendedPlays, buildThirtyPlayPortfolio, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
+import { buildRecommendedPlays, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
 import type { DayFilter, DrawResult, Play, PortfolioPlay, RecommendedPlay, SimulationResult, ThirtyPlayPortfolio } from "../lib/types";
 
 type ApiState = {
@@ -92,6 +92,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   );
   const [previousRecommendations, setPreviousRecommendations] = useState<PreviousRecommendations | null>(null);
   const [portfolioRequested, setPortfolioRequested] = useState(false);
+  const [thirtyPlayPortfolio, setThirtyPlayPortfolio] = useState<ThirtyPlayPortfolio | null>(null);
+  const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
+  const [portfolioMessage, setPortfolioMessage] = useState("Abre la sección para cargar las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
 
   useEffect(() => {
@@ -125,11 +128,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const activePageSize = historyPageSize === "todos" ? filteredHistory.length || defaultHistoryPageSize : historyPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
-  const thirtyPlayPortfolio = useMemo(
-    () => portfolioRequested ? buildThirtyPlayPortfolio(data.results, ticket.drawDate) : null,
-    [data.results, portfolioRequested, ticket.drawDate]
-  );
-
   useEffect(() => {
     fetch(`/api/virtual-ticket?drawDate=${ticket.drawDate}`)
       .then((response) => response.json())
@@ -147,6 +145,22 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       })
       .catch(() => setTicketMessage("No se pudo cargar el juego virtual."));
   }, [ticket.drawDate]);
+
+  useEffect(() => {
+    if (!portfolioRequested) return;
+    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
+    fetch(`/api/portfolio?drawDate=${ticket.drawDate}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
+        return response.json();
+      })
+      .then((payload) => {
+        setThirtyPlayPortfolio(payload.current ?? null);
+        setPreviousPortfolio(payload.previous ?? null);
+        setPortfolioMessage("");
+      })
+      .catch(() => setPortfolioMessage("No se pudieron cargar las 30 jugadas guardadas."));
+  }, [portfolioRequested, ticket.drawDate]);
 
   useEffect(() => {
     if (!isUpdating) return;
@@ -435,9 +449,20 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <small>Inclinado al {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
         </summary>
         {thirtyPlayPortfolio ? (
-          <ThirtyPlayPortfolioView portfolio={thirtyPlayPortfolio} />
+          <div className="portfolioSnapshots">
+            <ThirtyPlayPortfolioView portfolio={thirtyPlayPortfolio} />
+            {previousPortfolio ? (
+              <details className="portfolioPreviousAccordion">
+                <summary>
+                  <span>Comparar con el sorteo anterior</span>
+                  <small>{formatDay(previousPortfolio.targetDay)} {formatShortDate(previousPortfolio.targetDate)}</small>
+                </summary>
+                <ThirtyPlayPortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} historical />
+              </details>
+            ) : null}
+          </div>
         ) : (
-          <div className="thirtyPortfolioLoading">Preparando las 30 jugadas con el historial disponible…</div>
+          <div className="thirtyPortfolioLoading">{portfolioMessage}</div>
         )}
       </details>
 
@@ -638,7 +663,15 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   );
 }
 
-function ThirtyPlayPortfolioView({ portfolio }: { portfolio: ThirtyPlayPortfolio }) {
+function ThirtyPlayPortfolioView({
+  portfolio,
+  winningDraw,
+  historical = false
+}: {
+  portfolio: ThirtyPlayPortfolio;
+  winningDraw?: DrawResult;
+  historical?: boolean;
+}) {
   const profiles: Array<{
     id: PortfolioPlay["profile"];
     title: string;
@@ -653,10 +686,10 @@ function ThirtyPlayPortfolioView({ portfolio }: { portfolio: ThirtyPlayPortfolio
     <section className="thirtyPortfolioBody">
       <header className="portfolioTarget">
         <div>
-          <span className="panelLabel">Sorteo objetivo</span>
+          <span className="panelLabel">{historical ? "Sorteo evaluado" : "Sorteo objetivo"}</span>
           <h2>{formatLongDate(portfolio.targetDate)}</h2>
         </div>
-        <p>En cada columna: 5 jugadas analizadas solo con sorteos de {formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.</p>
+        <p>{winningDraw ? "La corona indica una coincidencia exacta de número y posición." : `En cada columna: 5 jugadas solo de ${formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.`}</p>
       </header>
 
       <div className="portfolioColumns">
@@ -683,12 +716,12 @@ function ThirtyPlayPortfolioView({ portfolio }: { portfolio: ThirtyPlayPortfolio
                     </div>
                     <div className="portfolioNumbers" aria-label={`Jugada ${index + 1}: ${play.numbers.join(", ")} más ${play.plus}`}>
                       {play.numbers.map((number, position) => (
-                        <span className="portfolioBall" key={`${position}-${number}`}>{String(number).padStart(2, "0")}</span>
+                        <span className={`portfolioBall ${winningDraw?.numbers[position] === number ? "portfolioBallWinner" : ""}`} key={`${position}-${number}`}>{String(number).padStart(2, "0")}</span>
                       ))}
                       <i>+</i>
-                      <span className="portfolioBall portfolioPlus">{String(play.plus).padStart(2, "0")}</span>
+                      <span className={`portfolioBall portfolioPlus ${winningDraw?.plus === play.plus ? "portfolioBallWinner" : ""}`}>{String(play.plus).padStart(2, "0")}</span>
                     </div>
-                    <small>{play.explanation}</small>
+                    <small>{winningDraw ? `${play.numbers.filter((number, position) => winningDraw.numbers[position] === number).length} coincidencias en posición${winningDraw.plus === play.plus ? " · Más acertado" : ""}` : play.explanation}</small>
                   </div>
                 ))}
               </div>

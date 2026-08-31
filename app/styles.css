@@ -1468,6 +1468,22 @@ h3 {
   width: 27px;
 }
 
+.portfolioBallWinner {
+  box-shadow: 0 0 0 3px rgba(215, 155, 37, 0.28);
+  position: relative;
+}
+
+.portfolioBallWinner::after {
+  color: #d79b25;
+  content: "♛";
+  font-size: 0.72rem;
+  left: 50%;
+  line-height: 1;
+  position: absolute;
+  top: -10px;
+  transform: translateX(-50%);
+}
+
 .portfolioPlus {
   background: var(--red);
   border-color: var(--red);
@@ -1484,6 +1500,34 @@ h3 {
 
 .portfolioDisclaimer {
   margin: 14px 0 0;
+}
+
+.portfolioPreviousAccordion {
+  background: #f8f8f2;
+  border-top: 1px solid var(--line);
+}
+
+.portfolioPreviousAccordion > summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 14px 16px;
+}
+
+.portfolioPreviousAccordion > summary span {
+  color: var(--blue);
+  font-weight: 900;
+}
+
+.portfolioPreviousAccordion > summary small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.portfolioPreviousAccordion .thirtyPortfolioBody {
+  padding-top: 0;
 }
 
 .recommendationComparison {
