@@ -1304,6 +1304,188 @@ h3 {
   padding: 16px;
 }
 
+.thirtyPortfolioBody {
+  background: #f8f8f2;
+  border-top: 1px solid var(--line);
+  padding: 16px;
+}
+
+.thirtyPortfolioLoading {
+  background: #f8f8f2;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 700;
+  padding: 24px 16px;
+}
+
+.portfolioTarget {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+}
+
+.portfolioTarget h2,
+.portfolioTarget p,
+.portfolioColumn h3,
+.portfolioColumn p {
+  margin: 0;
+}
+
+.portfolioTarget h2 {
+  color: var(--blue);
+  font-size: 1.15rem;
+  margin-top: 3px;
+}
+
+.portfolioTarget p {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  max-width: 520px;
+  text-align: right;
+}
+
+.portfolioColumns {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.portfolioColumn {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.portfolioColumn > header {
+  align-items: start;
+  border-top: 4px solid var(--blue);
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  min-height: 88px;
+  padding: 12px;
+}
+
+.portfolioColumn.fuerte > header { border-top-color: #00843d; }
+.portfolioColumn.equilibrada > header { border-top-color: #21499a; }
+.portfolioColumn.exploratoria > header { border-top-color: #c77700; }
+
+.portfolioColumn h3 {
+  color: var(--blue);
+  font-size: 1rem;
+}
+
+.portfolioColumn p {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.35;
+  margin-top: 4px;
+}
+
+.portfolioColumn > header > strong {
+  align-items: center;
+  background: rgba(33, 73, 154, 0.1);
+  border-radius: 50%;
+  color: var(--blue);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  height: 29px;
+  justify-content: center;
+  width: 29px;
+}
+
+.portfolioPlayList {
+  border-top: 1px solid var(--line);
+}
+
+.portfolioPlayRow {
+  padding: 10px 11px;
+}
+
+.portfolioPlayRow + .portfolioPlayRow {
+  border-top: 1px solid rgba(33, 73, 154, 0.12);
+}
+
+.portfolioPlayMeta {
+  align-items: center;
+  display: flex;
+  font-size: 0.65rem;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.portfolioPlayMeta b { color: var(--blue); }
+.portfolioPlayMeta > span:last-child { color: var(--muted); margin-left: auto; }
+
+.portfolioScope {
+  background: rgba(33, 73, 154, 0.09);
+  border-radius: 999px;
+  color: var(--blue);
+  font-weight: 800;
+  padding: 3px 6px;
+}
+
+.portfolioScope.mismo-dia {
+  background: rgba(0, 132, 61, 0.1);
+  color: var(--green-dark);
+}
+
+.portfolioNumbers {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.portfolioNumbers i {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.portfolioBall {
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid var(--blue);
+  border-radius: 50%;
+  color: var(--blue);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.61rem;
+  font-weight: 900;
+  height: 27px;
+  justify-content: center;
+  width: 27px;
+}
+
+.portfolioPlus {
+  background: var(--red);
+  border-color: var(--red);
+  color: #ffffff;
+}
+
+.portfolioPlayRow > small {
+  color: var(--muted);
+  display: block;
+  font-size: 0.61rem;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+
+.portfolioDisclaimer {
+  margin: 14px 0 0;
+}
+
 .recommendationComparison {
   display: grid;
   gap: 14px;
@@ -3037,6 +3219,10 @@ h3 {
   .twoColumn,
   .gameGrid,
   .recommendationComparison {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolioColumns {
     grid-template-columns: 1fr;
   }
 

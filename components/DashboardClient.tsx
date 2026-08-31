@@ -5,8 +5,8 @@ import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { buildRecommendedPlays, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
-import type { DayFilter, DrawResult, Play, RecommendedPlay, SimulationResult } from "../lib/types";
+import { buildRecommendedPlays, buildThirtyPlayPortfolio, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
+import type { DayFilter, DrawResult, Play, PortfolioPlay, RecommendedPlay, SimulationResult, ThirtyPlayPortfolio } from "../lib/types";
 
 type ApiState = {
   results: DrawResult[];
@@ -91,6 +91,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     buildRecommendedPlays(initialData.results.filter((result) => result.date < getNextGameDate()), getDrawDay(getNextGameDate()), 5)
   );
   const [previousRecommendations, setPreviousRecommendations] = useState<PreviousRecommendations | null>(null);
+  const [portfolioRequested, setPortfolioRequested] = useState(false);
   const automaticUpdateStarted = useRef(false);
 
   useEffect(() => {
@@ -124,6 +125,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const activePageSize = historyPageSize === "todos" ? filteredHistory.length || defaultHistoryPageSize : historyPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
+  const thirtyPlayPortfolio = useMemo(
+    () => portfolioRequested ? buildThirtyPlayPortfolio(data.results, ticket.drawDate) : null,
+    [data.results, portfolioRequested, ticket.drawDate]
+  );
 
   useEffect(() => {
     fetch(`/api/virtual-ticket?drawDate=${ticket.drawDate}`)
@@ -419,6 +424,23 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </section>
       </details>
 
+      <details
+        className="topPositionsAccordion thirtyPortfolioAccordion"
+        onToggle={(event) => {
+          if (event.currentTarget.open) setPortfolioRequested(true);
+        }}
+      >
+        <summary>
+          <span>Generador de 30 Jugadas</span>
+          <small>Inclinado al {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+        </summary>
+        {thirtyPlayPortfolio ? (
+          <ThirtyPlayPortfolioView portfolio={thirtyPlayPortfolio} />
+        ) : (
+          <div className="thirtyPortfolioLoading">Preparando las 30 jugadas con el historial disponible…</div>
+        )}
+      </details>
+
       <section className="recommendationComparison">
         <RecommendationSnapshotCard
           snapshot={previousRecommendations}
@@ -613,6 +635,72 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </button>
       </nav>
     </main>
+  );
+}
+
+function ThirtyPlayPortfolioView({ portfolio }: { portfolio: ThirtyPlayPortfolio }) {
+  const profiles: Array<{
+    id: PortfolioPlay["profile"];
+    title: string;
+    description: string;
+  }> = [
+    { id: "fuerte", title: "Inclinación fuerte", description: "Mayor respaldo del día objetivo y de sus patrones recientes." },
+    { id: "equilibrada", title: "Equilibradas", description: "Balance entre afinidad, frecuencia, retraso y diversidad." },
+    { id: "exploratoria", title: "Exploratorias", description: "Más diversidad sin salir de los controles históricos." }
+  ];
+
+  return (
+    <section className="thirtyPortfolioBody">
+      <header className="portfolioTarget">
+        <div>
+          <span className="panelLabel">Sorteo objetivo</span>
+          <h2>{formatLongDate(portfolio.targetDate)}</h2>
+        </div>
+        <p>En cada columna: 5 jugadas analizadas solo con sorteos de {formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.</p>
+      </header>
+
+      <div className="portfolioColumns">
+        {profiles.map((profile) => {
+          const plays = portfolio.plays.filter((play) => play.profile === profile.id);
+          return (
+            <article className={`portfolioColumn ${profile.id}`} key={profile.id}>
+              <header>
+                <div>
+                  <h3>{profile.title}</h3>
+                  <p>{profile.description}</p>
+                </div>
+                <strong>{plays.length}</strong>
+              </header>
+              <div className="portfolioPlayList">
+                {plays.map((play, index) => (
+                  <div className="portfolioPlayRow" key={play.id}>
+                    <div className="portfolioPlayMeta">
+                      <b>#{index + 1}</b>
+                      <span className={`portfolioScope ${play.scope}`}>
+                        {play.scope === "mismo-dia" ? `Solo ${formatDay(portfolio.targetDay)}` : "Mié. + sáb."}
+                      </span>
+                      <span>{play.score} pts</span>
+                    </div>
+                    <div className="portfolioNumbers" aria-label={`Jugada ${index + 1}: ${play.numbers.join(", ")} más ${play.plus}`}>
+                      {play.numbers.map((number, position) => (
+                        <span className="portfolioBall" key={`${position}-${number}`}>{String(number).padStart(2, "0")}</span>
+                      ))}
+                      <i>+</i>
+                      <span className="portfolioBall portfolioPlus">{String(play.plus).padStart(2, "0")}</span>
+                    </div>
+                    <small>{play.explanation}</small>
+                  </div>
+                ))}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <p className="recommendationDisclaimer portfolioDisclaimer">
+        Estas combinaciones son reproducibles para este sorteo y se basan en patrones históricos; no predicen ni garantizan resultados.
+      </p>
+    </section>
   );
 }
 

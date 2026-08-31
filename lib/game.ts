@@ -1,5 +1,5 @@
 import { simulate } from "./stats";
-import type { DayFilter, DrawDay, DrawResult, Play, RecommendedPlay } from "./types";
+import type { DayFilter, DrawDay, DrawResult, Play, PortfolioPlay, PortfolioScope, RecommendedPlay, ThirtyPlayPortfolio } from "./types";
 
 export type VirtualTicket = {
   drawDate: string;
@@ -402,7 +402,8 @@ export function buildRecommendedPlays(
   results: DrawResult[],
   day: DayFilter,
   count = 5,
-  weights: RecommendationWeights = recommendationWeights
+  weights: RecommendationWeights = recommendationWeights,
+  options: { profiles?: RecommendationProfile[]; seedSuffix?: string; iterations?: number } = {}
 ): RecommendedPlay[] {
   const ordered = [...results].sort((a, b) => b.date.localeCompare(a.date));
   const scoped = day === "todos" ? ordered : ordered.filter((result) => result.day === day);
@@ -427,7 +428,7 @@ export function buildRecommendedPlays(
   }
 
   const maxIndividual = Math.max(...individual, 1);
-  const random = seededRandom(`${ordered[0]?.date ?? "empty"}-${day}-${ordered.length}`);
+  const random = seededRandom(`${ordered[0]?.date ?? "empty"}-${day}-${ordered.length}-${options.seedSuffix ?? "default"}`);
   const candidates = new Map<string, {
     numbers: number[];
     rawScore: number;
@@ -436,7 +437,7 @@ export function buildRecommendedPlays(
     exploratoryCount: number;
   }>();
 
-  for (let iteration = 0; iteration < 5000; iteration += 1) {
+  for (let iteration = 0; iteration < (options.iterations ?? 5000); iteration += 1) {
     const numbers = weightedCandidate(individual, random);
     const key = combinationKey(numbers);
     if (historical.has(key) || candidates.has(key)) continue;
@@ -471,7 +472,7 @@ export function buildRecommendedPlays(
   const ranked = [...candidates.values()].sort((a, b) => b.rawScore - a.rawScore);
   const selected: Array<(typeof ranked)[number] & { profile: RecommendationProfile }> = [];
   const candidatePool = ranked.slice(0, Math.min(1200, ranked.length));
-  const requestedProfiles: RecommendationProfile[] = ["fuerte", "fuerte", "fuerte", "equilibrada", "exploratoria"];
+  const requestedProfiles: RecommendationProfile[] = options.profiles ?? ["fuerte", "fuerte", "fuerte", "equilibrada", "exploratoria"];
   while (selected.length < count) {
     const profile = requestedProfiles[selected.length] ?? "equilibrada";
     const next = candidatePool
@@ -521,6 +522,159 @@ export function buildRecommendedPlays(
     profile: candidate.profile,
     daySupportCount: 6 - candidate.exploratoryCount
   }));
+}
+
+function compactCoverageRange(values: number[], coverage = 0.8) {
+  const sorted = [...values].sort((a, b) => a - b);
+  if (!sorted.length) return { low: 1, high: 40 };
+  const size = Math.max(1, Math.ceil(sorted.length * coverage));
+  let low = sorted[0];
+  let high = sorted[size - 1];
+  for (let start = 1; start + size <= sorted.length; start += 1) {
+    if (sorted[start + size - 1] - sorted[start] < high - low) {
+      low = sorted[start];
+      high = sorted[start + size - 1];
+    }
+  }
+  return { low, high };
+}
+
+function portfolioPositionRanges(draws: DrawResult[]) {
+  return Array.from({ length: 6 }, (_, position) => compactCoverageRange(draws.map((draw) => draw.numbers[position])));
+}
+
+function p1p3NearbyCount(numbers: number[], draws: DrawResult[]) {
+  return draws.filter((draw) =>
+    Math.abs(draw.numbers[0] - numbers[0]) +
+    Math.abs(draw.numbers[1] - numbers[1]) +
+    Math.abs(draw.numbers[2] - numbers[2]) <= 6
+  ).length;
+}
+
+function positionalDelayAlert(numbers: number[], results: DrawResult[], targetDate: string) {
+  const cutoff = new Date(`${targetDate}T00:00:00Z`);
+  cutoff.setUTCMonth(cutoff.getUTCMonth() - 5);
+  const cutoffDate = cutoff.toISOString().slice(0, 10);
+  const alerts = numbers.flatMap((number, position) => {
+    const last = results.find((draw) => draw.numbers[position] === number);
+    return !last || last.date < cutoffDate
+      ? [`${String(number).padStart(2, "0")} en P${position + 1}: ${last?.date ?? "sin aparicion"}`]
+      : [];
+  });
+  return alerts.length ? alerts.join(" · ") : null;
+}
+
+function buildPlusOrder(draws: DrawResult[]) {
+  const counts = countNumbers(draws, (draw) => [draw.plus]);
+  const maxCount = Math.max(...counts, 1);
+  return Array.from({ length: 12 }, (_, index) => index + 1).sort((a, b) => {
+    const delayA = draws.findIndex((draw) => draw.plus === a);
+    const delayB = draws.findIndex((draw) => draw.plus === b);
+    const scoreA = counts[a] / maxCount + (delayA < 0 ? 1 : delayA / Math.max(draws.length, 1)) * 0.4;
+    const scoreB = counts[b] / maxCount + (delayB < 0 ? 1 : delayB / Math.max(draws.length, 1)) * 0.4;
+    return scoreB - scoreA || a - b;
+  });
+}
+
+export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: string): ThirtyPlayPortfolio {
+  const targetDay = getDrawDay(targetDate);
+  const prior = [...results]
+    .filter((draw) => draw.date < targetDate)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const sameDay = prior.filter((draw) => draw.day === targetDay);
+  const previousDraw = prior[0];
+  const previousSameDay = sameDay[0];
+  const historical = new Set(prior.map((draw) => combinationKey(draw.numbers)));
+  const profiles: RecommendationProfile[] = ["fuerte", "equilibrada", "exploratoria"];
+  const scopes: Array<{ scope: PortfolioScope; analysis: DrawResult[] }> = [
+    { scope: "mismo-dia", analysis: sameDay },
+    { scope: "historial-completo", analysis: prior }
+  ];
+  const groups = profiles.flatMap((profile) => scopes.map(({ scope, analysis }) => {
+    const forcedProfiles = Array.from({ length: 100 }, () => profile);
+    const ranges = portfolioPositionRanges(analysis);
+    const candidates = buildRecommendedPlays(analysis, "todos", 100, recommendationWeights, {
+      profiles: forcedProfiles,
+      seedSuffix: `${targetDate}-${profile}-${scope}-v1`,
+      iterations: 2400
+    }).map((play) => {
+      const previousDrawRepeats = previousDraw ? play.numbers.filter((number) => previousDraw.numbers.includes(number)).length : 0;
+      const previousSameDayRepeats = previousSameDay ? play.numbers.filter((number) => previousSameDay.numbers.includes(number)).length : 0;
+      const inRangeCount = play.numbers.filter((number, position) => number >= ranges[position].low && number <= ranges[position].high).length;
+      return {
+        ...play,
+        scope,
+        previousDrawRepeats,
+        previousSameDayRepeats,
+        inRangeCount,
+        p1p3Nearby: p1p3NearbyCount(play.numbers, analysis),
+        positionalDelayAlert: positionalDelayAlert(play.numbers, prior, targetDate)
+      };
+    }).filter((play) => !historical.has(combinationKey(play.numbers)) && play.p1p3Nearby >= 3 && !play.positionalDelayAlert)
+      .filter((play) => profile !== "fuerte" || (play.daySupportCount === 6 && play.previousDrawRepeats <= 2 && play.previousSameDayRepeats <= 1))
+      .filter((play) => profile !== "equilibrada" || play.daySupportCount >= 4)
+      .filter((play) => profile !== "exploratoria" || (play.daySupportCount >= 4 && play.daySupportCount <= 5));
+    return { profile, scope, candidates, selected: [] as typeof candidates };
+  }));
+
+  const numberExposure = Array(41).fill(0) as number[];
+  const positionExposure = Array.from({ length: 6 }, () => Array(41).fill(0) as number[]);
+  const selectedKeys = new Set<string>();
+
+  for (let round = 0; round < 5; round += 1) {
+    for (const group of groups) {
+      const eligible = group.candidates
+        .filter((candidate) => !selectedKeys.has(combinationKey(candidate.numbers)))
+        .filter((candidate) => candidate.numbers.every((number) => numberExposure[number] < 9))
+        .filter((candidate) => candidate.numbers.every((number, position) => positionExposure[position][number] < 6))
+        .filter((candidate) => groups.every((other) => other.selected.every((existing) =>
+          candidate.numbers.filter((number) => existing.numbers.includes(number)).length <= 4
+        )))
+        .map((candidate) => ({
+          candidate,
+          adjusted:
+            candidate.score +
+            Math.min(12, candidate.p1p3Nearby) * 0.12 +
+            candidate.inRangeCount * 0.35 -
+            candidate.numbers.reduce((sum, number) => sum + numberExposure[number] * 1.55, 0) -
+            candidate.numbers.reduce((sum, number, position) => sum + positionExposure[position][number] * 2.1, 0)
+        }))
+        .sort((a, b) => b.adjusted - a.adjusted || b.candidate.score - a.candidate.score);
+      const next = eligible[0]?.candidate;
+      if (!next) continue;
+      group.selected.push(next);
+      selectedKeys.add(combinationKey(next.numbers));
+      next.numbers.forEach((number, position) => {
+        numberExposure[number] += 1;
+        positionExposure[position][number] += 1;
+      });
+    }
+  }
+
+  const plusOrder = buildPlusOrder(prior);
+  const plays: PortfolioPlay[] = [];
+  for (const profile of profiles) {
+    const profileGroups = groups.filter((group) => group.profile === profile);
+    const profilePlays = profileGroups.flatMap((group) => group.selected);
+    profilePlays.forEach((play, index) => {
+      const scopeLabel = play.scope === "mismo-dia" ? `solo ${targetDay}` : "miercoles y sabados";
+      plays.push({
+        ...play,
+        id: index + 1,
+        plus: plusOrder[plays.length % plusOrder.length],
+        explanation: `${scopeLabel}; ${play.inRangeCount}/6 dentro de rango; ${play.p1p3Nearby} antecedentes P1-P3 cercanos; repite ${play.previousDrawRepeats} del sorteo anterior.`
+      });
+    });
+  }
+
+  return {
+    targetDate,
+    targetDay,
+    generatedAt: new Date().toISOString(),
+    plays,
+    exposure: Array.from({ length: 40 }, (_, index) => ({ number: index + 1, count: numberExposure[index + 1] }))
+      .sort((a, b) => b.count - a.count || a.number - b.number)
+  };
 }
 
 export function evaluateVirtualTicket(ticket: VirtualTicket, draw: DrawResult | undefined) {

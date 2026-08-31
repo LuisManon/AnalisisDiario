@@ -20,6 +20,26 @@ export type RecommendedPlay = Play & {
   daySupportCount: number;
 };
 
+export type PortfolioScope = "mismo-dia" | "historial-completo";
+
+export type PortfolioPlay = RecommendedPlay & {
+  scope: PortfolioScope;
+  previousDrawRepeats: number;
+  previousSameDayRepeats: number;
+  inRangeCount: number;
+  p1p3Nearby: number;
+  positionalDelayAlert: string | null;
+  explanation: string;
+};
+
+export type ThirtyPlayPortfolio = {
+  targetDate: string;
+  targetDay: DrawDay;
+  generatedAt: string;
+  plays: PortfolioPlay[];
+  exposure: Array<{ number: number; count: number }>;
+};
+
 export type DayFilter = DrawDay | "todos";
 
 export type SimulationResult = {
