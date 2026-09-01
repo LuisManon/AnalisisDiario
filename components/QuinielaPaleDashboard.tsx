@@ -5,6 +5,7 @@ import {
   buildQuinielaPairs,
   buildQuinielaStats,
   buildQuinielaSuggestions,
+  buildThirtyQuinielaSuggestions,
   formatQuinielaNumber,
   getNextQuinielaDate,
   getQuinielaTargetLabel
@@ -73,6 +74,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const filtered = useMemo(() => results.filter((draw) => (year === "todos" || draw.date.startsWith(year)) && (day === "todos" || weekday(draw.date) === Number(day))), [results, year, day]);
   const stats = useMemo(() => buildQuinielaStats(filtered), [filtered]);
   const suggestions = useMemo(() => analysisReady ? buildQuinielaSuggestions(results, targetDate, 5) : [], [analysisReady, results, targetDate]);
+  const thirtySuggestions = useMemo(() => analysisReady ? buildThirtyQuinielaSuggestions(results, targetDate) : [], [analysisReady, results, targetDate]);
   const pairs = useMemo(() => buildQuinielaPairs(filtered, 5), [filtered]);
   const latest = results[0];
   const ranges = useMemo(() => [0, 1, 2].map((position) => compactRange(filtered.map((draw) => draw.numbers[position]))), [filtered]);
@@ -181,6 +183,39 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
       <section className="topPositionsBoard quinielaTopBoard">
         <div className="quinielaPositionGrid">{stats.topByPosition.map((items, position) => <article className="quinielaPositionCard" key={position}><h3>{position + 1}{position === 0 ? "ra" : position === 1 ? "da" : "ra"} posicion</h3>{items.map((item, rank) => <div className="quinielaRank" key={item.number}><b>#{rank + 1}</b><QBall number={item.number} position={position} winner={latest?.numbers[position] === item.number} /><span>{item.count} salidas</span></div>)}</article>)}</div>
       </section>
+      </details>
+
+      <details className="topPositionsAccordion quinielaThirtyAccordion">
+        <summary>
+          <span>Generador de 30 Jugadas</span>
+          <small>Inclinado al {getQuinielaTargetLabel(targetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+        </summary>
+        <section className="quinielaThirtyBody">
+          <div className="quinielaThirtyColumns">
+            {([
+              ["fuerte", "Inclinación fuerte", "Mayor afinidad histórica con el día y la posición exacta."],
+              ["equilibrada", "Equilibradas", "Balance de frecuencia, retraso, posición y pares."],
+              ["exploratoria", "Exploratorias", "Menor afinidad reciente con respaldo histórico utilizable."]
+            ] as const).map(([profile, title, description]) => {
+              const plays = thirtySuggestions.filter((play) => play.profile === profile);
+              return (
+                <article className={`quinielaThirtyColumn ${profile}`} key={profile}>
+                  <header><div><h3>{title}</h3><p>{description}</p></div><strong>{plays.length}</strong></header>
+                  <div>
+                    {plays.map((play, index) => (
+                      <div className="quinielaThirtyPlay" key={play.id}>
+                        <b>#{index + 1}</b>
+                        <div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} />)}</div>
+                        <span>{play.score} pts</span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+          <p className="recommendationDisclaimer">Las posiciones P1, P2 y P3 deben conservarse en el orden mostrado. Análisis histórico; no garantiza resultados.</p>
+        </section>
       </details>
 
       <section className="twoColumn quinielaAnalysisGrid">

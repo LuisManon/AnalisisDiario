@@ -90,7 +90,12 @@ function seededRandom(text: string) {
   };
 }
 
-export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate: string, limit = 5): QuinielaSuggestion[] {
+export function buildQuinielaSuggestions(
+  results: QuinielaPaleDraw[],
+  targetDate: string,
+  limit = 5,
+  requestedProfiles: QuinielaProfile[] = ["fuerte", "fuerte", "fuerte", "equilibrada", "exploratoria"]
+): QuinielaSuggestion[] {
   if (!results.length) return [];
   const targetWeekday = new Date(`${targetDate}T00:00:00Z`).getUTCDay();
   const scoped = results.filter((draw) => new Date(`${draw.date}T00:00:00Z`).getUTCDay() === targetWeekday);
@@ -157,9 +162,8 @@ export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate
   }
 
   const ranked = candidates.sort((a, b) => b.raw - a.raw).slice(0, 800);
-  const profiles: QuinielaProfile[] = ["fuerte", "fuerte", "fuerte", "equilibrada", "exploratoria"];
   const selected: Array<(typeof ranked)[number] & { profile: QuinielaProfile }> = [];
-  for (const profile of profiles.slice(0, limit)) {
+  for (const profile of requestedProfiles.slice(0, limit)) {
     const candidate = ranked
       .filter((item) => !selected.some((play) => play.numbers.join("-") === item.numbers.join("-")))
       .filter((item) => profile !== "fuerte" || item.lowAffinity === 0)
@@ -172,6 +176,15 @@ export function buildQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate
   selected.sort((a, b) => profileOrder[a.profile] - profileOrder[b.profile] || b.raw - a.raw);
   const best = Math.max(...selected.map((item) => item.raw), 1);
   return selected.map((item, index) => ({ id: index + 1, numbers: item.numbers, profile: item.profile, score: Math.round(item.raw / best * 100) }));
+}
+
+export function buildThirtyQuinielaSuggestions(results: QuinielaPaleDraw[], targetDate: string) {
+  const profiles: QuinielaProfile[] = [
+    ...Array.from({ length: 10 }, () => "fuerte" as const),
+    ...Array.from({ length: 10 }, () => "equilibrada" as const),
+    ...Array.from({ length: 10 }, () => "exploratoria" as const)
+  ];
+  return buildQuinielaSuggestions(results, targetDate, 30, profiles);
 }
 
 export function buildQuinielaPairs(results: QuinielaPaleDraw[], limit = 5) {
