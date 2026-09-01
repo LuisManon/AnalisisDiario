@@ -460,6 +460,41 @@ main {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.quinielaRecommendationContext {
+  background: #ffffff;
+  border: 1px solid rgba(33, 73, 154, 0.2);
+  border-left: 5px solid var(--blue);
+  border-radius: 9px;
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 12px;
+  padding: 11px 13px;
+}
+
+.quinielaRecommendationContext.evaluation { border-left-color: #d79b25; }
+.quinielaRecommendationContext strong { color: var(--blue); grid-column: 1 / -1; }
+.quinielaRecommendationContext span { color: var(--muted); font-size: 0.7rem; font-weight: 700; }
+.quinielaRecommendationContext span:last-child { grid-column: 1 / -1; }
+
+.quinielaPreviousPortfolio {
+  border-top: 1px solid var(--line);
+  margin: 16px -14px -14px;
+}
+
+.quinielaPreviousPortfolio > summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 14px;
+}
+
+.quinielaPreviousPortfolio > summary span { color: var(--blue); font-weight: 900; }
+.quinielaPreviousPortfolio > summary small { color: var(--muted); font-weight: 700; }
+.quinielaPreviousPortfolio .quinielaPortfolioSnapshot { padding: 0 14px 14px; }
+
 .quinielaThirtyColumn {
   background: #ffffff;
   border: 1px solid var(--line);
@@ -512,6 +547,7 @@ main {
 
 @media (max-width: 980px) {
   .quinielaThirtyColumns { grid-template-columns: 1fr; }
+  .quinielaRecommendationContext { grid-template-columns: 1fr; }
 }
 
 .quinielaAnalysisLoading {

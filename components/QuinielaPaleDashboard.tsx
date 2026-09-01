@@ -5,14 +5,16 @@ import {
   buildQuinielaPairs,
   buildQuinielaStats,
   buildQuinielaSuggestions,
-  buildThirtyQuinielaSuggestions,
   formatQuinielaNumber,
   getNextQuinielaDate,
   getQuinielaTargetLabel
 } from "../lib/quiniela-pale";
+import type { QuinielaSuggestion } from "../lib/quiniela-pale";
 import type { QuinielaPaleDraw } from "../lib/types";
 
 type Props = { initialData: { results: QuinielaPaleDraw[] } };
+type QuinielaPortfolioSnapshot = { targetDate: string; generatedAt: string; plays: QuinielaSuggestion[] };
+type PreviousQuinielaPortfolio = QuinielaPortfolioSnapshot & { draw: QuinielaPaleDraw };
 
 const positionColors = ["#d71920", "#21499a", "#d9a309"];
 
@@ -51,6 +53,39 @@ function compactRange(values: number[]) {
   return { low, high };
 }
 
+function QuinielaPortfolioView({ portfolio, winningDraw, historicalThrough }: { portfolio: QuinielaPortfolioSnapshot; winningDraw?: QuinielaPaleDraw; historicalThrough: string | null }) {
+  return (
+    <div className="quinielaPortfolioSnapshot">
+      <div className={`quinielaRecommendationContext ${winningDraw ? "evaluation" : "next"}`}>
+        <strong>{winningDraw ? "Sorteo anterior evaluado" : "Próximo sorteo"}</strong>
+        <span>Objetivo: {getQuinielaTargetLabel(portfolio.targetDate)}</span>
+        <span>Histórico utilizado hasta: {historicalThrough ? shortDate(historicalThrough) : "sin datos"}</span>
+        <span>{winningDraw ? "La corona indica coincidencia exacta de número y posición. Esta fotografía no se recalcula." : "El último resultado disponible ya está incluido y estas jugadas quedaron congeladas para esta fecha."}</span>
+      </div>
+      <div className="quinielaThirtyColumns">
+        {([[
+          "fuerte", "Inclinación fuerte", "Mayor afinidad histórica con el día y la posición exacta."
+        ], [
+          "equilibrada", "Equilibradas", "Balance de frecuencia, retraso, posición y pares."
+        ], [
+          "exploratoria", "Exploratorias", "Menor afinidad reciente con respaldo histórico utilizable."
+        ]] as const).map(([profile, title, description]) => {
+          const plays = portfolio.plays.filter((play) => play.profile === profile);
+          return <article className={`quinielaThirtyColumn ${profile}`} key={profile}>
+            <header><div><h3>{title}</h3><p>{description}</p></div><strong>{plays.length}</strong></header>
+            <div>{plays.map((play, index) => <div className="quinielaThirtyPlay" key={play.id}>
+              <b>#{index + 1}</b>
+              <div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} winner={winningDraw?.numbers[position] === number} />)}</div>
+              <span>{play.score} pts</span>
+            </div>)}</div>
+          </article>;
+        })}
+      </div>
+      <p className="recommendationDisclaimer">Las posiciones P1, P2 y P3 deben conservarse en el orden mostrado. Análisis histórico; no garantiza resultados.</p>
+    </div>
+  );
+}
+
 export function QuinielaPaleDashboard({ initialData }: Props) {
   const [results, setResults] = useState(initialData.results);
   const [status, setStatus] = useState(`Datos listos: ${initialData.results.length} sorteos cargados.`);
@@ -61,6 +96,10 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const [activeSearch, setActiveSearch] = useState<number | null>(null);
   const [historyPage, setHistoryPage] = useState(1);
   const [analysisReady, setAnalysisReady] = useState(false);
+  const [portfolioRequested, setPortfolioRequested] = useState(false);
+  const [currentPortfolio, setCurrentPortfolio] = useState<QuinielaPortfolioSnapshot | null>(null);
+  const [previousPortfolio, setPreviousPortfolio] = useState<PreviousQuinielaPortfolio | null>(null);
+  const [portfolioMessage, setPortfolioMessage] = useState("Abre la sección para cargar las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
   const targetDate = useMemo(() => {
     const scheduled = getNextQuinielaDate();
@@ -73,8 +112,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const years = useMemo(() => [...new Set(results.map((draw) => draw.date.slice(0, 4)))].sort((a, b) => b.localeCompare(a)), [results]);
   const filtered = useMemo(() => results.filter((draw) => (year === "todos" || draw.date.startsWith(year)) && (day === "todos" || weekday(draw.date) === Number(day))), [results, year, day]);
   const stats = useMemo(() => buildQuinielaStats(filtered), [filtered]);
-  const suggestions = useMemo(() => analysisReady ? buildQuinielaSuggestions(results, targetDate, 5) : [], [analysisReady, results, targetDate]);
-  const thirtySuggestions = useMemo(() => analysisReady ? buildThirtyQuinielaSuggestions(results, targetDate) : [], [analysisReady, results, targetDate]);
+  const suggestions = useMemo(() => analysisReady ? buildQuinielaSuggestions(results.filter((draw) => draw.date < targetDate), targetDate, 5) : [], [analysisReady, results, targetDate]);
   const pairs = useMemo(() => buildQuinielaPairs(filtered, 5), [filtered]);
   const latest = results[0];
   const ranges = useMemo(() => [0, 1, 2].map((position) => compactRange(filtered.map((draw) => draw.numbers[position]))), [filtered]);
@@ -86,6 +124,19 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
     const timeout = window.setTimeout(() => setAnalysisReady(true), 50);
     return () => window.clearTimeout(timeout);
   }, []);
+
+  useEffect(() => {
+    if (!portfolioRequested) return;
+    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
+    fetch(`/api/quiniela-pale/portfolio?drawDate=${targetDate}`)
+      .then((response) => { if (!response.ok) throw new Error(); return response.json(); })
+      .then((payload) => {
+        setCurrentPortfolio(payload.current ?? null);
+        setPreviousPortfolio(payload.previous ?? null);
+        setPortfolioMessage("");
+      })
+      .catch(() => setPortfolioMessage("No se pudieron cargar las 30 jugadas guardadas."));
+  }, [portfolioRequested, targetDate]);
 
   useEffect(() => {
     if (automaticUpdateStarted.current) return;
@@ -185,37 +236,15 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
       </section>
       </details>
 
-      <details className="topPositionsAccordion quinielaThirtyAccordion">
+      <details className="topPositionsAccordion quinielaThirtyAccordion" onToggle={(event) => { if (event.currentTarget.open) setPortfolioRequested(true); }}>
         <summary>
           <span>Generador de 30 Jugadas</span>
           <small>Inclinado al {getQuinielaTargetLabel(targetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
         </summary>
-        <section className="quinielaThirtyBody">
-          <div className="quinielaThirtyColumns">
-            {([
-              ["fuerte", "Inclinación fuerte", "Mayor afinidad histórica con el día y la posición exacta."],
-              ["equilibrada", "Equilibradas", "Balance de frecuencia, retraso, posición y pares."],
-              ["exploratoria", "Exploratorias", "Menor afinidad reciente con respaldo histórico utilizable."]
-            ] as const).map(([profile, title, description]) => {
-              const plays = thirtySuggestions.filter((play) => play.profile === profile);
-              return (
-                <article className={`quinielaThirtyColumn ${profile}`} key={profile}>
-                  <header><div><h3>{title}</h3><p>{description}</p></div><strong>{plays.length}</strong></header>
-                  <div>
-                    {plays.map((play, index) => (
-                      <div className="quinielaThirtyPlay" key={play.id}>
-                        <b>#{index + 1}</b>
-                        <div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} />)}</div>
-                        <span>{play.score} pts</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <p className="recommendationDisclaimer">Las posiciones P1, P2 y P3 deben conservarse en el orden mostrado. Análisis histórico; no garantiza resultados.</p>
-        </section>
+        {currentPortfolio ? <section className="quinielaThirtyBody">
+          <QuinielaPortfolioView portfolio={currentPortfolio} historicalThrough={results.find((draw) => draw.date < currentPortfolio.targetDate)?.date ?? null} />
+          {previousPortfolio ? <details className="quinielaPreviousPortfolio"><summary><span>Comparar con el sorteo anterior</span><small>{getQuinielaTargetLabel(previousPortfolio.targetDate)}</small></summary><QuinielaPortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} historicalThrough={results.find((draw) => draw.date < previousPortfolio.targetDate)?.date ?? null} /></details> : null}
+        </section> : <div className="thirtyPortfolioLoading">{portfolioMessage}</div>}
       </details>
 
       <section className="twoColumn quinielaAnalysisGrid">
@@ -223,7 +252,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
           <div className="recommendationTitleRow"><h2>Jugadas recomendadas</h2><span className="quinielaInfo" title="Puntajes relativos basados en frecuencia, posicion, retraso, pares y afinidad del dia.">i</span></div>
           <p className="muted">Analisis inclinado al proximo sorteo del {getQuinielaTargetLabel(targetDate)}.</p>
           {analysisReady ? (
-            <div className="recommendationList">{suggestions.map((play) => <div className="quinielaRecommendation" key={play.id}><span>#{play.id}</span><div><span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span><div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} winner={latest?.numbers.includes(number)} />)}</div></div><b className="scoreBadge">{play.score} pts</b></div>)}</div>
+            <div className="recommendationList">{suggestions.map((play) => <div className="quinielaRecommendation" key={play.id}><span>#{play.id}</span><div><span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}</span><div className="quinielaBalls">{play.numbers.map((number, position) => <QBall key={position} number={number} position={position} />)}</div></div><b className="scoreBadge">{play.score} pts</b></div>)}</div>
           ) : (
             <div className="quinielaAnalysisLoading" role="status" aria-live="polite">
               <span className="quinielaLoadingSpinner" />
