@@ -18,6 +18,15 @@ type PreviousQuinielaPortfolio = QuinielaPortfolioSnapshot & { draw: QuinielaPal
 
 const positionColors = ["#d71920", "#21499a", "#d9a309"];
 
+const quinielaPrizeTable = [
+  { play: "Quiniela", result: "Número en 1ra posición", prize: "RD$60" },
+  { play: "Quiniela", result: "Número en 2da posición", prize: "RD$8" },
+  { play: "Quiniela", result: "Número en 3ra posición", prize: "RD$4" },
+  { play: "Super Palé", result: "Combinación ganadora", prize: "RD$3,000" },
+  { play: "Tripleta", result: "3 números", prize: "RD$30,000" },
+  { play: "Tripleta", result: "2 números", prize: "RD$150" }
+];
+
 function QBall({ number, winner = false, position = 0 }: { number: number; winner?: boolean; position?: number }) {
   return (
     <span className={`quinielaBall p${position + 1} ${winner ? "quinielaBallWinner" : ""}`}>
@@ -200,7 +209,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
           <h1>Analisis por posicion, combinaciones y jugadas</h1>
           <p className="subcopy">Resultados de LEIDSA del 00 al 99. Analiza cada posicion, pares y afinidad por dia sin asumir numeros ganadores.</p>
         </div>
-        <div className="heroPanel">
+        <div className="heroPanel latestDrawPanel">
           <span className="panelLabel">Ultimo sorteo</span>
           <strong>{latest ? `${shortDate(latest.date)} · ${fullDate(latest.date).split(",")[0]}` : "Sin datos"}</strong>
           <div className="quinielaBalls">{latest?.numbers.map((number, position) => <QBall key={position} number={number} position={position} />)}</div>
@@ -227,6 +236,21 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
         <div className="metric"><span>Mas frecuente</span><strong>{stats.topHot[0] ? formatQuinielaNumber(stats.topHot[0].number) : "N/D"}</strong></div>
         <div className="metric"><span>Par mas repetido</span><strong>{pairs[0] ? pairs[0].numbers.map(formatQuinielaNumber).join("-") : "N/D"}</strong></div>
         <div className="metric"><span>Proximo sorteo</span><strong className="quinielaMetricDate">{getQuinielaTargetLabel(targetDate)}</strong></div>
+      </section>
+
+      <section className="card quinielaPrizeCard">
+        <div>
+          <p className="eyebrow">Pagos por cada RD$1 apostado</p>
+          <h2>Tabla de premios</h2>
+          <p className="muted">Referencia para Quiniela, Super Palé y Tripleta de LEIDSA.</p>
+        </div>
+        <div className="quinielaPrizeTableWrap">
+          <table>
+            <thead><tr><th>Jugada</th><th>Acierto</th><th>Premio</th></tr></thead>
+            <tbody>{quinielaPrizeTable.map((item) => <tr key={`${item.play}-${item.result}`}><td>{item.play}</td><td>{item.result}</td><td>{item.prize}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <small>Montos de referencia por peso apostado. Confirma siempre las condiciones vigentes en tu ticket o punto de venta.</small>
       </section>
 
       <details className="topPositionsAccordion" open>

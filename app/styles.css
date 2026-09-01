@@ -388,6 +388,57 @@ main {
   top: -8px;
 }
 
+.quinielaPrizeCard {
+  align-items: center;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(190px, 0.7fr) minmax(420px, 1.3fr);
+  margin-bottom: 22px;
+  padding: 18px 20px;
+}
+
+.quinielaPrizeCard h2,
+.quinielaPrizeCard p {
+  margin-bottom: 5px;
+}
+
+.quinielaPrizeCard > small {
+  color: var(--muted);
+  font-size: 0.68rem;
+  grid-column: 1 / -1;
+}
+
+.quinielaPrizeTableWrap {
+  overflow-x: auto;
+}
+
+.quinielaPrizeTableWrap table {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  width: 100%;
+}
+
+.quinielaPrizeTableWrap th,
+.quinielaPrizeTableWrap td {
+  border-bottom: 1px solid rgba(33, 73, 154, 0.14);
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.quinielaPrizeTableWrap th {
+  color: var(--muted);
+  font-size: 0.67rem;
+  text-transform: uppercase;
+}
+
+.quinielaPrizeTableWrap td:last-child,
+.quinielaPrizeTableWrap th:last-child {
+  color: var(--blue);
+  font-weight: 900;
+  text-align: right;
+  white-space: nowrap;
+}
+
 .quinielaFilters,
 .toolbarActions,
 .quinielaSearchBar {
@@ -811,6 +862,17 @@ h3 {
   justify-content: center;
   gap: 16px;
   min-height: 190px;
+}
+
+.latestDrawPanel {
+  align-self: center;
+  gap: 9px;
+  min-height: 0;
+  padding: 15px 18px;
+}
+
+.latestDrawPanel .panelLabel {
+  margin-bottom: 0;
 }
 
 .lotoTheme .heroPanel {
@@ -3478,6 +3540,14 @@ h3 {
   .gameGrid,
   .recommendationComparison {
     grid-template-columns: 1fr;
+  }
+
+  .quinielaPrizeCard {
+    grid-template-columns: 1fr;
+  }
+
+  .quinielaPrizeCard > small {
+    grid-column: 1;
   }
 
   .primeraQuinielaTopGrid,

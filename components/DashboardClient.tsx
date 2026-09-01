@@ -269,7 +269,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
             Dashboard privado para revisar resultados, comparar miercoles contra sabado y probar 5 jugadas contra el ultimo sorteo cargado.
           </p>
         </div>
-        <div className="heroPanel">
+        <div className="heroPanel latestDrawPanel">
           <span className="panelLabel">Ultimo sorteo</span>
           {latest ? (
             <>
