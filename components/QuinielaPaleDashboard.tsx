@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildQuinielaPairs,
   buildQuinielaStats,
@@ -60,6 +60,7 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   const [activeSearch, setActiveSearch] = useState<number | null>(null);
   const [historyPage, setHistoryPage] = useState(1);
   const [analysisReady, setAnalysisReady] = useState(false);
+  const automaticUpdateStarted = useRef(false);
   const targetDate = useMemo(() => {
     const scheduled = getNextQuinielaDate();
     const latestDate = results[0]?.date;
@@ -82,6 +83,12 @@ export function QuinielaPaleDashboard({ initialData }: Props) {
   useEffect(() => {
     const timeout = window.setTimeout(() => setAnalysisReady(true), 50);
     return () => window.clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    if (automaticUpdateStarted.current) return;
+    automaticUpdateStarted.current = true;
+    void updateResults();
   }, []);
 
   async function updateResults() {

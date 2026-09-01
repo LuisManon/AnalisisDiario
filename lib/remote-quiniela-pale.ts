@@ -9,14 +9,14 @@ function toIsoDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-function latestAvailableDate() {
+export function getLatestExpectedQuinielaPaleDate() {
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }));
   const drawMinutes = now.getDay() === 0 ? 15 * 60 + 55 : 20 * 60 + 55;
   if (now.getHours() * 60 + now.getMinutes() < drawMinutes) now.setDate(now.getDate() - 1);
   return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
 }
 
-export function getQuinielaDateRange(startDate: string, endDate = latestAvailableDate()) {
+export function getQuinielaDateRange(startDate: string, endDate = getLatestExpectedQuinielaPaleDate()) {
   const dates: string[] = [];
   const start = new Date(`${startDate}T00:00:00Z`);
   const end = new Date(`${endDate}T00:00:00Z`);

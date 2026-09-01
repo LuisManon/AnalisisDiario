@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { readQuinielaPaleResults, writeQuinielaPaleResults } from "../../../../lib/data";
-import { fetchQuinielaPaleResultsSince } from "../../../../lib/remote-quiniela-pale";
+import { fetchQuinielaPaleResultsSince, getLatestExpectedQuinielaPaleDate } from "../../../../lib/remote-quiniela-pale";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +15,24 @@ export async function GET(request: Request) {
     const existing = await readQuinielaPaleResults();
     const rebuild = new URL(request.url).searchParams.get("rebuild") === "1";
     const latestDate = existing[0]?.date ?? new Date().toISOString().slice(0, 10);
-    const startDate = rebuild || existing.length < 60 ? subtractDays(latestDate, 364) : subtractDays(latestDate, 2);
+    const expectedDate = getLatestExpectedQuinielaPaleDate();
+    if (!rebuild && latestDate >= expectedDate) {
+      return NextResponse.json({
+        ok: true,
+        added: 0,
+        total: existing.length,
+        results: existing,
+        latest: existing[0] ?? null,
+        expectedDate,
+        checked: false,
+        message: `El último sorteo esperado (${expectedDate}) ya está cargado; no fue necesario consultar la fuente.`
+      });
+    }
+    const startDate = rebuild ? "2025-08-01" : subtractDays(latestDate, 1);
     const before = new Set(existing.map((result) => result.date));
     const remote = await fetchQuinielaPaleResultsSince(startDate);
     const added = remote.results.filter((result) => !before.has(result.date)).length;
-    const results = await writeQuinielaPaleResults(rebuild ? remote.results : [...existing, ...remote.results]);
+    const results = await writeQuinielaPaleResults([...existing, ...remote.results]);
     return NextResponse.json({
       ok: true,
       added,
@@ -27,6 +40,8 @@ export async function GET(request: Request) {
       results,
       latest: results[0] ?? null,
       source: remote.sourceUrl,
+      expectedDate,
+      checked: true,
       message: added ? `Se agregaron ${added} resultados de Quiniela Pale.` : "La data ya esta actualizada."
     });
   } catch (error) {
