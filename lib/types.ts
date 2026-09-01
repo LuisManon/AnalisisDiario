@@ -61,6 +61,14 @@ export type LaPrimeraDraw = {
   source?: string;
 };
 
+export type LaPrimeraQuinielaDraw = {
+  date: string;
+  session: LaPrimeraSession;
+  numbers: [number, number, number];
+  drawId?: number;
+  source?: string;
+};
+
 export type LotekaRepartideraDraw = {
   date: string;
   number: number;

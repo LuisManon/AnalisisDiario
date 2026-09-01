@@ -47,8 +47,8 @@ function averageGap(results: LaPrimeraDraw[], number: number) {
 export function buildLaPrimeraStats(results: LaPrimeraDraw[], session: LaPrimeraFilter) {
   const filtered = filterLaPrimeraResults(results, session);
   const frequency = getFrequency(filtered);
-  const topHot = [...frequency].sort((a, b) => b.count - a.count || a.number - b.number).slice(0, 10);
-  const topCold = [...frequency].sort((a, b) => a.count - b.count || b.number - a.number).slice(0, 10);
+  const topHot = [...frequency].sort((a, b) => b.count - a.count || a.number - b.number).slice(0, 20);
+  const topCold = [...frequency].sort((a, b) => a.count - b.count || b.number - a.number).slice(0, 20);
   const latestBySession = {
     dia: results.find((result) => result.session === "dia") ?? null,
     noche: results.find((result) => result.session === "noche") ?? null

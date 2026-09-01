@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { readLaPrimeraResults, writeLaPrimeraResults } from "../../../../lib/data";
-import { fetchLaPrimeraResultsSince } from "../../../../lib/remote-la-primera";
+import { readLaPrimeraQuinielaResults, readLaPrimeraResults, writeLaPrimeraQuinielaResults, writeLaPrimeraResults } from "../../../../lib/data";
+import { fetchLaPrimeraQuinielaResultsSince, fetchLaPrimeraResultsSince } from "../../../../lib/remote-la-primera";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +17,12 @@ export async function GET() {
     const startDate = subtractDays(latestDate, 1);
     const beforeKeys = new Set(existing.map((result) => `${result.date}-${result.session}`));
     const remote = await fetchLaPrimeraResultsSince(startDate);
+    const existingQuiniela = await readLaPrimeraQuinielaResults();
+    const latestQuinielaDate = existingQuiniela[0]?.date ?? "2025-09-01";
+    const remoteQuiniela = await fetchLaPrimeraQuinielaResultsSince(subtractDays(latestQuinielaDate, 1));
     const added = remote.results.filter((result) => !beforeKeys.has(`${result.date}-${result.session}`)).length;
     const results = await writeLaPrimeraResults([...existing, ...remote.results]);
+    const quinielaResults = await writeLaPrimeraQuinielaResults([...existingQuiniela, ...remoteQuiniela.results]);
 
     return NextResponse.json({
       ok: true,
@@ -26,6 +30,7 @@ export async function GET() {
       total: results.length,
       latest: results[0] ?? null,
       results,
+      quinielaResults,
       source: remote.sourceUrl,
       checkedDates: remote.checkedDates,
       message: added
@@ -34,6 +39,7 @@ export async function GET() {
     });
   } catch (error) {
     const results = await readLaPrimeraResults();
+    const quinielaResults = await readLaPrimeraQuinielaResults();
     return NextResponse.json(
       {
         ok: false,
@@ -41,6 +47,7 @@ export async function GET() {
         total: results.length,
         latest: results[0] ?? null,
         results,
+        quinielaResults,
         message: error instanceof Error ? error.message : "No se pudo consultar La Primera."
       },
       { status: 502 }

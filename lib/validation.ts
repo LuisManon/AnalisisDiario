@@ -28,6 +28,18 @@ export const laPrimeraDrawSchema = z.object({
   source: z.string().optional()
 });
 
+export const laPrimeraQuinielaDrawSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  session: z.enum(["dia", "noche"]),
+  numbers: z.tuple([
+    z.number().int().min(0).max(99),
+    z.number().int().min(0).max(99),
+    z.number().int().min(0).max(99)
+  ]),
+  drawId: z.number().int().positive().optional(),
+  source: z.string().optional()
+});
+
 export const lotekaRepartideraDrawSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   number: z.number().int().min(0).max(99),

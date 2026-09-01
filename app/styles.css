@@ -2748,6 +2748,118 @@ h3 {
   color: var(--primera-dark);
 }
 
+.primeraProductSwitch {
+  background: #333333;
+  display: flex;
+  gap: 6px;
+  padding: 10px 32px;
+}
+
+.primeraProductSwitch button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 8px 15px;
+}
+
+.primeraProductSwitch button.active {
+  background: var(--primera-red);
+  border-color: var(--primera-red);
+}
+
+.primeraQuinielaBalls {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.primeraQuinielaBall {
+  align-items: center;
+  background: #ffffff;
+  border: 3px solid #fd0100;
+  border-radius: 50%;
+  color: #333333;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.76rem;
+  font-weight: 900;
+  height: 37px;
+  justify-content: center;
+  position: relative;
+  width: 37px;
+}
+
+.primeraQuinielaBall.p2 { border-color: #333333; }
+.primeraQuinielaBall.p3 { border-color: #d79b25; }
+
+.primeraQuinielaBall.winner::after {
+  color: #d79b25;
+  content: "♛";
+  font-size: 0.8rem;
+  left: 50%;
+  position: absolute;
+  top: -12px;
+  transform: translateX(-50%);
+}
+
+.primeraQuinielaTopGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 14px 0;
+}
+
+.primeraQuinielaRankList {
+  display: grid;
+  gap: 7px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.primeraQuinielaRank {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  font-size: 0.72rem;
+  gap: 7px;
+  grid-template-columns: 24px 39px minmax(0, 1fr);
+  padding: 5px 0 8px;
+}
+
+.primeraQuinielaRank > b,
+.primeraQuinielaRank > span {
+  color: var(--muted);
+}
+
+.primeraQuinielaRecommendations {
+  margin-bottom: 18px;
+}
+
+.primeraQuinielaSuggestionGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.primeraQuinielaSuggestionGrid article {
+  background: var(--primera-soft);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 12px;
+}
+
+.primeraQuinielaSuggestionGrid article > strong {
+  color: var(--primera-dark);
+  font-size: 0.72rem;
+}
+
 .primeraTheme .subcopy,
 .primeraTheme .status,
 .primeraTheme .chartLegend,
@@ -3263,6 +3375,11 @@ h3 {
   .twoColumn,
   .gameGrid,
   .recommendationComparison {
+    grid-template-columns: 1fr;
+  }
+
+  .primeraQuinielaTopGrid,
+  .primeraQuinielaSuggestionGrid {
     grid-template-columns: 1fr;
   }
 

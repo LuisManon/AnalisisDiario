@@ -1,5 +1,5 @@
-import { laPrimeraDrawSchema } from "./validation";
-import type { LaPrimeraDraw } from "./types";
+import { laPrimeraDrawSchema, laPrimeraQuinielaDrawSchema } from "./validation";
+import type { LaPrimeraDraw, LaPrimeraQuinielaDraw } from "./types";
 
 const resultsUrl = "https://laprimera.do/resultados/";
 const ajaxUrl = "https://laprimera.do/wp-admin/admin-ajax.php";
@@ -44,6 +44,15 @@ function parseOfficialDraw(date: string, item: OfficialLottery): LaPrimeraDraw |
     source: resultsUrl
   });
 
+  return parsed.success ? parsed.data : null;
+}
+
+function parseOfficialQuinielaDraw(date: string, item: OfficialLottery): LaPrimeraQuinielaDraw | null {
+  if (item.juego_id !== 5 || item.resultado?.length !== 3) return null;
+  const session = item.hora_sorteo === "07:00pm" ? "noche" : item.hora_sorteo === "12:00pm" ? "dia" : null;
+  if (!session) return null;
+  const numbers = item.resultado.map(Number);
+  const parsed = laPrimeraQuinielaDrawSchema.safeParse({ date, session, numbers, drawId: item.sorteo_numero, source: resultsUrl });
   return parsed.success ? parsed.data : null;
 }
 
@@ -100,6 +109,28 @@ export async function fetchLaPrimeraResultsForDate(date: string, nonce: string) 
     const parsed = parseOfficialDraw(date, item);
     return parsed ? [parsed] : [];
   });
+}
+
+export async function fetchLaPrimeraQuinielaResultsForDate(date: string, nonce: string) {
+  const body = new FormData();
+  body.append("action", "get_lotteries_results");
+  body.append("nonce", nonce);
+  body.append("date", date);
+  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(20_000) });
+  if (!response.ok) throw new Error(`La Primera AJAX respondio HTTP ${response.status}.`);
+  const payload = (await response.json()) as OfficialResponse;
+  return (payload.data?.lotteries?.la_primera ?? []).flatMap((item) => {
+    const parsed = parseOfficialQuinielaDraw(date, item);
+    return parsed ? [parsed] : [];
+  });
+}
+
+export async function fetchLaPrimeraQuinielaResultsSince(startDate: string, endDate?: string) {
+  const nonce = await fetchNonce();
+  const dates = getDateRange(startDate, endDate);
+  const results: LaPrimeraQuinielaDraw[] = [];
+  for (const date of dates) results.push(...await fetchLaPrimeraQuinielaResultsForDate(date, nonce));
+  return { results, sourceUrl: resultsUrl, checkedDates: dates };
 }
 
 export async function fetchLaPrimeraResultsSince(startDate: string, endDate?: string) {

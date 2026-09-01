@@ -5,18 +5,19 @@ import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
 import { LotekaRepartideraDashboard } from "./LotekaRepartideraDashboard";
 import { QuinielaPaleDashboard } from "./QuinielaPaleDashboard";
-import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "../lib/types";
+import type { DrawResult, LaPrimeraDraw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "../lib/types";
 
 type AppShellProps = {
   lotoResults: DrawResult[];
   laPrimeraResults: LaPrimeraDraw[];
+  laPrimeraQuinielaResults: LaPrimeraQuinielaDraw[];
   lotekaRepartideraResults: LotekaRepartideraDraw[];
   quinielaPaleResults: QuinielaPaleDraw[];
 };
 
 type ActiveTab = "loto" | "quiniela" | "primera" | "loteka";
 
-export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
+export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResults, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("loto");
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export function AppShell({ lotoResults, laPrimeraResults, lotekaRepartideraResul
       ) : activeTab === "quiniela" ? (
         <QuinielaPaleDashboard initialData={{ results: quinielaPaleResults }} />
       ) : activeTab === "primera" ? (
-        <LaPrimeraDashboard initialData={{ results: laPrimeraResults }} />
+        <LaPrimeraDashboard initialData={{ results: laPrimeraResults, quinielaResults: laPrimeraQuinielaResults }} />
       ) : (
         <LotekaRepartideraDashboard initialData={{ results: lotekaRepartideraResults }} />
       )}

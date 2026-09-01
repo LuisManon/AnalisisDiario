@@ -9,11 +9,13 @@ import {
   formatSession,
   laPrimeraSchedules
 } from "../lib/la-primera";
-import type { LaPrimeraDraw, LaPrimeraFilter } from "../lib/types";
+import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-pale";
+import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraQuinielaDraw, LaPrimeraSession, QuinielaPaleDraw } from "../lib/types";
 
 type Props = {
   initialData: {
     results: LaPrimeraDraw[];
+    quinielaResults: LaPrimeraQuinielaDraw[];
   };
 };
 
@@ -108,6 +110,7 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 
 export function LaPrimeraDashboard({ initialData }: Props) {
   const [data, setData] = useState(initialData);
+  const [product, setProduct] = useState<"quinielon" | "quiniela">("quinielon");
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [status, setStatus] = useState(`Data local: ${initialData.results.length} sorteos cargados.`);
   const [session, setSession] = useState<LaPrimeraFilter>("todos");
@@ -137,7 +140,10 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         await minimumLoading;
         if (!isMounted) return;
         if (!response.ok) throw new Error(payload.message);
-        if (Array.isArray(payload.results)) setData({ results: payload.results });
+        if (Array.isArray(payload.results)) setData({
+          results: payload.results,
+          quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : initialData.quinielaResults
+        });
         setStatus(`${payload.message} Total: ${payload.total}. Ultimo: ${payload.latest?.date ?? "N/D"}.`);
       } catch {
         await minimumLoading;
@@ -183,8 +189,13 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     return <LaPrimeraSkeleton message="Actualizando La Primera..." />;
   }
 
+  if (product === "quiniela") {
+    return <LaPrimeraQuinielaView results={data.quinielaResults} onProductChange={setProduct} status={status} />;
+  }
+
   return (
     <main className="primeraTheme">
+      <ProductSwitch product={product} onChange={setProduct} />
       <section className="hero primeraHero">
         <div>
           <p className="eyebrow primeraEyebrow">La Primera Lab local</p>
@@ -264,8 +275,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       </section>
 
       <section className="twoColumn">
-        <FrequencyCard title="Top 10 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
-        <FrequencyCard title="Top 10 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
+        <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
+        <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
       </section>
 
       <section className="twoColumn">
@@ -374,6 +385,113 @@ export function LaPrimeraDashboard({ initialData }: Props) {
             </article>
           ))}
         </div>
+      </section>
+    </main>
+  );
+}
+
+function ProductSwitch({ product, onChange }: { product: "quinielon" | "quiniela"; onChange: (product: "quinielon" | "quiniela") => void }) {
+  return (
+    <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
+      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
+      <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
+    </nav>
+  );
+}
+
+function quinielaTopByPosition(results: LaPrimeraQuinielaDraw[]) {
+  return Array.from({ length: 3 }, (_, position) => {
+    const counts = Array(100).fill(0) as number[];
+    for (const draw of results) counts[draw.numbers[position]] += 1;
+    return counts.map((count, number) => ({ number, count }))
+      .sort((a, b) => b.count - a.count || a.number - b.number)
+      .slice(0, 20);
+  });
+}
+
+function nextDateAfter(date: string) {
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  return next.toISOString().slice(0, 10);
+}
+
+function PrimeraQuinielaBall({ number, position, winner = false }: { number: number; position: number; winner?: boolean }) {
+  return <span className={`primeraQuinielaBall p${position + 1} ${winner ? "winner" : ""}`}>{formatQuinielaNumber(number)}</span>;
+}
+
+function LaPrimeraQuinielaView({
+  results,
+  onProductChange,
+  status
+}: {
+  results: LaPrimeraQuinielaDraw[];
+  onProductChange: (product: "quinielon" | "quiniela") => void;
+  status: string;
+}) {
+  const [session, setSession] = useState<LaPrimeraSession>("dia");
+  const scoped = useMemo(() => results.filter((draw) => draw.session === session), [results, session]);
+  const latest = scoped[0] ?? null;
+  const targetDate = latest ? nextDateAfter(latest.date) : "";
+  const positionTops = useMemo(() => quinielaTopByPosition(scoped), [scoped]);
+  const suggestionInput = useMemo<QuinielaPaleDraw[]>(() => scoped.map((draw) => ({ date: draw.date, numbers: draw.numbers, source: draw.source })), [scoped]);
+  const suggestions = useMemo(() => targetDate ? buildQuinielaSuggestions(suggestionInput, targetDate, 5) : [], [suggestionInput, targetDate]);
+
+  return (
+    <main className="primeraTheme primeraQuinielaTheme">
+      <ProductSwitch product="quiniela" onChange={onProductChange} />
+      <section className="hero primeraHero">
+        <div>
+          <p className="eyebrow primeraEyebrow">La Primera · producto independiente</p>
+          <h1>Quiniela Día y Noche</h1>
+          <p className="subcopy">Tres posiciones del 00 al 99. Tops y recomendaciones separados por tanda.</p>
+        </div>
+        <div className="heroPanel primeraHeroPanel">
+          <span className="panelLabel primeraLabel">Último resultado · {formatSession(session)}</span>
+          <strong>{latest ? formatShortDate(latest.date) : "Sin datos"}</strong>
+          <div className="primeraQuinielaBalls">{latest?.numbers.map((number, position) => <PrimeraQuinielaBall key={position} number={number} position={position} />)}</div>
+          <small>{session === "dia" ? "12:00 PM" : "7:00 PM"}</small>
+        </div>
+      </section>
+
+      <section className="toolbar primeraToolbar quinielaSimpleToolbar">
+        <div className="segmented primeraSegmented">
+          {(["dia", "noche"] as LaPrimeraSession[]).map((option) => <button key={option} className={session === option ? "active" : ""} onClick={() => setSession(option)}>{formatSession(option)}</button>)}
+        </div>
+        <span className="status">{scoped.length} sorteos de {formatSession(session)} · {status}</span>
+      </section>
+
+      <section className="primeraQuinielaTopGrid">
+        {positionTops.map((items, position) => (
+          <article className="card primeraCard" key={position}>
+            <h2>Top 20 · P{position + 1}</h2>
+            <div className="primeraQuinielaRankList">
+              {items.map((item, rank) => (
+                <div className="primeraQuinielaRank" key={item.number}>
+                  <b>#{rank + 1}</b>
+                  <PrimeraQuinielaBall number={item.number} position={position} winner={latest?.numbers[position] === item.number} />
+                  <span>{item.count} salidas</span>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="card primeraCard primeraQuinielaRecommendations">
+        <div>
+          <h2>5 recomendaciones · {formatSession(session)}</h2>
+          <p className="mutedText">Inclinadas al {targetDate ? formatLongDate(targetDate) : "próximo sorteo"}, usando solamente el histórico de esta tanda.</p>
+        </div>
+        <div className="primeraQuinielaSuggestionGrid">
+          {suggestions.map((play) => (
+            <article key={play.id}>
+              <span className={`recommendationProfile ${play.profile}`}>{play.profile === "fuerte" ? "Fuerte" : play.profile === "equilibrada" ? "Equilibrada" : "Exploratoria"}</span>
+              <div className="primeraQuinielaBalls">{play.numbers.map((number, position) => <PrimeraQuinielaBall key={position} number={number} position={position} />)}</div>
+              <strong>{play.score} pts</strong>
+            </article>
+          ))}
+        </div>
+        <p className="recommendationDisclaimer">Análisis estadístico; no predice ni garantiza resultados.</p>
       </section>
     </main>
   );

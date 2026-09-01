@@ -1,15 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
-import { drawSchema, laPrimeraDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
-import type { DrawResult, LaPrimeraDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
+import { drawSchema, laPrimeraDrawSchema, laPrimeraQuinielaDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
+import type { DrawResult, LaPrimeraDraw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
 
 const dataPath = path.join(process.cwd(), "data", "results.json");
 const laPrimeraDataPath = path.join(process.cwd(), "data", "la-primera-results.json");
+const laPrimeraQuinielaDataPath = path.join(process.cwd(), "data", "la-primera-quiniela-results.json");
 const lotekaRepartideraDataPath = path.join(process.cwd(), "data", "loteka-repartidera-results.json");
 const quinielaPaleDataPath = path.join(process.cwd(), "data", "quiniela-pale-results.json");
 const lotoMasRepoPath = "data/results.json";
 const laPrimeraRepoPath = "data/la-primera-results.json";
+const laPrimeraQuinielaRepoPath = "data/la-primera-quiniela-results.json";
 const lotekaRepartideraRepoPath = "data/loteka-repartidera-results.json";
 const quinielaPaleRepoPath = "data/quiniela-pale-results.json";
 
@@ -58,6 +60,20 @@ export async function writeLaPrimeraResults(results: LaPrimeraDraw[]) {
   for (const result of results) unique.set(`${result.date}-${result.session}`, result);
   const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date) || a.session.localeCompare(b.session));
   await writeJsonFile(laPrimeraDataPath, laPrimeraRepoPath, `${JSON.stringify(sorted, null, 2)}\n`, "Update La Primera results");
+  return sorted;
+}
+
+export async function readLaPrimeraQuinielaResults(): Promise<LaPrimeraQuinielaDraw[]> {
+  const raw = await readJsonFile(laPrimeraQuinielaDataPath, laPrimeraQuinielaRepoPath);
+  const results = laPrimeraQuinielaDrawSchema.array().parse(JSON.parse(raw));
+  return results.sort((a, b) => b.date.localeCompare(a.date) || a.session.localeCompare(b.session));
+}
+
+export async function writeLaPrimeraQuinielaResults(results: LaPrimeraQuinielaDraw[]) {
+  const unique = new Map<string, LaPrimeraQuinielaDraw>();
+  for (const result of results) unique.set(`${result.date}-${result.session}`, result);
+  const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date) || a.session.localeCompare(b.session));
+  await writeJsonFile(laPrimeraQuinielaDataPath, laPrimeraQuinielaRepoPath, `${JSON.stringify(sorted, null, 2)}\n`, "Update La Primera Quiniela results");
   return sorted;
 }
 
