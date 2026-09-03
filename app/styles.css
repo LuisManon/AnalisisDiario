@@ -3024,6 +3024,49 @@ h3 {
   font-size: 0.72rem;
 }
 
+.primeraLoto5Balls { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+.primeraLoto5Balls > i { color: var(--muted); font-style: normal; font-weight: 900; }
+
+.primeraLoto5Ball {
+  align-items: center;
+  background: radial-gradient(circle at 35% 25%, #fff 0 10%, #f3d3d5 38%, #c91825 100%);
+  border: 1px solid #a20d18;
+  border-radius: 50%;
+  box-shadow: inset -3px -5px 10px rgba(84, 0, 6, 0.2), 0 4px 9px rgba(116, 10, 18, 0.14);
+  color: #fff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 900;
+  height: 38px;
+  justify-content: center;
+  position: relative;
+  width: 38px;
+}
+
+.primeraLoto5Ball.plus {
+  background: radial-gradient(circle at 35% 25%, #fff 0 10%, #f4d985 38%, #d79b25 100%);
+  border-color: #a66d08;
+  color: #3d2904;
+}
+
+.primeraLoto5Ball.winner::after { content: "👑"; font-size: 0.9rem; position: absolute; right: -7px; top: -10px; }
+.loto5Hero .primeraHeroPanel { min-width: min(100%, 410px); }
+.loto5Metrics .metric:nth-child(2) strong { font-size: 0.82rem; }
+.loto5InfoGrid { align-items: stretch; }
+.loto5Rules { color: var(--muted); display: grid; gap: 8px; line-height: 1.45; margin: 14px 0 18px; padding-left: 20px; }
+.sourceLink { color: var(--primera-red); font-size: 0.82rem; font-weight: 800; }
+.loto5PrizeTableWrap { margin-top: 14px; overflow-x: auto; }
+.loto5PrizeTable { border-collapse: collapse; width: 100%; }
+.loto5PrizeTable th, .loto5PrizeTable td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+.loto5PrizeTable th { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; }
+.loto5PrizeTable td:last-child { color: var(--primera-red); font-weight: 900; }
+.loto5FrequencyList { display: grid; gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 14px; }
+.loto5FrequencyList > div { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 8px; grid-template-columns: 27px 38px minmax(0, 1fr); padding: 5px 0 8px; }
+.loto5FrequencyList b, .loto5FrequencyList span { color: var(--muted); font-size: 0.74rem; }
+.loto5History { margin-top: 18px; }
+.loto5History .historyRow { align-items: center; }
+
 .primeraTheme .subcopy,
 .primeraTheme .status,
 .primeraTheme .chartLegend,

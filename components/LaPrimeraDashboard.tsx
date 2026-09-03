@@ -10,12 +10,15 @@ import {
   laPrimeraSchedules
 } from "../lib/la-primera";
 import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-pale";
-import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraQuinielaDraw, LaPrimeraSession, QuinielaPaleDraw } from "../lib/types";
+import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, QuinielaPaleDraw } from "../lib/types";
+
+type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
 
 type Props = {
   initialData: {
     results: LaPrimeraDraw[];
     quinielaResults: LaPrimeraQuinielaDraw[];
+    loto5Results: LaPrimeraLoto5Draw[];
   };
 };
 
@@ -110,7 +113,7 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 
 export function LaPrimeraDashboard({ initialData }: Props) {
   const [data, setData] = useState(initialData);
-  const [product, setProduct] = useState<"quinielon" | "quiniela">("quinielon");
+  const [product, setProduct] = useState<LaPrimeraProduct>("quinielon");
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [status, setStatus] = useState(`Data local: ${initialData.results.length} sorteos cargados.`);
   const [session, setSession] = useState<LaPrimeraFilter>("todos");
@@ -142,7 +145,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         if (!response.ok) throw new Error(payload.message);
         if (Array.isArray(payload.results)) setData({
           results: payload.results,
-          quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : initialData.quinielaResults
+          quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : initialData.quinielaResults,
+          loto5Results: Array.isArray(payload.loto5Results) ? payload.loto5Results : initialData.loto5Results
         });
         setStatus(`${payload.message} Total: ${payload.total}. Ultimo: ${payload.latest?.date ?? "N/D"}.`);
       } catch {
@@ -191,6 +195,10 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 
   if (product === "quiniela") {
     return <LaPrimeraQuinielaView results={data.quinielaResults} onProductChange={setProduct} status={status} />;
+  }
+
+  if (product === "loto5") {
+    return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
   }
 
   return (
@@ -390,11 +398,12 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   );
 }
 
-function ProductSwitch({ product, onChange }: { product: "quinielon" | "quiniela"; onChange: (product: "quinielon" | "quiniela") => void }) {
+function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
   return (
     <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
       <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
+      <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
     </nav>
   );
 }
@@ -425,7 +434,7 @@ function LaPrimeraQuinielaView({
   status
 }: {
   results: LaPrimeraQuinielaDraw[];
-  onProductChange: (product: "quinielon" | "quiniela") => void;
+  onProductChange: (product: LaPrimeraProduct) => void;
   status: string;
 }) {
   const [session, setSession] = useState<LaPrimeraSession>("dia");
@@ -492,6 +501,120 @@ function LaPrimeraQuinielaView({
           ))}
         </div>
         <p className="recommendationDisclaimer">Análisis estadístico; no predice ni garantiza resultados.</p>
+      </section>
+    </main>
+  );
+}
+
+const loto5Prizes = [
+  { hits: "5 + Más", prize: "RD$30,000,000" },
+  { hits: "5", prize: "RD$3,000,000" },
+  { hits: "4 + Más", prize: "RD$30,000" },
+  { hits: "4", prize: "RD$5,000" },
+  { hits: "3 + Más", prize: "RD$1,000" },
+  { hits: "3", prize: "RD$100" },
+  { hits: "2 + Más", prize: "RD$60" },
+  { hits: "2", prize: "RD$20" }
+];
+
+function Loto5Ball({ number, plus = false, winner = false }: { number: number; plus?: boolean; winner?: boolean }) {
+  return <span className={`primeraLoto5Ball ${plus ? "plus" : ""} ${winner ? "winner" : ""}`}>{String(number).padStart(2, "0")}</span>;
+}
+
+function LaPrimeraLoto5View({
+  results,
+  onProductChange,
+  status
+}: {
+  results: LaPrimeraLoto5Draw[];
+  onProductChange: (product: LaPrimeraProduct) => void;
+  status: string;
+}) {
+  const [historyPage, setHistoryPage] = useState(1);
+  const latest = results[0] ?? null;
+  const oldest = results.at(-1) ?? null;
+  const frequencies = useMemo(() => {
+    const counts = Array(39).fill(0) as number[];
+    for (const draw of results) for (const number of draw.numbers) counts[number] += 1;
+    return counts.slice(1).map((count, index) => ({ number: index + 1, count }))
+      .sort((a, b) => b.count - a.count || a.number - b.number);
+  }, [results]);
+  const plusFrequencies = useMemo(() => {
+    const counts = Array(11).fill(0) as number[];
+    for (const draw of results) counts[draw.plus] += 1;
+    return counts.slice(1).map((count, index) => ({ number: index + 1, count }))
+      .sort((a, b) => b.count - a.count || a.number - b.number);
+  }, [results]);
+  const pageCount = Math.max(1, Math.ceil(results.length / 10));
+  const history = results.slice((historyPage - 1) * 10, historyPage * 10);
+
+  return (
+    <main className="primeraTheme primeraLoto5Theme">
+      <ProductSwitch product="loto5" onChange={onProductChange} />
+      <section className="hero primeraHero loto5Hero">
+        <div>
+          <p className="eyebrow primeraEyebrow">La Primera · sorteo diario</p>
+          <h1>Loto 5 y Loto 5 Más</h1>
+          <p className="subcopy">Cinco números del 01 al 38 y un adicional Más del 01 al 10. El orden de los aciertos no importa.</p>
+        </div>
+        <div className="heroPanel primeraHeroPanel">
+          <span className="panelLabel primeraLabel">Último resultado · 7:00 PM</span>
+          <strong>{latest ? formatLongDate(latest.date) : "Sin datos"}</strong>
+          <div className="primeraLoto5Balls">
+            {latest?.numbers.map((number) => <Loto5Ball key={number} number={number} />)}
+            {latest ? <><i>+</i><Loto5Ball number={latest.plus} plus /></> : null}
+          </div>
+          <small>{latest ? `Sorteo #${latest.drawId ?? "N/D"}` : status}</small>
+        </div>
+      </section>
+
+      <section className="metricsGrid loto5Metrics">
+        <div className="metric primeraMetric"><span>Sorteos cargados</span><strong>{results.length}</strong></div>
+        <div className="metric primeraMetric"><span>Histórico</span><strong>{oldest ? `${formatShortDate(oldest.date)} — ${latest ? formatShortDate(latest.date) : ""}` : "N/D"}</strong></div>
+        <div className="metric primeraMetric"><span>Precio Loto 5</span><strong>RD$20</strong></div>
+        <div className="metric primeraMetric"><span>Con Loto 5 Más</span><strong>RD$30</strong></div>
+      </section>
+
+      <section className="twoColumn loto5InfoGrid">
+        <article className="card primeraCard">
+          <h2>Reglas del sorteo</h2>
+          <ul className="loto5Rules">
+            <li>Se celebra todos los días a las 7:00 PM.</li>
+            <li>Selecciona 5 números distintos del 01 al 38.</li>
+            <li>Los aciertos cuentan en cualquier orden.</li>
+            <li>Loto 5 Más agrega un número del 01 al 10.</li>
+            <li>Los premios mayores se reparten si hay varios ganadores.</li>
+          </ul>
+          <a className="sourceLink" href="https://laprimera.do/loto5-y-loto5-mas-2/" target="_blank" rel="noreferrer">Consultar reglas oficiales ↗</a>
+        </article>
+        <article className="card primeraCard">
+          <h2>Tabla de premios</h2>
+          <div className="loto5PrizeTableWrap">
+            <table className="loto5PrizeTable"><thead><tr><th>Aciertos</th><th>Premio</th></tr></thead>
+              <tbody>{loto5Prizes.map((row) => <tr key={row.hits}><td>{row.hits}</td><td>{row.prize}</td></tr>)}</tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section className="twoColumn loto5FrequencyGrid">
+        <article className="card primeraCard">
+          <h2>Frecuencia · números principales</h2>
+          <p className="mutedText">Apariciones dentro del histórico cargado.</p>
+          <div className="loto5FrequencyList">{frequencies.slice(0, 20).map((item, index) => <div key={item.number}><b>#{index + 1}</b><Loto5Ball number={item.number} winner={latest?.numbers.includes(item.number)} /><span>{item.count} salidas</span></div>)}</div>
+        </article>
+        <article className="card primeraCard">
+          <h2>Frecuencia · Loto 5 Más</h2>
+          <p className="mutedText">Ranking de los diez bolos adicionales.</p>
+          <div className="loto5FrequencyList plusList">{plusFrequencies.map((item, index) => <div key={item.number}><b>#{index + 1}</b><Loto5Ball number={item.number} plus winner={latest?.plus === item.number} /><span>{item.count} salidas</span></div>)}</div>
+        </article>
+      </section>
+
+      <section className="card primeraCard loto5History">
+        <div className="sectionHeader"><div><h2>Histórico de Loto 5</h2><p>{results.length} sorteos oficiales cargados.</p></div>
+          <div className="pagination"><button className="miniButton" disabled={historyPage === 1} onClick={() => setHistoryPage((page) => page - 1)}>Anterior</button><span>Página {historyPage} de {pageCount}</span><button className="miniButton" disabled={historyPage === pageCount} onClick={() => setHistoryPage((page) => page + 1)}>Siguiente</button></div>
+        </div>
+        {history.map((draw) => <article className="historyRow" key={draw.date}><div className="historyDate"><strong>{formatShortDate(draw.date)}</strong><span>{formatLongDate(draw.date)}</span></div><div className="primeraLoto5Balls">{draw.numbers.map((number) => <Loto5Ball key={number} number={number} />)}<i>+</i><Loto5Ball number={draw.plus} plus /></div></article>)}
       </section>
     </main>
   );

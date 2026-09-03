@@ -1,17 +1,19 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
-import { drawSchema, laPrimeraDrawSchema, laPrimeraQuinielaDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
-import type { DrawResult, LaPrimeraDraw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
+import { drawSchema, laPrimeraDrawSchema, laPrimeraLoto5DrawSchema, laPrimeraQuinielaDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
+import type { DrawResult, LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
 
 const dataPath = path.join(process.cwd(), "data", "results.json");
 const laPrimeraDataPath = path.join(process.cwd(), "data", "la-primera-results.json");
 const laPrimeraQuinielaDataPath = path.join(process.cwd(), "data", "la-primera-quiniela-results.json");
+const laPrimeraLoto5DataPath = path.join(process.cwd(), "data", "la-primera-loto5-results.json");
 const lotekaRepartideraDataPath = path.join(process.cwd(), "data", "loteka-repartidera-results.json");
 const quinielaPaleDataPath = path.join(process.cwd(), "data", "quiniela-pale-results.json");
 const lotoMasRepoPath = "data/results.json";
 const laPrimeraRepoPath = "data/la-primera-results.json";
 const laPrimeraQuinielaRepoPath = "data/la-primera-quiniela-results.json";
+const laPrimeraLoto5RepoPath = "data/la-primera-loto5-results.json";
 const lotekaRepartideraRepoPath = "data/loteka-repartidera-results.json";
 const quinielaPaleRepoPath = "data/quiniela-pale-results.json";
 
@@ -74,6 +76,25 @@ export async function writeLaPrimeraQuinielaResults(results: LaPrimeraQuinielaDr
   for (const result of results) unique.set(`${result.date}-${result.session}`, result);
   const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date) || a.session.localeCompare(b.session));
   await writeJsonFile(laPrimeraQuinielaDataPath, laPrimeraQuinielaRepoPath, `${JSON.stringify(sorted, null, 2)}\n`, "Update La Primera Quiniela results");
+  return sorted;
+}
+
+export async function readLaPrimeraLoto5Results(): Promise<LaPrimeraLoto5Draw[]> {
+  const raw = await readJsonFile(laPrimeraLoto5DataPath, laPrimeraLoto5RepoPath);
+  const results = laPrimeraLoto5DrawSchema.array().parse(JSON.parse(raw));
+  return results.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function writeLaPrimeraLoto5Results(results: LaPrimeraLoto5Draw[]) {
+  const unique = new Map<string, LaPrimeraLoto5Draw>();
+  for (const result of results) unique.set(result.date, result);
+  const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date));
+  await writeJsonFile(
+    laPrimeraLoto5DataPath,
+    laPrimeraLoto5RepoPath,
+    `${JSON.stringify(sorted, null, 2)}\n`,
+    "Update La Primera Loto 5 results"
+  );
   return sorted;
 }
 

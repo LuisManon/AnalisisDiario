@@ -40,6 +40,20 @@ export const laPrimeraQuinielaDrawSchema = z.object({
   source: z.string().optional()
 });
 
+export const laPrimeraLoto5DrawSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  numbers: z.tuple([
+    z.number().int().min(1).max(38),
+    z.number().int().min(1).max(38),
+    z.number().int().min(1).max(38),
+    z.number().int().min(1).max(38),
+    z.number().int().min(1).max(38)
+  ]).refine((numbers) => new Set(numbers).size === numbers.length, "Los números de Loto 5 deben ser únicos."),
+  plus: z.number().int().min(1).max(10),
+  drawId: z.number().int().positive().optional(),
+  source: z.string().optional()
+});
+
 export const lotekaRepartideraDrawSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   number: z.number().int().min(0).max(99),

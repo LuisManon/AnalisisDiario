@@ -1,5 +1,5 @@
-import { laPrimeraDrawSchema, laPrimeraQuinielaDrawSchema } from "./validation";
-import type { LaPrimeraDraw, LaPrimeraQuinielaDraw } from "./types";
+import { laPrimeraDrawSchema, laPrimeraLoto5DrawSchema, laPrimeraQuinielaDrawSchema } from "./validation";
+import type { LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw } from "./types";
 
 const resultsUrl = "https://laprimera.do/resultados/";
 const ajaxUrl = "https://laprimera.do/wp-admin/admin-ajax.php";
@@ -53,6 +53,19 @@ function parseOfficialQuinielaDraw(date: string, item: OfficialLottery): LaPrime
   if (!session) return null;
   const numbers = item.resultado.map(Number);
   const parsed = laPrimeraQuinielaDrawSchema.safeParse({ date, session, numbers, drawId: item.sorteo_numero, source: resultsUrl });
+  return parsed.success ? parsed.data : null;
+}
+
+function parseOfficialLoto5Draw(date: string, item: OfficialLottery): LaPrimeraLoto5Draw | null {
+  if (item.juego_id !== 37 || item.resultado?.length !== 6) return null;
+  const values = item.resultado.map(Number);
+  const parsed = laPrimeraLoto5DrawSchema.safeParse({
+    date,
+    numbers: values.slice(0, 5),
+    plus: values[5],
+    drawId: item.sorteo_numero,
+    source: resultsUrl
+  });
   return parsed.success ? parsed.data : null;
 }
 
@@ -123,6 +136,28 @@ export async function fetchLaPrimeraQuinielaResultsForDate(date: string, nonce: 
     const parsed = parseOfficialQuinielaDraw(date, item);
     return parsed ? [parsed] : [];
   });
+}
+
+export async function fetchLaPrimeraLoto5ResultsForDate(date: string, nonce: string) {
+  const body = new FormData();
+  body.append("action", "get_lotteries_results");
+  body.append("nonce", nonce);
+  body.append("date", date);
+  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(20_000) });
+  if (!response.ok) throw new Error(`La Primera AJAX respondio HTTP ${response.status}.`);
+  const payload = (await response.json()) as OfficialResponse;
+  return (payload.data?.lotteries?.la_primera ?? []).flatMap((item) => {
+    const parsed = parseOfficialLoto5Draw(date, item);
+    return parsed ? [parsed] : [];
+  });
+}
+
+export async function fetchLaPrimeraLoto5ResultsSince(startDate: string, endDate?: string) {
+  const nonce = await fetchNonce();
+  const dates = getDateRange(startDate, endDate);
+  const results: LaPrimeraLoto5Draw[] = [];
+  for (const date of dates) results.push(...await fetchLaPrimeraLoto5ResultsForDate(date, nonce));
+  return { results, sourceUrl: resultsUrl, checkedDates: dates };
 }
 
 export async function fetchLaPrimeraQuinielaResultsSince(startDate: string, endDate?: string) {
