@@ -689,7 +689,7 @@ function ThirtyPlayPortfolioView({
           <span className="panelLabel">{historical ? "Sorteo evaluado" : "Sorteo objetivo"}</span>
           <h2>{formatLongDate(portfolio.targetDate)}</h2>
         </div>
-        <p>{winningDraw ? "La corona indica una coincidencia exacta de número y posición." : `En cada columna: 5 jugadas solo de ${formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.`}</p>
+        <p>{winningDraw ? "La corona indica un número acertado; el Más se evalúa por separado." : `En cada columna: 5 jugadas solo de ${formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.`}</p>
       </header>
 
       <div className="portfolioColumns">
@@ -716,12 +716,12 @@ function ThirtyPlayPortfolioView({
                     </div>
                     <div className="portfolioNumbers" aria-label={`Jugada ${index + 1}: ${play.numbers.join(", ")} más ${play.plus}`}>
                       {play.numbers.map((number, position) => (
-                        <span className={`portfolioBall ${winningDraw?.numbers[position] === number ? "portfolioBallWinner" : ""}`} key={`${position}-${number}`}>{String(number).padStart(2, "0")}</span>
+                        <span className={`portfolioBall ${winningDraw?.numbers.includes(number) ? "portfolioBallWinner" : ""}`} key={`${position}-${number}`}>{String(number).padStart(2, "0")}</span>
                       ))}
                       <i>+</i>
                       <span className={`portfolioBall portfolioPlus ${winningDraw?.plus === play.plus ? "portfolioBallWinner" : ""}`}>{String(play.plus).padStart(2, "0")}</span>
                     </div>
-                    <small>{winningDraw ? `${play.numbers.filter((number, position) => winningDraw.numbers[position] === number).length} coincidencias en posición${winningDraw.plus === play.plus ? " · Más acertado" : ""}` : play.explanation}</small>
+                    <small>{winningDraw ? `${play.numbers.filter((number) => winningDraw.numbers.includes(number)).length} números acertados${winningDraw.plus === play.plus ? " · Más acertado" : ""}` : play.explanation}</small>
                   </div>
                 ))}
               </div>
