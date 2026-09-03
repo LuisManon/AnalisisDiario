@@ -16,19 +16,7 @@ export async function GET(request: Request) {
     const rebuild = new URL(request.url).searchParams.get("rebuild") === "1";
     const latestDate = existing[0]?.date ?? new Date().toISOString().slice(0, 10);
     const expectedDate = getLatestExpectedQuinielaPaleDate();
-    if (!rebuild && latestDate >= expectedDate) {
-      return NextResponse.json({
-        ok: true,
-        added: 0,
-        total: existing.length,
-        results: existing,
-        latest: existing[0] ?? null,
-        expectedDate,
-        checked: false,
-        message: `El último sorteo esperado (${expectedDate}) ya está cargado; no fue necesario consultar la fuente.`
-      });
-    }
-    const startDate = rebuild ? "2025-08-01" : subtractDays(latestDate, 1);
+    const startDate = rebuild ? "2025-08-01" : subtractDays(latestDate > expectedDate ? expectedDate : latestDate, 3);
     const before = new Set(existing.map((result) => result.date));
     const remote = await fetchQuinielaPaleResultsSince(startDate);
     const added = remote.results.filter((result) => !before.has(result.date)).length;
@@ -42,7 +30,7 @@ export async function GET(request: Request) {
       source: remote.sourceUrl,
       expectedDate,
       checked: true,
-      message: added ? `Se agregaron ${added} resultados de Quiniela Pale.` : "La data ya esta actualizada."
+      message: added ? `Se agregaron ${added} resultados de Quiniela Pale.` : "Se verificaron y corrigieron los resultados recientes de Quiniela Pale."
     });
   } catch (error) {
     const results = await readQuinielaPaleResults();

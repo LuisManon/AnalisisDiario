@@ -74,17 +74,17 @@ async function fetchFromLaBanca(date: string): Promise<QuinielaPaleDraw | null> 
 }
 
 export async function fetchQuinielaPaleForDate(date: string): Promise<QuinielaPaleDraw | null> {
-  const primary = await Promise.allSettled([fetchFromDominicanas(date)]);
-  if (primary[0].status === "fulfilled" && primary[0].value) return primary[0].value;
+  const [archive, statistics] = await Promise.allSettled([
+    fetchFromLaBanca(date),
+    fetchFromDominicanas(date)
+  ]);
 
-  try {
-    return await fetchFromLaBanca(date);
-  } catch (backupError) {
-    if (primary[0].status === "rejected") {
-      throw new AggregateError([primary[0].reason, backupError], `No se pudo consultar Quiniela Pale para ${date}.`);
-    }
-    throw backupError;
-  }
+  // El JSON por fecha es inmutable y evita aceptar bloques estadísticos que
+  // conservan temporalmente los números del día anterior bajo una fecha nueva.
+  if (archive.status === "fulfilled" && archive.value) return archive.value;
+  if (statistics.status === "fulfilled" && statistics.value) return statistics.value;
+  if (archive.status === "fulfilled" || statistics.status === "fulfilled") return null;
+  throw new AggregateError([archive.reason, statistics.reason], `No se pudo consultar Quiniela Pale para ${date}.`);
 }
 
 export async function fetchQuinielaPaleResultsSince(startDate: string, endDate?: string) {
@@ -101,5 +101,12 @@ export async function fetchQuinielaPaleResultsSince(startDate: string, endDate?:
   if (!results.length && errors.length === dates.length) {
     throw new AggregateError(errors, "No se pudo consultar ninguna fuente remota de Quiniela Pale.");
   }
-  return { results, sourceUrl: results[0]?.source ?? publicResultUrl, checkedDates: dates };
+  const verifiedResults = results.filter((result, index) => {
+    const previous = results[index - 1];
+    if (!previous || result.source !== publicResultUrl) return true;
+    const isNextDay = new Date(`${result.date}T00:00:00Z`).getTime() - new Date(`${previous.date}T00:00:00Z`).getTime() === 86_400_000;
+    const repeatsPreviousBlock = result.numbers.every((number, position) => previous.numbers[position] === number);
+    return !isNextDay || !repeatsPreviousBlock;
+  });
+  return { results: verifiedResults, sourceUrl: verifiedResults[0]?.source ?? publicResultUrl, checkedDates: dates };
 }
