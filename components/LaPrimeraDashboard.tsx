@@ -517,6 +517,45 @@ const loto5Prizes = [
   { hits: "2", prize: "RD$20" }
 ];
 
+const loto5PositionColors = ["#fd0100", "#333333", "#d79b25", "#8d2db5", "#147a62", "#d65a12"];
+
+function loto5CoverageRange(values: number[]) {
+  const sorted = values.slice().sort((a, b) => a - b);
+  if (!sorted.length) return { low: 0, high: 0 };
+  const sampleSize = Math.max(1, Math.ceil(sorted.length * 0.8));
+  let low = sorted[0];
+  let high = sorted[sampleSize - 1];
+  for (let start = 1; start + sampleSize <= sorted.length; start += 1) {
+    const candidateLow = sorted[start];
+    const candidateHigh = sorted[start + sampleSize - 1];
+    if (candidateHigh - candidateLow < high - low) {
+      low = candidateLow;
+      high = candidateHigh;
+    }
+  }
+  return { low, high };
+}
+
+function Loto5RangeMap({ results }: { results: LaPrimeraLoto5Draw[] }) {
+  const rows = Array.from({ length: 5 }, (_, position) => {
+    const values = results.map((draw) => draw.numbers[position]);
+    const { low, high } = loto5CoverageRange(values);
+    return { position, low, high, average: values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length), omitted: values.filter((value) => value < low || value > high).length };
+  });
+  const ticks = [1, 5, 10, 15, 20, 25, 30, 35, 38];
+
+  return <section className="rangeMap loto5RangeMap" aria-label="Mapa de rangos de Loto 5 por posición">
+    <div className="rangeMapHeader"><div><span className="panelLabel">Mapa de rangos</span><h3>Rango normal de salida por posición</h3></div><p>Intervalo más compacto que concentra el 80% de las apariciones en cada posición.</p></div>
+    <div className="rangeAxis" aria-hidden="true">{ticks.map((tick) => <span key={tick} style={{ left: `${((tick - 1) / 37) * 100}%` }}>{String(tick).padStart(2, "0")}</span>)}</div>
+    <div className="rangeRows">{rows.map((row) => {
+      const left = ((row.low - 1) / 37) * 100;
+      const right = ((row.high - 1) / 37) * 100;
+      const color = loto5PositionColors[row.position];
+      return <article className="rangeRow" key={row.position}><div className="rangeLabel"><i style={{ background: color }} /><strong>P{row.position + 1}</strong><span>Posición {row.position + 1}</span></div><div className="rangeTrack"><div className="rangeBandGlow" style={{ left: `${left}%`, width: `${Math.max(1.5, right - left)}%`, background: color }} /><div className="rangeBand" style={{ left: `${left}%`, width: `${Math.max(1.5, right - left)}%`, background: color }} /><span className="rangeStart" style={{ left: `${left}%` }}>{String(row.low).padStart(2, "0")}</span><span className="rangeEnd" style={{ left: `${right}%` }}>{String(row.high).padStart(2, "0")}</span></div><div className="rangeStats"><strong>{String(row.low).padStart(2, "0")} - {String(row.high).padStart(2, "0")}</strong><span>Prom. {row.average.toFixed(1)} · {row.omitted} fuera · {results.length} sorteos</span></div></article>;
+    })}</div>
+  </section>;
+}
+
 function Loto5Ball({ number, plus = false, winner = false }: { number: number; plus?: boolean; winner?: boolean }) {
   return <span className={`primeraLoto5Ball ${plus ? "plus" : ""} ${winner ? "winner" : ""}`}>{String(number).padStart(2, "0")}</span>;
 }
@@ -533,18 +572,12 @@ function LaPrimeraLoto5View({
   const [historyPage, setHistoryPage] = useState(1);
   const latest = results[0] ?? null;
   const oldest = results.at(-1) ?? null;
-  const frequencies = useMemo(() => {
-    const counts = Array(39).fill(0) as number[];
-    for (const draw of results) for (const number of draw.numbers) counts[number] += 1;
-    return counts.slice(1).map((count, index) => ({ number: index + 1, count }))
-      .sort((a, b) => b.count - a.count || a.number - b.number);
-  }, [results]);
-  const plusFrequencies = useMemo(() => {
-    const counts = Array(11).fill(0) as number[];
-    for (const draw of results) counts[draw.plus] += 1;
-    return counts.slice(1).map((count, index) => ({ number: index + 1, count }))
-      .sort((a, b) => b.count - a.count || a.number - b.number);
-  }, [results]);
+  const positionTops = useMemo(() => Array.from({ length: 6 }, (_, position) => {
+    const maximum = position === 5 ? 10 : 38;
+    const counts = Array(maximum + 1).fill(0) as number[];
+    for (const draw of results) counts[position === 5 ? draw.plus : draw.numbers[position]] += 1;
+    return counts.slice(1).map((count, index) => ({ number: index + 1, count })).sort((a, b) => b.count - a.count || a.number - b.number).slice(0, 5);
+  }), [results]);
   const pageCount = Math.max(1, Math.ceil(results.length / 10));
   const history = results.slice((historyPage - 1) * 10, historyPage * 10);
 
@@ -575,8 +608,9 @@ function LaPrimeraLoto5View({
         <div className="metric primeraMetric"><span>Con Loto 5 Más</span><strong>RD$30</strong></div>
       </section>
 
-      <section className="twoColumn loto5InfoGrid">
-        <article className="card primeraCard">
+      <details className="topPositionsAccordion loto5InfoAccordion">
+        <summary><span>Reglas del sorteo y tabla de premios</span><small>Cómo jugar, precios y premios oficiales.</small></summary>
+        <section className="twoColumn loto5InfoGrid"><article className="card primeraCard">
           <h2>Reglas del sorteo</h2>
           <ul className="loto5Rules">
             <li>Se celebra todos los días a las 7:00 PM.</li>
@@ -594,21 +628,22 @@ function LaPrimeraLoto5View({
               <tbody>{loto5Prizes.map((row) => <tr key={row.hits}><td>{row.hits}</td><td>{row.prize}</td></tr>)}</tbody>
             </table>
           </div>
-        </article>
-      </section>
+        </article></section>
+      </details>
 
-      <section className="twoColumn loto5FrequencyGrid">
-        <article className="card primeraCard">
-          <h2>Frecuencia · números principales</h2>
-          <p className="mutedText">Apariciones dentro del histórico cargado.</p>
-          <div className="loto5FrequencyList">{frequencies.slice(0, 20).map((item, index) => <div key={item.number}><b>#{index + 1}</b><Loto5Ball number={item.number} winner={latest?.numbers.includes(item.number)} /><span>{item.count} salidas</span></div>)}</div>
-        </article>
-        <article className="card primeraCard">
-          <h2>Frecuencia · Loto 5 Más</h2>
-          <p className="mutedText">Ranking de los diez bolos adicionales.</p>
-          <div className="loto5FrequencyList plusList">{plusFrequencies.map((item, index) => <div key={item.number}><b>#{index + 1}</b><Loto5Ball number={item.number} plus winner={latest?.plus === item.number} /><span>{item.count} salidas</span></div>)}</div>
-        </article>
-      </section>
+      <details className="topPositionsAccordion loto5TopAccordion" open>
+        <summary><span>Top 5 por posición</span><small>Cada columna calcula la frecuencia respetando la posición exacta, incluido el Más.</small></summary>
+        <section className="topPositionsBoard"><div className="topPositionsGuide"><span><i className="guideRank">#</i> Orden por frecuencia</span><span><i className="guideBar" /> Comparación con el líder de cada posición</span><span><b>{results.length}</b> sorteos analizados</span></div>
+          <div className="topPositionsGrid loto5PositionGrid">{positionTops.map((items, position) => {
+            const isPlus = position === 5;
+            const color = loto5PositionColors[position];
+            const maxCount = Math.max(1, ...items.map((item) => item.count));
+            return <article className={`positionRankingCard ${isPlus ? "positionRankingPlus" : ""}`} style={{ borderTopColor: color }} key={position}><header className="positionRankingHeader"><span className="positionColorDot" style={{ backgroundColor: color }} /><div><span>{isPlus ? "MÁS" : `P${position + 1}`}</span><h3>{isPlus ? "Loto 5 Más" : `Posición ${position + 1}`}</h3></div></header><div className="positionRankingList">{items.map((item, rank) => <div className="positionRankingItem" key={item.number}><span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span><Loto5Ball number={item.number} plus={isPlus} winner={isPlus ? latest?.plus === item.number : latest?.numbers[position] === item.number} /><div className="positionFrequency"><div className="positionFrequencyMeta"><span>{rank === 0 ? "Líder" : `Top ${rank + 1}`}</span><strong>{item.count} salidas</strong></div><div className="positionBar"><span style={{ backgroundColor: color, width: `${(item.count / maxCount) * 100}%` }} /></div></div></div>)}</div></article>;
+          })}</div>
+        </section>
+      </details>
+
+      <section className="card rangeMapSection loto5RangeSection"><Loto5RangeMap results={results} /></section>
 
       <section className="card primeraCard loto5History">
         <div className="sectionHeader"><div><h2>Histórico de Loto 5</h2><p>{results.length} sorteos oficiales cargados.</p></div>

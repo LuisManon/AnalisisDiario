@@ -3029,31 +3029,35 @@ h3 {
 
 .primeraLoto5Ball {
   align-items: center;
-  background: radial-gradient(circle at 35% 25%, #fff 0 10%, #f3d3d5 38%, #c91825 100%);
-  border: 1px solid #a20d18;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0 18%, #ffffff 36%, #f2f2f2 100%);
+  border: 1px solid #9c0505;
   border-radius: 50%;
-  box-shadow: inset -3px -5px 10px rgba(84, 0, 6, 0.2), 0 4px 9px rgba(116, 10, 18, 0.14);
-  color: #fff;
+  box-shadow: inset -4px -7px 14px rgba(0, 0, 0, 0.18), 0 5px 10px rgba(0, 0, 0, 0.08);
+  color: var(--primera-dark);
   display: inline-flex;
   flex: 0 0 auto;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 900;
-  height: 38px;
+  height: 42px;
   justify-content: center;
+  line-height: 1;
+  outline: 5px solid var(--primera-red);
+  outline-offset: -7px;
   position: relative;
-  width: 38px;
+  width: 42px;
 }
 
 .primeraLoto5Ball.plus {
-  background: radial-gradient(circle at 35% 25%, #fff 0 10%, #f4d985 38%, #d79b25 100%);
-  border-color: #a66d08;
-  color: #3d2904;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0 18%, #ffffff 36%, #eeeeee 100%);
+  border-color: #333333;
+  outline-color: #333333;
 }
 
 .primeraLoto5Ball.winner::after { content: "👑"; font-size: 0.9rem; position: absolute; right: -7px; top: -10px; }
 .loto5Hero .primeraHeroPanel { min-width: min(100%, 410px); }
 .loto5Metrics .metric:nth-child(2) strong { font-size: 0.82rem; }
 .loto5InfoGrid { align-items: stretch; }
+.loto5InfoAccordion .loto5InfoGrid { margin: 0; padding: 16px; }
 .loto5Rules { color: var(--muted); display: grid; gap: 8px; line-height: 1.45; margin: 14px 0 18px; padding-left: 20px; }
 .sourceLink { color: var(--primera-red); font-size: 0.82rem; font-weight: 800; }
 .loto5PrizeTableWrap { margin-top: 14px; overflow-x: auto; }
@@ -3066,6 +3070,12 @@ h3 {
 .loto5FrequencyList b, .loto5FrequencyList span { color: var(--muted); font-size: 0.74rem; }
 .loto5History { margin-top: 18px; }
 .loto5History .historyRow { align-items: center; }
+.loto5PositionGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.primeraLoto5Theme .guideRank { background: var(--primera-red); }
+.primeraLoto5Theme .guideBar { background: linear-gradient(90deg, var(--primera-red) 68%, rgba(253, 1, 0, 0.12) 68%); }
+.primeraLoto5Theme .rangeInfo button { background: var(--primera-red); }
+.loto5RangeSection { margin-top: 18px; }
+.loto5RangeMap .rangeMapHeader { margin-bottom: 22px; }
 
 .primeraTheme .subcopy,
 .primeraTheme .status,
