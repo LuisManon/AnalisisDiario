@@ -674,12 +674,12 @@ function LaPrimeraLoto5View({
         </section>
       </details>
 
-      <section className="card rangeMapSection loto5RangeSection"><Loto5RangeMap results={results} /></section>
-
       <details className="topPositionsAccordion loto5PortfolioAccordion" onToggle={(event) => { if (event.currentTarget.open) setPortfolioRequested(true); }}>
         <summary><span>Generador de 60 jugadas</span><small>20 fuertes, 20 equilibradas y 20 exploratorias para {formatShortDate(targetDate)}.</small></summary>
         {portfolio ? <div className="portfolioSnapshots"><Loto5PortfolioView portfolio={portfolio} />{previousPortfolio ? <details className="portfolioPreviousAccordion"><summary><span>Comparar con el sorteo anterior</span><small>{formatShortDate(previousPortfolio.targetDate)}</small></summary><Loto5PortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} /></details> : null}</div> : <div className="thirtyPortfolioLoading">{portfolioMessage}</div>}
       </details>
+
+      <section className="card rangeMapSection loto5RangeSection"><Loto5RangeMap results={results} /></section>
 
       <section className="card primeraCard loto5History">
         <div className="sectionHeader"><div><h2>Histórico de Loto 5</h2><p>{results.length} sorteos oficiales cargados.</p></div>
