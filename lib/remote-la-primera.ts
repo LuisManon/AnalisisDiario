@@ -1,5 +1,6 @@
 import { laPrimeraDrawSchema, laPrimeraLoto5DrawSchema, laPrimeraQuinielaDrawSchema } from "./validation";
 import type { LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw } from "./types";
+import { cleanLoto5Results } from "./la-primera-loto5";
 
 const resultsUrl = "https://laprimera.do/resultados/";
 const ajaxUrl = "https://laprimera.do/wp-admin/admin-ajax.php";
@@ -157,7 +158,7 @@ export async function fetchLaPrimeraLoto5ResultsSince(startDate: string, endDate
   const dates = getDateRange(startDate, endDate);
   const results: LaPrimeraLoto5Draw[] = [];
   for (const date of dates) results.push(...await fetchLaPrimeraLoto5ResultsForDate(date, nonce));
-  return { results, sourceUrl: resultsUrl, checkedDates: dates };
+  return { results: cleanLoto5Results(results), sourceUrl: resultsUrl, checkedDates: dates };
 }
 
 export async function fetchLaPrimeraQuinielaResultsSince(startDate: string, endDate?: string) {

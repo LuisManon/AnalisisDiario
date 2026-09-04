@@ -77,6 +77,26 @@ export type LaPrimeraLoto5Draw = {
   source?: string;
 };
 
+export type Loto5Profile = "fuerte" | "equilibrada" | "exploratoria";
+
+export type Loto5PortfolioPlay = {
+  id: number;
+  profile: Loto5Profile;
+  numbers: [number, number, number, number, number];
+  plus: number;
+  score: number;
+  exactPositionRepeat: boolean;
+  explanation: string;
+};
+
+export type Loto5PortfolioSnapshot = {
+  targetDate: string;
+  generatedAt: string;
+  algorithmVersion: string;
+  historicalThrough: string | null;
+  plays: Loto5PortfolioPlay[];
+};
+
 export type LotekaRepartideraDraw = {
   date: string;
   number: number;

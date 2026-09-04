@@ -10,7 +10,8 @@ import {
   laPrimeraSchedules
 } from "../lib/la-primera";
 import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-pale";
-import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, QuinielaPaleDraw } from "../lib/types";
+import { getNextLoto5Date } from "../lib/la-primera-loto5";
+import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, Loto5PortfolioPlay, Loto5PortfolioSnapshot, QuinielaPaleDraw } from "../lib/types";
 
 type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
 
@@ -560,6 +561,22 @@ function Loto5Ball({ number, plus = false, winner = false }: { number: number; p
   return <span className={`primeraLoto5Ball ${plus ? "plus" : ""} ${winner ? "winner" : ""}`}>{String(number).padStart(2, "0")}</span>;
 }
 
+function loto5PrizeLabel(matches: number, plus: boolean) {
+  return loto5Prizes.find((prize) => prize.hits === `${matches}${plus ? " + Más" : ""}`)?.prize ?? "Sin premio";
+}
+
+function Loto5PortfolioView({ portfolio, winningDraw }: { portfolio: Loto5PortfolioSnapshot; winningDraw?: LaPrimeraLoto5Draw }) {
+  const profileLabels: Record<Loto5PortfolioPlay["profile"], string> = { fuerte: "Fuertes", equilibrada: "Equilibradas", exploratoria: "Exploratorias" };
+  return <section className="loto5PortfolioBody">
+    <header className="portfolioTarget"><div><span className="panelLabel">{winningDraw ? "Sorteo evaluado" : "Sorteo objetivo"}</span><h2>{formatLongDate(portfolio.targetDate)}</h2></div><p>Algoritmo {portfolio.algorithmVersion} · histórico hasta {portfolio.historicalThrough ? formatShortDate(portfolio.historicalThrough) : "N/D"}</p></header>
+    <div className="loto5PortfolioColumns">{(["fuerte", "equilibrada", "exploratoria"] as const).map((profile) => <article className={`loto5PortfolioColumn ${profile}`} key={profile}><header><h3>{profileLabels[profile]}</h3><strong>20</strong></header><div className="loto5PortfolioList">{portfolio.plays.filter((play) => play.profile === profile).map((play, index) => {
+      const matches = winningDraw ? play.numbers.filter((number) => winningDraw.numbers.includes(number)).length : 0;
+      const plusMatched = winningDraw?.plus === play.plus;
+      return <div className="loto5PortfolioPlay" key={play.id}><div className="portfolioPlayMeta"><b>#{index + 1}</b><span>{play.score} pts</span>{play.exactPositionRepeat ? <em>Repite posición</em> : null}</div><div className="primeraLoto5Balls">{play.numbers.map((number, position) => <span className={winningDraw?.numbers[position] === number ? "loto5ExactPosition" : ""} key={`${position}-${number}`}><Loto5Ball number={number} winner={winningDraw?.numbers.includes(number)} /></span>)}<i>+</i><Loto5Ball number={play.plus} plus winner={plusMatched} /></div><small>{winningDraw ? `${matches} aciertos${plusMatched ? " + Más" : ""} · ${loto5PrizeLabel(matches, Boolean(plusMatched))}` : play.explanation}</small></div>;
+    })}</div></article>)}</div>
+  </section>;
+}
+
 function LaPrimeraLoto5View({
   results,
   onProductChange,
@@ -570,6 +587,10 @@ function LaPrimeraLoto5View({
   status: string;
 }) {
   const [historyPage, setHistoryPage] = useState(1);
+  const [portfolioRequested, setPortfolioRequested] = useState(false);
+  const [portfolio, setPortfolio] = useState<Loto5PortfolioSnapshot | null>(null);
+  const [previousPortfolio, setPreviousPortfolio] = useState<(Loto5PortfolioSnapshot & { draw: LaPrimeraLoto5Draw }) | null>(null);
+  const [portfolioMessage, setPortfolioMessage] = useState("Abre la sección para generar las 60 jugadas.");
   const latest = results[0] ?? null;
   const oldest = results.at(-1) ?? null;
   const positionTops = useMemo(() => Array.from({ length: 6 }, (_, position) => {
@@ -580,6 +601,16 @@ function LaPrimeraLoto5View({
   }), [results]);
   const pageCount = Math.max(1, Math.ceil(results.length / 10));
   const history = results.slice((historyPage - 1) * 10, historyPage * 10);
+  const targetDate = getNextLoto5Date(results);
+
+  useEffect(() => {
+    if (!portfolioRequested) return;
+    setPortfolioMessage("Cargando o creando el fotograma de 60 jugadas…");
+    fetch(`/api/la-primera/loto5-portfolio?drawDate=${targetDate}`)
+      .then((response) => { if (!response.ok) throw new Error(); return response.json(); })
+      .then((payload) => { setPortfolio(payload.current ?? null); setPreviousPortfolio(payload.previous ?? null); setPortfolioMessage(""); })
+      .catch(() => setPortfolioMessage("No se pudo crear el fotograma de Loto 5."));
+  }, [portfolioRequested, targetDate]);
 
   return (
     <main className="primeraTheme primeraLoto5Theme">
@@ -644,6 +675,11 @@ function LaPrimeraLoto5View({
       </details>
 
       <section className="card rangeMapSection loto5RangeSection"><Loto5RangeMap results={results} /></section>
+
+      <details className="topPositionsAccordion loto5PortfolioAccordion" onToggle={(event) => { if (event.currentTarget.open) setPortfolioRequested(true); }}>
+        <summary><span>Generador de 60 jugadas</span><small>20 fuertes, 20 equilibradas y 20 exploratorias para {formatShortDate(targetDate)}.</small></summary>
+        {portfolio ? <div className="portfolioSnapshots"><Loto5PortfolioView portfolio={portfolio} />{previousPortfolio ? <details className="portfolioPreviousAccordion"><summary><span>Comparar con el sorteo anterior</span><small>{formatShortDate(previousPortfolio.targetDate)}</small></summary><Loto5PortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} /></details> : null}</div> : <div className="thirtyPortfolioLoading">{portfolioMessage}</div>}
+      </details>
 
       <section className="card primeraCard loto5History">
         <div className="sectionHeader"><div><h2>Histórico de Loto 5</h2><p>{results.length} sorteos oficiales cargados.</p></div>

@@ -3077,6 +3077,28 @@ h3 {
 .loto5RangeSection { margin-top: 18px; }
 .loto5RangeMap .rangeMapHeader { margin-bottom: 22px; }
 
+.loto5PortfolioBody { padding: 16px; }
+.loto5PortfolioColumns { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.loto5PortfolioColumn { background: #fff; border: 1px solid var(--line); border-radius: 10px; min-width: 0; overflow: hidden; }
+.loto5PortfolioColumn.fuerte { border-top: 4px solid var(--primera-red); }
+.loto5PortfolioColumn.equilibrada { border-top: 4px solid #333; }
+.loto5PortfolioColumn.exploratoria { border-top: 4px solid #d79b25; }
+.loto5PortfolioColumn > header { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 12px 14px; }
+.loto5PortfolioColumn > header h3 { margin: 0; }
+.loto5PortfolioColumn > header strong { background: var(--primera-soft); border-radius: 999px; padding: 5px 9px; }
+.loto5PortfolioList { display: grid; }
+.loto5PortfolioPlay { border-bottom: 1px solid var(--line); display: grid; gap: 8px; padding: 12px; }
+.loto5PortfolioPlay:last-child { border-bottom: 0; }
+.loto5PortfolioPlay .portfolioPlayMeta { align-items: center; display: flex; gap: 8px; }
+.loto5PortfolioPlay .portfolioPlayMeta span { color: var(--muted); font-size: 0.72rem; }
+.loto5PortfolioPlay .portfolioPlayMeta em { background: rgba(253, 1, 0, 0.08); border-radius: 999px; color: var(--primera-red); font-size: 0.65rem; font-style: normal; font-weight: 800; margin-left: auto; padding: 4px 6px; }
+.loto5PortfolioPlay small { color: var(--muted); line-height: 1.35; }
+.loto5ExactPosition { border-bottom: 3px solid #d79b25; border-radius: 50%; display: inline-flex; padding-bottom: 2px; }
+
+@media (max-width: 980px) {
+  .loto5PortfolioColumns { grid-template-columns: 1fr; }
+}
+
 .primeraTheme .subcopy,
 .primeraTheme .status,
 .primeraTheme .chartLegend,

@@ -42,6 +42,14 @@ for (let index = 0; index < dates.length; index += 8) {
   }
 }
 
-results.sort((a, b) => b.date.localeCompare(a.date));
-await fs.writeFile("data/la-primera-loto5-results.json", `${JSON.stringify(results, null, 2)}\n`);
-console.log(JSON.stringify({ startDate, endDate, draws: results.length, latest: results[0], oldest: results.at(-1) }, null, 2));
+results.sort((a, b) => a.date.localeCompare(b.date));
+const cleanResults = [];
+for (const result of results) {
+  const previous = cleanResults.at(-1);
+  const sameNumbers = previous && previous.numbers.every((number, position) => number === result.numbers[position]);
+  if (previous && sameNumbers && previous.plus === result.plus) continue;
+  cleanResults.push(result);
+}
+cleanResults.sort((a, b) => b.date.localeCompare(a.date));
+await fs.writeFile("data/la-primera-loto5-results.json", `${JSON.stringify(cleanResults, null, 2)}\n`);
+console.log(JSON.stringify({ startDate, endDate, draws: cleanResults.length, latest: cleanResults[0], oldest: cleanResults.at(-1) }, null, 2));
