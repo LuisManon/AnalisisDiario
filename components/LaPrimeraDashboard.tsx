@@ -599,8 +599,9 @@ function LaPrimeraLoto5View({
     for (const draw of results) counts[position === 5 ? draw.plus : draw.numbers[position]] += 1;
     return counts.slice(1).map((count, index) => ({ number: index + 1, count })).sort((a, b) => b.count - a.count || a.number - b.number).slice(0, 5);
   }), [results]);
-  const pageCount = Math.max(1, Math.ceil(results.length / 10));
-  const history = results.slice((historyPage - 1) * 10, historyPage * 10);
+  const historyPageSize = 5;
+  const pageCount = Math.max(1, Math.ceil(results.length / historyPageSize));
+  const history = results.slice((historyPage - 1) * historyPageSize, historyPage * historyPageSize);
   const targetDate = getNextLoto5Date(results);
 
   useEffect(() => {

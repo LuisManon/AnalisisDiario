@@ -516,7 +516,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                       </span>
                       <small>{play.profile === "fuerte" ? `${play.daySupportCount}/6 con respaldo del ${formatDay(ticket.day)}` : play.profile === "equilibrada" ? `Balance ${formatDay(ticket.day)} + historial general` : `${6 - play.daySupportCount} de baja afinidad del ${formatDay(ticket.day)}`}</small>
                     </div>
-                    <RecommendationBalls play={play} results={data.results} dayFilter={ticket.day} winningDraw={currentDraw} />
+                    <RecommendationBalls play={play} results={data.results} winningDraw={currentDraw} />
                     <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
                       {!currentDraw ? "Pendiente de resultado" : prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
                     </span>
@@ -785,7 +785,7 @@ function RecommendationSnapshotCard({
                     {play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}
                   </span>
                 </div>
-                <RecommendationBalls play={play} results={analysisResults} dayFilter={snapshot.day} winningDraw={snapshot.draw} />
+                <RecommendationBalls play={play} results={analysisResults} winningDraw={snapshot.draw} />
                 <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
                   {prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
                 </span>
@@ -805,46 +805,41 @@ function RecommendationSnapshotCard({
 function RecommendationBalls({
   play,
   results,
-  dayFilter,
   winningDraw
 }: {
   play: RecommendedPlay;
   results: DrawResult[];
-  dayFilter: DayFilter;
   winningDraw?: DrawResult;
 }) {
-  const analysisYear = results[0]?.date.slice(0, 4) ?? String(new Date().getFullYear());
   const [tooltip, setTooltip] = useState<null | {
     x: number;
     y: number;
-    date: string | null;
-    day: string | null;
-    position: string;
+    number: number;
+    isPlus: boolean;
+    requestedPosition: number | null;
+    exact: { date: string; day: DrawResult["day"] } | null;
+    alternate: { date: string; day: DrawResult["day"]; position: number } | null;
   }>(null);
 
-  function findLastResult(number: number, position: number | "plus") {
-    return results.find((result) => {
-      if (!result.date.startsWith(analysisYear)) return false;
-      if (dayFilter !== "todos" && result.day !== dayFilter) return false;
-      return position === "plus" ? result.plus === number : result.numbers[position] === number;
-    }) ?? null;
-  }
-
   function showTooltip(event: ReactMouseEvent<HTMLElement>, number: number, position: number | "plus") {
-    const width = 190;
-    const height = 106;
+    const width = 230;
+    const height = position === "plus" ? 104 : 148;
     const gap = 12;
     const edge = 8;
-    const lastResult = findLastResult(number, position);
+    const exactResult = results.find((result) => position === "plus" ? result.plus === number : result.numbers[position] === number) ?? null;
+    const alternateResult = position === "plus" ? null : results.find((result) => result.numbers.some((candidate, candidatePosition) => candidate === number && candidatePosition !== position)) ?? null;
+    const alternatePosition = alternateResult && position !== "plus" ? alternateResult.numbers.findIndex((candidate) => candidate === number) : -1;
     const preferredX = event.clientX + gap + width > window.innerWidth ? event.clientX - width - gap : event.clientX + gap;
     const preferredY = event.clientY + gap + height > window.innerHeight ? event.clientY - height - gap : event.clientY + gap;
 
     setTooltip({
       x: Math.min(Math.max(preferredX, edge), window.innerWidth - width - edge),
       y: Math.min(Math.max(preferredY, edge), window.innerHeight - height - edge),
-      date: lastResult?.date ?? null,
-      day: lastResult?.day ?? null,
-      position: position === "plus" ? "Numero Mas" : `Posicion ${position + 1}`
+      number,
+      isPlus: position === "plus",
+      requestedPosition: position === "plus" ? null : position,
+      exact: exactResult ? { date: exactResult.date, day: exactResult.day } : null,
+      alternate: alternateResult && alternatePosition >= 0 ? { date: alternateResult.date, day: alternateResult.day, position: alternatePosition } : null
     });
   }
 
@@ -869,19 +864,9 @@ function RecommendationBalls({
       </span>
       {tooltip ? (
         <div className="recommendationTooltip" style={{ left: tooltip.x, top: tooltip.y }}>
-          <strong>{tooltip.position}</strong>
-          {tooltip.date ? (
-            <>
-              <span>Fecha: <b>{formatShortDate(tooltip.date)}</b></span>
-              <span>Dia: <b>{formatDay(tooltip.day ?? "")}</b></span>
-            </>
-          ) : (
-            <span>
-              No ha salido en {analysisYear}
-              {dayFilter === "todos" ? "" : ` en sorteos de ${formatDay(dayFilter)}`}
-              {" "}en esta posicion.
-            </span>
-          )}
+          <strong>{tooltip.isPlus ? `Más ${tooltip.number}` : `Número ${tooltip.number} · P${(tooltip.requestedPosition ?? 0) + 1}`}</strong>
+          {tooltip.exact ? <span>Última vez {tooltip.isPlus ? "como Más" : "en esta posición"}: <b>{formatShortDate(tooltip.exact.date)}</b> · {formatDay(tooltip.exact.day)}</span> : <span>Nunca ha salido {tooltip.isPlus ? "como Más" : "en esta posición"} en el histórico cargado.</span>}
+          {!tooltip.isPlus && (tooltip.alternate ? <span>Última vez en otra posición: <b>P{tooltip.alternate.position + 1}</b> · {formatShortDate(tooltip.alternate.date)} · {formatDay(tooltip.alternate.day)}</span> : <span>No registra salidas en otra posición.</span>)}
         </div>
       ) : null}
     </div>

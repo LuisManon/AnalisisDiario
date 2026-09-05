@@ -1,7 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#f4f5f1"/>
-  <circle cx="32" cy="32" r="24" fill="#d7253d"/>
-  <circle cx="24" cy="22" r="8" fill="#ffffff" opacity="0.85"/>
-  <circle cx="32" cy="32" r="18" fill="none" stroke="#8f0f1f" stroke-width="3"/>
-  <text x="32" y="39" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" fill="#ffffff">+</text>
+  <defs>
+    <linearGradient id="background" x1="8" y1="6" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16856d"/>
+      <stop offset="1" stop-color="#073c35"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="18" y1="17" x2="44" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe89a"/>
+      <stop offset="0.48" stop-color="#f3bd35"/>
+      <stop offset="1" stop-color="#c47b0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="13" fill="url(#background)"/>
+  <path d="M14 22.5 24.5 31 32 16l7.5 15L50 22.5l-4 20H18l-4-20Z" fill="url(#gold)" stroke="#fff1b4" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M18 42.5h28v5.5H18z" fill="#f3bd35" stroke="#fff1b4" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="14" cy="21" r="3" fill="#fff1b4"/>
+  <circle cx="32" cy="14.5" r="3" fill="#fff1b4"/>
+  <circle cx="50" cy="21" r="3" fill="#fff1b4"/>
 </svg>
