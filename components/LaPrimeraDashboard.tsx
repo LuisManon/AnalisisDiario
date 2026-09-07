@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import {
   buildLaPrimeraStats,
+  buildLaPrimeraFrequencyRanking,
   buildLaPrimeraSuggestions,
   filterLaPrimeraResults,
   formatQuinielonNumber,
@@ -108,8 +109,9 @@ function getPreviousOccurrence(results: LaPrimeraDraw[], draw: LaPrimeraDraw) {
   };
 }
 
-function QuinielonBall({ number, tone = "red", winner = false }: { number: number; tone?: "red" | "dark"; winner?: boolean }) {
-  return <span className={`${tone === "red" ? "primeraBall" : "primeraBall dark"} ${winner ? "primeraBallWinner" : ""}`}>{formatQuinielonNumber(number)}</span>;
+function QuinielonBall({ number, tone = "red", winner = false }: { number: number; tone?: "red" | "dark" | "gold"; winner?: boolean }) {
+  const toneClass = tone === "dark" ? " dark" : tone === "gold" ? " gold" : "";
+  return <span className={`primeraBall${toneClass} ${winner ? "primeraBallWinner" : ""}`}>{formatQuinielonNumber(number)}</span>;
 }
 
 export function LaPrimeraDashboard({ initialData }: Props) {
@@ -289,6 +291,26 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
         <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
       </section>
+
+      <section className="investorSection">
+        <header>
+          <span>Selección exclusiva</span>
+          <h2>Quinielón Inversionistas</h2>
+          <p>Puestos 21 al 40 del ranking, sin repetir los números del Top 20 Calientes.</p>
+        </header>
+        <div className="twoColumn">
+          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} offset={20} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} offset={20} tone="gold" />
+        </div>
+      </section>
+
+      <WeeklyTopChallenge
+        results={results}
+        quinielaResults={data.quinielaResults}
+        rankingOffset={20}
+        participantLabel="Inversionistas"
+        variant="investor"
+      />
 
       <section className="twoColumn">
         <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} winningNumber={stats.latestBySession.dia?.number} />
@@ -773,25 +795,38 @@ function getWeekMonday(date: string) {
   return value.toISOString().slice(0, 10);
 }
 
-function WeeklyTopChallenge({ results, quinielaResults }: { results: LaPrimeraDraw[]; quinielaResults: LaPrimeraQuinielaDraw[] }) {
+function WeeklyTopChallenge({
+  results,
+  quinielaResults,
+  rankingOffset = 0,
+  participantLabel = "Nosotros",
+  variant = "default"
+}: {
+  results: LaPrimeraDraw[];
+  quinielaResults: LaPrimeraQuinielaDraw[];
+  rankingOffset?: number;
+  participantLabel?: string;
+  variant?: "default" | "investor";
+}) {
   const [showTotal, setShowTotal] = useState(false);
   const today = getDominicanClock().date;
   const monday = getWeekMonday(today);
   const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
   const rankingResults = results.filter((draw) => draw.date < monday);
   const rankingBase = rankingResults.length ? rankingResults : results;
-  const dayTop = buildLaPrimeraStats(rankingBase, "dia").topHot.map((item) => item.number);
-  const nightTop = buildLaPrimeraStats(rankingBase, "noche").topHot.map((item) => item.number);
+  const dayTop = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(rankingBase, "dia")).slice(rankingOffset, rankingOffset + 20).map((item) => item.number);
+  const nightTop = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(rankingBase, "noche")).slice(rankingOffset, rankingOffset + 20).map((item) => item.number);
   const topPool = new Set([...dayTop, ...nightTop]);
 
   const days = weekDates.map((date) => {
     const tandas: WeeklyTandaResult[] = (["dia", "noche"] as const).map((currentSession) => {
       const quinielon = results.find((draw) => draw.date === date && draw.session === currentSession);
       const quiniela = quinielaResults.find((draw) => draw.date === date && draw.session === currentSession);
+      const sessionPool = new Set(currentSession === "dia" ? dayTop : nightTop);
       const matches: WeeklyTandaResult["matches"] = [];
-      if (quinielon && topPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
+      if (quinielon && sessionPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
       for (const number of quiniela?.numbers ?? []) {
-        if (topPool.has(number)) matches.push({ number, source: "Quiniela" });
+        if (sessionPool.has(number)) matches.push({ number, source: "Quiniela" });
       }
       return {
         session: currentSession,
@@ -810,12 +845,12 @@ function WeeklyTopChallenge({ results, quinielaResults }: { results: LaPrimeraDr
   const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
-    <section className="card weeklyTopChallenge">
+    <section className={`card weeklyTopChallenge ${variant === "investor" ? "weeklyInvestorChallenge" : ""}`}>
       <header className="weeklyTopHeader">
         <div>
           <span className="panelLabel primeraLabel">Puja semanal · 14 tandas</span>
-          <h2>Top 40 contra la banca</h2>
-          <p>Los 20 puestos Día y los 20 puestos Noche se aplican al Quinielón y a la Quiniela de cada tanda.</p>
+          <h2>{variant === "investor" ? "Inversionistas contra la banca" : "Top 40 contra la banca"}</h2>
+          <p>Los puestos {rankingOffset + 1} al {rankingOffset + 20} de Día y Noche se aplican al Quinielón y a la Quiniela de su tanda correspondiente.</p>
         </div>
         <div className="weeklyRoster">
           <strong>40 puestos</strong>
@@ -832,7 +867,7 @@ function WeeklyTopChallenge({ results, quinielaResults }: { results: LaPrimeraDr
             <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div><b>{dayPercentage === null ? "Pendiente" : `${dayPercentage}%`}</b></header>
             <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
               <span>{formatSession(tanda.session)}</span>
-              <strong>{tanda.status === "nosotros" ? "Nosotros" : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
+              <strong>{tanda.status === "nosotros" ? participantLabel : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
               <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en ambos" : "Esperando ambos resultados"}</small>
             </div>)}</div>
           </article>;
@@ -841,24 +876,24 @@ function WeeklyTopChallenge({ results, quinielaResults }: { results: LaPrimeraDr
 
       <div className="weeklyTopActions">
         <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal(true)}>Calcular total semanal</button>
-        {showTotal ? <div className="weeklyTopSummary"><strong>{percentage}% para nosotros · {100 - percentage}% para la banca</strong><p>Marcador actual: <b>{ours}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado con las tandas completas disponibles hasta hoy.</p>}
+        {showTotal ? <div className="weeklyTopSummary"><strong>{percentage}% para {participantLabel.toLowerCase()} · {100 - percentage}% para la banca</strong><p>Marcador actual: <b>{ours}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado con las tandas completas disponibles hasta hoy.</p>}
       </div>
     </section>
   );
 }
 
-function FrequencyCard({ title, results, winningNumber }: { title: string; results: LaPrimeraDraw[]; winningNumber?: number }) {
-  const frequency = buildLaPrimeraStats(results, "todos").topHot;
+function FrequencyCard({ title, results, winningNumber, offset = 0, tone = "red" }: { title: string; results: LaPrimeraDraw[]; winningNumber?: number; offset?: number; tone?: "red" | "gold" }) {
+  const frequency = buildLaPrimeraFrequencyRanking(results).slice(offset, offset + 20);
   const max = Math.max(1, frequency[0]?.count ?? 1);
 
   return (
-    <div className="card primeraCard">
+    <div className={`card primeraCard ${tone === "gold" ? "investorCard" : ""}`}>
       <h2>{title}</h2>
       <div className="rankList">
         {frequency.map((item) => (
           <div className="rankItem" key={item.number}>
-            <QuinielonBall number={item.number} winner={item.number === winningNumber} />
-            <div className="bar primeraBar"><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
+            <QuinielonBall number={item.number} tone={tone} winner={item.number === winningNumber} />
+            <div className={`bar primeraBar ${tone === "gold" ? "investorBar" : ""}`}><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
             <strong>{item.count}</strong>
           </div>
         ))}
