@@ -14,7 +14,7 @@ import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-
 import { getNextLoto5Date } from "../lib/la-primera-loto5";
 import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, Loto5PortfolioPlay, Loto5PortfolioSnapshot, QuinielaPaleDraw } from "../lib/types";
 
-type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
+type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5" | "inversionistas";
 
 type Props = {
   initialData: {
@@ -204,6 +204,10 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
   }
 
+  if (product === "inversionistas") {
+    return <LaPrimeraInvestorView results={results} quinielaResults={data.quinielaResults} onProductChange={setProduct} />;
+  }
+
   return (
     <main className="primeraTheme">
       <ProductSwitch product={product} onChange={setProduct} />
@@ -291,26 +295,6 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
         <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
       </section>
-
-      <section className="investorSection">
-        <header>
-          <span>Selección exclusiva</span>
-          <h2>Quinielón Inversionistas</h2>
-          <p>Puestos 21 al 40 del ranking, sin repetir los números del Top 20 Calientes.</p>
-        </header>
-        <div className="twoColumn">
-          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} offset={20} tone="gold" />
-          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} offset={20} tone="gold" />
-        </div>
-      </section>
-
-      <WeeklyTopChallenge
-        results={results}
-        quinielaResults={data.quinielaResults}
-        rankingOffset={20}
-        participantLabel="Inversionistas"
-        variant="investor"
-      />
 
       <section className="twoColumn">
         <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} winningNumber={stats.latestBySession.dia?.number} />
@@ -429,7 +413,49 @@ function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onCha
       <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
+      <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
     </nav>
+  );
+}
+
+function LaPrimeraInvestorView({
+  results,
+  quinielaResults,
+  onProductChange
+}: {
+  results: LaPrimeraDraw[];
+  quinielaResults: LaPrimeraQuinielaDraw[];
+  onProductChange: (product: LaPrimeraProduct) => void;
+}) {
+  const latestBySession = {
+    dia: results.find((draw) => draw.session === "dia") ?? null,
+    noche: results.find((draw) => draw.session === "noche") ?? null
+  };
+
+  return (
+    <main className="primeraTheme primeraInvestorTheme">
+      <ProductSwitch product="inversionistas" onChange={onProductChange} />
+
+      <section className="investorSection investorPageSection">
+        <header>
+          <span>Selección exclusiva</span>
+          <h1>Quinielón Inversionistas</h1>
+          <p>Puestos 21 al 40 del ranking, sin repetir los números del Top 20 Calientes.</p>
+        </header>
+        <div className="twoColumn">
+          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumber={latestBySession.dia?.number} offset={20} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={latestBySession.noche?.number} offset={20} tone="gold" />
+        </div>
+      </section>
+
+      <WeeklyTopChallenge
+        results={results}
+        quinielaResults={quinielaResults}
+        rankingOffset={20}
+        participantLabel="Inversionistas"
+        variant="investor"
+      />
+    </main>
   );
 }
 

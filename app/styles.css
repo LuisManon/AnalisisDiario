@@ -3484,6 +3484,7 @@ h3 {
   text-transform: uppercase;
 }
 
+.investorSection > header h1,
 .investorSection > header h2 {
   color: #5c4308;
   margin: 4px 0 5px;
