@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import {
   buildLaPrimeraStats,
+  buildLaPrimeraExclusiveRankings,
   buildLaPrimeraFrequencyRanking,
   buildLaPrimeraSuggestions,
   filterLaPrimeraResults,
@@ -125,6 +126,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const [tooltip, setTooltip] = useState<Tooltip>(null);
   const results = data.results;
   const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
+  const exclusiveRankings = useMemo(() => buildLaPrimeraExclusiveRankings(results), [results]);
   const latestQuinielonNumbers = [stats.latestBySession.dia?.number, stats.latestBySession.noche?.number].filter((number): number is number => number !== undefined);
   const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
   const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
@@ -293,8 +295,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       </section>
 
       <section className="twoColumn">
-        <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumbers={latestQuinielonNumbers} />
-        <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumbers={latestQuinielonNumbers} />
+        <FrequencyCard title="Top 20 calientes Dia" ranking={exclusiveRankings.hotDay} winningNumbers={latestQuinielonNumbers} />
+        <FrequencyCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={latestQuinielonNumbers} />
       </section>
 
       <section className="twoColumn">
@@ -431,6 +433,7 @@ function LaPrimeraInvestorView({
     noche: results.find((draw) => draw.session === "noche") ?? null
   };
   const latestNumbers = [latestBySession.dia?.number, latestBySession.noche?.number].filter((number): number is number => number !== undefined);
+  const exclusiveRankings = buildLaPrimeraExclusiveRankings(results);
 
   return (
     <main className="primeraTheme primeraInvestorTheme">
@@ -447,11 +450,11 @@ function LaPrimeraInvestorView({
         <header>
           <span>Selección exclusiva</span>
           <h1>Quinielón Inversionistas</h1>
-          <p>Puestos 21 al 40 del ranking, sin repetir los números del Top 20 Calientes.</p>
+          <p>Los siguientes 20 números elegibles por tanda, sin repetir ningún número de las listas anteriores.</p>
         </header>
         <div className="twoColumn">
-          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumbers={latestNumbers} offset={20} tone="gold" />
-          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumbers={latestNumbers} offset={20} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={latestNumbers} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={latestNumbers} tone="gold" />
         </div>
       </section>
     </main>
@@ -837,8 +840,9 @@ function WeeklyTopChallenge({
   const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
   const rankingResults = results.filter((draw) => draw.date < monday);
   const rankingBase = rankingResults.length ? rankingResults : results;
-  const dayTop = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(rankingBase, "dia")).slice(rankingOffset, rankingOffset + 20).map((item) => item.number);
-  const nightTop = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(rankingBase, "noche")).slice(rankingOffset, rankingOffset + 20).map((item) => item.number);
+  const exclusiveRankings = buildLaPrimeraExclusiveRankings(rankingBase);
+  const dayTop = (variant === "investor" ? exclusiveRankings.investorDay : exclusiveRankings.hotDay).map((item) => item.number);
+  const nightTop = (variant === "investor" ? exclusiveRankings.investorNight : exclusiveRankings.hotNight).map((item) => item.number);
   const topPool = new Set([...dayTop, ...nightTop]);
 
   const days = weekDates.map((date) => {
@@ -900,8 +904,8 @@ function WeeklyTopChallenge({
   );
 }
 
-function FrequencyCard({ title, results, winningNumbers = [], offset = 0, tone = "red" }: { title: string; results: LaPrimeraDraw[]; winningNumbers?: readonly number[]; offset?: number; tone?: "red" | "gold" }) {
-  const frequency = buildLaPrimeraFrequencyRanking(results).slice(offset, offset + 20);
+function FrequencyCard({ title, results = [], ranking, winningNumbers = [], tone = "red" }: { title: string; results?: LaPrimeraDraw[]; ranking?: Array<{ number: number; count: number }>; winningNumbers?: readonly number[]; tone?: "red" | "gold" }) {
+  const frequency = ranking ?? buildLaPrimeraFrequencyRanking(results).slice(0, 20);
   const max = Math.max(1, frequency[0]?.count ?? 1);
 
   return (

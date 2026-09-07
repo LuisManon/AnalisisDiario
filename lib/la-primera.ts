@@ -33,6 +33,24 @@ export function buildLaPrimeraFrequencyRanking(results: LaPrimeraDraw[]) {
   return getFrequency(results).sort((a, b) => b.count - a.count || a.number - b.number);
 }
 
+export function buildLaPrimeraExclusiveRankings(results: LaPrimeraDraw[]) {
+  const dayRanking = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(results, "dia"));
+  const nightRanking = buildLaPrimeraFrequencyRanking(filterLaPrimeraResults(results, "noche"));
+  const used = new Set<number>();
+  const takeUnique = (ranking: Array<{ number: number; count: number }>) => {
+    const selected = ranking.filter((item) => !used.has(item.number)).slice(0, 20);
+    selected.forEach((item) => used.add(item.number));
+    return selected;
+  };
+
+  return {
+    hotDay: takeUnique(dayRanking),
+    hotNight: takeUnique(nightRanking),
+    investorDay: takeUnique(dayRanking),
+    investorNight: takeUnique(nightRanking)
+  };
+}
+
 function getLastSeenIndex(results: LaPrimeraDraw[], number: number) {
   return results.findIndex((result) => result.number === number);
 }
