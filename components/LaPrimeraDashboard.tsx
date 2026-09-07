@@ -14,7 +14,7 @@ import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-
 import { getNextLoto5Date } from "../lib/la-primera-loto5";
 import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, Loto5PortfolioPlay, Loto5PortfolioSnapshot, QuinielaPaleDraw } from "../lib/types";
 
-type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
+type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5" | "estadisticas";
 
 type Props = {
   initialData: {
@@ -202,6 +202,10 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 
   if (product === "loto5") {
     return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
+  }
+
+  if (product === "estadisticas") {
+    return <LaPrimeraStatisticsView results={results} quinielaResults={data.quinielaResults} onProductChange={setProduct} />;
   }
 
   return (
@@ -429,6 +433,7 @@ function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onCha
       <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
+      <button className={product === "estadisticas" ? "active" : ""} onClick={() => onChange("estadisticas")}>Estadísticas</button>
     </nav>
   );
 }
@@ -451,6 +456,103 @@ function nextDateAfter(date: string) {
 
 function PrimeraQuinielaBall({ number, position, winner = false }: { number: number; position: number; winner?: boolean }) {
   return <span className={`primeraQuinielaBall p${position + 1} ${winner ? "winner" : ""}`}>{formatQuinielaNumber(number)}</span>;
+}
+
+function LaPrimeraStatisticsView({
+  results,
+  quinielaResults,
+  onProductChange
+}: {
+  results: LaPrimeraDraw[];
+  quinielaResults: LaPrimeraQuinielaDraw[];
+  onProductChange: (product: LaPrimeraProduct) => void;
+}) {
+  const [quinielonPage, setQuinielonPage] = useState(1);
+  const [quinielaPage, setQuinielaPage] = useState(1);
+  const historyPageSize = 5;
+  const quinielonPageCount = Math.max(1, Math.ceil(results.length / historyPageSize));
+  const quinielaPageCount = Math.max(1, Math.ceil(quinielaResults.length / historyPageSize));
+  const quinielonHistory = results.slice((quinielonPage - 1) * historyPageSize, quinielonPage * historyPageSize);
+  const quinielaHistory = quinielaResults.slice((quinielaPage - 1) * historyPageSize, quinielaPage * historyPageSize);
+  const quinielonLatest = {
+    dia: results.find((draw) => draw.session === "dia") ?? null,
+    noche: results.find((draw) => draw.session === "noche") ?? null
+  };
+  const quinielaLatest = {
+    dia: quinielaResults.find((draw) => draw.session === "dia") ?? null,
+    noche: quinielaResults.find((draw) => draw.session === "noche") ?? null
+  };
+  const quinielaTops = {
+    dia: quinielaTopByPosition(quinielaResults.filter((draw) => draw.session === "dia")),
+    noche: quinielaTopByPosition(quinielaResults.filter((draw) => draw.session === "noche"))
+  };
+
+  return (
+    <main className="primeraTheme primeraStatisticsTheme">
+      <ProductSwitch product="estadisticas" onChange={onProductChange} />
+      <section className="hero primeraHero statisticsHero">
+        <div>
+          <p className="eyebrow primeraEyebrow">La Primera · centro estadístico</p>
+          <h1>Estadísticas de Quinielón y Quiniela</h1>
+          <p className="subcopy">Últimos sorteos, frecuencias, tops por tanda e históricos en un solo lugar.</p>
+        </div>
+        <div className="heroPanel primeraHeroPanel">
+          <span className="panelLabel primeraLabel">Cobertura disponible</span>
+          <strong>{results.length + quinielaResults.length} sorteos</strong>
+          <small>{results.length} de Quinielón · {quinielaResults.length} de Quiniela</small>
+        </div>
+      </section>
+
+      <section className="statisticsSection">
+        <div className="sectionHeader"><div><h2>Últimos sorteos</h2><p>Resultados más recientes de Día y Noche.</p></div></div>
+        <div className="statisticsLatestGrid">
+          {(["dia", "noche"] as const).map((currentSession) => {
+            const draw = quinielonLatest[currentSession];
+            return <article className="card primeraCard statisticsLatestCard" key={`quinielon-${currentSession}`}><span>Quinielón · {formatSession(currentSession)}</span><strong>{draw ? formatShortDate(draw.date) : "Sin datos"}</strong>{draw ? <QuinielonBall number={draw.number} tone={currentSession === "dia" ? "red" : "dark"} /> : null}</article>;
+          })}
+          {(["dia", "noche"] as const).map((currentSession) => {
+            const draw = quinielaLatest[currentSession];
+            return <article className="card primeraCard statisticsLatestCard" key={`quiniela-${currentSession}`}><span>Quiniela · {formatSession(currentSession)}</span><strong>{draw ? formatShortDate(draw.date) : "Sin datos"}</strong><div className="primeraQuinielaBalls">{draw?.numbers.map((number, position) => <PrimeraQuinielaBall key={position} number={number} position={position} />)}</div></article>;
+          })}
+        </div>
+      </section>
+
+      <section className="metricsGrid">
+        <div className="metric primeraMetric"><span>Quinielón Día</span><strong>{filterLaPrimeraResults(results, "dia").length}</strong></div>
+        <div className="metric primeraMetric"><span>Quinielón Noche</span><strong>{filterLaPrimeraResults(results, "noche").length}</strong></div>
+        <div className="metric primeraMetric"><span>Quiniela Día</span><strong>{quinielaResults.filter((draw) => draw.session === "dia").length}</strong></div>
+        <div className="metric primeraMetric"><span>Quiniela Noche</span><strong>{quinielaResults.filter((draw) => draw.session === "noche").length}</strong></div>
+      </section>
+
+      <section className="statisticsSection">
+        <div className="sectionHeader"><div><h2>Top Quinielón</h2><p>Los 20 números con mayor frecuencia en cada tanda.</p></div></div>
+        <div className="twoColumn">
+          <FrequencyCard title="Top 20 · Día" results={filterLaPrimeraResults(results, "dia")} winningNumber={quinielonLatest.dia?.number} />
+          <FrequencyCard title="Top 20 · Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={quinielonLatest.noche?.number} />
+        </div>
+      </section>
+
+      {(["dia", "noche"] as const).map((currentSession) => <section className="statisticsSection" key={`tops-${currentSession}`}>
+        <div className="sectionHeader"><div><h2>Top Quiniela · {formatSession(currentSession)}</h2><p>Top 20 respetando cada posición del resultado.</p></div></div>
+        <div className="primeraQuinielaTopGrid">
+          {quinielaTops[currentSession].map((items, position) => <article className="card primeraCard" key={position}><h2>Posición {position + 1}</h2><div className="primeraQuinielaRankList">{items.map((item, rank) => <div className="primeraQuinielaRank" key={item.number}><b>#{rank + 1}</b><PrimeraQuinielaBall number={item.number} position={position} winner={quinielaLatest[currentSession]?.numbers[position] === item.number} /><span>{item.count} salidas</span></div>)}</div></article>)}
+        </div>
+      </section>)}
+
+      <section className="statisticsHistoryGrid">
+        <StatisticsQuinielonHistory results={quinielonHistory} total={results.length} page={quinielonPage} pageCount={quinielonPageCount} onPageChange={setQuinielonPage} />
+        <StatisticsQuinielaHistory results={quinielaHistory} total={quinielaResults.length} page={quinielaPage} pageCount={quinielaPageCount} onPageChange={setQuinielaPage} />
+      </section>
+    </main>
+  );
+}
+
+function StatisticsQuinielonHistory({ results, total, page, pageCount, onPageChange }: { results: LaPrimeraDraw[]; total: number; page: number; pageCount: number; onPageChange: (page: number) => void }) {
+  return <section className="card primeraCard"><div className="sectionHeader"><div><h2>Histórico de Quinielón</h2><p>{total} sorteos · 5 por página.</p></div><div className="pagination"><button className="miniButton" disabled={page === 1} onClick={() => onPageChange(page - 1)}>Anterior</button><span>Página {page} de {pageCount}</span><button className="miniButton" disabled={page === pageCount} onClick={() => onPageChange(page + 1)}>Siguiente</button></div></div><div className="primeraHistory">{results.map((draw) => <article className="historyRow" key={`${draw.date}-${draw.session}`}><div className="historyDate"><strong>{formatShortDate(draw.date)} · {formatSession(draw.session)}</strong><span>{formatLongDate(draw.date)}</span></div><QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} /></article>)}</div></section>;
+}
+
+function StatisticsQuinielaHistory({ results, total, page, pageCount, onPageChange }: { results: LaPrimeraQuinielaDraw[]; total: number; page: number; pageCount: number; onPageChange: (page: number) => void }) {
+  return <section className="card primeraCard"><div className="sectionHeader"><div><h2>Histórico de Quiniela</h2><p>{total} sorteos · 5 por página.</p></div><div className="pagination"><button className="miniButton" disabled={page === 1} onClick={() => onPageChange(page - 1)}>Anterior</button><span>Página {page} de {pageCount}</span><button className="miniButton" disabled={page === pageCount} onClick={() => onPageChange(page + 1)}>Siguiente</button></div></div><div className="primeraHistory">{results.map((draw) => <article className="historyRow" key={`${draw.date}-${draw.session}-${draw.drawId ?? draw.numbers.join("-")}`}><div className="historyDate"><strong>{formatShortDate(draw.date)} · {formatSession(draw.session)}</strong><span>{formatLongDate(draw.date)} · Sorteo #{draw.drawId ?? "N/D"}</span></div><div className="primeraQuinielaBalls">{draw.numbers.map((number, position) => <PrimeraQuinielaBall key={position} number={number} position={position} />)}</div></article>)}</div></section>;
 }
 
 function LaPrimeraQuinielaView({
