@@ -125,6 +125,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const [tooltip, setTooltip] = useState<Tooltip>(null);
   const results = data.results;
   const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
+  const latestQuinielonNumbers = [stats.latestBySession.dia?.number, stats.latestBySession.noche?.number].filter((number): number is number => number !== undefined);
   const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
   const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
   const daySuggestionDate = stats.latestBySession.dia?.date ?? results[0]?.date ?? "";
@@ -205,7 +206,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   }
 
   if (product === "inversionistas") {
-    return <LaPrimeraInvestorView results={results} quinielaResults={data.quinielaResults} onProductChange={setProduct} />;
+    return <LaPrimeraInvestorView results={results} onProductChange={setProduct} />;
   }
 
   return (
@@ -270,7 +271,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         <span className="status">{status} Las recomendaciones son historicas, no predicciones garantizadas.</span>
       </section>
 
-      <WeeklyTopChallenge results={results} quinielaResults={data.quinielaResults} />
+      <WeeklyTopChallenge results={results} />
 
       <section className="metricsGrid">
         <div className="metric primeraMetric">
@@ -292,8 +293,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       </section>
 
       <section className="twoColumn">
-        <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumber={stats.latestBySession.dia?.number} />
-        <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={stats.latestBySession.noche?.number} />
+        <FrequencyCard title="Top 20 calientes Dia" results={filterLaPrimeraResults(results, "dia")} winningNumbers={latestQuinielonNumbers} />
+        <FrequencyCard title="Top 20 calientes Noche" results={filterLaPrimeraResults(results, "noche")} winningNumbers={latestQuinielonNumbers} />
       </section>
 
       <section className="twoColumn">
@@ -420,17 +421,16 @@ function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onCha
 
 function LaPrimeraInvestorView({
   results,
-  quinielaResults,
   onProductChange
 }: {
   results: LaPrimeraDraw[];
-  quinielaResults: LaPrimeraQuinielaDraw[];
   onProductChange: (product: LaPrimeraProduct) => void;
 }) {
   const latestBySession = {
     dia: results.find((draw) => draw.session === "dia") ?? null,
     noche: results.find((draw) => draw.session === "noche") ?? null
   };
+  const latestNumbers = [latestBySession.dia?.number, latestBySession.noche?.number].filter((number): number is number => number !== undefined);
 
   return (
     <main className="primeraTheme primeraInvestorTheme">
@@ -438,7 +438,6 @@ function LaPrimeraInvestorView({
 
       <WeeklyTopChallenge
         results={results}
-        quinielaResults={quinielaResults}
         rankingOffset={20}
         participantLabel="Inversionistas"
         variant="investor"
@@ -451,8 +450,8 @@ function LaPrimeraInvestorView({
           <p>Puestos 21 al 40 del ranking, sin repetir los números del Top 20 Calientes.</p>
         </header>
         <div className="twoColumn">
-          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumber={latestBySession.dia?.number} offset={20} tone="gold" />
-          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={latestBySession.noche?.number} offset={20} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Día" results={filterLaPrimeraResults(results, "dia")} winningNumbers={latestNumbers} offset={20} tone="gold" />
+          <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumbers={latestNumbers} offset={20} tone="gold" />
         </div>
       </section>
     </main>
@@ -823,13 +822,11 @@ function getWeekMonday(date: string) {
 
 function WeeklyTopChallenge({
   results,
-  quinielaResults,
   rankingOffset = 0,
   participantLabel = "Nosotros",
   variant = "default"
 }: {
   results: LaPrimeraDraw[];
-  quinielaResults: LaPrimeraQuinielaDraw[];
   rankingOffset?: number;
   participantLabel?: string;
   variant?: "default" | "investor";
@@ -847,16 +844,11 @@ function WeeklyTopChallenge({
   const days = weekDates.map((date) => {
     const tandas: WeeklyTandaResult[] = (["dia", "noche"] as const).map((currentSession) => {
       const quinielon = results.find((draw) => draw.date === date && draw.session === currentSession);
-      const quiniela = quinielaResults.find((draw) => draw.date === date && draw.session === currentSession);
-      const sessionPool = new Set(currentSession === "dia" ? dayTop : nightTop);
       const matches: WeeklyTandaResult["matches"] = [];
-      if (quinielon && sessionPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
-      for (const number of quiniela?.numbers ?? []) {
-        if (sessionPool.has(number)) matches.push({ number, source: "Quiniela" });
-      }
+      if (quinielon && topPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
       return {
         session: currentSession,
-        status: matches.length ? "nosotros" : quinielon && quiniela ? "banca" : "pendiente",
+        status: matches.length ? "nosotros" : quinielon ? "banca" : "pendiente",
         matches
       };
     });
@@ -876,7 +868,7 @@ function WeeklyTopChallenge({
         <div>
           <span className="panelLabel primeraLabel">Puja semanal · 14 tandas</span>
           <h2>{variant === "investor" ? "Inversionistas contra la banca" : "Top 40 contra la banca"}</h2>
-          <p>Los puestos {rankingOffset + 1} al {rankingOffset + 20} de Día y Noche se aplican al Quinielón y a la Quiniela de su tanda correspondiente.</p>
+          <p>Los puestos {rankingOffset + 1} al {rankingOffset + 20} de Día y Noche se evalúan juntos contra cada resultado del Quinielón.</p>
         </div>
         <div className="weeklyRoster">
           <strong>40 puestos</strong>
@@ -894,7 +886,7 @@ function WeeklyTopChallenge({
             <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
               <span>{formatSession(tanda.session)}</span>
               <strong>{tanda.status === "nosotros" ? participantLabel : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
-              <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en ambos" : "Esperando ambos resultados"}</small>
+              <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en el Quinielón" : "Esperando resultado"}</small>
             </div>)}</div>
           </article>;
         })}
@@ -908,7 +900,7 @@ function WeeklyTopChallenge({
   );
 }
 
-function FrequencyCard({ title, results, winningNumber, offset = 0, tone = "red" }: { title: string; results: LaPrimeraDraw[]; winningNumber?: number; offset?: number; tone?: "red" | "gold" }) {
+function FrequencyCard({ title, results, winningNumbers = [], offset = 0, tone = "red" }: { title: string; results: LaPrimeraDraw[]; winningNumbers?: readonly number[]; offset?: number; tone?: "red" | "gold" }) {
   const frequency = buildLaPrimeraFrequencyRanking(results).slice(offset, offset + 20);
   const max = Math.max(1, frequency[0]?.count ?? 1);
 
@@ -918,7 +910,7 @@ function FrequencyCard({ title, results, winningNumber, offset = 0, tone = "red"
       <div className="rankList">
         {frequency.map((item) => (
           <div className="rankItem" key={item.number}>
-            <QuinielonBall number={item.number} tone={tone} winner={item.number === winningNumber} />
+            <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
             <div className={`bar primeraBar ${tone === "gold" ? "investorBar" : ""}`}><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
             <strong>{item.count}</strong>
           </div>
