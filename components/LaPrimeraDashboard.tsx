@@ -264,6 +264,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         <span className="status">{status} Las recomendaciones son historicas, no predicciones garantizadas.</span>
       </section>
 
+      <WeeklyTopChallenge results={results} quinielaResults={data.quinielaResults} />
+
       <section className="metricsGrid">
         <div className="metric primeraMetric">
           <span>Sorteos analizados</span>
@@ -726,6 +728,93 @@ function LaPrimeraSkeleton({ message }: { message: string }) {
         <div className="card"><div className="skeletonBlock primeraCardSkeleton" /></div>
       </section>
     </main>
+  );
+}
+
+type WeeklyTandaResult = {
+  session: LaPrimeraSession;
+  status: "nosotros" | "banca" | "pendiente";
+  matches: Array<{ number: number; source: "Quinielón" | "Quiniela" }>;
+};
+
+function getWeekMonday(date: string) {
+  const value = new Date(`${date}T00:00:00Z`);
+  const weekday = value.getUTCDay();
+  value.setUTCDate(value.getUTCDate() - (weekday === 0 ? 6 : weekday - 1));
+  return value.toISOString().slice(0, 10);
+}
+
+function WeeklyTopChallenge({ results, quinielaResults }: { results: LaPrimeraDraw[]; quinielaResults: LaPrimeraQuinielaDraw[] }) {
+  const [showTotal, setShowTotal] = useState(false);
+  const today = getDominicanClock().date;
+  const monday = getWeekMonday(today);
+  const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
+  const rankingResults = results.filter((draw) => draw.date < monday);
+  const rankingBase = rankingResults.length ? rankingResults : results;
+  const dayTop = buildLaPrimeraStats(rankingBase, "dia").topHot.map((item) => item.number);
+  const nightTop = buildLaPrimeraStats(rankingBase, "noche").topHot.map((item) => item.number);
+  const topPool = new Set([...dayTop, ...nightTop]);
+
+  const days = weekDates.map((date) => {
+    const tandas: WeeklyTandaResult[] = (["dia", "noche"] as const).map((currentSession) => {
+      const quinielon = results.find((draw) => draw.date === date && draw.session === currentSession);
+      const quiniela = quinielaResults.find((draw) => draw.date === date && draw.session === currentSession);
+      const matches: WeeklyTandaResult["matches"] = [];
+      if (quinielon && topPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
+      for (const number of quiniela?.numbers ?? []) {
+        if (topPool.has(number)) matches.push({ number, source: "Quiniela" });
+      }
+      return {
+        session: currentSession,
+        status: matches.length ? "nosotros" : quinielon && quiniela ? "banca" : "pendiente",
+        matches
+      };
+    });
+    return { date, tandas };
+  });
+
+  const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
+  const ours = resolved.filter((tanda) => tanda.status === "nosotros").length;
+  const bank = resolved.filter((tanda) => tanda.status === "banca").length;
+  const pending = 14 - resolved.length;
+  const percentage = resolved.length ? Math.round((ours / resolved.length) * 100) : 0;
+  const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
+
+  return (
+    <section className="card weeklyTopChallenge">
+      <header className="weeklyTopHeader">
+        <div>
+          <span className="panelLabel primeraLabel">Puja semanal · 14 tandas</span>
+          <h2>Top 40 contra la banca</h2>
+          <p>Los 20 puestos Día y los 20 puestos Noche se aplican al Quinielón y a la Quiniela de cada tanda.</p>
+        </div>
+        <div className="weeklyRoster">
+          <strong>40 puestos</strong>
+          <span>{topPool.size} números únicos · alineación al {formatShortDate(monday)}</span>
+        </div>
+      </header>
+
+      <div className="weeklyDayGrid">
+        {days.map((day) => {
+          const dayResolved = day.tandas.filter((tanda) => tanda.status !== "pendiente");
+          const dayWins = dayResolved.filter((tanda) => tanda.status === "nosotros").length;
+          const dayPercentage = dayResolved.length ? Math.round((dayWins / dayResolved.length) * 100) : null;
+          return <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
+            <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div><b>{dayPercentage === null ? "Pendiente" : `${dayPercentage}%`}</b></header>
+            <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
+              <span>{formatSession(tanda.session)}</span>
+              <strong>{tanda.status === "nosotros" ? "Nosotros" : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
+              <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en ambos" : "Esperando ambos resultados"}</small>
+            </div>)}</div>
+          </article>;
+        })}
+      </div>
+
+      <div className="weeklyTopActions">
+        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal(true)}>Calcular total semanal</button>
+        {showTotal ? <div className="weeklyTopSummary"><strong>{percentage}% para nosotros · {100 - percentage}% para la banca</strong><p>Marcador actual: <b>{ours}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado con las tandas completas disponibles hasta hoy.</p>}
+      </div>
+    </section>
   );
 }
 

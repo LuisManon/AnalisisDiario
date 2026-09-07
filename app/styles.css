@@ -3175,6 +3175,176 @@ h3 {
   color: var(--primera-dark);
 }
 
+.weeklyTopChallenge {
+  border-top: 5px solid var(--primera-red);
+  margin-bottom: 28px;
+  padding: 22px;
+}
+
+.weeklyTopHeader {
+  align-items: end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.weeklyTopHeader h2 {
+  margin: 5px 0 6px;
+}
+
+.weeklyTopHeader p,
+.weeklySummaryHint,
+.weeklyTopSummary p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.weeklyRoster {
+  background: var(--primera-soft);
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  display: grid;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 12px 14px;
+  text-align: right;
+}
+
+.weeklyRoster strong {
+  color: var(--primera-dark);
+  font-size: 1.2rem;
+}
+
+.weeklyRoster span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.weeklyDayGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(7, minmax(135px, 1fr));
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+}
+
+.weeklyDayCard {
+  background: #fafafa;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.weeklyDayCard.today {
+  border-color: var(--primera-red);
+  box-shadow: 0 0 0 2px rgba(215, 37, 61, 0.1);
+}
+
+.weeklyDayCard > header {
+  align-items: center;
+  background: #f1f1ef;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.weeklyDayCard > header div {
+  display: grid;
+  gap: 2px;
+}
+
+.weeklyDayCard > header strong {
+  color: var(--primera-dark);
+  text-transform: capitalize;
+}
+
+.weeklyDayCard > header span {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.weeklyDayCard > header b {
+  color: var(--primera-red);
+  font-size: 0.86rem;
+}
+
+.weeklyTandas {
+  display: grid;
+  gap: 1px;
+}
+
+.weeklyTanda {
+  border-left: 4px solid #c6c6c6;
+  display: grid;
+  gap: 3px;
+  min-height: 86px;
+  padding: 9px 8px;
+}
+
+.weeklyTanda.nosotros {
+  background: #eef8f1;
+  border-left-color: #16804a;
+}
+
+.weeklyTanda.banca {
+  background: #fff0f1;
+  border-left-color: var(--primera-red);
+}
+
+.weeklyTanda.pendiente {
+  background: #f8f8f6;
+}
+
+.weeklyTanda > span,
+.weeklyTanda small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.weeklyTanda strong {
+  color: var(--primera-dark);
+  font-size: 0.82rem;
+}
+
+.weeklyTanda.nosotros strong {
+  color: #116b3d;
+}
+
+.weeklyTanda.banca strong {
+  color: var(--primera-red);
+}
+
+.weeklyTanda small {
+  line-height: 1.3;
+}
+
+.weeklyTopActions {
+  align-items: center;
+  border-top: 1px solid #e7e7e7;
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  padding-top: 16px;
+}
+
+.weeklyCalculateButton {
+  flex: 0 0 auto;
+  margin: 0;
+  width: auto;
+}
+
+.weeklyTopSummary {
+  display: grid;
+  gap: 4px;
+}
+
+.weeklyTopSummary > strong {
+  color: var(--primera-red);
+  font-size: 1.08rem;
+}
+
 .primeraTheme .segmented button.active,
 .primeraTheme .primaryButton {
   background: var(--primera-red);
@@ -3625,6 +3795,15 @@ h3 {
     grid-column: 1;
   }
 
+  .weeklyTopHeader {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .weeklyRoster {
+    text-align: left;
+  }
+
   .primeraQuinielaTopGrid,
   .primeraQuinielaSuggestionGrid {
     grid-template-columns: 1fr;
@@ -3708,6 +3887,19 @@ h3 {
     align-items: flex-start;
     display: grid;
     gap: 8px;
+  }
+
+  .weeklyTopChallenge {
+    padding: 16px;
+  }
+
+  .weeklyTopActions {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .weeklyCalculateButton {
+    width: 100%;
   }
 
   .historyRow .ballsRow,
