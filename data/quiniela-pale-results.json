@@ -1,12 +1,21 @@
 [
   {
+    "date": "2026-09-06",
+    "numbers": [
+      48,
+      14,
+      67
+    ],
+    "source": "https://labanca.do/loterias/leidsa/quiniela-pale/2026-09-06/"
+  },
+  {
     "date": "2026-09-05",
     "numbers": [
       53,
       30,
       28
     ],
-    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/quiniela-pale"
+    "source": "https://labanca.do/loterias/leidsa/quiniela-pale/2026-09-05/"
   },
   {
     "date": "2026-09-04",
@@ -15,7 +24,7 @@
       13,
       22
     ],
-    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/quiniela-pale"
+    "source": "https://labanca.do/loterias/leidsa/quiniela-pale/2026-09-04/"
   },
   {
     "date": "2026-09-03",
@@ -24,7 +33,7 @@
       16,
       63
     ],
-    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/quiniela-pale"
+    "source": "https://labanca.do/loterias/leidsa/quiniela-pale/2026-09-03/"
   },
   {
     "date": "2026-09-02",
@@ -33,7 +42,7 @@
       72,
       99
     ],
-    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/quiniela-pale"
+    "source": "https://labanca.do/loterias/leidsa/quiniela-pale/2026-09-02/"
   },
   {
     "date": "2026-09-01",
