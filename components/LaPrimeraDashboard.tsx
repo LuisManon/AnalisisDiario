@@ -441,12 +441,21 @@ function LaPrimeraQuinielaView({
   status: string;
 }) {
   const [session, setSession] = useState<LaPrimeraSession>("dia");
+  const [historyPage, setHistoryPage] = useState(1);
   const scoped = useMemo(() => results.filter((draw) => draw.session === session), [results, session]);
   const latest = scoped[0] ?? null;
   const targetDate = latest ? nextDateAfter(latest.date) : "";
   const positionTops = useMemo(() => quinielaTopByPosition(scoped), [scoped]);
   const suggestionInput = useMemo<QuinielaPaleDraw[]>(() => scoped.map((draw) => ({ date: draw.date, numbers: draw.numbers, source: draw.source })), [scoped]);
   const suggestions = useMemo(() => targetDate ? buildQuinielaSuggestions(suggestionInput, targetDate, 5) : [], [suggestionInput, targetDate]);
+  const historyPageSize = 5;
+  const historyPageCount = Math.max(1, Math.ceil(scoped.length / historyPageSize));
+  const history = scoped.slice((historyPage - 1) * historyPageSize, historyPage * historyPageSize);
+
+  function changeQuinielaSession(value: LaPrimeraSession) {
+    setSession(value);
+    setHistoryPage(1);
+  }
 
   return (
     <main className="primeraTheme primeraQuinielaTheme">
@@ -467,7 +476,7 @@ function LaPrimeraQuinielaView({
 
       <section className="toolbar primeraToolbar quinielaSimpleToolbar">
         <div className="segmented primeraSegmented">
-          {(["dia", "noche"] as LaPrimeraSession[]).map((option) => <button key={option} className={session === option ? "active" : ""} onClick={() => setSession(option)}>{formatSession(option)}</button>)}
+          {(["dia", "noche"] as LaPrimeraSession[]).map((option) => <button key={option} className={session === option ? "active" : ""} onClick={() => changeQuinielaSession(option)}>{formatSession(option)}</button>)}
         </div>
         <span className="status">{scoped.length} sorteos de {formatSession(session)} · {status}</span>
       </section>
@@ -504,6 +513,26 @@ function LaPrimeraQuinielaView({
           ))}
         </div>
         <p className="recommendationDisclaimer">Análisis estadístico; no predice ni garantiza resultados.</p>
+      </section>
+
+      <section className="card primeraCard primeraQuinielaHistory">
+        <div className="sectionHeader">
+          <div>
+            <h2>Histórico de Quiniela · {formatSession(session)}</h2>
+            <p>{scoped.length} sorteos · mostrando 5 por página.</p>
+          </div>
+          <div className="pagination">
+            <button className="miniButton" disabled={historyPage === 1} onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}>Anterior</button>
+            <span>Página {historyPage} de {historyPageCount}</span>
+            <button className="miniButton" disabled={historyPage === historyPageCount} onClick={() => setHistoryPage((page) => Math.min(historyPageCount, page + 1))}>Siguiente</button>
+          </div>
+        </div>
+        <div className="primeraHistory">
+          {history.map((draw) => <article className="historyRow" key={`${draw.date}-${draw.session}-${draw.drawId ?? draw.numbers.join("-")}`}>
+            <div className="historyDate"><strong>{formatShortDate(draw.date)} · {formatSession(draw.session)}</strong><span>{formatLongDate(draw.date)} · Sorteo #{draw.drawId ?? "N/D"}</span></div>
+            <div className="primeraQuinielaBalls">{draw.numbers.map((number, position) => <PrimeraQuinielaBall key={position} number={number} position={position} />)}</div>
+          </article>)}
+        </div>
       </section>
     </main>
   );
