@@ -436,6 +436,14 @@ function LaPrimeraInvestorView({
     <main className="primeraTheme primeraInvestorTheme">
       <ProductSwitch product="inversionistas" onChange={onProductChange} />
 
+      <WeeklyTopChallenge
+        results={results}
+        quinielaResults={quinielaResults}
+        rankingOffset={20}
+        participantLabel="Inversionistas"
+        variant="investor"
+      />
+
       <section className="investorSection investorPageSection">
         <header>
           <span>Selección exclusiva</span>
@@ -447,14 +455,6 @@ function LaPrimeraInvestorView({
           <FrequencyCard title="Top 20 Inversionistas Noche" results={filterLaPrimeraResults(results, "noche")} winningNumber={latestBySession.noche?.number} offset={20} tone="gold" />
         </div>
       </section>
-
-      <WeeklyTopChallenge
-        results={results}
-        quinielaResults={quinielaResults}
-        rankingOffset={20}
-        participantLabel="Inversionistas"
-        variant="investor"
-      />
     </main>
   );
 }
