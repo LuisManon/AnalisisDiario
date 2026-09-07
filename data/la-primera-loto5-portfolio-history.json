@@ -1,5 +1,913 @@
 [
   {
+    "targetDate": "2026-09-07",
+    "generatedAt": "2026-09-07T13:45:43.861Z",
+    "algorithmVersion": "loto5-v1",
+    "historicalThrough": "2026-09-06",
+    "plays": [
+      {
+        "id": 1,
+        "profile": "fuerte",
+        "numbers": [
+          11,
+          10,
+          5,
+          33,
+          38
+        ],
+        "score": 81.1,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 2,
+        "profile": "fuerte",
+        "numbers": [
+          31,
+          18,
+          5,
+          33,
+          10
+        ],
+        "score": 81,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 3,
+        "profile": "fuerte",
+        "numbers": [
+          11,
+          16,
+          20,
+          18,
+          33
+        ],
+        "score": 80.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 4,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          31,
+          10,
+          18,
+          33
+        ],
+        "score": 79.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 5,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          18,
+          10,
+          27,
+          33
+        ],
+        "score": 79.4,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 6,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          18,
+          10,
+          33,
+          32
+        ],
+        "score": 79.3,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 7,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          18,
+          1,
+          33,
+          38
+        ],
+        "score": 79.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 8,
+        "profile": "fuerte",
+        "numbers": [
+          31,
+          16,
+          8,
+          33,
+          10
+        ],
+        "score": 79.2,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      },
+      {
+        "id": 9,
+        "profile": "fuerte",
+        "numbers": [
+          11,
+          18,
+          10,
+          27,
+          33
+        ],
+        "score": 79.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 10
+      },
+      {
+        "id": 10,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          18,
+          8,
+          33,
+          35
+        ],
+        "score": 79.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 1
+      },
+      {
+        "id": 11,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          31,
+          7,
+          18,
+          33
+        ],
+        "score": 79,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 5
+      },
+      {
+        "id": 12,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          16,
+          18,
+          33,
+          23
+        ],
+        "score": 79.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 13,
+        "profile": "fuerte",
+        "numbers": [
+          10,
+          3,
+          18,
+          34,
+          33
+        ],
+        "score": 78.8,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 14,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          31,
+          10,
+          33,
+          15
+        ],
+        "score": 78.7,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 15,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          20,
+          10,
+          27,
+          33
+        ],
+        "score": 78.6,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 16,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          31,
+          18,
+          33,
+          5
+        ],
+        "score": 78.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 17,
+        "profile": "fuerte",
+        "numbers": [
+          8,
+          31,
+          20,
+          33,
+          5
+        ],
+        "score": 78.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      },
+      {
+        "id": 18,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          18,
+          8,
+          34,
+          33
+        ],
+        "score": 78.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 19,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          16,
+          10,
+          34,
+          33
+        ],
+        "score": 78.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 20,
+        "profile": "fuerte",
+        "numbers": [
+          11,
+          18,
+          8,
+          27,
+          33
+        ],
+        "score": 78.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 21,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          31,
+          5,
+          18,
+          33
+        ],
+        "score": 84.7,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 22,
+        "profile": "equilibrada",
+        "numbers": [
+          35,
+          20,
+          8,
+          33,
+          1
+        ],
+        "score": 83.4,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 23,
+        "profile": "equilibrada",
+        "numbers": [
+          8,
+          16,
+          20,
+          18,
+          33
+        ],
+        "score": 83.6,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 10
+      },
+      {
+        "id": 24,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          18,
+          1,
+          34,
+          33
+        ],
+        "score": 83.6,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 25,
+        "profile": "equilibrada",
+        "numbers": [
+          5,
+          18,
+          14,
+          27,
+          33
+        ],
+        "score": 83.3,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 1
+      },
+      {
+        "id": 26,
+        "profile": "equilibrada",
+        "numbers": [
+          25,
+          20,
+          1,
+          18,
+          33
+        ],
+        "score": 83.4,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 5
+      },
+      {
+        "id": 27,
+        "profile": "equilibrada",
+        "numbers": [
+          5,
+          3,
+          38,
+          18,
+          33
+        ],
+        "score": 83.6,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 28,
+        "profile": "equilibrada",
+        "numbers": [
+          8,
+          18,
+          23,
+          33,
+          15
+        ],
+        "score": 83.3,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 29,
+        "profile": "equilibrada",
+        "numbers": [
+          7,
+          18,
+          1,
+          33,
+          38
+        ],
+        "score": 83.3,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 30,
+        "profile": "equilibrada",
+        "numbers": [
+          5,
+          20,
+          1,
+          33,
+          38
+        ],
+        "score": 83.3,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 31,
+        "profile": "equilibrada",
+        "numbers": [
+          5,
+          16,
+          8,
+          33,
+          35
+        ],
+        "score": 83.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 32,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          16,
+          31,
+          33,
+          5
+        ],
+        "score": 82.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      },
+      {
+        "id": 33,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          10,
+          8,
+          33,
+          35
+        ],
+        "score": 82.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 10
+      },
+      {
+        "id": 34,
+        "profile": "equilibrada",
+        "numbers": [
+          7,
+          18,
+          10,
+          33,
+          28
+        ],
+        "score": 82.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 35,
+        "profile": "equilibrada",
+        "numbers": [
+          16,
+          20,
+          1,
+          27,
+          33
+        ],
+        "score": 83,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 36,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          18,
+          7,
+          33,
+          28
+        ],
+        "score": 83,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 37,
+        "profile": "equilibrada",
+        "numbers": [
+          8,
+          7,
+          38,
+          33,
+          10
+        ],
+        "score": 83,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 38,
+        "profile": "equilibrada",
+        "numbers": [
+          8,
+          3,
+          18,
+          33,
+          35
+        ],
+        "score": 82.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 39,
+        "profile": "equilibrada",
+        "numbers": [
+          11,
+          20,
+          18,
+          33,
+          15
+        ],
+        "score": 83,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 1
+      },
+      {
+        "id": 40,
+        "profile": "equilibrada",
+        "numbers": [
+          8,
+          18,
+          7,
+          33,
+          32
+        ],
+        "score": 82.7,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 5
+      },
+      {
+        "id": 41,
+        "profile": "exploratoria",
+        "numbers": [
+          19,
+          27,
+          38,
+          18,
+          33
+        ],
+        "score": 87.8,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 42,
+        "profile": "exploratoria",
+        "numbers": [
+          33,
+          18,
+          38,
+          31,
+          15
+        ],
+        "score": 87.3,
+        "exactPositionRepeat": true,
+        "explanation": "Incluye una repetición exacta de posición del sorteo anterior.",
+        "plus": 9
+      },
+      {
+        "id": 43,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          20,
+          38,
+          33,
+          35
+        ],
+        "score": 87.4,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      },
+      {
+        "id": 44,
+        "profile": "exploratoria",
+        "numbers": [
+          35,
+          18,
+          38,
+          33,
+          10
+        ],
+        "score": 87.2,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 45,
+        "profile": "exploratoria",
+        "numbers": [
+          31,
+          10,
+          27,
+          34,
+          33
+        ],
+        "score": 86.9,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 46,
+        "profile": "exploratoria",
+        "numbers": [
+          11,
+          18,
+          38,
+          34,
+          33
+        ],
+        "score": 87.2,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 47,
+        "profile": "exploratoria",
+        "numbers": [
+          5,
+          31,
+          38,
+          33,
+          28
+        ],
+        "score": 87.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 48,
+        "profile": "exploratoria",
+        "numbers": [
+          31,
+          16,
+          20,
+          33,
+          35
+        ],
+        "score": 87,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 49,
+        "profile": "exploratoria",
+        "numbers": [
+          16,
+          20,
+          38,
+          27,
+          33
+        ],
+        "score": 87.1,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 50,
+        "profile": "exploratoria",
+        "numbers": [
+          35,
+          31,
+          8,
+          33,
+          28
+        ],
+        "score": 86.8,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 51,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          33,
+          32,
+          27,
+          35
+        ],
+        "score": 86.6,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 52,
+        "profile": "exploratoria",
+        "numbers": [
+          16,
+          20,
+          38,
+          34,
+          27
+        ],
+        "score": 87,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 1
+      },
+      {
+        "id": 53,
+        "profile": "exploratoria",
+        "numbers": [
+          36,
+          18,
+          38,
+          33,
+          10
+        ],
+        "score": 86.8,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      },
+      {
+        "id": 54,
+        "profile": "exploratoria",
+        "numbers": [
+          31,
+          10,
+          38,
+          33,
+          23
+        ],
+        "score": 87,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 55,
+        "profile": "exploratoria",
+        "numbers": [
+          27,
+          16,
+          38,
+          21,
+          33
+        ],
+        "score": 86.7,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 3
+      },
+      {
+        "id": 56,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          31,
+          27,
+          33,
+          35
+        ],
+        "score": 86.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 7
+      },
+      {
+        "id": 57,
+        "profile": "exploratoria",
+        "numbers": [
+          5,
+          31,
+          38,
+          27,
+          33
+        ],
+        "score": 86.7,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 2
+      },
+      {
+        "id": 58,
+        "profile": "exploratoria",
+        "numbers": [
+          27,
+          18,
+          25,
+          33,
+          32
+        ],
+        "score": 86.2,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 6
+      },
+      {
+        "id": 59,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          33,
+          38,
+          21,
+          35
+        ],
+        "score": 86.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 4
+      },
+      {
+        "id": 60,
+        "profile": "exploratoria",
+        "numbers": [
+          31,
+          20,
+          38,
+          19,
+          27
+        ],
+        "score": 86.5,
+        "exactPositionRepeat": false,
+        "explanation": "Sin repeticiones exactas de posición del sorteo anterior.",
+        "plus": 8
+      }
+    ]
+  },
+  {
     "targetDate": "2026-09-06",
     "generatedAt": "2026-09-06T01:37:32.086Z",
     "algorithmVersion": "loto5-v1",
