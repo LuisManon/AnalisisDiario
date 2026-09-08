@@ -3193,12 +3193,12 @@ h3 {
   color: #8a6510;
 }
 
-.weeklyInvestorChallenge .weeklyTanda.nosotros {
+.weeklyTanda.inversionistas {
   background: rgba(212, 165, 20, 0.12);
-  border-color: rgba(180, 135, 13, 0.35);
+  border-left-color: #b8870b;
 }
 
-.weeklyInvestorChallenge .weeklyTanda.nosotros strong {
+.weeklyTanda.inversionistas strong {
   color: #8a6510;
 }
 

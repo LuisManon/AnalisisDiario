@@ -442,7 +442,6 @@ function LaPrimeraInvestorView({
       <WeeklyTopChallenge
         results={results}
         rankingOffset={20}
-        participantLabel="Inversionistas"
         variant="investor"
       />
 
@@ -812,8 +811,8 @@ function LaPrimeraSkeleton({ message }: { message: string }) {
 
 type WeeklyTandaResult = {
   session: LaPrimeraSession;
-  status: "nosotros" | "banca" | "pendiente";
-  matches: Array<{ number: number; source: "Quinielón" | "Quiniela" }>;
+  status: "nosotros" | "inversionistas" | "banca" | "pendiente";
+  matches: Array<{ number: number; source: "Quinielón" }>;
 };
 
 function getWeekMonday(date: string) {
@@ -826,12 +825,10 @@ function getWeekMonday(date: string) {
 function WeeklyTopChallenge({
   results,
   rankingOffset = 0,
-  participantLabel = "Nosotros",
   variant = "default"
 }: {
   results: LaPrimeraDraw[];
   rankingOffset?: number;
-  participantLabel?: string;
   variant?: "default" | "investor";
 }) {
   const [showTotal, setShowTotal] = useState(false);
@@ -844,15 +841,19 @@ function WeeklyTopChallenge({
   const dayTop = (variant === "investor" ? exclusiveRankings.investorDay : exclusiveRankings.hotDay).map((item) => item.number);
   const nightTop = (variant === "investor" ? exclusiveRankings.investorNight : exclusiveRankings.hotNight).map((item) => item.number);
   const topPool = new Set([...dayTop, ...nightTop]);
+  const hotPool = new Set([...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight].map((item) => item.number));
+  const investorPool = new Set([...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight].map((item) => item.number));
 
   const days = weekDates.map((date) => {
     const tandas: WeeklyTandaResult[] = (["dia", "noche"] as const).map((currentSession) => {
       const quinielon = results.find((draw) => draw.date === date && draw.session === currentSession);
       const matches: WeeklyTandaResult["matches"] = [];
-      if (quinielon && topPool.has(quinielon.number)) matches.push({ number: quinielon.number, source: "Quinielón" });
+      if (quinielon && (hotPool.has(quinielon.number) || investorPool.has(quinielon.number))) {
+        matches.push({ number: quinielon.number, source: "Quinielón" });
+      }
       return {
         session: currentSession,
-        status: matches.length ? "nosotros" : quinielon ? "banca" : "pendiente",
+        status: !quinielon ? "pendiente" : hotPool.has(quinielon.number) ? "nosotros" : investorPool.has(quinielon.number) ? "inversionistas" : "banca",
         matches
       };
     });
@@ -861,9 +862,12 @@ function WeeklyTopChallenge({
 
   const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
   const ours = resolved.filter((tanda) => tanda.status === "nosotros").length;
+  const investors = resolved.filter((tanda) => tanda.status === "inversionistas").length;
   const bank = resolved.filter((tanda) => tanda.status === "banca").length;
   const pending = 14 - resolved.length;
-  const percentage = resolved.length ? Math.round((ours / resolved.length) * 100) : 0;
+  const oursPercentage = resolved.length ? Math.round((ours / resolved.length) * 100) : 0;
+  const investorsPercentage = resolved.length ? Math.round((investors / resolved.length) * 100) : 0;
+  const bankPercentage = resolved.length ? Math.max(0, 100 - oursPercentage - investorsPercentage) : 0;
   const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
@@ -884,12 +888,14 @@ function WeeklyTopChallenge({
         {days.map((day) => {
           const dayResolved = day.tandas.filter((tanda) => tanda.status !== "pendiente");
           const dayWins = dayResolved.filter((tanda) => tanda.status === "nosotros").length;
-          const dayPercentage = dayResolved.length ? Math.round((dayWins / dayResolved.length) * 100) : null;
+          const dayInvestorWins = dayResolved.filter((tanda) => tanda.status === "inversionistas").length;
+          const dayBankWins = dayResolved.filter((tanda) => tanda.status === "banca").length;
+          const dayScore = dayResolved.length ? `${dayWins}N · ${dayInvestorWins}I · ${dayBankWins}B` : "Pendiente";
           return <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
-            <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div><b>{dayPercentage === null ? "Pendiente" : `${dayPercentage}%`}</b></header>
+            <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div><b>{dayScore}</b></header>
             <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
               <span>{formatSession(tanda.session)}</span>
-              <strong>{tanda.status === "nosotros" ? participantLabel : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
+              <strong>{tanda.status === "nosotros" ? "Nosotros" : tanda.status === "inversionistas" ? "Inversionistas" : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
               <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en el Quinielón" : "Esperando resultado"}</small>
             </div>)}</div>
           </article>;
@@ -897,8 +903,8 @@ function WeeklyTopChallenge({
       </div>
 
       <div className="weeklyTopActions">
-        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal(true)}>Calcular total semanal</button>
-        {showTotal ? <div className="weeklyTopSummary"><strong>{percentage}% para {participantLabel.toLowerCase()} · {100 - percentage}% para la banca</strong><p>Marcador actual: <b>{ours}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado con las tandas completas disponibles hasta hoy.</p>}
+        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((visible) => !visible)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
+        {showTotal ? <div className="weeklyTopSummary"><strong>{oursPercentage}% Nosotros · {investorsPercentage}% Inversionistas · {bankPercentage}% Banca</strong><p>Marcador actual: <b>{ours}–{investors}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado entre Nosotros, Inversionistas y Banca con las tandas disponibles.</p>}
       </div>
     </section>
   );
