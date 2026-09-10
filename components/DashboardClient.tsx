@@ -446,7 +446,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       >
         <summary>
           <span>Generador de 30 Jugadas</span>
-          <small>Inclinado al {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+          <small>Inclinado al {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)} · 8 fuertes, 15 equilibradas y 7 exploratorias.</small>
         </summary>
         {thirtyPlayPortfolio ? (
           <div className="portfolioSnapshots">

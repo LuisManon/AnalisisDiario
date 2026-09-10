@@ -19,6 +19,8 @@ export const virtualPrizeTable = [
   { matches: 3, plus: false, amount: 100, label: "3 aciertos" }
 ];
 
+export const thirtyPlayAlgorithmVersion = "v2-core-coverage";
+
 export function formatMoney(amount: number) {
   return new Intl.NumberFormat("es-DO", {
     style: "currency",
@@ -584,6 +586,24 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
   const sameDay = prior.filter((draw) => draw.day === targetDay);
   const previousDraw = prior[0];
   const previousSameDay = sameDay[0];
+  const profileTargets: Record<RecommendationProfile, Record<PortfolioScope, number>> = {
+    fuerte: { "mismo-dia": 4, "historial-completo": 4 },
+    equilibrada: { "mismo-dia": 8, "historial-completo": 7 },
+    exploratoria: { "mismo-dia": 4, "historial-completo": 3 }
+  };
+  const priorCounts = countNumbers(prior, (draw) => draw.numbers);
+  const sameDayCounts = countNumbers(sameDay, (draw) => draw.numbers);
+  const recentCounts = countNumbers(prior.slice(0, 20), (draw) => draw.numbers);
+  const maxPrior = Math.max(...priorCounts, 1);
+  const maxSameDay = Math.max(...sameDayCounts, 1);
+  const maxRecent = Math.max(...recentCounts, 1);
+  const coreNumbers = new Set(Array.from({ length: 40 }, (_, index) => index + 1)
+    .sort((a, b) => {
+      const scoreA = priorCounts[a] / maxPrior + sameDayCounts[a] / maxSameDay * 0.8 + recentCounts[a] / maxRecent * 0.65;
+      const scoreB = priorCounts[b] / maxPrior + sameDayCounts[b] / maxSameDay * 0.8 + recentCounts[b] / maxRecent * 0.65;
+      return scoreB - scoreA || a - b;
+    })
+    .slice(0, 14));
   const historical = new Set(prior.map((draw) => combinationKey(draw.numbers)));
   const profiles: RecommendationProfile[] = ["fuerte", "equilibrada", "exploratoria"];
   const scopes: Array<{ scope: PortfolioScope; analysis: DrawResult[] }> = [
@@ -614,15 +634,32 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
       .filter((play) => profile !== "fuerte" || (play.daySupportCount === 6 && play.previousDrawRepeats <= 2 && play.previousSameDayRepeats <= 1))
       .filter((play) => profile !== "equilibrada" || play.daySupportCount >= 4)
       .filter((play) => profile !== "exploratoria" || (play.daySupportCount >= 4 && play.daySupportCount <= 5));
-    return { profile, scope, candidates, selected: [] as typeof candidates };
+    return { profile, scope, targetCount: profileTargets[profile][scope], candidates, selected: [] as typeof candidates };
   }));
 
   const numberExposure = Array(41).fill(0) as number[];
   const positionExposure = Array.from({ length: 6 }, () => Array(41).fill(0) as number[]);
   const selectedKeys = new Set<string>();
+  const coveredCoreTriples = new Set<string>();
+  const coveredCoreQuads = new Set<string>();
+  const subsetKeys = (numbers: number[], size: number) => {
+    const keys: string[] = [];
+    const visit = (start: number, selected: number[]) => {
+      if (selected.length === size) {
+        keys.push(selected.join("-"));
+        return;
+      }
+      for (let index = start; index < numbers.length; index += 1) visit(index + 1, [...selected, numbers[index]]);
+    };
+    visit(0, []);
+    return keys;
+  };
 
-  for (let round = 0; round < 5; round += 1) {
+  let selecting = true;
+  while (selecting) {
+    selecting = false;
     for (const group of groups) {
+      if (group.selected.length >= group.targetCount) continue;
       const eligible = group.candidates
         .filter((candidate) => !selectedKeys.has(combinationKey(candidate.numbers)))
         .filter((candidate) => candidate.numbers.every((number) => numberExposure[number] < 9))
@@ -630,29 +667,50 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
         .filter((candidate) => groups.every((other) => other.selected.every((existing) =>
           candidate.numbers.filter((number) => existing.numbers.includes(number)).length <= 4
         )))
-        .map((candidate) => ({
-          candidate,
-          adjusted:
+        .map((candidate) => {
+          const candidateCore = candidate.numbers.filter((number) => coreNumbers.has(number));
+          const newTriples = subsetKeys(candidateCore, 3).filter((key) => !coveredCoreTriples.has(key)).length;
+          const newQuads = subsetKeys(candidateCore, 4).filter((key) => !coveredCoreQuads.has(key)).length;
+          return {
+            candidate,
+            adjusted:
             candidate.score +
             Math.min(12, candidate.p1p3Nearby) * 0.12 +
             candidate.inRangeCount * 0.35 -
             candidate.numbers.reduce((sum, number) => sum + numberExposure[number] * 1.55, 0) -
-            candidate.numbers.reduce((sum, number, position) => sum + positionExposure[position][number] * 2.1, 0)
-        }))
+            candidate.numbers.reduce((sum, number, position) => sum + positionExposure[position][number] * 2.1, 0) +
+            candidateCore.length * 1.35 +
+            newTriples * 0.22 +
+            newQuads * 0.38
+          };
+        })
         .sort((a, b) => b.adjusted - a.adjusted || b.candidate.score - a.candidate.score);
       const next = eligible[0]?.candidate;
       if (!next) continue;
+      selecting = true;
       group.selected.push(next);
       selectedKeys.add(combinationKey(next.numbers));
       next.numbers.forEach((number, position) => {
         numberExposure[number] += 1;
         positionExposure[position][number] += 1;
       });
+      const selectedCore = next.numbers.filter((number) => coreNumbers.has(number));
+      subsetKeys(selectedCore, 3).forEach((key) => coveredCoreTriples.add(key));
+      subsetKeys(selectedCore, 4).forEach((key) => coveredCoreQuads.add(key));
     }
   }
 
   const plusOrder = buildPlusOrder(prior);
   const plays: PortfolioPlay[] = [];
+  const totalPlayCount = groups.reduce((sum, group) => sum + group.selected.length, 0);
+  const previousPlus = previousDraw?.plus;
+  const rotatingPlus = plusOrder.filter((number) => number !== previousPlus);
+  const previousPlusIndex = Math.floor(totalPlayCount / 2);
+  const plusAssignments = Array.from({ length: totalPlayCount }, (_, index) =>
+    previousPlus !== undefined && index === previousPlusIndex
+      ? previousPlus
+      : rotatingPlus[(index - (index > previousPlusIndex ? 1 : 0)) % rotatingPlus.length]
+  );
   for (const profile of profiles) {
     const profileGroups = groups.filter((group) => group.profile === profile);
     const profilePlays = profileGroups.flatMap((group) => group.selected);
@@ -661,7 +719,7 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
       plays.push({
         ...play,
         id: index + 1,
-        plus: plusOrder[plays.length % plusOrder.length],
+        plus: plusAssignments[plays.length],
         explanation: `${scopeLabel}; ${play.inRangeCount}/6 dentro de rango; ${play.p1p3Nearby} antecedentes P1-P3 cercanos; repite ${play.previousDrawRepeats} del sorteo anterior.`
       });
     });
@@ -671,6 +729,7 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     targetDate,
     targetDay,
     generatedAt: new Date().toISOString(),
+    algorithmVersion: thirtyPlayAlgorithmVersion,
     plays,
     exposure: Array.from({ length: 40 }, (_, index) => ({ number: index + 1, count: numberExposure[index + 1] }))
       .sort((a, b) => b.count - a.count || a.number - b.number)

@@ -2,7 +2,8 @@
   {
     "targetDate": "2026-09-12",
     "targetDay": "sabado",
-    "generatedAt": "2026-09-10T00:08:03.168Z",
+    "generatedAt": "2026-09-10T01:40:08.354Z",
+    "algorithmVersion": "v2-core-coverage",
     "plays": [
       {
         "id": 1,
@@ -19,12 +20,12 @@
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 1,
+        "previousDrawRepeats": 0,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
         "p1p3Nearby": 15,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 15 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 15 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
         "id": 2,
@@ -41,91 +42,91 @@
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 0,
+        "previousDrawRepeats": 1,
         "previousSameDayRepeats": 0,
         "inRangeCount": 6,
         "p1p3Nearby": 10,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 3,
         "numbers": [
-          3,
-          4,
-          14,
+          6,
+          15,
+          17,
           24,
-          25,
-          36
+          27,
+          29
         ],
         "plus": 10,
-        "score": 90,
+        "score": 80,
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 1,
+        "previousDrawRepeats": 0,
         "previousSameDayRepeats": 1,
-        "inRangeCount": 6,
-        "p1p3Nearby": 9,
+        "inRangeCount": 4,
+        "p1p3Nearby": 8,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 9 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "solo sabado; 4/6 dentro de rango; 8 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
         "id": 4,
         "numbers": [
           4,
-          6,
-          18,
-          28,
-          29,
-          39
+          9,
+          10,
+          23,
+          30,
+          36
         ],
         "plus": 4,
-        "score": 85,
+        "score": 92,
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "mismo-dia",
         "previousDrawRepeats": 1,
-        "previousSameDayRepeats": 1,
+        "previousSameDayRepeats": 0,
         "inRangeCount": 6,
-        "p1p3Nearby": 7,
+        "p1p3Nearby": 15,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 7 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 15 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 5,
         "numbers": [
-          13,
+          9,
+          10,
           14,
-          20,
-          23,
-          28,
+          22,
+          25,
           30
         ],
         "plus": 5,
-        "score": 85,
+        "score": 97,
         "profile": "fuerte",
         "daySupportCount": 6,
-        "scope": "mismo-dia",
+        "scope": "historial-completo",
         "previousDrawRepeats": 1,
-        "previousSameDayRepeats": 1,
-        "inRangeCount": 4,
-        "p1p3Nearby": 3,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 5,
+        "p1p3Nearby": 14,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 4/6 dentro de rango; 3 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "miercoles y sabados; 5/6 dentro de rango; 14 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 6,
         "numbers": [
-          6,
-          10,
-          14,
-          25,
-          30,
-          31
+          1,
+          9,
+          12,
+          21,
+          22,
+          40
         ],
         "plus": 7,
-        "score": 100,
+        "score": 86,
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "historial-completo",
@@ -139,90 +140,46 @@
       {
         "id": 7,
         "numbers": [
-          6,
-          7,
+          3,
           10,
-          22,
-          29,
-          38
+          13,
+          19,
+          30,
+          31
         ],
         "plus": 3,
-        "score": 94,
+        "score": 89,
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "historial-completo",
-        "previousDrawRepeats": 1,
+        "previousDrawRepeats": 2,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
-        "p1p3Nearby": 17,
+        "p1p3Nearby": 28,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 17 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 28 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
       },
       {
         "id": 8,
         "numbers": [
-          9,
+          10,
           12,
-          15,
           20,
+          21,
           25,
-          39
+          38
         ],
         "plus": 8,
-        "score": 85,
-        "profile": "fuerte",
-        "daySupportCount": 6,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 1,
-        "previousSameDayRepeats": 1,
-        "inRangeCount": 6,
-        "p1p3Nearby": 17,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 17 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
-      },
-      {
-        "id": 9,
-        "numbers": [
-          10,
-          13,
-          19,
-          22,
-          31,
-          35
-        ],
-        "plus": 6,
-        "score": 94,
+        "score": 90,
         "profile": "fuerte",
         "daySupportCount": 6,
         "scope": "historial-completo",
         "previousDrawRepeats": 1,
         "previousSameDayRepeats": 1,
         "inRangeCount": 5,
-        "p1p3Nearby": 13,
+        "p1p3Nearby": 9,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 5/6 dentro de rango; 13 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
-      },
-      {
-        "id": 10,
-        "numbers": [
-          7,
-          10,
-          12,
-          15,
-          30,
-          38
-        ],
-        "plus": 9,
-        "score": 94,
-        "profile": "fuerte",
-        "daySupportCount": 6,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 6,
-        "p1p3Nearby": 16,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 16 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "miercoles y sabados; 5/6 dentro de rango; 9 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 1,
@@ -234,218 +191,350 @@
           32,
           35
         ],
-        "plus": 11,
+        "plus": 9,
         "score": 98,
         "profile": "equilibrada",
         "daySupportCount": 6,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 1,
+        "previousDrawRepeats": 0,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
         "p1p3Nearby": 10,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
         "id": 2,
         "numbers": [
-          4,
-          9,
-          14,
-          23,
-          27,
-          40
+          10,
+          18,
+          20,
+          21,
+          29,
+          32
         ],
-        "plus": 2,
-        "score": 96,
+        "plus": 11,
+        "score": 94,
         "profile": "equilibrada",
         "daySupportCount": 6,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 6,
-        "p1p3Nearby": 18,
+        "previousDrawRepeats": 2,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 4,
+        "p1p3Nearby": 4,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 18 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "solo sabado; 4/6 dentro de rango; 4 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
       },
       {
         "id": 3,
         "numbers": [
-          9,
-          13,
-          18,
-          20,
-          28,
-          30
-        ],
-        "plus": 1,
-        "score": 86,
-        "profile": "equilibrada",
-        "daySupportCount": 6,
-        "scope": "mismo-dia",
-        "previousDrawRepeats": 1,
-        "previousSameDayRepeats": 1,
-        "inRangeCount": 5,
-        "p1p3Nearby": 10,
-        "positionalDelayAlert": null,
-        "explanation": "solo sabado; 5/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
-      },
-      {
-        "id": 4,
-        "numbers": [
-          1,
           3,
-          9,
-          28,
-          32,
-          40
-        ],
-        "plus": 12,
-        "score": 87,
-        "profile": "equilibrada",
-        "daySupportCount": 5,
-        "scope": "mismo-dia",
-        "previousDrawRepeats": 2,
-        "previousSameDayRepeats": 2,
-        "inRangeCount": 6,
-        "p1p3Nearby": 9,
-        "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 9 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
-      },
-      {
-        "id": 5,
-        "numbers": [
-          2,
           4,
-          19,
-          32,
-          36,
-          37
+          8,
+          28,
+          31,
+          39
         ],
-        "plus": 10,
+        "plus": 2,
         "score": 84,
         "profile": "equilibrada",
-        "daySupportCount": 4,
-        "scope": "mismo-dia",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 4,
-        "p1p3Nearby": 8,
-        "positionalDelayAlert": null,
-        "explanation": "solo sabado; 4/6 dentro de rango; 8 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
-      },
-      {
-        "id": 6,
-        "numbers": [
-          4,
-          9,
-          12,
-          21,
-          22,
-          40
-        ],
-        "plus": 4,
-        "score": 92,
-        "profile": "equilibrada",
-        "daySupportCount": 6,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 6,
-        "p1p3Nearby": 23,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 23 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
-      },
-      {
-        "id": 7,
-        "numbers": [
-          3,
-          6,
-          20,
-          26,
-          31,
-          36
-        ],
-        "plus": 5,
-        "score": 88,
-        "profile": "equilibrada",
         "daySupportCount": 5,
-        "scope": "historial-completo",
+        "scope": "mismo-dia",
         "previousDrawRepeats": 3,
-        "previousSameDayRepeats": 3,
-        "inRangeCount": 6,
-        "p1p3Nearby": 11,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 11 antecedentes P1-P3 cercanos; repite 3 del sorteo anterior."
-      },
-      {
-        "id": 8,
-        "numbers": [
-          2,
-          12,
-          19,
-          24,
-          35,
-          40
-        ],
-        "plus": 7,
-        "score": 95,
-        "profile": "equilibrada",
-        "daySupportCount": 6,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 1,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
         "p1p3Nearby": 13,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 13 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 13 antecedentes P1-P3 cercanos; repite 3 del sorteo anterior."
+      },
+      {
+        "id": 4,
+        "numbers": [
+          9,
+          18,
+          19,
+          24,
+          28,
+          31
+        ],
+        "plus": 1,
+        "score": 86,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 2,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 5,
+        "p1p3Nearby": 3,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 5/6 dentro de rango; 3 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
+      },
+      {
+        "id": 5,
+        "numbers": [
+          13,
+          14,
+          17,
+          22,
+          23,
+          36
+        ],
+        "plus": 12,
+        "score": 90,
+        "profile": "equilibrada",
+        "daySupportCount": 6,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 1,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 5,
+        "p1p3Nearby": 4,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 5/6 dentro de rango; 4 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+      },
+      {
+        "id": 6,
+        "numbers": [
+          10,
+          11,
+          18,
+          21,
+          22,
+          24
+        ],
+        "plus": 10,
+        "score": 85,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 2,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 4,
+        "p1p3Nearby": 3,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 4/6 dentro de rango; 3 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
+      },
+      {
+        "id": 7,
+        "numbers": [
+          9,
+          13,
+          14,
+          15,
+          26,
+          27
+        ],
+        "plus": 4,
+        "score": 80,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 0,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 5,
+        "p1p3Nearby": 8,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 5/6 dentro de rango; 8 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+      },
+      {
+        "id": 8,
+        "numbers": [
+          6,
+          11,
+          13,
+          16,
+          30,
+          32
+        ],
+        "plus": 6,
+        "score": 83,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 0,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 6,
+        "p1p3Nearby": 10,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
         "id": 9,
         "numbers": [
+          2,
           3,
-          6,
-          8,
-          24,
-          38,
-          39
+          10,
+          32,
+          35,
+          38
         ],
-        "plus": 3,
-        "score": 88,
+        "plus": 5,
+        "score": 99,
         "profile": "equilibrada",
-        "daySupportCount": 5,
+        "daySupportCount": 6,
         "scope": "historial-completo",
-        "previousDrawRepeats": 2,
+        "previousDrawRepeats": 1,
         "previousSameDayRepeats": 2,
         "inRangeCount": 5,
-        "p1p3Nearby": 20,
+        "p1p3Nearby": 24,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 5/6 dentro de rango; 20 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
+        "explanation": "miercoles y sabados; 5/6 dentro de rango; 24 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 10,
         "numbers": [
-          1,
           3,
-          6,
-          29,
-          36,
-          38
+          9,
+          14,
+          24,
+          32,
+          35
         ],
-        "plus": 8,
-        "score": 81,
+        "plus": 7,
+        "score": 100,
         "profile": "equilibrada",
         "daySupportCount": 6,
         "scope": "historial-completo",
-        "previousDrawRepeats": 3,
-        "previousSameDayRepeats": 3,
-        "inRangeCount": 4,
-        "p1p3Nearby": 12,
+        "previousDrawRepeats": 1,
+        "previousSameDayRepeats": 2,
+        "inRangeCount": 6,
+        "p1p3Nearby": 32,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 4/6 dentro de rango; 12 antecedentes P1-P3 cercanos; repite 3 del sorteo anterior."
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 32 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+      },
+      {
+        "id": 11,
+        "numbers": [
+          7,
+          11,
+          15,
+          20,
+          22,
+          37
+        ],
+        "plus": 3,
+        "score": 83,
+        "profile": "equilibrada",
+        "daySupportCount": 4,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 2,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 6,
+        "p1p3Nearby": 24,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 24 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
+      },
+      {
+        "id": 12,
+        "numbers": [
+          2,
+          4,
+          13,
+          26,
+          35,
+          40
+        ],
+        "plus": 8,
+        "score": 98,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 1,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 6,
+        "p1p3Nearby": 23,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 23 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
+      },
+      {
+        "id": 13,
+        "numbers": [
+          1,
+          5,
+          9,
+          32,
+          38,
+          39
+        ],
+        "plus": 9,
+        "score": 84,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 0,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 4,
+        "p1p3Nearby": 27,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 4/6 dentro de rango; 27 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+      },
+      {
+        "id": 14,
+        "numbers": [
+          1,
+          7,
+          17,
+          29,
+          36,
+          40
+        ],
+        "plus": 11,
+        "score": 89,
+        "profile": "equilibrada",
+        "daySupportCount": 5,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 0,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 5,
+        "p1p3Nearby": 13,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 5/6 dentro de rango; 13 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+      },
+      {
+        "id": 15,
+        "numbers": [
+          4,
+          6,
+          20,
+          22,
+          29,
+          31
+        ],
+        "plus": 2,
+        "score": 91,
+        "profile": "equilibrada",
+        "daySupportCount": 6,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 4,
+        "previousSameDayRepeats": 2,
+        "inRangeCount": 6,
+        "p1p3Nearby": 10,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 4 del sorteo anterior."
       },
       {
         "id": 1,
+        "numbers": [
+          5,
+          6,
+          13,
+          25,
+          36,
+          39
+        ],
+        "plus": 1,
+        "score": 87,
+        "profile": "exploratoria",
+        "daySupportCount": 5,
+        "scope": "mismo-dia",
+        "previousDrawRepeats": 0,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 5,
+        "p1p3Nearby": 9,
+        "positionalDelayAlert": null,
+        "explanation": "solo sabado; 5/6 dentro de rango; 9 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+      },
+      {
+        "id": 2,
         "numbers": [
           2,
           7,
@@ -454,64 +543,20 @@
           34,
           39
         ],
-        "plus": 6,
+        "plus": 12,
         "score": 93,
         "profile": "exploratoria",
         "daySupportCount": 5,
         "scope": "mismo-dia",
-        "previousDrawRepeats": 1,
+        "previousDrawRepeats": 0,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
         "p1p3Nearby": 11,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 11 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
-      },
-      {
-        "id": 2,
-        "numbers": [
-          8,
-          14,
-          17,
-          19,
-          22,
-          40
-        ],
-        "plus": 9,
-        "score": 92,
-        "profile": "exploratoria",
-        "daySupportCount": 4,
-        "scope": "mismo-dia",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 6,
-        "p1p3Nearby": 7,
-        "positionalDelayAlert": null,
-        "explanation": "solo sabado; 6/6 dentro de rango; 7 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 11 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
         "id": 3,
-        "numbers": [
-          7,
-          18,
-          20,
-          21,
-          23,
-          34
-        ],
-        "plus": 11,
-        "score": 86,
-        "profile": "exploratoria",
-        "daySupportCount": 5,
-        "scope": "mismo-dia",
-        "previousDrawRepeats": 2,
-        "previousSameDayRepeats": 2,
-        "inRangeCount": 5,
-        "p1p3Nearby": 3,
-        "positionalDelayAlert": null,
-        "explanation": "solo sabado; 5/6 dentro de rango; 3 antecedentes P1-P3 cercanos; repite 2 del sorteo anterior."
-      },
-      {
-        "id": 4,
         "numbers": [
           8,
           10,
@@ -520,7 +565,7 @@
           27,
           32
         ],
-        "plus": 2,
+        "plus": 10,
         "score": 98,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -533,60 +578,82 @@
         "explanation": "solo sabado; 6/6 dentro de rango; 7 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
       },
       {
-        "id": 5,
+        "id": 4,
         "numbers": [
-          9,
+          5,
+          6,
           15,
-          16,
-          26,
+          23,
           33,
           36
         ],
-        "plus": 1,
-        "score": 76,
+        "plus": 4,
+        "score": 81,
         "profile": "exploratoria",
         "daySupportCount": 4,
         "scope": "mismo-dia",
         "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 5,
-        "p1p3Nearby": 7,
+        "previousSameDayRepeats": 1,
+        "inRangeCount": 6,
+        "p1p3Nearby": 10,
         "positionalDelayAlert": null,
-        "explanation": "solo sabado; 5/6 dentro de rango; 7 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "solo sabado; 6/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+      },
+      {
+        "id": 5,
+        "numbers": [
+          4,
+          13,
+          15,
+          23,
+          30,
+          40
+        ],
+        "plus": 5,
+        "score": 94,
+        "profile": "exploratoria",
+        "daySupportCount": 5,
+        "scope": "historial-completo",
+        "previousDrawRepeats": 1,
+        "previousSameDayRepeats": 0,
+        "inRangeCount": 6,
+        "p1p3Nearby": 20,
+        "positionalDelayAlert": null,
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 20 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 6,
         "numbers": [
-          10,
           11,
-          13,
-          24,
-          26,
-          32
+          12,
+          19,
+          22,
+          28,
+          30
         ],
-        "plus": 12,
-        "score": 89,
+        "plus": 7,
+        "score": 92,
         "profile": "exploratoria",
         "daySupportCount": 4,
         "scope": "historial-completo",
-        "previousDrawRepeats": 0,
+        "previousDrawRepeats": 1,
         "previousSameDayRepeats": 0,
-        "inRangeCount": 5,
-        "p1p3Nearby": 10,
+        "inRangeCount": 4,
+        "p1p3Nearby": 8,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 5/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "miercoles y sabados; 4/6 dentro de rango; 8 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       },
       {
         "id": 7,
         "numbers": [
           2,
-          13,
-          15,
+          3,
+          12,
+          26,
           29,
-          31,
-          34
+          38
         ],
-        "plus": 10,
+        "plus": 3,
         "score": 93,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -594,88 +661,38 @@
         "previousDrawRepeats": 1,
         "previousSameDayRepeats": 1,
         "inRangeCount": 6,
-        "p1p3Nearby": 16,
+        "p1p3Nearby": 19,
         "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 16 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
-      },
-      {
-        "id": 8,
-        "numbers": [
-          5,
-          9,
-          10,
-          25,
-          33,
-          38
-        ],
-        "plus": 4,
-        "score": 88,
-        "profile": "exploratoria",
-        "daySupportCount": 4,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 6,
-        "p1p3Nearby": 18,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 6/6 dentro de rango; 18 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
-      },
-      {
-        "id": 9,
-        "numbers": [
-          11,
-          12,
-          15,
-          21,
-          27,
-          30
-        ],
-        "plus": 5,
-        "score": 88,
-        "profile": "exploratoria",
-        "daySupportCount": 4,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 4,
-        "p1p3Nearby": 10,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 4/6 dentro de rango; 10 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
-      },
-      {
-        "id": 10,
-        "numbers": [
-          8,
-          18,
-          19,
-          22,
-          29,
-          31
-        ],
-        "plus": 7,
-        "score": 85,
-        "profile": "exploratoria",
-        "daySupportCount": 4,
-        "scope": "historial-completo",
-        "previousDrawRepeats": 0,
-        "previousSameDayRepeats": 0,
-        "inRangeCount": 5,
-        "p1p3Nearby": 4,
-        "positionalDelayAlert": null,
-        "explanation": "miercoles y sabados; 5/6 dentro de rango; 4 antecedentes P1-P3 cercanos; repite 0 del sorteo anterior."
+        "explanation": "miercoles y sabados; 6/6 dentro de rango; 19 antecedentes P1-P3 cercanos; repite 1 del sorteo anterior."
       }
     ],
     "exposure": [
       {
         "number": 10,
-        "count": 8
-      },
-      {
-        "number": 14,
-        "count": 8
+        "count": 9
       },
       {
         "number": 9,
+        "count": 7
+      },
+      {
+        "number": 13,
+        "count": 7
+      },
+      {
+        "number": 14,
+        "count": 7
+      },
+      {
+        "number": 22,
+        "count": 7
+      },
+      {
+        "number": 30,
+        "count": 7
+      },
+      {
+        "number": 32,
         "count": 7
       },
       {
@@ -683,27 +700,11 @@
         "count": 6
       },
       {
-        "number": 6,
-        "count": 6
-      },
-      {
         "number": 15,
         "count": 6
       },
       {
-        "number": 25,
-        "count": 6
-      },
-      {
-        "number": 28,
-        "count": 6
-      },
-      {
         "number": 29,
-        "count": 6
-      },
-      {
-        "number": 30,
         "count": 6
       },
       {
@@ -719,55 +720,47 @@
         "count": 5
       },
       {
-        "number": 7,
+        "number": 6,
         "count": 5
-      },
-      {
-        "number": 12,
-        "count": 5
-      },
-      {
-        "number": 13,
-        "count": 5
-      },
-      {
-        "number": 19,
-        "count": 5
-      },
-      {
-        "number": 20,
-        "count": 5
-      },
-      {
-        "number": 22,
-        "count": 5
-      },
-      {
-        "number": 31,
-        "count": 5
-      },
-      {
-        "number": 32,
-        "count": 5
-      },
-      {
-        "number": 38,
-        "count": 5
-      },
-      {
-        "number": 40,
-        "count": 5
-      },
-      {
-        "number": 8,
-        "count": 4
-      },
-      {
-        "number": 18,
-        "count": 4
       },
       {
         "number": 21,
+        "count": 5
+      },
+      {
+        "number": 25,
+        "count": 5
+      },
+      {
+        "number": 28,
+        "count": 5
+      },
+      {
+        "number": 35,
+        "count": 5
+      },
+      {
+        "number": 7,
+        "count": 4
+      },
+      {
+        "number": 11,
+        "count": 4
+      },
+      {
+        "number": 12,
+        "count": 4
+      },
+      {
+        "number": 17,
+        "count": 4
+      },
+      {
+        "number": 20,
+        "count": 4
+      },
+      {
+        "number": 23,
         "count": 4
       },
       {
@@ -775,7 +768,11 @@
         "count": 4
       },
       {
-        "number": 35,
+        "number": 31,
+        "count": 4
+      },
+      {
+        "number": 38,
         "count": 4
       },
       {
@@ -783,11 +780,27 @@
         "count": 4
       },
       {
+        "number": 40,
+        "count": 4
+      },
+      {
+        "number": 1,
+        "count": 3
+      },
+      {
+        "number": 5,
+        "count": 3
+      },
+      {
         "number": 16,
         "count": 3
       },
       {
-        "number": 23,
+        "number": 18,
+        "count": 3
+      },
+      {
+        "number": 19,
         "count": 3
       },
       {
@@ -799,27 +812,15 @@
         "count": 3
       },
       {
-        "number": 34,
-        "count": 3
-      },
-      {
-        "number": 1,
-        "count": 2
-      },
-      {
-        "number": 11,
-        "count": 2
-      },
-      {
-        "number": 17,
+        "number": 8,
         "count": 2
       },
       {
         "number": 33,
-        "count": 2
+        "count": 1
       },
       {
-        "number": 5,
+        "number": 34,
         "count": 1
       },
       {

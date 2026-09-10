@@ -36,6 +36,7 @@ export type ThirtyPlayPortfolio = {
   targetDate: string;
   targetDay: DrawDay;
   generatedAt: string;
+  algorithmVersion?: string;
   plays: PortfolioPlay[];
   exposure: Array<{ number: number; count: number }>;
 };

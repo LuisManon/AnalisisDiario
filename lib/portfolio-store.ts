@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
-import { buildThirtyPlayPortfolio } from "./game";
+import { buildThirtyPlayPortfolio, thirtyPlayAlgorithmVersion } from "./game";
 import type { DrawResult, ThirtyPlayPortfolio } from "./types";
 
 const portfolioPath = path.join(process.cwd(), "data", "portfolio-history.json");
@@ -30,9 +30,11 @@ async function writePortfolios(portfolios: ThirtyPlayPortfolio[]) {
 export async function getOrCreatePortfolio(targetDate: string, results: DrawResult[]) {
   const portfolios = await readPortfolios();
   const existing = portfolios.find((portfolio) => portfolio.targetDate === targetDate);
-  if (existing) return existing;
+  const latestResultDate = results[0]?.date ?? "";
+  const shouldRegenerate = existing && targetDate > latestResultDate && existing.algorithmVersion !== thirtyPlayAlgorithmVersion;
+  if (existing && !shouldRegenerate) return existing;
 
   const portfolio = buildThirtyPlayPortfolio(results, targetDate);
-  await writePortfolios([...portfolios, portfolio]);
+  await writePortfolios([...portfolios.filter((item) => item.targetDate !== targetDate), portfolio]);
   return portfolio;
 }
