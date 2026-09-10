@@ -877,7 +877,7 @@ function WeeklyTopChallenge({
     const tandas: WeeklyTandaResult[] = (["dia", "noche"] as const).map((currentSession) => {
       const quinielon = results.find((draw) => draw.date === date && draw.session === currentSession);
       const matches: WeeklyTandaResult["matches"] = [];
-      if (quinielon && (hotPool.has(quinielon.number) || investorPool.has(quinielon.number))) {
+      if (quinielon) {
         matches.push({ number: quinielon.number, source: "Quinielón" });
       }
       return {
@@ -925,7 +925,7 @@ function WeeklyTopChallenge({
             <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
               <span>{formatSession(tanda.session)}</span>
               <strong>{tanda.status === "nosotros" ? "Nosotros" : tanda.status === "inversionistas" ? "Inversionistas" : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
-              <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : tanda.status === "banca" ? "Sin match en el Quinielón" : "Esperando resultado"}</small>
+              <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : "Esperando resultado"}</small>
             </div>)}</div>
           </article>;
         })}
