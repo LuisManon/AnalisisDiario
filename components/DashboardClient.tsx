@@ -48,6 +48,73 @@ function formatLongDate(date: string) {
   }).format(new Date(`${date}T00:00:00Z`));
 }
 
+async function downloadThirtyPlayPortfolioPdf(portfolio: ThirtyPlayPortfolio, winningDraw?: DrawResult) {
+  const { jsPDF } = await import("jspdf");
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const profileStyle: Record<PortfolioPlay["profile"], { label: string; color: [number, number, number] }> = {
+    fuerte: { label: "Fuerte", color: [0, 132, 61] },
+    equilibrada: { label: "Equilibrada", color: [33, 73, 154] },
+    exploratoria: { label: "Exploratoria", color: [199, 119, 0] }
+  };
+  const columns = Array.from({ length: 3 }, (_, index) => portfolio.plays.slice(index * 10, index * 10 + 10));
+  const margin = 10;
+  const gap = 4;
+  const columnWidth = (297 - margin * 2 - gap * 2) / 3;
+
+  pdf.setFillColor(24, 38, 67);
+  pdf.rect(0, 0, 297, 25, "F");
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(17);
+  pdf.text("Loto Mas - Cartera de 30 jugadas", margin, 11);
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Objetivo: ${formatLongDate(portfolio.targetDate)} | Algoritmo: ${portfolio.algorithmVersion ?? "v1"}`, margin, 18);
+  if (winningDraw) pdf.text(`Sorteo evaluado: ${winningDraw.numbers.map((number) => String(number).padStart(2, "0")).join("-")} + ${String(winningDraw.plus).padStart(2, "0")}`, 287, 18, { align: "right" });
+
+  columns.forEach((plays, columnIndex) => {
+    const x = margin + columnIndex * (columnWidth + gap);
+    pdf.setFillColor(244, 246, 249);
+    pdf.roundedRect(x, 31, columnWidth, 169, 2, 2, "F");
+    pdf.setTextColor(24, 38, 67);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(11);
+    pdf.text(`Columna ${columnIndex + 1}`, x + 4, 39);
+
+    plays.forEach((play, rowIndex) => {
+      const y = 45 + rowIndex * 15;
+      const style = profileStyle[play.profile];
+      pdf.setDrawColor(...style.color);
+      pdf.setLineWidth(1.2);
+      pdf.line(x + 2, y - 4, x + 2, y + 8);
+      pdf.setFillColor(...style.color);
+      pdf.roundedRect(x + 5, y - 4, 20, 5, 1, 1, "F");
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(6.5);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(style.label, x + 15, y - 0.5, { align: "center" });
+      pdf.setTextColor(24, 38, 67);
+      pdf.setFontSize(7.5);
+      pdf.text(`#${rowIndex + 1}`, x + 28, y);
+      pdf.setFontSize(9);
+      const numbers = play.numbers.map((number) => String(number).padStart(2, "0")).join("  ");
+      pdf.text(numbers, x + 37, y);
+      pdf.setTextColor(205, 31, 43);
+      pdf.text(`+ ${String(play.plus).padStart(2, "0")}`, x + columnWidth - 4, y, { align: "right" });
+      pdf.setTextColor(102, 109, 122);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(6.5);
+      const scope = play.scope === "mismo-dia" ? `Solo ${formatDay(portfolio.targetDay)}` : "Mie. + sab.";
+      pdf.text(`${scope} | ${play.score} pts`, x + 28, y + 5);
+    });
+  });
+
+  pdf.setTextColor(102, 109, 122);
+  pdf.setFontSize(7);
+  pdf.text("Analisis estadistico. Estas jugadas no predicen ni garantizan resultados.", margin, 207);
+  pdf.save(`loto-mas-30-jugadas-${portfolio.targetDate}.pdf`);
+}
+
 function formatShortDate(date: string) {
   const [year, month, day] = date.split("-");
   return `${day}-${month}-${year}`;
@@ -712,13 +779,18 @@ function ThirtyPlayPortfolioView({
           <span className="panelLabel">{historical ? "Sorteo evaluado" : "Sorteo objetivo"}</span>
           <h2>{formatLongDate(portfolio.targetDate)}</h2>
         </div>
+        <div className="portfolioTargetActions">
         {winningDraw ? <div className="portfolioPrizeSummary">
           <strong>{awardedPlays.length ? `${awardedPlays.length} jugadas con premio · ${formatMoney(awardedTotal)}` : "Ninguna jugada obtuvo premio"}</strong>
           {awardedPlays.length ? <div className="portfolioPrizeRows">{awardedPlays.map((item) => <span key={`${item.play.profile}-${item.play.id}`}>
             <b>{item.profileTitle} · renglón #{item.row}</b>
             <small>{item.prize.label} · {formatMoney(item.prize.amount)}</small>
           </span>)}</div> : <small>La corona indica coincidencias, aunque no todas alcanzan un renglón premiado.</small>}
-        </div> : <p>En cada columna: 5 jugadas solo de {formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.</p>}
+        </div> : <p>En cada columna: jugadas identificadas por perfil y alcance estadístico.</p>}
+          <button className="secondaryButton portfolioPdfButton" onClick={() => downloadThirtyPlayPortfolioPdf(portfolio, winningDraw)}>
+            <span aria-hidden="true">↓</span> Descargar PDF
+          </button>
+        </div>
       </header>
 
       <div className="portfolioColumns">

@@ -1526,6 +1526,20 @@ h3 {
   max-width: 680px;
 }
 
+.portfolioTargetActions {
+  align-items: flex-end;
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+}
+
+.portfolioPdfButton {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
 .portfolioPrizeSummary > strong {
   color: var(--green-dark);
   font-size: 0.88rem;
@@ -3997,6 +4011,11 @@ h3 {
   .portfolioPrizeSummary {
     justify-items: start;
     max-width: none;
+  }
+
+  .portfolioTargetActions {
+    align-items: start;
+    justify-items: start;
   }
 
   .portfolioPrizeRows {
