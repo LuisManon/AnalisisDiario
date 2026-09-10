@@ -477,12 +477,9 @@ function LaPrimeraBankView({ results, onProductChange }: { results: LaPrimeraDra
         <header>
           <span>Selección restante</span>
           <h1>Números de la Banca</h1>
-          <p>Los 20 números que no pertenecen a Nosotros ni a Inversionistas, ordenados por su frecuencia en cada tanda.</p>
+          <p>Los 20 números restantes. La clasificación se actualiza con cada sorteo y permite ascensos entre Banca, Inversionistas y Nosotros.</p>
         </header>
-        <div className="twoColumn">
-          <FrequencyCard title="Top 20 Banca Día" ranking={exclusiveRankings.bankDay} winningNumbers={weeklyWinningNumbers} tone="dark" />
-          <FrequencyCard title="Top 20 Banca Noche" ranking={exclusiveRankings.bankNight} winningNumbers={weeklyWinningNumbers} tone="dark" />
-        </div>
+        <BankNumberCard ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} />
         <p className="weeklyCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
       </section>
     </main>
@@ -868,7 +865,7 @@ function WeeklyTopChallenge({
   const rankingBase = rankingResults.length ? rankingResults : results;
   const exclusiveRankings = buildLaPrimeraExclusiveRankings(rankingBase);
   const selectedRanking = variant === "bank"
-    ? [...exclusiveRankings.bankDay, ...exclusiveRankings.bankNight]
+    ? exclusiveRankings.bank
     : variant === "investor"
       ? [...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight]
       : [...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight];
@@ -956,6 +953,19 @@ function FrequencyCard({ title, results = [], ranking, winningNumbers = [], tone
             <div className={`bar primeraBar ${tone === "gold" ? "investorBar" : tone === "dark" ? "bankBar" : ""}`}><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
             <strong>{item.count}</strong>
           </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BankNumberCard({ ranking, winningNumbers = [] }: { ranking: Array<{ number: number; count: number }>; winningNumbers?: readonly number[] }) {
+  return (
+    <div className="card primeraCard bankCard">
+      <h2>20 números restantes</h2>
+      <div className="bankNumberGrid">
+        {ranking.map((item) => (
+          <QuinielonBall key={item.number} number={item.number} tone="dark" winner={winningNumbers.includes(item.number)} />
         ))}
       </div>
     </div>
