@@ -3324,6 +3324,23 @@ h3 {
   border-color: #b8870b;
 }
 
+.weeklyBankChallenge {
+  background: linear-gradient(135deg, #ffffff, #eeeeee);
+  border-color: #c9c9c9;
+  border-top-color: #333333;
+}
+
+.weeklyBankChallenge .primeraLabel,
+.weeklyBankChallenge .weeklyRoster strong,
+.weeklyBankChallenge .weeklyTopSummary > strong {
+  color: #333333;
+}
+
+.weeklyBankChallenge .weeklyCalculateButton {
+  background: #333333;
+  border-color: #333333;
+}
+
 .weeklyTopHeader {
   align-items: end;
   display: flex;
@@ -3610,6 +3627,52 @@ h3 {
 .investorSection > header p {
   color: #745b1d;
   margin: 0;
+}
+
+.bankSection {
+  background: linear-gradient(135deg, #ffffff, #ededed);
+  border: 1px solid #cccccc;
+  border-radius: 18px;
+  margin-bottom: 28px;
+  padding: 20px;
+}
+
+.bankSection > header {
+  margin-bottom: 16px;
+}
+
+.bankSection > header > span {
+  color: #555555;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.bankSection > header h1 {
+  color: #262626;
+  margin: 4px 0 5px;
+}
+
+.bankSection > header p,
+.weeklyCrownNote {
+  color: #666666;
+  margin: 0;
+}
+
+.weeklyCrownNote {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.bankCard {
+  border-color: #d1d1d1;
+  box-shadow: inset 0 4px 0 #333333;
+}
+
+.primeraBar.bankBar span {
+  background: linear-gradient(90deg, #242424, #666666);
 }
 
 .investorCard {

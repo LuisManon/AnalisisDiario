@@ -47,7 +47,8 @@ export function buildLaPrimeraExclusiveRankings(results: LaPrimeraDraw[]) {
     hotDay: takeUnique(dayRanking),
     hotNight: takeUnique(nightRanking),
     investorDay: takeUnique(dayRanking),
-    investorNight: takeUnique(nightRanking)
+    investorNight: takeUnique(nightRanking),
+    bank: buildLaPrimeraFrequencyRanking(results).filter((item) => !used.has(item.number))
   };
 }
 
