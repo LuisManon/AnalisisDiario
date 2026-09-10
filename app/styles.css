@@ -1590,6 +1590,33 @@ h3 {
 .portfolioColumn.equilibrada > header { border-top-color: #21499a; }
 .portfolioColumn.exploratoria > header { border-top-color: #c77700; }
 
+.portfolioBatchColumn > header {
+  border-top: 0;
+  position: relative;
+}
+
+.portfolioBatchColumn > header::before {
+  background: var(--blue);
+  content: "";
+  height: 4px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.portfolioBatchColumn.batch1 > header::before {
+  background: linear-gradient(90deg, #00843d 0 80%, #21499a 80%);
+}
+
+.portfolioBatchColumn.batch2 > header::before {
+  background: #21499a;
+}
+
+.portfolioBatchColumn.batch3 > header::before {
+  background: linear-gradient(90deg, #21499a 0 30%, #c77700 30%);
+}
+
 .portfolioColumn h3 {
   color: var(--blue);
   font-size: 1rem;
@@ -1623,6 +1650,14 @@ h3 {
   padding: 10px 11px;
 }
 
+.portfolioPlayProfile {
+  border-left: 4px solid transparent;
+}
+
+.portfolioPlayProfile.fuerte { border-left-color: #00843d; }
+.portfolioPlayProfile.equilibrada { border-left-color: #21499a; }
+.portfolioPlayProfile.exploratoria { border-left-color: #c77700; }
+
 .portfolioPlayRow + .portfolioPlayRow {
   border-top: 1px solid rgba(33, 73, 154, 0.12);
 }
@@ -1637,6 +1672,27 @@ h3 {
 
 .portfolioPlayMeta b { color: var(--blue); }
 .portfolioPlayMeta > span:last-child { color: var(--muted); margin-left: auto; }
+
+.portfolioProfileTag {
+  border-radius: 999px;
+  font-weight: 900;
+  padding: 3px 6px;
+}
+
+.portfolioProfileTag.fuerte {
+  background: rgba(0, 132, 61, 0.1);
+  color: #006f34;
+}
+
+.portfolioProfileTag.equilibrada {
+  background: rgba(33, 73, 154, 0.1);
+  color: #21499a;
+}
+
+.portfolioProfileTag.exploratoria {
+  background: rgba(199, 119, 0, 0.12);
+  color: #a66000;
+}
 
 .portfolioScope {
   background: rgba(33, 73, 154, 0.09);

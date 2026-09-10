@@ -691,6 +691,19 @@ function ThirtyPlayPortfolioView({
     return [{ play, matches, plusMatched, prize, profileTitle: profile?.title ?? play.profile, row }];
   }) : [];
   const awardedTotal = awardedPlays.reduce((sum, item) => sum + item.prize.amount, 0);
+  const profileLabels: Record<PortfolioPlay["profile"], string> = {
+    fuerte: "Fuerte",
+    equilibrada: "Equilibrada",
+    exploratoria: "Exploratoria"
+  };
+  const columns = Array.from({ length: 3 }, (_, index) => {
+    const plays = portfolio.plays.slice(index * 10, index * 10 + 10);
+    const counts = profiles.flatMap((profile) => {
+      const count = plays.filter((play) => play.profile === profile.id).length;
+      return count ? [`${count} ${profileLabels[profile.id].toLowerCase()}${count === 1 ? "" : "s"}`] : [];
+    });
+    return { index, plays, description: counts.join(" · ") };
+  });
 
   return (
     <section className="thirtyPortfolioBody">
@@ -709,22 +722,21 @@ function ThirtyPlayPortfolioView({
       </header>
 
       <div className="portfolioColumns">
-        {profiles.map((profile) => {
-          const plays = portfolio.plays.filter((play) => play.profile === profile.id);
-          return (
-            <article className={`portfolioColumn ${profile.id}`} key={profile.id}>
+        {columns.map((column) => (
+            <article className={`portfolioColumn portfolioBatchColumn batch${column.index + 1}`} key={column.index}>
               <header>
                 <div>
-                  <h3>{profile.title}</h3>
-                  <p>{profile.description}</p>
+                  <h3>Columna {column.index + 1}</h3>
+                  <p>{column.description}</p>
                 </div>
-                <strong>{plays.length}</strong>
+                <strong>{column.plays.length}</strong>
               </header>
               <div className="portfolioPlayList">
-                {plays.map((play, index) => (
-                  <div className="portfolioPlayRow" key={play.id}>
+                {column.plays.map((play, index) => (
+                  <div className={`portfolioPlayRow portfolioPlayProfile ${play.profile}`} key={`${play.profile}-${play.id}`}>
                     <div className="portfolioPlayMeta">
                       <b>#{index + 1}</b>
+                      <span className={`portfolioProfileTag ${play.profile}`}>{profileLabels[play.profile]}</span>
                       <span className={`portfolioScope ${play.scope}`}>
                         {play.scope === "mismo-dia" ? `Solo ${formatDay(portfolio.targetDay)}` : "Mié. + sáb."}
                       </span>
@@ -742,8 +754,7 @@ function ThirtyPlayPortfolioView({
                 ))}
               </div>
             </article>
-          );
-        })}
+        ))}
       </div>
 
       <p className="recommendationDisclaimer portfolioDisclaimer">
