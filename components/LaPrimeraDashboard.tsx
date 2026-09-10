@@ -477,11 +477,11 @@ function LaPrimeraBankView({ results, onProductChange }: { results: LaPrimeraDra
         <header>
           <span>Selección restante</span>
           <h1>Números de la Banca</h1>
-          <p>Los 20 números que no pertenecen a Nosotros ni a Inversionistas.</p>
+          <p>Los 20 números que no pertenecen a Nosotros ni a Inversionistas, ordenados por su frecuencia en cada tanda.</p>
         </header>
         <div className="twoColumn">
-          <FrequencyCard title="Banca · 1 al 10" ranking={exclusiveRankings.bank.slice(0, 10)} winningNumbers={weeklyWinningNumbers} tone="dark" />
-          <FrequencyCard title="Banca · 11 al 20" ranking={exclusiveRankings.bank.slice(10, 20)} winningNumbers={weeklyWinningNumbers} tone="dark" />
+          <FrequencyCard title="Top 20 Banca Día" ranking={exclusiveRankings.bankDay} winningNumbers={weeklyWinningNumbers} tone="dark" />
+          <FrequencyCard title="Top 20 Banca Noche" ranking={exclusiveRankings.bankNight} winningNumbers={weeklyWinningNumbers} tone="dark" />
         </div>
         <p className="weeklyCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
       </section>
@@ -868,7 +868,7 @@ function WeeklyTopChallenge({
   const rankingBase = rankingResults.length ? rankingResults : results;
   const exclusiveRankings = buildLaPrimeraExclusiveRankings(rankingBase);
   const selectedRanking = variant === "bank"
-    ? exclusiveRankings.bank
+    ? [...exclusiveRankings.bankDay, ...exclusiveRankings.bankNight]
     : variant === "investor"
       ? [...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight]
       : [...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight];
