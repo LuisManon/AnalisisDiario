@@ -1515,6 +1515,53 @@ h3 {
   text-align: right;
 }
 
+.portfolioTargetEvaluated {
+  align-items: flex-start;
+}
+
+.portfolioPrizeSummary {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  max-width: 680px;
+}
+
+.portfolioPrizeSummary > strong {
+  color: var(--green-dark);
+  font-size: 0.88rem;
+}
+
+.portfolioPrizeSummary > small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.portfolioPrizeRows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.portfolioPrizeRows > span {
+  background: rgba(0, 132, 61, 0.08);
+  border: 1px solid rgba(0, 132, 61, 0.2);
+  border-radius: 8px;
+  display: grid;
+  gap: 2px;
+  padding: 6px 8px;
+}
+
+.portfolioPrizeRows b {
+  color: var(--green-dark);
+  font-size: 0.68rem;
+}
+
+.portfolioPrizeRows small {
+  color: var(--muted);
+  font-size: 0.63rem;
+}
+
 .portfolioColumns {
   display: grid;
   gap: 12px;
@@ -3884,6 +3931,20 @@ h3 {
 
   .portfolioColumns {
     grid-template-columns: 1fr;
+  }
+
+  .portfolioTargetEvaluated {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .portfolioPrizeSummary {
+    justify-items: start;
+    max-width: none;
+  }
+
+  .portfolioPrizeRows {
+    justify-content: flex-start;
   }
 
   .metricsGrid,

@@ -681,15 +681,31 @@ function ThirtyPlayPortfolioView({
     { id: "equilibrada", title: "Equilibradas", description: "Balance entre afinidad, frecuencia, retraso y diversidad." },
     { id: "exploratoria", title: "Exploratorias", description: "Más diversidad sin salir de los controles históricos." }
   ];
+  const awardedPlays = winningDraw ? portfolio.plays.flatMap((play) => {
+    const matches = play.numbers.filter((number) => winningDraw.numbers.includes(number)).length;
+    const plusMatched = winningDraw.plus === play.plus;
+    const prize = getVirtualPrize(matches, plusMatched);
+    if (!prize.amount) return [];
+    const profile = profiles.find((item) => item.id === play.profile);
+    const row = portfolio.plays.filter((item) => item.profile === play.profile).findIndex((item) => item === play) + 1;
+    return [{ play, matches, plusMatched, prize, profileTitle: profile?.title ?? play.profile, row }];
+  }) : [];
+  const awardedTotal = awardedPlays.reduce((sum, item) => sum + item.prize.amount, 0);
 
   return (
     <section className="thirtyPortfolioBody">
-      <header className="portfolioTarget">
+      <header className={`portfolioTarget ${winningDraw ? "portfolioTargetEvaluated" : ""}`}>
         <div>
           <span className="panelLabel">{historical ? "Sorteo evaluado" : "Sorteo objetivo"}</span>
           <h2>{formatLongDate(portfolio.targetDate)}</h2>
         </div>
-        <p>{winningDraw ? "La corona indica un número acertado; el Más se evalúa por separado." : `En cada columna: 5 jugadas solo de ${formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.`}</p>
+        {winningDraw ? <div className="portfolioPrizeSummary">
+          <strong>{awardedPlays.length ? `${awardedPlays.length} jugadas con premio · ${formatMoney(awardedTotal)}` : "Ninguna jugada obtuvo premio"}</strong>
+          {awardedPlays.length ? <div className="portfolioPrizeRows">{awardedPlays.map((item) => <span key={`${item.play.profile}-${item.play.id}`}>
+            <b>{item.profileTitle} · renglón #{item.row}</b>
+            <small>{item.prize.label} · {formatMoney(item.prize.amount)}</small>
+          </span>)}</div> : <small>La corona indica coincidencias, aunque no todas alcanzan un renglón premiado.</small>}
+        </div> : <p>En cada columna: 5 jugadas solo de {formatDay(portfolio.targetDay)} y 5 con miércoles + sábado.</p>}
       </header>
 
       <div className="portfolioColumns">
