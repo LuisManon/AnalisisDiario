@@ -3049,6 +3049,7 @@ h3 {
 .primeraProductSwitch button.active {
   background: var(--primera-red);
   border-color: var(--primera-red);
+  color: #ffffff;
 }
 
 .primeraQuinielaBalls {
@@ -3683,9 +3684,51 @@ h3 {
   margin-top: 16px;
 }
 
+.quinielonRosterSection {
+  border-radius: 18px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.nosotrosRosterSection {
+  background: linear-gradient(135deg, #fffafa, #fff0f0);
+  border: 1px solid rgba(253, 1, 0, 0.2);
+}
+
+.quinielonRosterSection > header {
+  margin-bottom: 16px;
+}
+
+.quinielonRosterSection > header > span {
+  color: var(--primera-red);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.quinielonRosterSection > header h2 {
+  margin: 4px 0 5px;
+}
+
+.quinielonRosterSection > header p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.numberGridCard h3 {
+  margin: 0;
+}
+
+.quinielonCrownNote {
+  margin-bottom: 28px;
+  margin-top: -6px;
+}
+
 @media (max-width: 760px) {
   .bankNumberGrid {
-    grid-template-columns: repeat(5, minmax(42px, 1fr));
+    gap: 10px 6px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 

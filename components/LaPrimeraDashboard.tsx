@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from
 import {
   buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
-  buildLaPrimeraFrequencyRanking,
   buildLaPrimeraSuggestions,
   filterLaPrimeraResults,
   formatQuinielonNumber,
@@ -15,7 +14,7 @@ import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-
 import { getNextLoto5Date } from "../lib/la-primera-loto5";
 import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, Loto5PortfolioPlay, Loto5PortfolioSnapshot, QuinielaPaleDraw } from "../lib/types";
 
-type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5" | "inversionistas" | "banca";
+type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
 
 type Props = {
   initialData: {
@@ -237,14 +236,6 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
   }
 
-  if (product === "inversionistas") {
-    return <LaPrimeraInvestorView results={results} onProductChange={setProduct} />;
-  }
-
-  if (product === "banca") {
-    return <LaPrimeraBankView results={results} onProductChange={setProduct} />;
-  }
-
   return (
     <main className="primeraTheme">
       <ProductSwitch product={product} onChange={setProduct} />
@@ -328,11 +319,39 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         </div>
       </section>
 
-      <section className="twoColumn">
-        <FrequencyCard title="Top 20 calientes Dia" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} />
-        <FrequencyCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbers} />
+      <section className="quinielonRosterSection nosotrosRosterSection">
+        <header>
+          <span>Nuestra selección</span>
+          <h2>Top 20 calientes</h2>
+          <p>Los números con mayor frecuencia histórica para cada tanda.</p>
+        </header>
+        <div className="twoColumn">
+          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} />
+          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbers} />
+        </div>
       </section>
-      <p className="weeklyCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
+
+      <section className="quinielonRosterSection investorSection">
+        <header>
+          <span>Selección exclusiva</span>
+          <h2>Números de los Inversionistas</h2>
+          <p>Los siguientes 20 números disponibles por tanda, sin repetir los de nuestra selección.</p>
+        </header>
+        <div className="twoColumn">
+          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} tone="gold" />
+          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbers} tone="gold" />
+        </div>
+      </section>
+
+      <section className="quinielonRosterSection bankSection">
+        <header>
+          <span>Selección restante</span>
+          <h2>Números de la Banca</h2>
+          <p>Los 20 números restantes después de las selecciones de Nosotros e Inversionistas.</p>
+        </header>
+        <NumberGridCard title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} tone="dark" />
+      </section>
+      <p className="weeklyCrownNote quinielonCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
 
       <section className="twoColumn">
         <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} winningNumber={stats.latestBySession.dia?.number} />
@@ -451,68 +470,7 @@ function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onCha
       <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
-      <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
-      <button className={product === "banca" ? "active" : ""} onClick={() => onChange("banca")}>Banca</button>
     </nav>
-  );
-}
-
-function LaPrimeraInvestorView({
-  results,
-  onProductChange
-}: {
-  results: LaPrimeraDraw[];
-  onProductChange: (product: LaPrimeraProduct) => void;
-}) {
-  const weeklyWinningNumbers = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date)).map((draw) => draw.number);
-  const exclusiveRankings = buildLaPrimeraExclusiveRankings(results);
-
-  return (
-    <main className="primeraTheme primeraInvestorTheme">
-      <ProductSwitch product="inversionistas" onChange={onProductChange} />
-
-      <WeeklyTopChallenge
-        results={results}
-        rankingOffset={20}
-        variant="investor"
-      />
-
-      <section className="investorSection investorPageSection">
-        <header>
-          <span>Selección exclusiva</span>
-          <h1>Quinielón Inversionistas</h1>
-          <p>Los siguientes 20 números elegibles por tanda, sin repetir ningún número de las listas anteriores.</p>
-        </header>
-        <div className="twoColumn">
-          <FrequencyCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} tone="gold" />
-          <FrequencyCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbers} tone="gold" />
-        </div>
-        <p className="weeklyCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
-      </section>
-    </main>
-  );
-}
-
-function LaPrimeraBankView({ results, onProductChange }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void }) {
-  const exclusiveRankings = buildLaPrimeraExclusiveRankings(results);
-  const weeklyWinningNumbers = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date)).map((draw) => draw.number);
-
-  return (
-    <main className="primeraTheme primeraBankTheme">
-      <ProductSwitch product="banca" onChange={onProductChange} />
-
-      <WeeklyTopChallenge results={results} variant="bank" />
-
-      <section className="bankSection">
-        <header>
-          <span>Selección restante</span>
-          <h1>Números de la Banca</h1>
-          <p>Los 20 números restantes. La clasificación se actualiza con cada sorteo y permite ascensos entre Banca, Inversionistas y Nosotros.</p>
-        </header>
-        <BankNumberCard ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} />
-        <p className="weeklyCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
-      </section>
-    </main>
   );
 }
 
@@ -969,36 +927,26 @@ function WeeklyTopChallenge({
   );
 }
 
-function FrequencyCard({ title, results = [], ranking, winningNumbers = [], tone = "red" }: { title: string; results?: LaPrimeraDraw[]; ranking?: Array<{ number: number; count: number }>; winningNumbers?: readonly number[]; tone?: "red" | "gold" | "dark" }) {
-  const frequency = ranking ?? buildLaPrimeraFrequencyRanking(results).slice(0, 20);
-  const max = Math.max(1, frequency[0]?.count ?? 1);
-
+function NumberGridCard({
+  title,
+  ranking,
+  winningNumbers = [],
+  tone = "red"
+}: {
+  title: string;
+  ranking: Array<{ number: number; count: number }>;
+  winningNumbers?: readonly number[];
+  tone?: "red" | "gold" | "dark";
+}) {
   return (
-    <div className={`card primeraCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
-      <h2>{title}</h2>
-      <div className="rankList">
-        {frequency.map((item) => (
-          <div className="rankItem" key={item.number}>
-            <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
-            <div className={`bar primeraBar ${tone === "gold" ? "investorBar" : tone === "dark" ? "bankBar" : ""}`}><span style={{ width: `${(item.count / max) * 100}%` }} /></div>
-            <strong>{item.count}</strong>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function BankNumberCard({ ranking, winningNumbers = [] }: { ranking: Array<{ number: number; count: number }>; winningNumbers?: readonly number[] }) {
-  return (
-    <div className="card primeraCard bankCard">
-      <h2>20 números restantes</h2>
+    <article className={`card primeraCard numberGridCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
+      <h3>{title}</h3>
       <div className="bankNumberGrid">
         {ranking.map((item) => (
-          <QuinielonBall key={item.number} number={item.number} tone="dark" winner={winningNumbers.includes(item.number)} />
+          <QuinielonBall key={item.number} number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
         ))}
       </div>
-    </div>
+    </article>
   );
 }
 
