@@ -3716,6 +3716,10 @@ h3 {
   margin: 0;
 }
 
+.quinielonRosterSection .twoColumn {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .numberGridCard h3 {
   margin: 0;
 }
