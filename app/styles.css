@@ -3030,17 +3030,17 @@ h3 {
 }
 
 .primeraProductSwitch {
-  background: #333333;
+  background: transparent;
   display: flex;
   gap: 6px;
   padding: 10px 32px;
 }
 
 .primeraProductSwitch button {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: #ffffff;
+  border: 1px solid #cfcfcf;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--primera-dark);
   cursor: pointer;
   font-weight: 800;
   padding: 8px 15px;

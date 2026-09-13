@@ -75,6 +75,28 @@ function getDominicanClock() {
   };
 }
 
+function isLaPrimeraDataCurrent(data: Props["initialData"]) {
+  const now = getDominicanClock();
+  const yesterday = addDays(now.date, -1);
+  const expectedSession: LaPrimeraSession = now.minutes >= drawCutoffMinutes.noche
+    ? "noche"
+    : now.minutes >= drawCutoffMinutes.dia
+      ? "dia"
+      : "noche";
+  const expectedSessionDate = now.minutes >= drawCutoffMinutes.dia ? now.date : yesterday;
+  const expectedLoto5Date = now.minutes >= drawCutoffMinutes.noche ? now.date : yesterday;
+
+  const hasQuinielon = data.results.some(
+    (draw) => draw.date === expectedSessionDate && draw.session === expectedSession
+  );
+  const hasQuiniela = data.quinielaResults.some(
+    (draw) => draw.date === expectedSessionDate && draw.session === expectedSession
+  );
+  const hasLoto5 = data.loto5Results.some((draw) => draw.date === expectedLoto5Date);
+
+  return hasQuinielon && hasQuiniela && hasLoto5;
+}
+
 function getLatestDateLabel(draw: LaPrimeraDraw) {
   const now = getDominicanClock();
   const yesterday = addDays(now.date, -1);
@@ -140,9 +162,17 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 
   useEffect(() => {
     let isMounted = true;
-    const minimumLoading = new Promise((resolve) => window.setTimeout(resolve, 500));
+
+    if (isLaPrimeraDataCurrent(initialData)) {
+      const timeout = window.setTimeout(() => setIsPageLoading(false), 500);
+      return () => {
+        isMounted = false;
+        window.clearTimeout(timeout);
+      };
+    }
 
     async function updateLatest() {
+      const minimumLoading = new Promise((resolve) => window.setTimeout(resolve, 500));
       try {
         const response = await fetch("/api/la-primera/update");
         const payload = await response.json();
