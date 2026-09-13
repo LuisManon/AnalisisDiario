@@ -155,8 +155,16 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const nightSuggestionDate = stats.latestBySession.noche?.date ?? results[0]?.date ?? "";
   const history = stats.filtered;
   const historyStartDate = results[results.length - 1]?.date ?? "";
-  const pageCount = Math.max(1, Math.ceil(history.length / pageSize));
-  const paginatedHistory = history.slice((historyPage - 1) * pageSize, historyPage * pageSize);
+  const historyDates = [...new Set(history.map((draw) => draw.date))];
+  const pageCount = Math.max(1, Math.ceil((session === "todos" ? historyDates.length : history.length) / pageSize));
+  const paginatedHistory = session === "todos"
+    ? historyDates.slice((historyPage - 1) * pageSize, historyPage * pageSize).map((date) => ({
+        date,
+        draws: (["noche", "dia"] as const)
+          .map((currentSession) => history.find((draw) => draw.date === date && draw.session === currentSession))
+          .filter((draw): draw is LaPrimeraDraw => Boolean(draw))
+      }))
+    : history.slice((historyPage - 1) * pageSize, historyPage * pageSize).map((draw) => ({ date: draw.date, draws: [draw] }));
   const scatterData = useMemo(() => filterLaPrimeraResults(results, scatterSession).slice().reverse(), [results, scatterSession]);
 
   useEffect(() => {
@@ -434,7 +442,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
         <div className="sectionHeader">
           <div>
             <h2>Historial paginado</h2>
-            <p>{history.length} sorteos en el filtro {formatSession(session)}.</p>
+            <p>{session === "todos" ? `${historyDates.length} fechas · 5 fechas por página` : `${history.length} sorteos en el filtro ${formatSession(session)}`}.</p>
           </div>
           <div className="pagination">
             <button className="miniButton" disabled={historyPage === 1} onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}>
@@ -447,14 +455,20 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           </div>
         </div>
         <div className="primeraHistory">
-          {paginatedHistory.map((draw) => (
-            <article className="historyRow" key={`${draw.date}-${draw.session}`}>
+          {paginatedHistory.map((group) => (
+            <article className="historyRow primeraGroupedHistoryRow" key={group.date}>
               <div className="historyDate">
-                <strong>{formatShortDate(draw.date)} · {formatSession(draw.session)}</strong>
-                <span>{formatLongDate(draw.date)}</span>
+                <strong>{formatShortDate(group.date)}</strong>
+                <span>{formatLongDate(group.date)}</span>
               </div>
-              <div className="ballsRow">
-                <QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} winner={draw.number === stats.latestBySession[draw.session]?.number} />
+              <div className="primeraHistorySessions">
+                {group.draws.map((draw) => (
+                  <div className={`primeraHistorySession ${draw.session}`} key={draw.session}>
+                    <span>{formatSession(draw.session)}</span>
+                    <QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} winner={draw.number === stats.latestBySession[draw.session]?.number} />
+                    <small>{laPrimeraSchedules[draw.session].time}</small>
+                  </div>
+                ))}
               </div>
             </article>
           ))}

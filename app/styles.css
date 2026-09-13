@@ -3784,6 +3784,43 @@ h3 {
   margin-top: 5px;
 }
 
+.primeraHistorySessions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.primeraHistorySession {
+  align-items: center;
+  background: #f7f7f7;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto 42px auto;
+  padding: 8px 10px;
+}
+
+.primeraHistorySession > span {
+  color: var(--primera-dark);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.primeraHistorySession > small {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.primeraHistorySession.noche {
+  border-left: 4px solid #333333;
+}
+
+.primeraHistorySession.dia {
+  border-left: 4px solid var(--primera-red);
+}
+
 .primeraLatestSkeleton {
   height: 118px;
 }
@@ -4356,6 +4393,12 @@ h3 {
 
   .primeraHistory .historyRow .ballsRow {
     justify-content: flex-start;
+  }
+
+  .primeraHistorySessions {
+    align-items: stretch;
+    display: grid;
+    justify-content: stretch;
   }
 }
 
