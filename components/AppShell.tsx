@@ -34,11 +34,8 @@ export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResul
   return (
     <div className={`appShell ${activeTab === "primera" ? "primeraShell" : activeTab === "loteka" ? "lotekaShell" : "lotoShell"}`}>
       <nav className="appTabs" aria-label="Secciones de analisis">
-        <button className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>
-          Loto Mas
-        </button>
-        <button className={activeTab === "quiniela" ? "active quinielaTab" : "quinielaTab"} onClick={() => changeTab("quiniela")}>
-          Quiniela Pale
+        <button className={activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("loto")}>
+          LEIDSA
         </button>
         <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>
           La Primera
@@ -47,6 +44,12 @@ export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResul
           Loteka
         </button>
       </nav>
+      {activeTab === "loto" || activeTab === "quiniela" ? (
+        <nav className="leidsaProductSwitch" aria-label="Producto de LEIDSA">
+          <button className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>Loto Más</button>
+          <button className={activeTab === "quiniela" ? "active" : ""} onClick={() => changeTab("quiniela")}>Quiniela Palé</button>
+        </nav>
+      ) : null}
       {activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
       ) : activeTab === "quiniela" ? (

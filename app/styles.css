@@ -297,6 +297,31 @@ main {
   border-color: var(--green);
 }
 
+.leidsaProductSwitch {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 12px 28px 0;
+}
+
+.leidsaProductSwitch button {
+  background: #e5232f;
+  border: 1px solid #e5232f;
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  min-height: 38px;
+  padding: 7px 18px;
+}
+
+.leidsaProductSwitch button.active {
+  background: #b80f1a;
+  border-color: #b80f1a;
+  box-shadow: 0 0 0 3px rgba(229, 35, 47, 0.2);
+}
+
 .appShell.quinielaShell {
   background: #f4effa;
   box-shadow: 0 0 0 100vmax #f4effa;
@@ -778,9 +803,9 @@ main {
 }
 
 .lotekaShell .appTabs .lotekaTab.active {
-  background: #ed1632;
-  border-color: #ed1632;
-  color: #ffffff;
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #047fa0;
 }
 
 .lotoTheme {
@@ -4247,6 +4272,17 @@ h3 {
     width: 100%;
   }
 
+  .leidsaProductSwitch {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px 16px 0;
+  }
+
+  .leidsaProductSwitch button {
+    min-width: 0;
+    width: 100%;
+  }
+
   .primeraTheme {
     max-width: 100%;
     min-width: 0;
@@ -4577,5 +4613,88 @@ h3 {
 
   .quinielaTheme > .toolbar .status {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .appShell .appTabs {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(33, 73, 154, 0.12);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(22, 35, 65, 0.1);
+    clip-path: none;
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 12px 12px 0;
+    max-width: none;
+    padding: 6px;
+  }
+
+  .appShell .appTabs button {
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    color: #34435f;
+    font-size: 0.76rem;
+    min-height: 42px;
+    min-width: 0;
+    padding: 0 6px;
+    width: 100%;
+  }
+
+  .appShell .appTabs button.active {
+    background: #21499a;
+    border-color: #21499a;
+    box-shadow: 0 5px 12px rgba(33, 73, 154, 0.24);
+    color: #ffffff;
+  }
+
+  .primeraShell .appTabs .primeraTab.active {
+    background: #fd0100;
+    color: #ffffff;
+  }
+
+  .lotekaShell .appTabs {
+    background: #04acd0;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .lotekaShell .appTabs button {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .lotekaShell .appTabs .lotekaTab.active {
+    background: #ffffff;
+    box-shadow: 0 5px 12px rgba(0, 83, 105, 0.2);
+    color: #047fa0;
+  }
+
+  .leidsaProductSwitch,
+  .primeraProductSwitch {
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .leidsaProductSwitch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .primeraProductSwitch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .leidsaProductSwitch button,
+  .primeraProductSwitch button {
+    border-radius: 999px;
+    font-size: 0.7rem;
+    line-height: 1.15;
+    min-height: 42px;
+    padding: 7px 6px;
+  }
+
+  .primeraProductSwitch button:last-child {
+    grid-column: auto;
   }
 }
