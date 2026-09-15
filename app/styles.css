@@ -3721,6 +3721,24 @@ body:has(.appShell.primeraShell) {
   margin-top: 16px;
 }
 
+.rosterBallWrap {
+  display: inline-flex;
+  position: relative;
+}
+
+.frozenBallBadge {
+  filter: drop-shadow(0 2px 3px rgba(21, 103, 145, 0.28));
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 1rem;
+  left: -8px;
+  line-height: 1;
+  pointer-events: none;
+  position: absolute;
+  top: -11px;
+  transform: rotate(-9deg);
+  z-index: 4;
+}
+
 .quinielonRosterSection {
   border-radius: 18px;
   margin-bottom: 20px;

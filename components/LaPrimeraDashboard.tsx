@@ -91,6 +91,24 @@ function getDelayedRosterNumbers(
     });
 }
 
+function buildFrozenNumberMap(
+  results: LaPrimeraDraw[],
+  ranking: Array<{ number: number }>,
+  sessions: readonly LaPrimeraSession[],
+  referenceDate: string
+) {
+  const frozen = new Map<number, LaPrimeraSession[]>();
+  if (!referenceDate) return frozen;
+
+  for (const session of sessions) {
+    for (const item of getDelayedRosterNumbers(results, ranking, session, referenceDate)) {
+      frozen.set(item.number, [...(frozen.get(item.number) ?? []), session]);
+    }
+  }
+
+  return frozen;
+}
+
 function getDominicanClock() {
   const parts = new Intl.DateTimeFormat("en-CA", {
     day: "2-digit",
@@ -189,6 +207,13 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     inversionistas: [...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight],
     banca: exclusiveRankings.bank
   }), [exclusiveRankings]);
+  const frozenRosterNumbers = useMemo(() => ({
+    nosotrosDia: buildFrozenNumberMap(results, exclusiveRankings.hotDay, ["dia"], rosterDelayReferenceDate),
+    nosotrosNoche: buildFrozenNumberMap(results, exclusiveRankings.hotNight, ["noche"], rosterDelayReferenceDate),
+    inversionistasDia: buildFrozenNumberMap(results, exclusiveRankings.investorDay, ["dia"], rosterDelayReferenceDate),
+    inversionistasNoche: buildFrozenNumberMap(results, exclusiveRankings.investorNight, ["noche"], rosterDelayReferenceDate),
+    banca: buildFrozenNumberMap(results, exclusiveRankings.bank, ["dia", "noche"], rosterDelayReferenceDate)
+  }), [exclusiveRankings, results, rosterDelayReferenceDate]);
   const weeklyWinningNumbers = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date)).map((draw) => draw.number);
   const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
   const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
@@ -383,8 +408,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "nosotros" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.nosotros} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} />
-          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbers} />
+          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
+          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
         </div>
       </section>
 
@@ -403,8 +428,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "inversionistas" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.inversionistas} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} tone="gold" />
-          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbers} tone="gold" />
+          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
+          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
         </div>
       </section>
 
@@ -422,7 +447,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           <p>Los 20 números restantes después de las selecciones de Nosotros e Inversionistas.</p>
           {openRosterInfo === "banca" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.banca} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
-        <NumberGridCard title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} tone="dark" />
+        <NumberGridCard title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.banca} tone="dark" />
       </section>
       <p className="weeklyCrownNote quinielonCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
 
@@ -1010,20 +1035,31 @@ function NumberGridCard({
   title,
   ranking,
   winningNumbers = [],
+  frozenByNumber = new Map(),
   tone = "red"
 }: {
   title: string;
   ranking: Array<{ number: number; count: number }>;
   winningNumbers?: readonly number[];
+  frozenByNumber?: ReadonlyMap<number, readonly LaPrimeraSession[]>;
   tone?: "red" | "gold" | "dark";
 }) {
   return (
     <article className={`card primeraCard numberGridCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
       <h3>{title}</h3>
       <div className="bankNumberGrid">
-        {ranking.map((item) => (
-          <QuinielonBall key={item.number} number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
-        ))}
+        {ranking.map((item) => {
+          const frozenSessions = frozenByNumber.get(item.number) ?? [];
+          const frozenLabel = frozenSessions.length
+            ? `6 meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
+            : "";
+          return (
+            <span className="rosterBallWrap" key={item.number} title={frozenLabel || undefined}>
+              {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : null}
+              <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
+            </span>
+          );
+        })}
       </div>
     </article>
   );
