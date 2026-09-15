@@ -1367,7 +1367,7 @@ function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selected
 
 function DashboardSkeleton({ message }: { message: string }) {
   return (
-    <main>
+    <main className="lotoTheme">
       <section className="hero">
         <div>
           <div className="skeletonLine tiny" />

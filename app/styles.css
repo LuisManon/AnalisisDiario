@@ -1100,6 +1100,16 @@ h3 {
   overflow: hidden;
 }
 
+html:has(.appShell.lotekaShell),
+body:has(.appShell.lotekaShell) {
+  background: #eaf7ff;
+}
+
+html:has(.appShell.primeraShell),
+body:has(.appShell.primeraShell) {
+  background: #f8eff2;
+}
+
 .topPositionsAccordion summary {
   align-items: center;
   cursor: pointer;
@@ -4057,6 +4067,1135 @@ h3 {
   min-height: 156px;
 }
 
+/* Loteka iOS / liquid glass experiment */
+.appShell.lotekaShell {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(85, 215, 255, 0.56), transparent 32rem),
+    radial-gradient(circle at 92% 28%, rgba(255, 112, 142, 0.3), transparent 28rem),
+    radial-gradient(circle at 52% 92%, rgba(87, 184, 255, 0.35), transparent 34rem),
+    linear-gradient(145deg, #dff7ff 0%, #eef7ff 43%, #f7eefa 100%);
+  box-shadow: 0 0 0 100vmax #eaf7ff;
+  color: #0b2545;
+  overflow: hidden;
+}
+
+.lotekaShell .appTabs {
+  background: rgba(244, 252, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 22px;
+  box-shadow:
+    0 18px 45px rgba(34, 91, 126, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  clip-path: none;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 7px;
+  position: relative;
+  width: calc(100% - 56px);
+  z-index: 3;
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+.lotekaShell .appTabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 16px;
+  color: rgba(11, 37, 69, 0.62);
+  min-height: 43px;
+  transition: background 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.lotekaShell .appTabs button:hover {
+  background: rgba(255, 255, 255, 0.52);
+  color: #0b2545;
+  transform: translateY(-1px);
+}
+
+.lotekaShell .appTabs button.active,
+.lotekaShell .appTabs .lotekaTab.active {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  box-shadow: 0 7px 20px rgba(23, 91, 130, 0.15), inset 0 1px 0 #ffffff;
+  color: #007f9f;
+}
+
+.lotekaTheme {
+  --loteka-cyan: #00a9cf;
+  --loteka-cyan-dark: #007d9d;
+  --loteka-red: #e92646;
+  --loteka-ink: #0b2545;
+  --muted: #557086;
+  background: transparent;
+  border: 0;
+  color: var(--loteka-ink);
+  isolation: isolate;
+  padding-top: 22px;
+  position: relative;
+}
+
+.lotekaTheme::before,
+.lotekaTheme::after {
+  border-radius: 999px;
+  content: "";
+  filter: blur(3px);
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.lotekaTheme::before {
+  background: linear-gradient(135deg, rgba(0, 194, 232, 0.3), rgba(255, 255, 255, 0.06));
+  height: 290px;
+  right: -145px;
+  top: 110px;
+  transform: rotate(-22deg);
+  width: 290px;
+}
+
+.lotekaTheme::after {
+  background: rgba(237, 22, 50, 0.1);
+  height: 220px;
+  left: -120px;
+  top: 620px;
+  width: 220px;
+}
+
+.lotekaTheme .hero,
+.lotekaTheme .toolbar,
+.lotekaTheme .metric,
+.lotekaTheme .card,
+.lotekaTheme .historyRow {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(244, 252, 255, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 18px 45px rgba(32, 79, 111, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 rgba(91, 155, 185, 0.1);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.lotekaTheme .hero {
+  background:
+    radial-gradient(circle at 83% 18%, rgba(255, 255, 255, 0.86), transparent 26%),
+    linear-gradient(125deg, rgba(255, 255, 255, 0.74), rgba(217, 247, 255, 0.44));
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lotekaTheme .hero::after {
+  background: linear-gradient(90deg, var(--loteka-cyan), #79dbed 62%, var(--loteka-red));
+  border-radius: 999px;
+  bottom: 0;
+  content: "";
+  height: 4px;
+  left: 34px;
+  opacity: 0.82;
+  position: absolute;
+  right: 34px;
+}
+
+.lotekaHero h1 {
+  color: #09223f;
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.lotekaEyebrow {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(16, 117, 151, 0.08);
+  color: #007f9f;
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.lotekaHeroPanel {
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(27, 92, 125, 0.12), inset 0 1px 0 #ffffff;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.lotekaLatest {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(222, 247, 253, 0.38));
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.lotekaTheme .toolbar {
+  border-radius: 20px;
+}
+
+.lotekaTheme .downloadButton,
+.lotekaTheme .primaryButton,
+.lotekaTheme .miniButton {
+  background: linear-gradient(180deg, #20c0df, #009abd);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 13px;
+  box-shadow: 0 8px 18px rgba(0, 153, 190, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.lotekaTheme .downloadButton:hover,
+.lotekaTheme .miniButton:not(:disabled):hover {
+  box-shadow: 0 11px 23px rgba(0, 153, 190, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.lotekaTheme .metricsGrid {
+  gap: 14px;
+}
+
+.lotekaTheme .metric {
+  border-radius: 20px;
+  min-height: 112px;
+  padding: 20px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.lotekaTheme .metric:hover {
+  box-shadow: 0 22px 48px rgba(32, 79, 111, 0.15), inset 0 1px 0 #ffffff;
+  transform: translateY(-3px);
+}
+
+.lotekaTheme .metric span {
+  color: #60798d;
+  letter-spacing: 0.03em;
+}
+
+.lotekaTheme .metric strong {
+  letter-spacing: -0.04em;
+}
+
+.lotekaTheme .card,
+.lotekaCard,
+.lotekaScatter {
+  border-radius: 26px;
+  box-shadow: 0 20px 48px rgba(32, 79, 111, 0.1), inset 0 1px 0 #ffffff;
+  overflow: hidden;
+}
+
+.lotekaCard {
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+.lotekaBall {
+  background:
+    radial-gradient(circle at 31% 22%, #ffffff 0 10%, rgba(255, 255, 255, 0.92) 14%, transparent 31%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(190, 239, 250, 0.72));
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 9px 20px rgba(0, 137, 170, 0.2),
+    inset -5px -7px 12px rgba(0, 160, 197, 0.12),
+    inset 3px 4px 7px rgba(255, 255, 255, 0.94);
+  color: #007d9d;
+}
+
+.lotekaBallWinner {
+  box-shadow: 0 0 0 3px rgba(0, 177, 214, 0.2), 0 10px 25px rgba(0, 137, 170, 0.28), inset 3px 4px 7px #ffffff;
+}
+
+.lotekaBar {
+  background: rgba(42, 136, 164, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lotekaBar span {
+  background: linear-gradient(90deg, #00a4c8, #67d9ed);
+  box-shadow: 0 0 14px rgba(0, 169, 207, 0.32);
+}
+
+.lotekaTheme select {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(31, 84, 115, 0.08);
+  color: var(--loteka-ink);
+}
+
+.lotekaTheme .chartPlotBg {
+  fill: rgba(255, 255, 255, 0.46);
+  stroke: rgba(255, 255, 255, 0.9);
+}
+
+.lotekaPoint {
+  filter: drop-shadow(0 3px 4px rgba(0, 125, 157, 0.28));
+}
+
+.lotekaTheme .chartTooltip {
+  background: rgba(247, 253, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  border-radius: 15px;
+  box-shadow: 0 16px 38px rgba(19, 72, 104, 0.18);
+  color: var(--loteka-ink);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.lotekaTheme .historyRow {
+  border-radius: 17px;
+  margin-bottom: 9px;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.lotekaTheme .historyRow:hover {
+  background: rgba(255, 255, 255, 0.82);
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lotekaTheme *,
+  .lotekaShell .appTabs button {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+.lotekaShell,
+.lotekaShell button,
+.lotekaShell select {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+@media (max-width: 620px) {
+  .lotekaShell .appTabs {
+    width: calc(100% - 24px);
+  }
+
+  .lotekaTheme {
+    padding-top: 22px;
+  }
+
+  .lotekaTheme .hero {
+    border-radius: 30px;
+  }
+
+  .lotekaHero h1 {
+    font-size: clamp(2.25rem, 12vw, 3.1rem);
+  }
+
+  .lotekaTheme .metric {
+    min-height: 92px;
+  }
+}
+
+/* Shared Loteka alignment and vertical rhythm */
+.lotekaTheme {
+  max-width: 1240px;
+  padding-left: 0;
+  padding-right: 0;
+  width: calc(100% - 56px);
+}
+
+.lotekaTheme > section {
+  margin-bottom: 22px;
+  margin-top: 0;
+}
+
+.lotekaTheme > section:last-child {
+  margin-bottom: 0;
+}
+
+.lotekaTheme > .lotekaHero {
+  padding: 34px 30px 28px;
+}
+
+.lotekaTheme > .lotekaToolbar {
+  padding: 16px 22px;
+}
+
+@media (max-width: 620px) {
+  .lotekaTheme {
+    width: calc(100% - 24px);
+  }
+
+  .lotekaTheme > section {
+    margin-bottom: 16px;
+  }
+
+  .lotekaTheme > .lotekaHero {
+    padding: 26px 18px 22px;
+  }
+
+  .lotekaTheme > .lotekaToolbar {
+    padding: 14px 16px;
+  }
+}
+
+/* La Primera iOS / liquid glass */
+.appShell.primeraShell {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255, 92, 112, 0.28), transparent 31rem),
+    radial-gradient(circle at 92% 30%, rgba(255, 255, 255, 0.72), transparent 27rem),
+    radial-gradient(circle at 48% 88%, rgba(255, 174, 184, 0.24), transparent 35rem),
+    linear-gradient(145deg, #fff0f2 0%, #f8f4f6 46%, #f2ebef 100%);
+  box-shadow: 0 0 0 100vmax #f8eff2;
+  color: #27181d;
+  overflow: hidden;
+}
+
+.primeraShell,
+.primeraShell button,
+.primeraShell select {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+.primeraShell .appTabs {
+  background: rgba(255, 250, 251, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(108, 44, 58, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  clip-path: none;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 7px;
+  position: relative;
+  width: calc(100% - 56px);
+  z-index: 3;
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+.primeraShell .appTabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 16px;
+  color: rgba(45, 27, 33, 0.62);
+  min-height: 43px;
+  transition: background 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.primeraShell .appTabs button:hover {
+  background: rgba(255, 255, 255, 0.52);
+  color: #2d1b21;
+  transform: translateY(-1px);
+}
+
+.primeraShell .appTabs button.active,
+.primeraShell .appTabs .primeraTab.active {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 0 7px 20px rgba(120, 39, 56, 0.14), inset 0 1px 0 #ffffff;
+  color: #d9001b;
+}
+
+.primeraTheme {
+  --primera-red: #ed1632;
+  --primera-dark: #27181d;
+  --primera-soft: rgba(255, 246, 248, 0.58);
+  --muted: #745e65;
+  --line: rgba(128, 72, 85, 0.13);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--primera-dark);
+  isolation: isolate;
+  max-width: 1240px;
+  padding: 22px 0 30px;
+  position: relative;
+  width: calc(100% - 56px);
+}
+
+.primeraTheme::before,
+.primeraTheme::after {
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.primeraTheme::before {
+  background: linear-gradient(135deg, rgba(253, 1, 0, 0.16), rgba(255, 255, 255, 0.08));
+  height: 300px;
+  right: -160px;
+  top: 100px;
+  transform: rotate(-20deg);
+  width: 300px;
+}
+
+.primeraTheme::after {
+  background: rgba(255, 112, 139, 0.12);
+  height: 230px;
+  left: -130px;
+  top: 670px;
+  width: 230px;
+}
+
+.primeraTheme > .primeraProductSwitch,
+.primeraTheme > section {
+  margin-bottom: 22px;
+  margin-top: 0;
+}
+
+.primeraTheme > section:last-child {
+  margin-bottom: 0;
+}
+
+.primeraProductSwitch {
+  background: rgba(255, 250, 251, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 19px;
+  box-shadow: 0 13px 32px rgba(101, 43, 56, 0.09), inset 0 1px 0 #ffffff;
+  padding: 6px;
+  -webkit-backdrop-filter: blur(22px) saturate(175%);
+  backdrop-filter: blur(22px) saturate(175%);
+}
+
+.primeraProductSwitch button {
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  color: rgba(45, 27, 33, 0.65);
+  min-height: 40px;
+  padding: 8px 18px;
+}
+
+.primeraProductSwitch button.active {
+  background: linear-gradient(180deg, #ff3650, #e40021);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 7px 17px rgba(221, 0, 31, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.primeraTheme .hero,
+.primeraTheme .toolbar,
+.primeraTheme .metric,
+.primeraTheme .card,
+.primeraTheme .historyRow,
+.primeraTheme .quinielonRosterSection,
+.primeraTheme .investorSection,
+.primeraTheme .bankSection {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 246, 248, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 45px rgba(91, 41, 53, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.98), inset 0 -1px 0 rgba(130, 72, 84, 0.08);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.primeraTheme > .primeraHero {
+  background: radial-gradient(circle at 83% 18%, rgba(255, 255, 255, 0.88), transparent 26%), linear-gradient(125deg, rgba(255, 255, 255, 0.76), rgba(255, 225, 231, 0.42));
+  border-radius: 32px;
+  overflow: hidden;
+  padding: 34px 30px 28px;
+  position: relative;
+}
+
+.primeraTheme > .primeraHero::after {
+  background: linear-gradient(90deg, var(--primera-red), #ff8392 64%, #312126);
+  border-radius: 999px;
+  bottom: 0;
+  content: "";
+  height: 4px;
+  left: 34px;
+  opacity: 0.78;
+  position: absolute;
+  right: 34px;
+}
+
+.primeraHero h1 {
+  color: #27181d;
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.primeraEyebrow {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(151, 38, 58, 0.08);
+  color: #dc001f;
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.primeraHeroPanel {
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(103, 39, 52, 0.11), inset 0 1px 0 #ffffff;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.latestSplit article,
+.primeraQuinielaSuggestionGrid article,
+.primeraHistorySession,
+.weeklyRoster,
+.weeklyDayCard,
+.loto5PortfolioColumn {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 237, 241, 0.4));
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 #ffffff, 0 8px 20px rgba(93, 42, 53, 0.07);
+}
+
+.primeraTheme > .primeraToolbar {
+  border-radius: 20px;
+  padding: 16px 22px;
+}
+
+.primeraTheme .downloadButton,
+.primeraTheme .secondaryButton,
+.primeraTheme .primaryButton,
+.primeraTheme .miniButton,
+.primeraTheme .weeklyCalculateButton {
+  background: linear-gradient(180deg, #ff3650, #e40021);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 13px;
+  box-shadow: 0 8px 18px rgba(221, 0, 31, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.primeraTheme .downloadButton:hover,
+.primeraTheme .primaryButton:hover,
+.primeraTheme .miniButton:not(:disabled):hover {
+  box-shadow: 0 11px 23px rgba(221, 0, 31, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+.primeraTheme .segmented {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  border-radius: 13px;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.primeraTheme .segmented button.active {
+  background: linear-gradient(180deg, #ff3650, #e40021);
+}
+
+.primeraTheme .metric {
+  border-radius: 20px;
+  min-height: 112px;
+  padding: 20px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.primeraTheme .metric:hover {
+  box-shadow: 0 22px 48px rgba(91, 41, 53, 0.14), inset 0 1px 0 #ffffff;
+  transform: translateY(-3px);
+}
+
+.primeraTheme .card,
+.primeraCard,
+.primeraScatter,
+.primeraTheme .quinielonRosterSection,
+.primeraTheme .investorSection,
+.primeraTheme .bankSection {
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+.primeraBall,
+.primeraLoto5Ball,
+.primeraQuinielaBall {
+  background: radial-gradient(circle at 31% 22%, #ffffff 0 10%, rgba(255, 255, 255, 0.94) 14%, transparent 31%), linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 208, 217, 0.68));
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 0 9px 20px rgba(189, 25, 53, 0.18), inset -5px -7px 12px rgba(218, 20, 50, 0.1), inset 3px 4px 7px rgba(255, 255, 255, 0.96);
+  outline: 0;
+}
+
+.primeraBall.dark,
+.primeraLoto5Ball.plus {
+  background: radial-gradient(circle at 31% 22%, #ffffff 0 10%, rgba(255, 255, 255, 0.9) 14%, transparent 31%), linear-gradient(145deg, #f9f7f8, #cfc9cb);
+  box-shadow: 0 9px 20px rgba(40, 27, 31, 0.16), inset -5px -7px 12px rgba(30, 21, 24, 0.1), inset 3px 4px 7px #ffffff;
+}
+
+.primeraTheme .bar {
+  background: rgba(135, 70, 83, 0.1);
+  border-radius: 999px;
+}
+
+.primeraBar span {
+  background: linear-gradient(90deg, #e40021, #ff7688);
+  box-shadow: 0 0 14px rgba(228, 0, 33, 0.26);
+}
+
+.primeraTheme select {
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(96, 42, 54, 0.07);
+  color: var(--primera-dark);
+}
+
+.primeraTheme .historyRow {
+  border-radius: 17px;
+  margin-bottom: 9px;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.primeraTheme .historyRow:hover {
+  background: rgba(255, 255, 255, 0.84);
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primeraTheme *,
+  .primeraShell .appTabs button {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .primeraShell .appTabs,
+  .primeraTheme {
+    width: calc(100% - 24px);
+  }
+
+  .primeraShell .appTabs {
+    background: rgba(255, 250, 251, 0.6);
+    border-color: rgba(255, 255, 255, 0.88);
+    border-radius: 22px;
+  }
+
+  .primeraShell .appTabs button {
+    border-radius: 16px;
+    color: rgba(45, 27, 33, 0.64);
+  }
+
+  .primeraShell .appTabs .primeraTab.active {
+    background: rgba(255, 255, 255, 0.92);
+    color: #d9001b;
+  }
+
+  .primeraTheme {
+    padding-top: 12px;
+  }
+
+  .primeraTheme > .primeraProductSwitch,
+  .primeraTheme > section {
+    margin-bottom: 16px;
+  }
+
+  .primeraTheme > .primeraHero {
+    border-radius: 30px;
+    padding: 26px 18px 22px;
+  }
+
+  .primeraHero h1 {
+    font-size: clamp(2.25rem, 12vw, 3.1rem);
+  }
+
+  .primeraTheme > .primeraToolbar {
+    padding: 14px 16px;
+  }
+
+  .primeraTheme .metric {
+    min-height: 92px;
+  }
+}
+
+/* LEIDSA iOS / liquid glass */
+.appShell.lotoShell {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(255, 211, 38, 0.58), transparent 31rem),
+    radial-gradient(circle at 92% 28%, rgba(59, 111, 214, 0.25), transparent 29rem),
+    radial-gradient(circle at 50% 90%, rgba(255, 225, 92, 0.3), transparent 35rem),
+    linear-gradient(145deg, #fff5c9 0%, #f3f6fb 48%, #e7efff 100%);
+  box-shadow: 0 0 0 100vmax #f5f2da;
+  color: #17366f;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+html:has(.appShell.lotoShell),
+body:has(.appShell.lotoShell) {
+  background: #f5f2da;
+}
+
+.lotoShell,
+.lotoShell button,
+.lotoShell input,
+.lotoShell select {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+.lotoShell .appTabs {
+  background: rgba(250, 252, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(37, 65, 117, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+  clip-path: none;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 7px;
+  position: relative;
+  width: calc(100% - 56px);
+  z-index: 3;
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+.lotoShell .appTabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 16px;
+  color: rgba(27, 54, 105, 0.64);
+  min-height: 43px;
+  transition: background 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.lotoShell .appTabs button:hover {
+  background: rgba(255, 255, 255, 0.54);
+  color: #17366f;
+  transform: translateY(-1px);
+}
+
+.lotoShell .appTabs button.active,
+.lotoShell .appTabs .leidsaTab.active {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 0 7px 20px rgba(33, 73, 154, 0.15), inset 0 1px 0 #ffffff;
+  color: #21499a;
+}
+
+.leidsaProductSwitch {
+  background: rgba(250, 252, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 19px;
+  box-shadow: 0 13px 32px rgba(37, 65, 117, 0.09), inset 0 1px 0 #ffffff;
+  gap: 6px;
+  margin-top: 22px;
+  padding: 6px;
+  width: calc(100% - 56px);
+  -webkit-backdrop-filter: blur(22px) saturate(175%);
+  backdrop-filter: blur(22px) saturate(175%);
+}
+
+.leidsaProductSwitch button {
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  color: rgba(27, 54, 105, 0.67);
+  min-height: 40px;
+  padding: 8px 18px;
+}
+
+.leidsaProductSwitch button.active {
+  background: linear-gradient(180deg, #315db3, #173f8e);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 7px 17px rgba(33, 73, 154, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  color: #ffffff;
+}
+
+.lotoTheme,
+.quinielaTheme {
+  --panel: rgba(255, 255, 255, 0.58);
+  --line: rgba(45, 80, 145, 0.13);
+  --muted: #526a96;
+  background: transparent;
+  border: 0;
+  color: #17366f;
+  isolation: isolate;
+  max-width: 1240px;
+  padding: 22px 0 30px;
+  position: relative;
+  width: calc(100% - 56px);
+}
+
+.lotoTheme::before,
+.lotoTheme::after {
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.lotoTheme::before {
+  background: linear-gradient(135deg, rgba(255, 202, 22, 0.3), rgba(255, 255, 255, 0.06));
+  height: 300px;
+  right: -160px;
+  top: 120px;
+  transform: rotate(-20deg);
+  width: 300px;
+}
+
+.lotoTheme::after {
+  background: rgba(52, 98, 187, 0.12);
+  height: 230px;
+  left: -130px;
+  top: 720px;
+  width: 230px;
+}
+
+.lotoTheme > .hero,
+.lotoTheme > .toolbar,
+.lotoTheme > .metricsGrid,
+.lotoTheme > .card,
+.lotoTheme > .topPositionsBoard,
+.lotoTheme > .twoColumn,
+.lotoTheme > .recommendationComparison,
+.lotoTheme > .ticketPanel,
+.lotoTheme > .historyControls,
+.lotoTheme > .history {
+  margin-bottom: 22px;
+  margin-top: 0;
+}
+
+.lotoTheme .hero,
+.lotoTheme .toolbar,
+.lotoTheme .metric,
+.lotoTheme .card,
+.lotoTheme .historyRow,
+.lotoTheme .topPositionsBoard,
+.lotoTheme .recommendationComparison,
+.lotoTheme .ticketPanel,
+.lotoTheme .historyControls {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(246, 249, 255, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 45px rgba(38, 66, 119, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.98), inset 0 -1px 0 rgba(56, 91, 151, 0.08);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.lotoTheme > .hero {
+  background: radial-gradient(circle at 83% 18%, rgba(255, 255, 255, 0.88), transparent 26%), linear-gradient(125deg, rgba(255, 255, 255, 0.76), rgba(255, 237, 157, 0.4));
+  border-radius: 32px;
+  overflow: hidden;
+  padding: 34px 30px 28px;
+  position: relative;
+}
+
+.quinielaTheme > .hero {
+  background: radial-gradient(circle at 83% 18%, rgba(255, 255, 255, 0.88), transparent 26%), linear-gradient(125deg, rgba(255, 255, 255, 0.76), rgba(255, 237, 157, 0.4));
+  color: #17366f;
+}
+
+.quinielaTheme > .hero h1,
+.quinielaTheme > .hero .subcopy {
+  color: #21499a;
+}
+
+.quinielaTheme > .hero .subcopy {
+  opacity: 1;
+}
+
+.lotoTheme > .hero::after {
+  background: linear-gradient(90deg, #21499a, #ffca16 66%, #f1272b);
+  border-radius: 999px;
+  bottom: 0;
+  content: "";
+  height: 4px;
+  left: 34px;
+  opacity: 0.82;
+  position: absolute;
+  right: 34px;
+}
+
+.quinielaTheme > .hero::after {
+  background: linear-gradient(90deg, #21499a, #ffca16 66%, #f1272b);
+}
+
+.lotoTheme .hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.lotoTheme .eyebrow {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(33, 73, 154, 0.08);
+  color: #21499a;
+  display: inline-flex;
+  padding: 7px 12px;
+}
+
+.quinielaTheme .hero .eyebrow {
+  color: #21499a;
+}
+
+.lotoTheme .heroPanel {
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(40, 69, 123, 0.12), inset 0 1px 0 #ffffff;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.lotoTheme > .toolbar {
+  border-radius: 20px;
+  padding: 16px 22px;
+}
+
+.lotoTheme .segmented,
+.lotoTheme input,
+.lotoTheme select {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 13px;
+  box-shadow: inset 0 1px 0 #ffffff, 0 6px 16px rgba(37, 65, 117, 0.07);
+}
+
+.lotoTheme .downloadButton,
+.lotoTheme .primaryButton,
+.lotoTheme .secondaryButton,
+.lotoTheme .miniButton,
+.quinielaTheme .pagination button {
+  background: linear-gradient(180deg, #315db3, #173f8e);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 13px;
+  box-shadow: 0 8px 18px rgba(33, 73, 154, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.lotoTheme .downloadButton:hover,
+.lotoTheme .primaryButton:hover,
+.lotoTheme .miniButton:not(:disabled):hover {
+  box-shadow: 0 11px 23px rgba(33, 73, 154, 0.27), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+.lotoTheme .metric {
+  border-radius: 20px;
+  min-height: 112px;
+  padding: 20px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.lotoTheme .metric:hover {
+  box-shadow: 0 22px 48px rgba(38, 66, 119, 0.15), inset 0 1px 0 #ffffff;
+  transform: translateY(-3px);
+}
+
+.lotoTheme .card,
+.lotoTheme .topPositionsBoard,
+.lotoTheme .recommendationComparison,
+.lotoTheme .ticketPanel,
+.lotoTheme .historyControls {
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+.lotoTheme .ball,
+.quinielaBall {
+  background: radial-gradient(circle at 31% 22%, #ffffff 0 10%, rgba(255, 255, 255, 0.94) 14%, transparent 31%), linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(214, 224, 245, 0.72));
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 0 9px 20px rgba(33, 73, 154, 0.18), inset -5px -7px 12px rgba(33, 73, 154, 0.1), inset 3px 4px 7px rgba(255, 255, 255, 0.96);
+}
+
+.lotoTheme .ballPlus {
+  background: radial-gradient(circle at 31% 22%, #ffffff 0 8%, rgba(255, 150, 158, 0.9) 22%, #e51b30 100%);
+  color: #ffffff;
+}
+
+.lotoTheme .bar {
+  background: rgba(48, 84, 151, 0.1);
+  border-radius: 999px;
+}
+
+.lotoTheme .bar span {
+  background: linear-gradient(90deg, #21499a, #6e97df);
+  box-shadow: 0 0 14px rgba(33, 73, 154, 0.24);
+}
+
+.quinielaTheme .bar span {
+  background: linear-gradient(90deg, #21499a, #6e97df);
+}
+
+.lotoTheme .historyRow,
+.quinielaHistory article {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(246, 249, 255, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 17px;
+  box-shadow: 0 9px 24px rgba(38, 66, 119, 0.07), inset 0 1px 0 #ffffff;
+  margin-bottom: 9px;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.lotoTheme .historyRow:hover,
+.quinielaHistory article:hover {
+  background: rgba(255, 255, 255, 0.84);
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lotoTheme *,
+  .lotoShell .appTabs button {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .lotoShell .appTabs,
+  .leidsaProductSwitch,
+  .lotoTheme,
+  .quinielaTheme {
+    width: calc(100% - 24px);
+  }
+
+  .lotoShell .appTabs {
+    background: rgba(250, 252, 255, 0.62);
+    border-color: rgba(255, 255, 255, 0.9);
+    border-radius: 22px;
+  }
+
+  .lotoShell .appTabs button {
+    border-radius: 16px;
+    color: rgba(27, 54, 105, 0.66);
+  }
+
+  .lotoShell .appTabs .leidsaTab.active {
+    background: rgba(255, 255, 255, 0.92);
+    color: #21499a;
+  }
+
+  .leidsaProductSwitch {
+    margin-top: 12px;
+  }
+
+  .lotoTheme,
+  .quinielaTheme {
+    padding-top: 16px;
+  }
+
+  .lotoTheme > .hero,
+  .lotoTheme > .toolbar,
+  .lotoTheme > .metricsGrid,
+  .lotoTheme > .card,
+  .lotoTheme > .topPositionsBoard,
+  .lotoTheme > .twoColumn,
+  .lotoTheme > .recommendationComparison,
+  .lotoTheme > .ticketPanel,
+  .lotoTheme > .historyControls,
+  .lotoTheme > .history {
+    margin-bottom: 16px;
+  }
+
+  .lotoTheme > .hero {
+    border-radius: 30px;
+    padding: 26px 18px 22px;
+  }
+
+  .lotoTheme .hero h1 {
+    font-size: clamp(2.25rem, 12vw, 3.1rem);
+  }
+
+  .lotoTheme > .toolbar {
+    padding: 14px 16px;
+  }
+
+  .lotoTheme .metric {
+    min-height: 92px;
+  }
+}
+
 .skeletonPanel,
 .skeletonLine,
 .skeletonBlock,
@@ -4696,5 +5835,29 @@ h3 {
 
   .primeraProductSwitch button:last-child {
     grid-column: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .lotekaShell .appTabs {
+    background: rgba(244, 252, 255, 0.58);
+    border-color: rgba(255, 255, 255, 0.84);
+    border-radius: 22px;
+    gap: 4px;
+    width: calc(100% - 24px);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  .lotekaShell .appTabs button {
+    border-radius: 16px;
+    color: rgba(11, 37, 69, 0.64);
+  }
+
+  .lotekaShell .appTabs .lotekaTab.active {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.96);
+    box-shadow: 0 7px 18px rgba(23, 91, 130, 0.16), inset 0 1px 0 #ffffff;
+    color: #007f9f;
   }
 }
