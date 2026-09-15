@@ -3748,6 +3748,114 @@ body:has(.appShell.primeraShell) {
   margin: 4px 0 5px;
 }
 
+.rosterTitleRow {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.rosterTitleRow h2 {
+  flex: 0 1 auto;
+}
+
+.rosterInfoButton {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(228, 0, 33, 0.3);
+  border-radius: 50%;
+  color: var(--primera-red);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 28px;
+  font-family: Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  width: 28px;
+}
+
+.rosterInfoButton:hover,
+.rosterInfoButton[aria-expanded="true"] {
+  background: var(--primera-red);
+  box-shadow: 0 7px 18px rgba(228, 0, 33, 0.2);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.rosterInfoButton:focus-visible {
+  outline: 3px solid rgba(228, 0, 33, 0.22);
+  outline-offset: 2px;
+}
+
+.rosterDelayPanel {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(95, 67, 73, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 14px 32px rgba(76, 34, 43, 0.1);
+  display: block;
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.rosterDelayPanel > strong,
+.rosterDelayPanel > small {
+  display: block;
+}
+
+.rosterDelayPanel > small {
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.rosterDelayColumns {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.rosterDelayColumns > div {
+  background: rgba(246, 240, 242, 0.72);
+  border-radius: 12px;
+  padding: 11px;
+}
+
+.rosterDelayColumns p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin: 8px 0 0;
+}
+
+.rosterDelayList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.rosterDelayList > span {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid rgba(228, 0, 33, 0.14);
+  border-radius: 10px;
+  color: #371e24;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 900;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.rosterDelayList > span small {
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
 .quinielonRosterSection > header p {
   color: var(--muted);
   margin: 0;
@@ -3770,6 +3878,15 @@ body:has(.appShell.primeraShell) {
   .bankNumberGrid {
     gap: 10px 6px;
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .rosterDelayColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .rosterDelayList > span {
+    flex-direction: column;
+    gap: 2px;
   }
 }
 

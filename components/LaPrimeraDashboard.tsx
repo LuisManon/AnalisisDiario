@@ -30,6 +30,13 @@ type Tooltip = {
   draw: LaPrimeraDraw;
 } | null;
 
+type RosterInfo = "nosotros" | "inversionistas" | "banca";
+
+type DelayedNumber = {
+  number: number;
+  lastDate: string | null;
+};
+
 const pageSize = 5;
 const drawCutoffMinutes = {
   dia: 12 * 60,
@@ -55,6 +62,33 @@ function addDays(date: string, days: number) {
   const value = new Date(`${date}T00:00:00Z`);
   value.setUTCDate(value.getUTCDate() + days);
   return value.toISOString().slice(0, 10);
+}
+
+function subtractMonths(date: string, months: number) {
+  const value = new Date(`${date}T00:00:00Z`);
+  value.setUTCMonth(value.getUTCMonth() - months);
+  return value.toISOString().slice(0, 10);
+}
+
+function getDelayedRosterNumbers(
+  results: LaPrimeraDraw[],
+  ranking: Array<{ number: number }>,
+  session: LaPrimeraSession,
+  referenceDate: string
+): DelayedNumber[] {
+  const threshold = subtractMonths(referenceDate, 6);
+
+  return ranking
+    .map(({ number }) => ({
+      number,
+      lastDate: results.find((draw) => draw.session === session && draw.number === number)?.date ?? null
+    }))
+    .filter((item) => item.lastDate === null || item.lastDate <= threshold)
+    .sort((a, b) => {
+      if (a.lastDate === null) return b.lastDate === null ? a.number - b.number : -1;
+      if (b.lastDate === null) return 1;
+      return a.lastDate.localeCompare(b.lastDate) || a.number - b.number;
+    });
 }
 
 function getDominicanClock() {
@@ -145,9 +179,16 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const [scatterSession, setScatterSession] = useState<LaPrimeraFilter>("todos");
   const [historyPage, setHistoryPage] = useState(1);
   const [tooltip, setTooltip] = useState<Tooltip>(null);
+  const [openRosterInfo, setOpenRosterInfo] = useState<RosterInfo | null>(null);
   const results = data.results;
   const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
   const exclusiveRankings = useMemo(() => buildLaPrimeraExclusiveRankings(results), [results]);
+  const rosterDelayReferenceDate = results[0]?.date ?? "";
+  const rosterDelayRankings = useMemo(() => ({
+    nosotros: [...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight],
+    inversionistas: [...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight],
+    banca: exclusiveRankings.bank
+  }), [exclusiveRankings]);
   const weeklyWinningNumbers = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date)).map((draw) => draw.number);
   const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
   const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
@@ -330,8 +371,16 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       <section className="quinielonRosterSection nosotrosRosterSection">
         <header>
           <span>Nuestra selección</span>
-          <h2>Top 20 calientes</h2>
+          <div className="rosterTitleRow">
+            <h2>Top 20 calientes</h2>
+            <RosterDelayButton
+              label="Nosotros"
+              isOpen={openRosterInfo === "nosotros"}
+              onClick={() => setOpenRosterInfo((current) => current === "nosotros" ? null : "nosotros")}
+            />
+          </div>
           <p>Los números con mayor frecuencia histórica para cada tanda.</p>
+          {openRosterInfo === "nosotros" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.nosotros} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
           <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} />
@@ -342,8 +391,16 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       <section className="quinielonRosterSection investorSection">
         <header>
           <span>Selección exclusiva</span>
-          <h2>Números de los Inversionistas</h2>
+          <div className="rosterTitleRow">
+            <h2>Números de los Inversionistas</h2>
+            <RosterDelayButton
+              label="Inversionistas"
+              isOpen={openRosterInfo === "inversionistas"}
+              onClick={() => setOpenRosterInfo((current) => current === "inversionistas" ? null : "inversionistas")}
+            />
+          </div>
           <p>Los siguientes 20 números disponibles por tanda, sin repetir los de nuestra selección.</p>
+          {openRosterInfo === "inversionistas" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.inversionistas} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
           <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} tone="gold" />
@@ -354,8 +411,16 @@ export function LaPrimeraDashboard({ initialData }: Props) {
       <section className="quinielonRosterSection bankSection">
         <header>
           <span>Selección restante</span>
-          <h2>Números de la Banca</h2>
+          <div className="rosterTitleRow">
+            <h2>Números de la Banca</h2>
+            <RosterDelayButton
+              label="Banca"
+              isOpen={openRosterInfo === "banca"}
+              onClick={() => setOpenRosterInfo((current) => current === "banca" ? null : "banca")}
+            />
+          </div>
           <p>Los 20 números restantes después de las selecciones de Nosotros e Inversionistas.</p>
+          {openRosterInfo === "banca" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.banca} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <NumberGridCard title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} tone="dark" />
       </section>
@@ -961,6 +1026,67 @@ function NumberGridCard({
         ))}
       </div>
     </article>
+  );
+}
+
+function RosterDelayButton({
+  label,
+  isOpen,
+  onClick
+}: {
+  label: string;
+  isOpen: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="rosterInfoButton"
+      aria-label={`${isOpen ? "Ocultar" : "Mostrar"} números con seis meses o más sin salir de ${label}`}
+      aria-expanded={isOpen}
+      onClick={onClick}
+    >
+      i
+    </button>
+  );
+}
+
+function RosterDelayPanel({
+  results,
+  ranking,
+  referenceDate
+}: {
+  results: LaPrimeraDraw[];
+  ranking: Array<{ number: number }>;
+  referenceDate: string;
+}) {
+  const delayedBySession = (["dia", "noche"] as const).map((session) => ({
+    session,
+    numbers: referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate) : []
+  }));
+
+  return (
+    <aside className="rosterDelayPanel" role="status">
+      <strong>6 meses o más sin salir</strong>
+      <small>Calculado hasta {referenceDate ? formatShortDate(referenceDate) : "la última fecha disponible"}, por tanda.</small>
+      <div className="rosterDelayColumns">
+        {delayedBySession.map(({ session, numbers }) => (
+          <div key={session}>
+            <b>{formatSession(session)}</b>
+            {numbers.length ? (
+              <div className="rosterDelayList">
+                {numbers.map((item) => (
+                  <span key={item.number} title={item.lastDate ? `Última salida: ${formatShortDate(item.lastDate)}` : "Sin salida en el historial disponible"}>
+                    {formatQuinielonNumber(item.number)}
+                    <small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small>
+                  </span>
+                ))}
+              </div>
+            ) : <p>Ninguno.</p>}
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 }
 
