@@ -3518,13 +3518,97 @@ body:has(.appShell.primeraShell) {
   line-height: 1.3;
 }
 
+.weeklyRotations {
+  align-items: start;
+  border-top: 1px solid #e7e7e7;
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+  padding-top: 13px;
+}
+
+.weeklyRotations > header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.weeklyRotations > header div {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.weeklyRotations > header span {
+  color: var(--primera-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.weeklyRotations > header strong {
+  align-items: center;
+  background: var(--primera-dark);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.68rem;
+  height: 20px;
+  justify-content: center;
+  min-width: 20px;
+  padding: 0 6px;
+}
+
+.weeklyRotations > header small,
+.weeklyRotations > p {
+  color: var(--muted);
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.weeklyRotationList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.weeklyRotationItem {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid #dfdfdf;
+  border-radius: 8px;
+  display: grid;
+  gap: 1px 8px;
+  grid-template-columns: auto 1fr;
+  padding: 7px 9px;
+}
+
+.weeklyRotationItem b {
+  color: var(--primera-dark);
+  font-size: 0.92rem;
+  grid-row: 1 / 3;
+}
+
+.weeklyRotationItem span {
+  color: var(--primera-dark);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.weeklyRotationItem i {
+  color: var(--primera-red);
+  font-style: normal;
+}
+
+.weeklyRotationItem small {
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
 .weeklyTopActions {
   align-items: center;
-  border-top: 1px solid #e7e7e7;
   display: flex;
   gap: 18px;
-  margin-top: 12px;
-  padding-top: 16px;
+  margin-top: 13px;
 }
 
 .weeklyCalculateButton {

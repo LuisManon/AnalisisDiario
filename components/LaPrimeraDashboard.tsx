@@ -933,6 +933,60 @@ type WeeklyTandaResult = {
   matches: Array<{ number: number; source: "Quinielón" }>;
 };
 
+type WeeklyRosterGroup = "nosotrosDia" | "nosotrosNoche" | "inversionistasDia" | "inversionistasNoche" | "banca";
+
+type WeeklyRotation = {
+  date: string;
+  session: LaPrimeraSession;
+  number: number;
+  from: WeeklyRosterGroup;
+  to: WeeklyRosterGroup;
+};
+
+const weeklyRosterLabels: Record<WeeklyRosterGroup, string> = {
+  nosotrosDia: "Nosotros Día",
+  nosotrosNoche: "Nosotros Noche",
+  inversionistasDia: "Inversionistas Día",
+  inversionistasNoche: "Inversionistas Noche",
+  banca: "Banca"
+};
+
+function buildWeeklyRosterMap(results: LaPrimeraDraw[]) {
+  const rankings = buildLaPrimeraExclusiveRankings(results);
+  const roster = new Map<number, WeeklyRosterGroup>();
+  rankings.hotDay.forEach(({ number }) => roster.set(number, "nosotrosDia"));
+  rankings.hotNight.forEach(({ number }) => roster.set(number, "nosotrosNoche"));
+  rankings.investorDay.forEach(({ number }) => roster.set(number, "inversionistasDia"));
+  rankings.investorNight.forEach(({ number }) => roster.set(number, "inversionistasNoche"));
+  rankings.bank.forEach(({ number }) => roster.set(number, "banca"));
+  return roster;
+}
+
+function buildWeeklyRotations(results: LaPrimeraDraw[], monday: string, rankingBase: LaPrimeraDraw[]) {
+  const sunday = addDays(monday, 6);
+  const weeklyDraws = results
+    .filter((draw) => draw.date >= monday && draw.date <= sunday)
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.session === b.session ? 0 : a.session === "dia" ? -1 : 1));
+  const accumulatedResults = [...rankingBase];
+  let previousRoster = buildWeeklyRosterMap(accumulatedResults);
+  const rotations: WeeklyRotation[] = [];
+
+  for (const draw of weeklyDraws) {
+    accumulatedResults.push(draw);
+    const nextRoster = buildWeeklyRosterMap(accumulatedResults);
+
+    for (let number = 0; number <= 99; number += 1) {
+      const from = previousRoster.get(number);
+      const to = nextRoster.get(number);
+      if (from && to && from !== to) rotations.push({ date: draw.date, session: draw.session, number, from, to });
+    }
+
+    previousRoster = nextRoster;
+  }
+
+  return rotations;
+}
+
 function getWeekMonday(date: string) {
   const value = new Date(`${date}T00:00:00Z`);
   const weekday = value.getUTCDay();
@@ -955,6 +1009,7 @@ function WeeklyTopChallenge({
   const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
   const rankingResults = results.filter((draw) => draw.date < monday);
   const rankingBase = rankingResults.length ? rankingResults : results;
+  const weeklyRotations = rankingResults.length ? buildWeeklyRotations(results, monday, rankingBase) : [];
   const exclusiveRankings = buildLaPrimeraExclusiveRankings(rankingBase);
   const selectedRanking = variant === "bank"
     ? exclusiveRankings.bank
@@ -1022,6 +1077,24 @@ function WeeklyTopChallenge({
           </article>;
         })}
       </div>
+
+      <aside className="weeklyRotations" aria-live="polite">
+        <header>
+          <div><span>Rotaciones</span><strong>{weeklyRotations.length}</strong></div>
+          <small>Se reinician cada lunes</small>
+        </header>
+        {weeklyRotations.length ? (
+          <div className="weeklyRotationList">
+            {weeklyRotations.map((rotation, index) => (
+              <div className="weeklyRotationItem" key={`${rotation.date}-${rotation.session}-${rotation.number}-${index}`}>
+                <b>{formatQuinielonNumber(rotation.number)}</b>
+                <span>{weeklyRosterLabels[rotation.from]} <i aria-hidden="true">→</i> {weeklyRosterLabels[rotation.to]}</span>
+                <small>{formatShortDate(rotation.date)} · {formatSession(rotation.session)}</small>
+              </div>
+            ))}
+          </div>
+        ) : <p>Sin cambios de plantilla esta semana.</p>}
+      </aside>
 
       <div className="weeklyTopActions">
         <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((visible) => !visible)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
