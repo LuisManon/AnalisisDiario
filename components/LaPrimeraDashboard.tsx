@@ -228,7 +228,12 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     inversionistasNoche: buildFrozenNumberMap(results, exclusiveRankings.investorNight, ["noche"], rosterDelayReferenceDate),
     banca: buildFrozenNumberMap(results, exclusiveRankings.bank, ["dia", "noche"], rosterDelayReferenceDate)
   }), [exclusiveRankings, results, rosterDelayReferenceDate]);
-  const weeklyWinningNumbers = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date)).map((draw) => draw.number);
+  const weeklyDraws = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date));
+  const weeklyWinningNumbers = weeklyDraws.map((draw) => draw.number);
+  const weeklyWinningNumbersBySession = {
+    dia: weeklyDraws.filter((draw) => draw.session === "dia").map((draw) => draw.number),
+    noche: weeklyDraws.filter((draw) => draw.session === "noche").map((draw) => draw.number)
+  };
   const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
   const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
   const daySuggestionDate = stats.latestBySession.dia?.date ?? results[0]?.date ?? "";
@@ -436,8 +441,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "nosotros" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.nosotros} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
-          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
+          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
+          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
         </div>
       </section>
 
@@ -456,8 +461,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "inversionistas" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.inversionistas} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
-          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
+          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
+          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
         </div>
       </section>
 
@@ -751,7 +756,10 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
   const rankings = useMemo(() => buildQuinielonV2Rankings(results), [results]);
   const referenceDate = results[0]?.date ?? "";
   const monday = getWeekMonday(getDominicanClock().date);
-  const weeklyWinningNumbers = results.filter((draw) => draw.date >= monday).map((draw) => draw.number);
+  const weeklyWinningNumbers = {
+    dia: results.filter((draw) => draw.date >= monday && draw.session === "dia").map((draw) => draw.number),
+    noche: results.filter((draw) => draw.date >= monday && draw.session === "noche").map((draw) => draw.number)
+  };
   const latestBySession = { dia: results.find((draw) => draw.session === "dia"), noche: results.find((draw) => draw.session === "noche") };
   const frozen = (ranking: Array<{ number: number }>, session: LaPrimeraSession) => buildFrozenNumberMap(results, ranking, [session], referenceDate, 6);
   const groups: Array<{ key: QuinielonV2Group; title: string; description: string; tone: "red" | "gold" | "dark" }> = [
@@ -773,7 +781,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard title={group.key === "nosotros" ? "40 números prioritarios" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} />
+          <NumberGridCard title={group.key === "nosotros" ? "40 números prioritarios" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} />
         </div>;
       })}</div>
     </section>)}
