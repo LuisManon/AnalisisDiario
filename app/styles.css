@@ -3995,6 +3995,16 @@ body:has(.appShell.primeraShell) {
   font-size: 0.86rem;
 }
 
+.v2SessionIcon {
+  align-items: center;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  width: 20px;
+}
+
 .v2RosterColumn .rosterDelayPanel {
   margin: 0;
 }
