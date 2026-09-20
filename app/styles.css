@@ -3854,6 +3854,89 @@ body:has(.appShell.primeraShell) {
   border-top-color: #6b39c8;
 }
 
+.v2LatestSplit .v2LatestCard {
+  border: 0;
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.v2LatestCard > *:not(.v2SkyIcon) {
+  position: relative;
+  z-index: 2;
+}
+
+.v2LatestCard .primeraBall {
+  border: 2px solid rgba(50, 33, 39, 0.34);
+  color: #21181b;
+  font-size: 1rem;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.v2LatestCard.dia {
+  background: #fff0b8;
+  box-shadow: inset 0 0 0 1px rgba(211, 151, 34, 0.14);
+}
+
+.v2LatestCard.dia .v2SkyIcon {
+  background: #ffb51b;
+  border-radius: 50%;
+  box-shadow:
+    0 -25px 0 -10px #ffb51b,
+    0 25px 0 -10px #ffb51b,
+    -25px 0 0 -10px #ffb51b,
+    25px 0 0 -10px #ffb51b,
+    -18px -18px 0 -11px #ffb51b,
+    18px -18px 0 -11px #ffb51b,
+    -18px 18px 0 -11px #ffb51b,
+    18px 18px 0 -11px #ffb51b;
+  height: 42px;
+  opacity: 0.9;
+  position: absolute;
+  right: 22px;
+  top: 24px;
+  width: 42px;
+  z-index: 1;
+}
+
+.v2LatestCard.noche {
+  background: #20284f;
+  box-shadow: inset 0 0 0 1px rgba(184, 197, 255, 0.12);
+}
+
+.v2LatestCard.noche > span:not(.primeraBall),
+.v2LatestCard.noche > small {
+  color: #cbd3f5;
+}
+
+.v2LatestCard.noche > strong {
+  color: #ffffff;
+}
+
+.v2LatestCard.noche .v2SkyIcon {
+  background: #fff1ad;
+  border-radius: 50%;
+  box-shadow: 18px -15px 0 -7px #ffffff, -18px 8px 0 -8px #aebfff, 20px 19px 0 -9px #ffffff;
+  height: 40px;
+  position: absolute;
+  right: 24px;
+  top: 22px;
+  width: 40px;
+  z-index: 1;
+}
+
+.v2LatestCard.noche .v2SkyIcon::after {
+  background: #20284f;
+  border-radius: 50%;
+  content: "";
+  height: 37px;
+  left: 13px;
+  position: absolute;
+  top: -5px;
+  width: 37px;
+}
+
 .quinielonV2Weekly {
   border-top-color: #6b39c8;
 }
