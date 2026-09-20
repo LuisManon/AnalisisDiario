@@ -92,7 +92,7 @@ async function fetchNonce() {
       "Accept-Language": "es-DO,es;q=0.9",
       "User-Agent": "LotoMasLab/1.0 Mozilla/5.0"
     },
-    signal: AbortSignal.timeout(20_000)
+    signal: AbortSignal.timeout(90_000)
   });
 
   if (!response.ok) throw new Error(`La Primera respondio HTTP ${response.status}.`);
@@ -113,7 +113,7 @@ export async function fetchLaPrimeraResultsForDate(date: string, nonce: string) 
       "User-Agent": "LotoMasLab/1.0 Mozilla/5.0"
     },
     body,
-    signal: AbortSignal.timeout(20_000)
+    signal: AbortSignal.timeout(90_000)
   });
 
   if (!response.ok) throw new Error(`La Primera AJAX respondio HTTP ${response.status}.`);
@@ -130,7 +130,7 @@ export async function fetchLaPrimeraQuinielaResultsForDate(date: string, nonce: 
   body.append("action", "get_lotteries_results");
   body.append("nonce", nonce);
   body.append("date", date);
-  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(20_000) });
+  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(90_000) });
   if (!response.ok) throw new Error(`La Primera AJAX respondio HTTP ${response.status}.`);
   const payload = (await response.json()) as OfficialResponse;
   return (payload.data?.lotteries?.la_primera ?? []).flatMap((item) => {
@@ -144,7 +144,7 @@ export async function fetchLaPrimeraLoto5ResultsForDate(date: string, nonce: str
   body.append("action", "get_lotteries_results");
   body.append("nonce", nonce);
   body.append("date", date);
-  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(20_000) });
+  const response = await fetch(ajaxUrl, { method: "POST", cache: "no-store", headers: { Accept: "application/json", "User-Agent": "LotoMasLab/1.0 Mozilla/5.0" }, body, signal: AbortSignal.timeout(90_000) });
   if (!response.ok) throw new Error(`La Primera AJAX respondio HTTP ${response.status}.`);
   const payload = (await response.json()) as OfficialResponse;
   return (payload.data?.lotteries?.la_primera ?? []).flatMap((item) => {

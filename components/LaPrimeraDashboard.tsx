@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import {
   buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
@@ -129,7 +129,7 @@ function getDominicanClock() {
   };
 }
 
-function isLaPrimeraDataCurrent(data: Props["initialData"]) {
+function getExpectedLaPrimeraDraw() {
   const now = getDominicanClock();
   const yesterday = addDays(now.date, -1);
   const expectedSession: LaPrimeraSession = now.minutes >= drawCutoffMinutes.noche
@@ -139,16 +139,26 @@ function isLaPrimeraDataCurrent(data: Props["initialData"]) {
       : "noche";
   const expectedSessionDate = now.minutes >= drawCutoffMinutes.dia ? now.date : yesterday;
   const expectedLoto5Date = now.minutes >= drawCutoffMinutes.noche ? now.date : yesterday;
+  return { expectedSession, expectedSessionDate, expectedLoto5Date };
+}
 
-  const hasQuinielon = data.results.some(
+function isQuinielonCurrent(results: LaPrimeraDraw[]) {
+  const { expectedSession, expectedSessionDate } = getExpectedLaPrimeraDraw();
+  return results.some(
     (draw) => draw.date === expectedSessionDate && draw.session === expectedSession
   );
-  const hasQuiniela = data.quinielaResults.some(
+}
+
+function isPrimeraQuinielaCurrent(results: LaPrimeraQuinielaDraw[]) {
+  const { expectedSession, expectedSessionDate } = getExpectedLaPrimeraDraw();
+  return results.some(
     (draw) => draw.date === expectedSessionDate && draw.session === expectedSession
   );
-  const hasLoto5 = data.loto5Results.some((draw) => draw.date === expectedLoto5Date);
+}
 
-  return hasQuinielon && hasQuiniela && hasLoto5;
+function isPrimeraLoto5Current(results: LaPrimeraLoto5Draw[]) {
+  const { expectedLoto5Date } = getExpectedLaPrimeraDraw();
+  return results.some((draw) => draw.date === expectedLoto5Date);
 }
 
 function getLatestDateLabel(draw: LaPrimeraDraw) {
@@ -201,6 +211,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const [historyPage, setHistoryPage] = useState(1);
   const [tooltip, setTooltip] = useState<Tooltip>(null);
   const [openRosterInfo, setOpenRosterInfo] = useState<RosterInfo | null>(null);
+  const dataRef = useRef(initialData);
   const results = data.results;
   const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
   const exclusiveRankings = useMemo(() => buildLaPrimeraExclusiveRankings(results), [results]);
@@ -238,41 +249,51 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 
   useEffect(() => {
     let isMounted = true;
+    const updating = new Set<"quinielon" | "quiniela" | "loto5">();
+    const loadingTimeout = window.setTimeout(() => {
+      if (isMounted) setIsPageLoading(false);
+    }, 500);
 
-    if (isLaPrimeraDataCurrent(initialData)) {
-      const timeout = window.setTimeout(() => setIsPageLoading(false), 500);
-      return () => {
-        isMounted = false;
-        window.clearTimeout(timeout);
-      };
-    }
-
-    async function updateLatest() {
-      const minimumLoading = new Promise((resolve) => window.setTimeout(resolve, 500));
+    async function updateProduct(product: "quinielon" | "quiniela" | "loto5") {
+      if (updating.has(product)) return;
+      updating.add(product);
       try {
-        const response = await fetch("/api/la-primera/update");
+        const expected = getExpectedLaPrimeraDraw();
+        const targetDate = product === "loto5" ? expected.expectedLoto5Date : expected.expectedSessionDate;
+        const response = await fetch(`/api/la-primera/update?product=${product}&date=${targetDate}`, { cache: "no-store" });
         const payload = await response.json();
-        await minimumLoading;
         if (!isMounted) return;
         if (!response.ok) throw new Error(payload.message);
-        if (Array.isArray(payload.results)) setData({
-          results: payload.results,
-          quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : initialData.quinielaResults,
-          loto5Results: Array.isArray(payload.loto5Results) ? payload.loto5Results : initialData.loto5Results
+        setData((current) => {
+          const next = {
+            results: Array.isArray(payload.results) ? payload.results : current.results,
+            quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : current.quinielaResults,
+            loto5Results: Array.isArray(payload.loto5Results) ? payload.loto5Results : current.loto5Results
+          };
+          dataRef.current = next;
+          return next;
         });
-        setStatus(`${payload.message} Total: ${payload.total}. Ultimo: ${payload.latest?.date ?? "N/D"}.`);
+        if (product === "quinielon") setStatus(`${payload.message} Total: ${payload.total}. Último: ${payload.latest?.date ?? "N/D"}.`);
       } catch {
-        await minimumLoading;
         if (!isMounted) return;
-        setStatus("No se pudo consultar La Primera. La data local permanece disponible.");
+        if (product === "quinielon") setStatus("La fuente oficial está tardando. Reintentaremos automáticamente en un minuto.");
       } finally {
-        if (isMounted) setIsPageLoading(false);
+        updating.delete(product);
       }
     }
 
-    updateLatest();
+    if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
+    if (!isPrimeraQuinielaCurrent(dataRef.current.quinielaResults)) void updateProduct("quiniela");
+    if (!isPrimeraLoto5Current(dataRef.current.loto5Results)) void updateProduct("loto5");
+
+    const pollInterval = window.setInterval(() => {
+      if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
+    }, 60_000);
+
     return () => {
       isMounted = false;
+      window.clearTimeout(loadingTimeout);
+      window.clearInterval(pollInterval);
     };
   }, []);
 
