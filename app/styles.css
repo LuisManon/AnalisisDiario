@@ -406,11 +406,16 @@ main {
 }
 
 .quinielaBallWinner::after {
-  content: "👑";
-  font-size: 0.62rem;
+  background: url("/icon.png") center / contain no-repeat;
+  content: "";
+  height: 17px;
+  pointer-events: none;
   position: absolute;
-  right: -5px;
-  top: -8px;
+  right: -6px;
+  top: -9px;
+  transform: rotate(8deg);
+  width: 17px;
+  z-index: 3;
 }
 
 .quinielaPrizeCard {
@@ -1441,17 +1446,15 @@ body:has(.appShell.primeraShell) {
 .ballWinnerPlus::after,
 .primeraBallWinner::after,
 .lotekaBallWinner::after {
-  content: "👑";
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-size: 0.76rem;
-  font-weight: 400;
-  line-height: 1;
+  background: url("/icon.png") center / contain no-repeat;
+  content: "";
+  height: 19px;
   pointer-events: none;
   position: absolute;
-  right: -6px;
-  text-shadow: none;
-  top: -7px;
-  transform: rotate(10deg);
+  right: -7px;
+  top: -9px;
+  transform: rotate(8deg);
+  width: 19px;
   z-index: 3;
 }
 
@@ -1790,14 +1793,16 @@ body:has(.appShell.primeraShell) {
 }
 
 .portfolioBallWinner::after {
-  color: #d79b25;
-  content: "♛";
-  font-size: 0.72rem;
-  left: 50%;
-  line-height: 1;
+  background: url("/icon.png") center / contain no-repeat;
+  content: "";
+  height: 15px;
+  pointer-events: none;
   position: absolute;
-  top: -10px;
-  transform: translateX(-50%);
+  right: -6px;
+  top: -8px;
+  transform: rotate(8deg);
+  width: 15px;
+  z-index: 3;
 }
 
 .portfolioPlus {
@@ -3113,13 +3118,16 @@ body:has(.appShell.primeraShell) {
 .primeraQuinielaBall.p3 { border-color: #d79b25; }
 
 .primeraQuinielaBall.winner::after {
-  color: #d79b25;
-  content: "♛";
-  font-size: 1.2rem;
-  left: 50%;
+  background: url("/icon.png") center / contain no-repeat;
+  content: "";
+  height: 19px;
+  pointer-events: none;
   position: absolute;
-  top: -17px;
-  transform: translateX(-50%);
+  right: -7px;
+  top: -10px;
+  transform: rotate(8deg);
+  width: 19px;
+  z-index: 3;
 }
 
 .primeraQuinielaTopGrid {
@@ -3206,7 +3214,18 @@ body:has(.appShell.primeraShell) {
   outline-color: #333333;
 }
 
-.primeraLoto5Ball.winner::after { content: "👑"; font-size: 0.9rem; position: absolute; right: -7px; top: -10px; }
+.primeraLoto5Ball.winner::after {
+  background: url("/icon.png") center / contain no-repeat;
+  content: "";
+  height: 19px;
+  pointer-events: none;
+  position: absolute;
+  right: -7px;
+  top: -10px;
+  transform: rotate(8deg);
+  width: 19px;
+  z-index: 3;
+}
 .loto5Hero .primeraHeroPanel { min-width: min(100%, 410px); }
 .loto5Metrics .metric:nth-child(2) strong { font-size: 0.82rem; }
 .loto5InfoGrid { align-items: stretch; }
