@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from
 import {
   buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
+  buildLaPrimeraFrequencyRanking,
   buildLaPrimeraSuggestions,
   filterLaPrimeraResults,
   formatQuinielonNumber,
@@ -14,7 +15,7 @@ import { buildQuinielaSuggestions, formatQuinielaNumber } from "../lib/quiniela-
 import { getNextLoto5Date } from "../lib/la-primera-loto5";
 import type { LaPrimeraDraw, LaPrimeraFilter, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LaPrimeraSession, Loto5PortfolioPlay, Loto5PortfolioSnapshot, QuinielaPaleDraw } from "../lib/types";
 
-type LaPrimeraProduct = "quinielon" | "quiniela" | "loto5";
+type LaPrimeraProduct = "quinielon" | "quinielon-v2" | "quiniela" | "loto5";
 
 type Props = {
   initialData: {
@@ -74,9 +75,10 @@ function getDelayedRosterNumbers(
   results: LaPrimeraDraw[],
   ranking: Array<{ number: number }>,
   session: LaPrimeraSession,
-  referenceDate: string
+  referenceDate: string,
+  months = 6
 ): DelayedNumber[] {
-  const threshold = subtractMonths(referenceDate, 6);
+  const threshold = subtractMonths(referenceDate, months);
 
   return ranking
     .map(({ number }) => ({
@@ -95,13 +97,14 @@ function buildFrozenNumberMap(
   results: LaPrimeraDraw[],
   ranking: Array<{ number: number }>,
   sessions: readonly LaPrimeraSession[],
-  referenceDate: string
+  referenceDate: string,
+  months = 6
 ) {
   const frozen = new Map<number, LaPrimeraSession[]>();
   if (!referenceDate) return frozen;
 
   for (const session of sessions) {
-    for (const item of getDelayedRosterNumbers(results, ranking, session, referenceDate)) {
+    for (const item of getDelayedRosterNumbers(results, ranking, session, referenceDate, months)) {
       frozen.set(item.number, [...(frozen.get(item.number) ?? []), session]);
     }
   }
@@ -308,6 +311,10 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 
   if (product === "loto5") {
     return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
+  }
+
+  if (product === "quinielon-v2") {
+    return <LaPrimeraQuinielonV2View results={results} onProductChange={setProduct} status={status} />;
   }
 
   return (
@@ -572,10 +579,159 @@ function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onCha
   return (
     <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
       <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
+      <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>Quinielón V2</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
     </nav>
   );
+}
+
+type QuinielonV2Group = "nosotros" | "inversionistas" | "banca";
+
+function buildQuinielonV2Rankings(results: LaPrimeraDraw[]) {
+  const split = (session: LaPrimeraSession) => {
+    const ranking = buildLaPrimeraFrequencyRanking(results.filter((draw) => draw.session === session));
+    return {
+      nosotros: ranking.slice(0, 40),
+      inversionistas: ranking.slice(40, 80),
+      banca: ranking.slice(80)
+    };
+  };
+  return { dia: split("dia"), noche: split("noche") };
+}
+
+function quinielonV2GroupForNumber(
+  rankings: ReturnType<typeof buildQuinielonV2Rankings>,
+  session: LaPrimeraSession,
+  number: number
+): QuinielonV2Group {
+  if (rankings[session].nosotros.some((item) => item.number === number)) return "nosotros";
+  if (rankings[session].inversionistas.some((item) => item.number === number)) return "inversionistas";
+  return "banca";
+}
+
+function buildQuinielonV2WeeklyRotations(results: LaPrimeraDraw[], monday: string) {
+  const sunday = addDays(monday, 6);
+  const accumulated = results.filter((draw) => draw.date < monday);
+  const weeklyDraws = results
+    .filter((draw) => draw.date >= monday && draw.date <= sunday)
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.session === b.session ? 0 : a.session === "dia" ? -1 : 1));
+  let previous = buildQuinielonV2Rankings(accumulated);
+  const rotations: Array<{ date: string; session: LaPrimeraSession; number: number; from: QuinielonV2Group; to: QuinielonV2Group }> = [];
+
+  for (const draw of weeklyDraws) {
+    accumulated.push(draw);
+    const next = buildQuinielonV2Rankings(accumulated);
+    for (let number = 0; number <= 99; number += 1) {
+      const from = quinielonV2GroupForNumber(previous, draw.session, number);
+      const to = quinielonV2GroupForNumber(next, draw.session, number);
+      if (from !== to) rotations.push({ date: draw.date, session: draw.session, number, from, to });
+    }
+    previous = next;
+  }
+
+  return rotations;
+}
+
+const quinielonV2GroupLabels: Record<QuinielonV2Group, string> = {
+  nosotros: "Top 40",
+  inversionistas: "Inversionistas",
+  banca: "Banca"
+};
+
+function QuinielonV2WeeklyChallenge({ results }: { results: LaPrimeraDraw[] }) {
+  const [showTotal, setShowTotal] = useState(false);
+  const today = getDominicanClock().date;
+  const monday = getWeekMonday(today);
+  const sunday = addDays(monday, 6);
+  const baseResults = results.filter((draw) => draw.date < monday);
+  const rankings = buildQuinielonV2Rankings(baseResults.length ? baseResults : results);
+  const rotations = baseResults.length ? buildQuinielonV2WeeklyRotations(results, monday) : [];
+  const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
+  const days = weekDates.map((date) => ({
+    date,
+    tandas: (["dia", "noche"] as const).map((session) => {
+      const draw = results.find((item) => item.date === date && item.session === session);
+      return { session, draw, status: draw ? quinielonV2GroupForNumber(rankings, session, draw.number) : "pendiente" as const };
+    })
+  }));
+  const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
+  const totals = {
+    nosotros: resolved.filter((tanda) => tanda.status === "nosotros").length,
+    inversionistas: resolved.filter((tanda) => tanda.status === "inversionistas").length,
+    banca: resolved.filter((tanda) => tanda.status === "banca").length
+  };
+
+  return (
+    <section className="card weeklyTopChallenge quinielonV2Weekly">
+      <header className="weeklyTopHeader">
+        <div><span className="panelLabel primeraLabel">Puja semanal V2 · 14 tandas</span><h2>Top 40 contra Inversionistas y Banca</h2><p>La alineación de cada tanda queda congelada al comenzar el lunes.</p></div>
+        <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div>
+      </header>
+      <div className="weeklyDayGrid">
+        {days.map((day) => <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
+          <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div></header>
+          <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
+            <span>{formatSession(tanda.session)}</span>
+            <strong>{tanda.status === "pendiente" ? "Pendiente" : quinielonV2GroupLabels[tanda.status]}</strong>
+            <small>{tanda.draw ? `${formatQuinielonNumber(tanda.draw.number)} · Quinielón` : "Esperando resultado"}</small>
+          </div>)}</div>
+        </article>)}
+      </div>
+      <aside className="weeklyRotations" aria-live="polite">
+        <header><div><span>Rotaciones automáticas</span><strong>{rotations.length}</strong></div><small>Se reinician cada lunes</small></header>
+        {rotations.length ? <div className="weeklyRotationList">{rotations.map((rotation, index) => <div className="weeklyRotationItem" key={`${rotation.date}-${rotation.session}-${rotation.number}-${index}`}>
+          <b>{formatQuinielonNumber(rotation.number)}</b>
+          <span>{quinielonV2GroupLabels[rotation.from]} <i aria-hidden="true">→</i> {quinielonV2GroupLabels[rotation.to]}</span>
+          <small>{formatShortDate(rotation.date)} · {formatSession(rotation.session)}</small>
+        </div>)}</div> : <p>Sin cambios de grupo esta semana.</p>}
+      </aside>
+      <div className="weeklyTopActions">
+        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((value) => !value)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
+        {showTotal ? <div className="weeklyTopSummary"><strong>{totals.nosotros} Top 40 · {totals.inversionistas} Inversionistas · {totals.banca} Banca</strong><p>{resolved.length} tandas resueltas; quedan {14 - resolved.length} pendientes.</p></div> : <p className="weeklySummaryHint">Calcula el marcador usando la plantilla V2 del lunes.</p>}
+      </div>
+    </section>
+  );
+}
+
+function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { results: LaPrimeraDraw[]; ranking: Array<{ number: number }>; session: LaPrimeraSession; referenceDate: string }) {
+  const delayed = referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate, 4) : [];
+  return <aside className="rosterDelayPanel" role="status"><strong>4 meses o más sin salir</strong><small>{formatSession(session)} · calculado hasta {formatShortDate(referenceDate)}</small>{delayed.length ? <div className="rosterDelayList">{delayed.map((item) => <span key={item.number}>{formatQuinielonNumber(item.number)}<small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small></span>)}</div> : <p>Ninguno.</p>}</aside>;
+}
+
+function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void; status: string }) {
+  const [openInfo, setOpenInfo] = useState<string | null>(null);
+  const rankings = useMemo(() => buildQuinielonV2Rankings(results), [results]);
+  const referenceDate = results[0]?.date ?? "";
+  const monday = getWeekMonday(getDominicanClock().date);
+  const weeklyWinningNumbers = results.filter((draw) => draw.date >= monday).map((draw) => draw.number);
+  const latestBySession = { dia: results.find((draw) => draw.session === "dia"), noche: results.find((draw) => draw.session === "noche") };
+  const frozen = (ranking: Array<{ number: number }>, session: LaPrimeraSession) => buildFrozenNumberMap(results, ranking, [session], referenceDate, 4);
+  const groups: Array<{ key: QuinielonV2Group; title: string; description: string; tone: "red" | "gold" | "dark" }> = [
+    { key: "nosotros", title: "Top 40", description: "Puestos 1 al 40 por frecuencia histórica de cada tanda.", tone: "red" },
+    { key: "inversionistas", title: "Inversionistas", description: "Puestos 41 al 80 por frecuencia histórica de cada tanda.", tone: "gold" },
+    { key: "banca", title: "Banca", description: "Puestos 81 al 100: los 20 números restantes de cada tanda.", tone: "dark" }
+  ];
+
+  return <main className="primeraTheme quinielonV2Theme">
+    <ProductSwitch product="quinielon-v2" onChange={onProductChange} />
+    <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>Quinielón V2</h1><p className="subcopy">Top 40, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit">{(["dia", "noche"] as const).map((session) => <article key={session}><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latestBySession[session] ? <QuinielonBall number={latestBySession[session]!.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latestBySession[session] ? formatShortDate(latestBySession[session]!.date) : "Sin fecha"}</small></article>)}</div></div></section>
+    <section className="toolbar primeraToolbar"><span className="status">{status} V2 mantiene clasificaciones independientes por tanda.</span></section>
+    <QuinielonV2WeeklyChallenge results={results} />
+    {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
+      <header><span>Clasificación V2</span><h2>{group.title}</h2><p>{group.description}</p></header>
+      <div className="twoColumn">{(["dia", "noche"] as const).map((session) => {
+        const infoKey = `${group.key}-${session}`;
+        const ranking = rankings[session][group.key];
+        return <div className="v2RosterColumn" key={session}>
+          <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
+          {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
+          <NumberGridCard title={`Puestos ${group.key === "nosotros" ? "1–40" : group.key === "inversionistas" ? "41–80" : "81–100"}`} ranking={ranking} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozen(ranking, session)} frozenMonths={4} tone={group.tone} />
+        </div>;
+      })}</div>
+    </section>)}
+    <p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
+  </main>;
 }
 
 function quinielaTopByPosition(results: LaPrimeraQuinielaDraw[]) {
@@ -1109,13 +1265,15 @@ function NumberGridCard({
   ranking,
   winningNumbers = [],
   frozenByNumber = new Map(),
-  tone = "red"
+  tone = "red",
+  frozenMonths = 6
 }: {
   title: string;
   ranking: Array<{ number: number; count: number }>;
   winningNumbers?: readonly number[];
   frozenByNumber?: ReadonlyMap<number, readonly LaPrimeraSession[]>;
   tone?: "red" | "gold" | "dark";
+  frozenMonths?: number;
 }) {
   return (
     <article className={`card primeraCard numberGridCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
@@ -1124,7 +1282,7 @@ function NumberGridCard({
         {ranking.map((item) => {
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
           const frozenLabel = frozenSessions.length
-            ? `6 meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
+            ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
             : "";
           return (
             <span className="rosterBallWrap" key={item.number} title={frozenLabel || undefined}>
@@ -1163,20 +1321,22 @@ function RosterDelayButton({
 function RosterDelayPanel({
   results,
   ranking,
-  referenceDate
+  referenceDate,
+  months = 6
 }: {
   results: LaPrimeraDraw[];
   ranking: Array<{ number: number }>;
   referenceDate: string;
+  months?: number;
 }) {
   const delayedBySession = (["dia", "noche"] as const).map((session) => ({
     session,
-    numbers: referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate) : []
+    numbers: referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate, months) : []
   }));
 
   return (
     <aside className="rosterDelayPanel" role="status">
-      <strong>6 meses o más sin salir</strong>
+      <strong>{months} meses o más sin salir</strong>
       <small>Calculado hasta {referenceDate ? formatShortDate(referenceDate) : "la última fecha disponible"}, por tanda.</small>
       <div className="rosterDelayColumns">
         {delayedBySession.map(({ session, numbers }) => (
