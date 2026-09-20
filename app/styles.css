@@ -3875,6 +3875,9 @@ body:has(.appShell.primeraShell) {
 
 .v2LatestSplit .v2LatestCard {
   border: 0;
+  box-sizing: border-box;
+  grid-template-rows: 24px 32px 50px 24px;
+  height: 190px;
   isolation: isolate;
   overflow: hidden;
   position: relative;
@@ -3889,13 +3892,26 @@ body:has(.appShell.primeraShell) {
   border: 2px solid rgba(50, 33, 39, 0.34);
   color: #21181b;
   font-size: 1rem;
+  height: 46px;
   -webkit-text-stroke: 0;
   text-shadow: none;
+  width: 46px;
 }
 
-.v2LatestCard.dia .primeraBall {
-  height: 46px;
-  width: 46px;
+.v2LatestCard > span:not(.primeraBall) {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.v2LatestCard > strong {
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.v2LatestCard > small {
+  font-size: 0.82rem;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .v2LatestCard.dia {
