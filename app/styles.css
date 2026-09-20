@@ -3893,6 +3893,11 @@ body:has(.appShell.primeraShell) {
   text-shadow: none;
 }
 
+.v2LatestCard.dia .primeraBall {
+  height: 46px;
+  width: 46px;
+}
+
 .v2LatestCard.dia {
   background: #fff0b8;
   box-shadow: inset 0 0 0 1px rgba(211, 151, 34, 0.14);
