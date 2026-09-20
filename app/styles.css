@@ -3880,24 +3880,36 @@ body:has(.appShell.primeraShell) {
 }
 
 .v2LatestCard.dia .v2SkyIcon {
-  background: #ffb51b;
-  border-radius: 50%;
-  box-shadow:
-    0 -25px 0 -10px #ffb51b,
-    0 25px 0 -10px #ffb51b,
-    -25px 0 0 -10px #ffb51b,
-    25px 0 0 -10px #ffb51b,
-    -18px -18px 0 -11px #ffb51b,
-    18px -18px 0 -11px #ffb51b,
-    -18px 18px 0 -11px #ffb51b,
-    18px 18px 0 -11px #ffb51b;
-  height: 42px;
-  opacity: 0.9;
+  background: #f5a623;
+  clip-path: polygon(
+    50% 0%, 57% 19%, 69% 4%, 72% 25%,
+    85% 15%, 82% 35%, 100% 31%, 86% 45%,
+    100% 50%, 81% 57%, 96% 69%, 75% 72%,
+    85% 85%, 65% 82%, 69% 100%, 55% 86%,
+    50% 100%, 43% 81%, 31% 96%, 28% 75%,
+    15% 85%, 18% 65%, 0% 69%, 14% 55%,
+    0% 50%, 19% 43%, 4% 31%, 25% 28%,
+    15% 15%, 35% 18%, 31% 0%, 45% 14%
+  );
+  height: 84px;
   position: absolute;
-  right: 22px;
-  top: 24px;
-  width: 42px;
-  z-index: 1;
+  right: 14px;
+  top: 14px;
+  width: 84px;
+  z-index: 2;
+}
+
+.v2LatestCard.dia .v2SkyIcon::before {
+  background: #ffdf18;
+  border: 3px solid #ffc24a;
+  border-radius: 50%;
+  content: "";
+  height: 60px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
 }
 
 .v2LatestCard.noche {
