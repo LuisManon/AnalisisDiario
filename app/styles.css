@@ -401,8 +401,8 @@ main {
 .quinielaBall.p3 { border-color: #77745f; }
 
 .quinielaBallWinner {
-  border-color: rgba(205, 151, 0, 0.72);
-  filter: drop-shadow(0 0 3px rgba(255, 211, 48, 0.72)) drop-shadow(0 0 7px rgba(255, 218, 79, 0.3));
+  border-color: rgba(205, 151, 0, 0.58);
+  filter: drop-shadow(0 0 2px rgba(255, 211, 48, 0.34)) drop-shadow(0 0 5px rgba(255, 218, 79, 0.14));
 }
 
 .quinielaBallWinner::after {
@@ -1425,13 +1425,13 @@ body:has(.appShell.primeraShell) {
 }
 
 .ballWinnerLoto {
-  border-color: rgba(205, 151, 0, 0.72);
-  filter: drop-shadow(0 0 3px rgba(255, 211, 48, 0.72)) drop-shadow(0 0 7px rgba(255, 218, 79, 0.3));
+  border-color: rgba(205, 151, 0, 0.58);
+  filter: drop-shadow(0 0 2px rgba(255, 211, 48, 0.34)) drop-shadow(0 0 5px rgba(255, 218, 79, 0.14));
 }
 
 .ballWinnerPlus {
-  border-color: rgba(255, 126, 132, 0.9);
-  filter: drop-shadow(0 0 3px rgba(255, 126, 132, 0.68)) drop-shadow(0 0 7px rgba(255, 174, 178, 0.3));
+  border-color: rgba(255, 126, 132, 0.68);
+  filter: drop-shadow(0 0 2px rgba(255, 126, 132, 0.32)) drop-shadow(0 0 5px rgba(255, 174, 178, 0.14));
 }
 
 .ballWinnerLoto,
@@ -1788,7 +1788,7 @@ body:has(.appShell.primeraShell) {
 }
 
 .portfolioBallWinner {
-  box-shadow: 0 0 0 3px rgba(215, 155, 37, 0.28);
+  box-shadow: 0 0 0 2px rgba(215, 155, 37, 0.16);
   position: relative;
 }
 
@@ -4155,8 +4155,8 @@ body:has(.appShell.primeraShell) {
 }
 
 .primeraBallWinner {
-  border-color: rgba(255, 116, 116, 0.88);
-  filter: drop-shadow(0 0 3px rgba(255, 91, 91, 0.58)) drop-shadow(0 0 8px rgba(255, 150, 150, 0.28));
+  border-color: rgba(255, 116, 116, 0.68);
+  filter: drop-shadow(0 0 2px rgba(255, 91, 91, 0.28)) drop-shadow(0 0 5px rgba(255, 150, 150, 0.12));
 }
 
 .primeraSuggestionList {
@@ -4384,8 +4384,8 @@ body:has(.appShell.primeraShell) {
 }
 
 .lotekaBallWinner {
-  border-color: rgba(84, 198, 231, 0.9);
-  filter: drop-shadow(0 0 3px rgba(66, 190, 230, 0.58)) drop-shadow(0 0 8px rgba(131, 220, 245, 0.3));
+  border-color: rgba(84, 198, 231, 0.68);
+  filter: drop-shadow(0 0 2px rgba(66, 190, 230, 0.28)) drop-shadow(0 0 5px rgba(131, 220, 245, 0.14));
 }
 
 .lotekaBar span,
@@ -4672,7 +4672,7 @@ body:has(.appShell.primeraShell) {
 }
 
 .lotekaBallWinner {
-  box-shadow: 0 0 0 3px rgba(0, 177, 214, 0.2), 0 10px 25px rgba(0, 137, 170, 0.28), inset 3px 4px 7px #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 177, 214, 0.12), 0 6px 14px rgba(0, 137, 170, 0.16), inset 3px 4px 7px #ffffff;
 }
 
 .lotekaBar {
@@ -5847,6 +5847,51 @@ body:has(.appShell.lotoShell) {
 
   .weeklyCalculateButton {
     width: 100%;
+  }
+
+  .weeklyRotations {
+    gap: 8px;
+  }
+
+  .weeklyRotations > header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .weeklyRotations > header small {
+    max-width: 112px;
+    text-align: right;
+  }
+
+  .weeklyRotationList {
+    display: grid;
+    gap: 8px;
+    grid-auto-columns: minmax(190px, 72vw);
+    grid-auto-flow: column;
+    margin-right: -16px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 1px 16px 7px 0;
+    scroll-padding-inline: 0 16px;
+    scroll-snap-type: inline proximity;
+    scrollbar-width: none;
+  }
+
+  .weeklyRotationList::-webkit-scrollbar {
+    display: none;
+  }
+
+  .weeklyRotationItem {
+    min-width: 0;
+    padding: 7px 9px;
+    scroll-snap-align: start;
+  }
+
+  .weeklyRotationItem span,
+  .weeklyRotationItem small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .historyRow .ballsRow,
