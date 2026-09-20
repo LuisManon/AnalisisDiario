@@ -611,11 +611,37 @@ type QuinielonV2Group = "nosotros" | "inversionistas" | "banca";
 
 function buildQuinielonV2Rankings(results: LaPrimeraDraw[]) {
   const split = (session: LaPrimeraSession) => {
-    const ranking = buildLaPrimeraFrequencyRanking(results.filter((draw) => draw.session === session));
+    const scoped = results.filter((draw) => draw.session === session);
+    const ranking = buildLaPrimeraFrequencyRanking(scoped);
+    const referenceDate = results.reduce((latest, draw) => draw.date > latest ? draw.date : latest, "");
+    const delayThreshold = referenceDate ? subtractMonths(referenceDate, 6) : "";
+    const lastDate = (number: number) => scoped.reduce(
+      (latest, draw) => draw.number === number && draw.date > latest ? draw.date : latest,
+      ""
+    );
+    const isDelayed = (number: number) => {
+      const latest = lastDate(number);
+      return !latest || latest <= delayThreshold;
+    };
+    const originalTop = ranking.slice(0, 40);
+    const displacedTop = new Set(originalTop.filter((item) => isDelayed(item.number)).map((item) => item.number));
+    const nosotros = ranking.filter((item) => !isDelayed(item.number)).slice(0, 40);
+    const ours = new Set(nosotros.map((item) => item.number));
+    const remaining = ranking.filter((item) => !ours.has(item.number));
+    const bank = remaining
+      .filter((item) => !displacedTop.has(item.number))
+      .sort((a, b) =>
+        Number(isDelayed(b.number)) - Number(isDelayed(a.number)) ||
+        a.count - b.count ||
+        lastDate(a.number).localeCompare(lastDate(b.number)) ||
+        a.number - b.number
+      )
+      .slice(0, 20);
+    const bankNumbers = new Set(bank.map((item) => item.number));
     return {
-      nosotros: ranking.slice(0, 40),
-      inversionistas: ranking.slice(40, 80),
-      banca: ranking.slice(80)
+      nosotros,
+      inversionistas: remaining.filter((item) => !bankNumbers.has(item.number)),
+      banca: bank
     };
   };
   return { dia: split("dia"), noche: split("noche") };
@@ -686,7 +712,7 @@ function QuinielonV2WeeklyChallenge({ results }: { results: LaPrimeraDraw[] }) {
   return (
     <section className="card weeklyTopChallenge quinielonV2Weekly">
       <header className="weeklyTopHeader">
-        <div><span className="panelLabel primeraLabel">Puja semanal V2 · 14 tandas</span><h2>Top 40 contra Inversionistas y Banca</h2><p>La alineación de cada tanda queda congelada al comenzar el lunes.</p></div>
+        <div><span className="panelLabel primeraLabel">Puja semanal V2 · 14 tandas</span><h2>Top 40 contra Inversionistas y Banca</h2><p>Nuestro Top 40 prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes.</p></div>
         <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div>
       </header>
       <div className="weeklyDayGrid">
@@ -716,8 +742,8 @@ function QuinielonV2WeeklyChallenge({ results }: { results: LaPrimeraDraw[] }) {
 }
 
 function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { results: LaPrimeraDraw[]; ranking: Array<{ number: number }>; session: LaPrimeraSession; referenceDate: string }) {
-  const delayed = referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate, 4) : [];
-  return <aside className="rosterDelayPanel" role="status"><strong>4 meses o más sin salir</strong><small>{formatSession(session)} · calculado hasta {formatShortDate(referenceDate)}</small>{delayed.length ? <div className="rosterDelayList">{delayed.map((item) => <span key={item.number}>{formatQuinielonNumber(item.number)}<small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small></span>)}</div> : <p>Ninguno.</p>}</aside>;
+  const delayed = referenceDate ? getDelayedRosterNumbers(results, ranking, session, referenceDate, 6) : [];
+  return <aside className="rosterDelayPanel" role="status"><strong>6 meses o más sin salir</strong><small>{formatSession(session)} · calculado hasta {formatShortDate(referenceDate)}</small>{delayed.length ? <div className="rosterDelayList">{delayed.map((item) => <span key={item.number}>{formatQuinielonNumber(item.number)}<small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small></span>)}</div> : <p>Ninguno.</p>}</aside>;
 }
 
 function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void; status: string }) {
@@ -727,11 +753,11 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
   const monday = getWeekMonday(getDominicanClock().date);
   const weeklyWinningNumbers = results.filter((draw) => draw.date >= monday).map((draw) => draw.number);
   const latestBySession = { dia: results.find((draw) => draw.session === "dia"), noche: results.find((draw) => draw.session === "noche") };
-  const frozen = (ranking: Array<{ number: number }>, session: LaPrimeraSession) => buildFrozenNumberMap(results, ranking, [session], referenceDate, 4);
+  const frozen = (ranking: Array<{ number: number }>, session: LaPrimeraSession) => buildFrozenNumberMap(results, ranking, [session], referenceDate, 6);
   const groups: Array<{ key: QuinielonV2Group; title: string; description: string; tone: "red" | "gold" | "dark" }> = [
-    { key: "nosotros", title: "Top 40", description: "Puestos 1 al 40 por frecuencia histórica de cada tanda.", tone: "red" },
-    { key: "inversionistas", title: "Inversionistas", description: "Puestos 41 al 80 por frecuencia histórica de cada tanda.", tone: "gold" },
-    { key: "banca", title: "Banca", description: "Puestos 81 al 100: los 20 números restantes de cada tanda.", tone: "dark" }
+    { key: "nosotros", title: "Top 40", description: "Los 40 más frecuentes y activos: ningún número con 6 meses o más de atraso.", tone: "red" },
+    { key: "inversionistas", title: "Inversionistas", description: "Plan de respaldo: recibe los frecuentes desplazados por atraso y los siguientes disponibles.", tone: "gold" },
+    { key: "banca", title: "Banca", description: "Los 20 restantes, donde se concentran los de menor frecuencia y mayor atraso.", tone: "dark" }
   ];
 
   return <main className="primeraTheme quinielonV2Theme">
@@ -747,7 +773,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard title={`Puestos ${group.key === "nosotros" ? "1–40" : group.key === "inversionistas" ? "41–80" : "81–100"}`} ranking={ranking} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozen(ranking, session)} frozenMonths={4} tone={group.tone} />
+          <NumberGridCard title={group.key === "nosotros" ? "40 números prioritarios" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} />
         </div>;
       })}</div>
     </section>)}
