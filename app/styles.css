@@ -5494,7 +5494,8 @@ body:has(.appShell.lotoShell) {
 }
 
 .lotoTheme .ballPlus {
-  background: radial-gradient(circle at 31% 22%, #ffffff 0 8%, rgba(255, 150, 158, 0.9) 22%, #e51b30 100%);
+  background: #e30613;
+  border-color: #a9000a;
   color: #ffffff;
 }
 
