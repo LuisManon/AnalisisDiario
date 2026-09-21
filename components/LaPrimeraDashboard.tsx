@@ -713,6 +713,14 @@ function QuinielonV2WeeklyChallenge({ results }: { results: LaPrimeraDraw[] }) {
     inversionistas: resolved.filter((tanda) => tanda.status === "inversionistas").length,
     banca: resolved.filter((tanda) => tanda.status === "banca").length
   };
+  const percentages = {
+    nosotros: resolved.length ? Math.round((totals.nosotros / resolved.length) * 100) : 0,
+    inversionistas: resolved.length ? Math.round((totals.inversionistas / resolved.length) * 100) : 0,
+    banca: 0
+  };
+  percentages.banca = resolved.length ? Math.max(0, 100 - percentages.nosotros - percentages.inversionistas) : 0;
+  const pending = 14 - resolved.length;
+  const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
     <section className="card weeklyTopChallenge quinielonV2Weekly">
@@ -740,7 +748,7 @@ function QuinielonV2WeeklyChallenge({ results }: { results: LaPrimeraDraw[] }) {
       </aside>
       <div className="weeklyTopActions">
         <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((value) => !value)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
-        {showTotal ? <div className="weeklyTopSummary"><strong>{totals.nosotros} La Casa · {totals.inversionistas} Inversionistas · {totals.banca} Banca</strong><p>{resolved.length} tandas resueltas; quedan {14 - resolved.length} pendientes.</p></div> : <p className="weeklySummaryHint">Calcula el marcador usando la plantilla V2 del lunes.</p>}
+        {showTotal ? <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador actual: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el marcador usando la plantilla V2 del lunes.</p>}
       </div>
     </section>
   );
