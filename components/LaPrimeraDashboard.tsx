@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import {
   buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
@@ -792,7 +792,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><span className={`v2SessionIcon ${session}`} aria-hidden="true">{session === "dia" ? "☀️" : "🌙"}</span><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} />
+          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={group.key !== "banca"} />
         </div>;
       })}</div>
     </section>)}
@@ -1332,7 +1332,8 @@ function NumberGridCard({
   winningNumbers = [],
   frozenByNumber = new Map(),
   tone = "red",
-  frozenMonths = 6
+  frozenMonths = 6,
+  separateRows = false
 }: {
   title: string;
   ranking: Array<{ number: number; count: number }>;
@@ -1340,21 +1341,25 @@ function NumberGridCard({
   frozenByNumber?: ReadonlyMap<number, readonly LaPrimeraSession[]>;
   tone?: "red" | "gold" | "dark";
   frozenMonths?: number;
+  separateRows?: boolean;
 }) {
   return (
     <article className={`card primeraCard numberGridCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
       <h3>{title}</h3>
       <div className="bankNumberGrid">
-        {ranking.map((item) => {
+        {ranking.map((item, index) => {
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
           const frozenLabel = frozenSessions.length
             ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
             : "";
           return (
-            <span className="rosterBallWrap" key={item.number} title={frozenLabel || undefined}>
+            <Fragment key={item.number}>
+              {separateRows && index > 0 && index % 10 === 0 ? <span className={`numberGridDivider${index % 20 !== 0 ? " numberGridDividerMobile" : ""}`} aria-hidden="true" /> : null}
+            <span className="rosterBallWrap" title={frozenLabel || undefined}>
               {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : null}
               <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
             </span>
+            </Fragment>
           );
         })}
       </div>

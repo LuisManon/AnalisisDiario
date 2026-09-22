@@ -3824,6 +3824,16 @@ body:has(.appShell.primeraShell) {
   margin-top: 16px;
 }
 
+.numberGridDivider {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  border-top: 1px solid rgba(90, 78, 66, 0.16);
+}
+
+.numberGridDividerMobile {
+  display: none;
+}
+
 .rosterBallWrap {
   display: inline-flex;
   position: relative;
@@ -4161,6 +4171,10 @@ body:has(.appShell.primeraShell) {
 }
 
 @media (max-width: 760px) {
+  .numberGridDividerMobile {
+    display: block;
+  }
+
   .bankNumberGrid {
     gap: 10px 6px;
     grid-template-columns: repeat(5, minmax(0, 1fr));
