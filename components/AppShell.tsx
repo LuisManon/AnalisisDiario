@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
 import { LotekaRepartideraDashboard } from "./LotekaRepartideraDashboard";
@@ -19,26 +19,20 @@ type AppShellProps = {
 type ActiveTab = "loto" | "quiniela" | "primera" | "loteka";
 
 export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResults, laPrimeraLoto5Results, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("loto");
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("activeLotteryTab");
-    if (stored === "loto" || stored === "quiniela" || stored === "primera" || stored === "loteka") setActiveTab(stored);
-  }, []);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("primera");
 
   function changeTab(tab: ActiveTab) {
     setActiveTab(tab);
-    window.localStorage.setItem("activeLotteryTab", tab);
   }
 
   return (
     <div className={`appShell ${activeTab === "primera" ? "primeraShell" : activeTab === "loteka" ? "lotekaShell" : "lotoShell"}`}>
       <nav className="appTabs" aria-label="Secciones de analisis">
-        <button className={activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("loto")}>
-          LEIDSA
-        </button>
         <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>
           La Primera
+        </button>
+        <button className={activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("loto")}>
+          LEIDSA
         </button>
         <button className={activeTab === "loteka" ? "active lotekaTab" : "lotekaTab"} onClick={() => changeTab("loteka")}>
           Loteka

@@ -203,7 +203,7 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 
 export function LaPrimeraDashboard({ initialData }: Props) {
   const [data, setData] = useState(initialData);
-  const [product, setProduct] = useState<LaPrimeraProduct>("quinielon");
+  const [product, setProduct] = useState<LaPrimeraProduct>("quinielon-v2");
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [status, setStatus] = useState(`Data local: ${initialData.results.length} sorteos cargados.`);
   const [session, setSession] = useState<LaPrimeraFilter>("todos");
@@ -604,8 +604,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
   return (
     <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
-      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>Quinielón V2</button>
+      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
     </nav>
