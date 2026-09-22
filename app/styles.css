@@ -3927,8 +3927,13 @@ body:has(.appShell.primeraShell) {
 }
 
 .v2LatestCard.dia {
-  background: #fff0b8;
-  box-shadow: inset 0 0 0 1px rgba(211, 151, 34, 0.14);
+  background:
+    radial-gradient(ellipse at 12% 28%, #ffffffb3 0 7%, transparent 18%),
+    radial-gradient(ellipse at 27% 32%, #ffffff99 0 9%, transparent 22%),
+    radial-gradient(ellipse at 76% 72%, #ffffffb3 0 10%, transparent 24%),
+    radial-gradient(ellipse at 93% 65%, #ffffff99 0 8%, transparent 20%),
+    linear-gradient(145deg, #dceefa, #f3f9fd);
+  box-shadow: inset 0 0 0 1px rgba(73, 102, 126, 0.14);
 }
 
 .v2LatestCard.dia .v2SkyIcon {
@@ -3967,6 +3972,19 @@ body:has(.appShell.primeraShell) {
 .v2LatestCard.noche {
   background: #20284f;
   box-shadow: inset 0 0 0 1px rgba(184, 197, 255, 0.12);
+}
+
+.v2LatestCard.noche::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    radial-gradient(circle, #e2edff 1px, transparent 1.8px),
+    radial-gradient(circle, #b9ccec 0.7px, transparent 1.5px);
+  background-size: 73px 61px, 47px 89px;
+  background-position: 17px 23px, 39px 51px;
 }
 
 .v2LatestCard.noche > span:not(.primeraBall),
@@ -4044,6 +4062,81 @@ body:has(.appShell.primeraShell) {
 
 .v2RosterColumn .numberGridCard {
   height: 100%;
+}
+
+.v2RosterColumn .v2SelectionCard {
+  position: relative;
+  isolation: isolate;
+}
+
+.quinielonV2Theme .v2RosterColumn .v2SelectionCard-dia {
+  background: linear-gradient(145deg, #dceefa, #f3f9fd);
+}
+
+.v2SelectionCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.v2SelectionCard-dia::before {
+  background:
+    radial-gradient(ellipse at 12% 28%, #ffffffb3 0 7%, transparent 18%),
+    radial-gradient(ellipse at 27% 32%, #ffffff99 0 9%, transparent 22%),
+    radial-gradient(ellipse at 76% 72%, #ffffffb3 0 10%, transparent 24%),
+    radial-gradient(ellipse at 93% 65%, #ffffff99 0 8%, transparent 20%);
+}
+
+.quinielonV2Theme .v2RosterColumn .v2SelectionCard-noche {
+  background: linear-gradient(145deg, #27344e, #172339);
+  border-color: #52607a;
+}
+
+.v2SelectionCard-noche::before {
+  opacity: 0.35;
+  background-image:
+    radial-gradient(circle, #e2edff 1px, transparent 1.8px),
+    radial-gradient(circle, #b9ccec 0.7px, transparent 1.5px);
+  background-size: 109px 83px, 67px 113px;
+  background-position: 17px 23px, 43px 57px;
+}
+
+.v2SelectionCard-noche h3 {
+  color: #f1f5fc;
+}
+
+.v2SelectionStamp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-top: 10px;
+  color: #49667e;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.v2SelectionStamp > span {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.v2SelectionCard-noche .v2SelectionStamp {
+  color: #becde3;
+}
+
+.v2SelectionCard-noche .primeraBall {
+  outline: 1px solid rgba(235, 242, 255, 0.38);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+}
+
+.v2SelectionCard-noche .numberGridDivider {
+  background: linear-gradient(to right, transparent, #d0def13d 35%, #d0def13d 65%, transparent);
 }
 
 .rosterTitleRow {

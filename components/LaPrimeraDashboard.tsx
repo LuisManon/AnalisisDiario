@@ -761,9 +761,14 @@ function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { r
 
 function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void; status: string }) {
   const [openInfo, setOpenInfo] = useState<string | null>(null);
+  const [today, setToday] = useState(() => getDominicanClock().date);
+  useEffect(() => {
+    const timer = window.setInterval(() => setToday(getDominicanClock().date), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
   const rankings = useMemo(() => buildQuinielonV2Rankings(results), [results]);
   const referenceDate = results[0]?.date ?? "";
-  const monday = getWeekMonday(getDominicanClock().date);
+  const monday = getWeekMonday(today);
   const weeklyWinningNumbers = {
     dia: results.filter((draw) => draw.date >= monday && draw.session === "dia").map((draw) => draw.number),
     noche: results.filter((draw) => draw.date >= monday && draw.session === "noche").map((draw) => draw.number)
@@ -792,7 +797,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><span className={`v2SessionIcon ${session}`} aria-hidden="true">{session === "dia" ? "☀️" : "🌙"}</span><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={group.key !== "banca"} />
+          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={group.key !== "banca"} session={session} selectionDate={today} />
         </div>;
       })}</div>
     </section>)}
@@ -1333,7 +1338,9 @@ function NumberGridCard({
   frozenByNumber = new Map(),
   tone = "red",
   frozenMonths = 6,
-  separateRows = false
+  separateRows = false,
+  session,
+  selectionDate
 }: {
   title: string;
   ranking: Array<{ number: number; count: number }>;
@@ -1342,10 +1349,13 @@ function NumberGridCard({
   tone?: "red" | "gold" | "dark";
   frozenMonths?: number;
   separateRows?: boolean;
+  session?: LaPrimeraSession;
+  selectionDate?: string;
 }) {
   return (
-    <article className={`card primeraCard numberGridCard ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
+    <article className={`card primeraCard numberGridCard ${session ? `v2SelectionCard v2SelectionCard-${session}` : ""} ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
       <h3>{title}</h3>
+      {session && selectionDate ? <div className="v2SelectionStamp"><span>{formatSession(session)} · {laPrimeraSchedules[session].time}</span><time dateTime={selectionDate}>{new Intl.DateTimeFormat("es-DO", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Santo_Domingo" }).format(new Date(`${selectionDate}T12:00:00-04:00`))}</time></div> : null}
       <div className="bankNumberGrid">
         {ranking.map((item, index) => {
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
