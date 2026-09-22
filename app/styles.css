@@ -3826,8 +3826,10 @@ body:has(.appShell.primeraShell) {
 
 .numberGridDivider {
   grid-column: 1 / -1;
-  justify-self: stretch;
-  border-top: 1px solid rgba(90, 78, 66, 0.16);
+  justify-self: center;
+  width: 64%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(90, 78, 66, 0.2) 35%, rgba(90, 78, 66, 0.2) 65%, transparent);
 }
 
 .numberGridDividerMobile {
