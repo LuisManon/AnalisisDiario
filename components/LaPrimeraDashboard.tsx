@@ -215,6 +215,11 @@ export function LaPrimeraDashboard({ initialData }: Props) {
   const results = data.results;
   const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
   const exclusiveRankings = useMemo(() => buildLaPrimeraExclusiveRankings(results), [results]);
+  const rotationMonday = getWeekMonday(getDominicanClock().date);
+  const movementByNumber = useMemo(() => {
+    const base = results.filter((draw) => draw.date < rotationMonday);
+    return buildNumberMovements(base.length ? buildWeeklyRotations(results, rotationMonday, base) : []);
+  }, [results, rotationMonday]);
   const rosterDelayReferenceDate = results[0]?.date ?? "";
   const rosterDelayRankings = useMemo(() => ({
     nosotros: [...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight],
@@ -441,8 +446,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "nosotros" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.nosotros} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
-          <NumberGridCard title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
+          <NumberGridCard movementByNumber={movementByNumber} title="Top 20 calientes Día" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
+          <NumberGridCard movementByNumber={movementByNumber} title="Top 20 calientes Noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
         </div>
       </section>
 
@@ -461,8 +466,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           {openRosterInfo === "inversionistas" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.inversionistas} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
         <div className="twoColumn">
-          <NumberGridCard title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
-          <NumberGridCard title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
+          <NumberGridCard movementByNumber={movementByNumber} title="Top 20 Inversionistas Día" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
+          <NumberGridCard movementByNumber={movementByNumber} title="Top 20 Inversionistas Noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
         </div>
       </section>
 
@@ -480,7 +485,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           <p>Los 20 números restantes después de las selecciones de Nosotros e Inversionistas.</p>
           {openRosterInfo === "banca" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.banca} referenceDate={rosterDelayReferenceDate} /> : null}
         </header>
-        <NumberGridCard title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.banca} tone="dark" />
+        <NumberGridCard movementByNumber={movementByNumber} title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.banca} tone="dark" />
       </section>
       <p className="weeklyCrownNote quinielonCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
 
@@ -769,6 +774,13 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
   const rankings = useMemo(() => buildQuinielonV2Rankings(results), [results]);
   const referenceDate = results[0]?.date ?? "";
   const monday = getWeekMonday(today);
+  const movements = useMemo(() => {
+    const rotations = results.some((draw) => draw.date < monday) ? buildQuinielonV2WeeklyRotations(results, monday) : [];
+    return {
+      dia: buildNumberMovements(rotations.filter((rotation) => rotation.session === "dia")),
+      noche: buildNumberMovements(rotations.filter((rotation) => rotation.session === "noche"))
+    };
+  }, [results, monday]);
   const weeklyWinningNumbers = {
     dia: results.filter((draw) => draw.date >= monday && draw.session === "dia").map((draw) => draw.number),
     noche: results.filter((draw) => draw.date >= monday && draw.session === "noche").map((draw) => draw.number)
@@ -797,7 +809,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status }: { result
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><span className={`v2SessionIcon ${session}`} aria-hidden="true">{session === "dia" ? "☀️" : "🌙"}</span><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={group.key !== "banca"} session={session} selectionDate={today} />
+          <NumberGridCard title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? "40 números de respaldo" : "20 números restantes"} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={group.key !== "banca"} session={session} selectionDate={today} movementByNumber={movements[session]} />
         </div>;
       })}</div>
     </section>)}
@@ -1331,6 +1343,30 @@ function WeeklyTopChallenge({
   );
 }
 
+type NumberMovement = { direction: "up" | "down"; label: string };
+
+function buildNumberMovements(rotations: Array<{ number: number; date: string; from: WeeklyRosterGroup | QuinielonV2Group; to: WeeklyRosterGroup | QuinielonV2Group }>) {
+  const movements = new Map<number, NumberMovement>();
+  const level = (group: string) => group.startsWith("nosotros") ? 0 : group.startsWith("inversionistas") ? 1 : 2;
+  const label = (group: WeeklyRosterGroup | QuinielonV2Group) => group in quinielonV2GroupLabels
+    ? quinielonV2GroupLabels[group as QuinielonV2Group]
+    : weeklyRosterLabels[group as WeeklyRosterGroup];
+  for (const rotation of rotations) {
+    const difference = level(rotation.from) - level(rotation.to);
+    // A transfer between day and night within the same group is not a promotion.
+    if (!difference) {
+      movements.delete(rotation.number);
+      continue;
+    }
+    const direction = difference > 0 ? "up" : "down";
+    movements.set(rotation.number, {
+      direction,
+      label: `${direction === "up" ? "Ascendió" : "Descendió"}: ${label(rotation.from)} → ${label(rotation.to)} · ${formatShortDate(rotation.date)}`
+    });
+  }
+  return movements;
+}
+
 function NumberGridCard({
   title,
   ranking,
@@ -1340,7 +1376,8 @@ function NumberGridCard({
   frozenMonths = 6,
   separateRows = false,
   session,
-  selectionDate
+  selectionDate,
+  movementByNumber = new Map()
 }: {
   title: string;
   ranking: Array<{ number: number; count: number }>;
@@ -1351,6 +1388,7 @@ function NumberGridCard({
   separateRows?: boolean;
   session?: LaPrimeraSession;
   selectionDate?: string;
+  movementByNumber?: ReadonlyMap<number, NumberMovement>;
 }) {
   return (
     <article className={`card primeraCard numberGridCard ${session ? `v2SelectionCard v2SelectionCard-${session}` : ""} ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
@@ -1358,6 +1396,7 @@ function NumberGridCard({
       {session && selectionDate ? <div className="v2SelectionStamp"><span>{formatSession(session)} · {laPrimeraSchedules[session].time}</span><time dateTime={selectionDate}>{new Intl.DateTimeFormat("es-DO", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Santo_Domingo" }).format(new Date(`${selectionDate}T12:00:00-04:00`))}</time></div> : null}
       <div className="bankNumberGrid">
         {ranking.map((item, index) => {
+          const movement = movementByNumber.get(item.number);
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
           const frozenLabel = frozenSessions.length
             ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
@@ -1368,6 +1407,7 @@ function NumberGridCard({
             <span className="rosterBallWrap" title={frozenLabel || undefined}>
               {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : null}
               <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
+              {movement ? <span className="rosterMovementBadge" role="img" aria-label={movement.label} title={movement.label}>{movement.direction === "up" ? "↑" : "↓"}</span> : null}
             </span>
             </Fragment>
           );

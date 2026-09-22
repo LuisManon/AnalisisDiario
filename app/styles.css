@@ -3841,6 +3841,25 @@ body:has(.appShell.primeraShell) {
   position: relative;
 }
 
+.rosterMovementBadge {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 20px;
+  border-radius: 7px;
+  background: #fff8f8;
+  color: #d71932;
+  box-shadow: 0 1px 4px rgba(60, 15, 25, 0.18);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .frozenBallBadge {
   filter: drop-shadow(0 2px 3px rgba(21, 103, 145, 0.28));
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
