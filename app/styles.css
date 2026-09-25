@@ -6493,3 +6493,26 @@ body:has(.appShell.lotoShell) {
 .numberDetailsPopover section > b { color: #b2223b; }
 .numberDetailsPopover p { margin: 6px 0; line-height: 1.4; }
 .numberDetailsPopover small { color: #766670; }
+
+/* Quinielón: smooth color fills without inset rings or circular highlights. */
+.primeraTheme .primeraBall {
+  outline: none;
+  outline-offset: 0;
+}
+
+.primeraTheme .primeraBall:not(.gold):not(.dark) {
+  background: linear-gradient(145deg, #f04b54, #d51f33 60%, #b9152b);
+  color: #fff;
+  border-color: #b51b2d;
+  box-shadow: inset 0 2px 4px #ffffff38, 0 4px 10px #8f16232b;
+}
+
+.primeraTheme .primeraBall.gold {
+  background: linear-gradient(145deg, #fff7d5, #e7c45f);
+  box-shadow: inset 0 2px 4px #ffffff66, 0 4px 10px #8a651026;
+}
+
+.primeraTheme .primeraBall.dark {
+  background: linear-gradient(145deg, #f9f7f8, #cfc9cb);
+  box-shadow: inset 0 2px 4px #ffffff66, 0 4px 10px #281b1f26;
+}
