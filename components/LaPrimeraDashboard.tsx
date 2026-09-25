@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
+import { createPortal } from "react-dom";
 import {
   buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
@@ -1408,12 +1409,52 @@ function formatNumberDelay(lastDate: string, today: string) {
   return `${months} ${months === 1 ? "mes" : "meses"} y ${days} ${days === 1 ? "día" : "días"} sin salir`;
 }
 
-function buildNumberDelayLabel(results: LaPrimeraDraw[], number: number, session?: LaPrimeraSession) {
+function NumberDetails({ results, number, session, children }: { results: LaPrimeraDraw[]; number: number; session?: LaPrimeraSession; children: ReactNode }) {
+  const trigger = useRef<HTMLSpanElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+  const cancel = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
+  const open = () => {
+    cancel();
+    const rect = trigger.current?.getBoundingClientRect();
+    if (!rect) return;
+    window.dispatchEvent(new Event("quinielon-close-details"));
+    setPosition({ left: Math.max(12, Math.min(rect.left + rect.width / 2 - 140, window.innerWidth - 292)), top: Math.max(12, Math.min(rect.bottom + 10, window.innerHeight - (session ? 245 : 380))) });
+  };
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(() => {
+    if (!position) return;
+    const close = () => setPosition(null);
+    const outside = (event: PointerEvent) => { if (!panel.current?.contains(event.target as Node) && !trigger.current?.contains(event.target as Node)) close(); };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { close(); trigger.current?.focus(); } };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    window.addEventListener("quinielon-close-details", close);
+    window.addEventListener("resize", close);
+    window.addEventListener("scroll", close, true);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+      window.removeEventListener("quinielon-close-details", close);
+      window.removeEventListener("resize", close);
+      window.removeEventListener("scroll", close, true);
+    };
+  }, [position]);
   const today = getDominicanClock().date;
-  return (session ? [session] : ["dia", "noche"] as const).map((tanda) => {
-    const lastDate = results.reduce((latest, draw) => draw.number === number && draw.session === tanda && draw.date <= today && draw.date > latest ? draw.date : latest, "");
-    return `${formatSession(tanda)}: ${lastDate ? `${formatNumberDelay(lastDate, today)} · Última salida: ${formatShortDate(lastDate)}` : "Sin salida registrada en el historial disponible"}`;
-  }).join("\n");
+  return <>
+    <span ref={trigger} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onMouseEnter={() => { cancel(); timer.current = setTimeout(open, 500); }} onMouseLeave={cancel} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
+    {position ? createPortal(<div ref={panel} className="numberDetailsPopover" role="dialog" aria-label={`Detalles del número ${formatQuinielonNumber(number)}`} style={position}>
+      <header><strong>Número {formatQuinielonNumber(number)}</strong><button type="button" aria-label="Cerrar detalles" onClick={() => { setPosition(null); trigger.current?.focus(); }}>×</button></header>
+      {(session ? [session] : ["dia", "noche"] as const).map((tanda) => {
+        const draws = results.filter((draw) => draw.session === tanda && draw.date <= today);
+        const hits = draws.filter((draw) => draw.number === number);
+        const rank = buildLaPrimeraFrequencyRanking(draws).findIndex((item) => item.number === number) + 1;
+        const lastDate = hits.reduce((latest, draw) => draw.date > latest ? draw.date : latest, "");
+        return <section key={tanda}><b>{tanda === "dia" ? "Día" : "Noche"}</b><p>Top 100 por frecuencia: <strong>#{rank} de 100</strong></p><p>Ha salido <strong>{hits.length}</strong> {hits.length === 1 ? "vez" : "veces"} en <strong>{draws.length}</strong> sorteos.</p><p>{lastDate ? formatNumberDelay(lastDate, today) : "Sin salida registrada en el historial disponible"}</p>{lastDate ? <small>Última vez: {formatShortDate(lastDate)}</small> : null}</section>;
+      })}
+    </div>, document.body) : null}
+  </>;
 }
 
 function NumberGridCard({
@@ -1457,11 +1498,11 @@ function NumberGridCard({
           return (
             <Fragment key={item.number}>
               {separateRows && index > 0 && index % 10 === 0 ? <span className={`numberGridDivider${index % 20 !== 0 ? " numberGridDividerMobile" : ""}`} aria-hidden="true" /> : null}
-            <span className="rosterBallWrap" title={buildNumberDelayLabel(results, item.number, delaySession)}>
+            <NumberDetails results={results} number={item.number} session={delaySession}>
               {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : null}
               <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
-              {movement ? <span className="rosterMovementBadge" role="img" aria-label={movement.label} title={movement.label}>{movement.direction === "up" ? "↑" : "↓"}</span> : null}
-            </span>
+              {movement ? <span className="rosterMovementBadge" role="img" aria-label={movement.label}>{movement.direction === "up" ? "↑" : "↓"}</span> : null}
+            </NumberDetails>
             </Fragment>
           );
         })}
