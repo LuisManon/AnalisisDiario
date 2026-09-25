@@ -6501,18 +6501,18 @@ body:has(.appShell.lotoShell) {
 }
 
 .primeraTheme .primeraBall:not(.gold):not(.dark) {
-  background: linear-gradient(145deg, #f04b54, #d51f33 60%, #b9152b);
+  background: radial-gradient(ellipse at 28% 18%, #ff4940 0%, #ec1420 30%, #c90018 62%, #7c0012 100%);
   color: #fff;
   border-color: #b51b2d;
-  box-shadow: inset 0 2px 4px #ffffff38, 0 4px 10px #8f16232b;
+  box-shadow: inset 2px 3px 6px #ffffff52, inset -4px -6px 9px #66051f66, 0 5px 10px #8f16233b;
 }
 
 .primeraTheme .primeraBall.gold {
-  background: linear-gradient(145deg, #fff7d5, #e7c45f);
-  box-shadow: inset 0 2px 4px #ffffff66, 0 4px 10px #8a651026;
+  background: radial-gradient(ellipse at 28% 18%, #fffdf0 0%, #ffedab 30%, #e7c45f 65%, #af7c20 100%);
+  box-shadow: inset 2px 3px 6px #ffffff80, inset -4px -6px 9px #94600c40, 0 5px 10px #8a651033;
 }
 
 .primeraTheme .primeraBall.dark {
-  background: linear-gradient(145deg, #f9f7f8, #cfc9cb);
-  box-shadow: inset 0 2px 4px #ffffff66, 0 4px 10px #281b1f26;
+  background: radial-gradient(ellipse at 28% 18%, #ffffff 0%, #eee9ed 30%, #c4bdc5 65%, #827783 100%);
+  box-shadow: inset 2px 3px 6px #ffffff99, inset -4px -6px 9px #4b3d504d, 0 5px 10px #281b1f33;
 }
