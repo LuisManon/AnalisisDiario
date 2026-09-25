@@ -710,6 +710,13 @@ const quinielonV2GroupLabels: Record<QuinielonV2Group, string> = {
   banca: "Banca"
 };
 
+function WeeklyPreviousDate({ results, number, session, date }: { results: LaPrimeraDraw[]; number: number; session: LaPrimeraSession; date: string }) {
+  const previousDate = results.reduce((latest, draw) =>
+    draw.number === number && draw.session === session && draw.date < date && draw.date > latest ? draw.date : latest,
+  "");
+  return <small>Última vez: {previousDate ? <time dateTime={previousDate}>{formatShortDate(previousDate)}</time> : "Sin registro anterior"}</small>;
+}
+
 function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDraw[]; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
   const [showTotal, setShowTotal] = useState(false);
@@ -755,6 +762,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? "Pendiente" : quinielonV2GroupLabels[tanda.status]}</strong>
             <small>{tanda.draw ? `${formatQuinielonNumber(tanda.draw.number)} · Quinielón` : "Esperando resultado"}</small>
+            {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
           </div>)}</div>
         </article>)}
       </div>
@@ -1328,6 +1336,7 @@ function WeeklyTopChallenge({
               <span>{formatSession(tanda.session)}</span>
               <strong>{tanda.status === "nosotros" ? "Nosotros" : tanda.status === "inversionistas" ? "Inversionistas" : tanda.status === "banca" ? "Banca" : "Pendiente"}</strong>
               <small>{tanda.matches.length ? tanda.matches.map((match) => `${formatQuinielonNumber(match.number)} · ${match.source}`).join(" / ") : "Esperando resultado"}</small>
+              {tanda.matches.map((match) => <WeeklyPreviousDate key={match.number} results={results} number={match.number} session={tanda.session} date={day.date} />)}
             </div>)}</div>
           </article>;
         })}
