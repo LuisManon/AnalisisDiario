@@ -1,5 +1,87 @@
 [
   {
+    "drawDate": "2026-09-30",
+    "day": "miercoles",
+    "generatedAt": "2026-09-27T02:25:19.163Z",
+    "plays": [
+      {
+        "id": 1,
+        "numbers": [
+          2,
+          14,
+          15,
+          23,
+          28,
+          38
+        ],
+        "plus": 12,
+        "score": 100,
+        "profile": "fuerte",
+        "daySupportCount": 6
+      },
+      {
+        "id": 2,
+        "numbers": [
+          2,
+          11,
+          12,
+          30,
+          31,
+          36
+        ],
+        "plus": 10,
+        "score": 99,
+        "profile": "fuerte",
+        "daySupportCount": 6
+      },
+      {
+        "id": 3,
+        "numbers": [
+          3,
+          10,
+          14,
+          26,
+          32,
+          37
+        ],
+        "plus": 1,
+        "score": 98,
+        "profile": "fuerte",
+        "daySupportCount": 6
+      },
+      {
+        "id": 4,
+        "numbers": [
+          4,
+          6,
+          13,
+          22,
+          35,
+          40
+        ],
+        "plus": 7,
+        "score": 94,
+        "profile": "equilibrada",
+        "daySupportCount": 6
+      },
+      {
+        "id": 5,
+        "numbers": [
+          6,
+          12,
+          19,
+          22,
+          30,
+          39
+        ],
+        "plus": 6,
+        "score": 95,
+        "profile": "exploratoria",
+        "daySupportCount": 5
+      }
+    ]
+  },
+  {
     "drawDate": "2026-09-26",
     "day": "sabado",
     "generatedAt": "2026-09-24T03:00:30.002Z",
