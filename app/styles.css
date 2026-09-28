@@ -6516,3 +6516,28 @@ body:has(.appShell.lotoShell) {
   background: radial-gradient(ellipse at 28% 18%, #ffffff 0%, #eee9ed 30%, #c4bdc5 65%, #827783 100%);
   box-shadow: inset 2px 3px 6px #ffffff99, inset -4px -6px 9px #4b3d504d, 0 5px 10px #281b1f33;
 }
+
+.weeklyTopChallenge { touch-action: pan-y; }
+.weeklyHistoryNavigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.weeklyHistoryNavigation > div { text-align: center; }
+.weeklyHistoryNavigation strong, .weeklyHistoryNavigation small { display: block; }
+.weeklyHistoryNavigation small { margin-top: 4px; color: var(--muted); font-size: 0.75rem; }
+.weeklyHistoryNavigation button {
+  padding: 9px 12px;
+  border: 1px solid #e5cdd2;
+  border-radius: 12px;
+  background: #fff7f8;
+  color: #8f2033;
+  font-weight: 700;
+}
+.weeklyHistoryNavigation button:disabled { opacity: 0.4; cursor: default; }
+@media (max-width: 600px) {
+  .weeklyHistoryNavigation > div { order: -1; width: 100%; }
+}

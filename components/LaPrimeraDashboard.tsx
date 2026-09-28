@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
 import {
   buildLaPrimeraStats,
@@ -718,14 +718,53 @@ function WeeklyPreviousDate({ results, number, session, date }: { results: LaPri
   return <small>Última vez: {previousDate ? <time dateTime={previousDate}>{formatShortDate(previousDate)}</time> : "Sin registro anterior"}</small>;
 }
 
+function useWeeklyHistory(results: LaPrimeraDraw[]) {
+  const [today, setToday] = useState(() => getDominicanClock().date);
+  const [selectedMonday, setSelectedMonday] = useState<string | null>(null);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const timer = window.setInterval(() => setToday(getDominicanClock().date), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const currentMonday = getWeekMonday(today);
+  // Only include weeks with earlier results to reconstruct the Monday lineup.
+  const firstDate = results.reduce((earliest, draw) => draw.date < earliest ? draw.date : earliest, today);
+  const firstMonday = addDays(getWeekMonday(firstDate), 7);
+  const earliestMonday = firstMonday < currentMonday ? firstMonday : currentMonday;
+  const monday = selectedMonday && selectedMonday >= earliestMonday && selectedMonday <= currentMonday ? selectedMonday : currentMonday;
+  const previous = () => { const value = addDays(monday, -7); if (value >= earliestMonday) setSelectedMonday(value); };
+  const next = () => { const value = addDays(monday, 7); if (value <= currentMonday) setSelectedMonday(value === currentMonday ? null : value); };
+  const swipe = {
+    onTouchStart: (event: ReactTouchEvent) => { start.current = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; },
+    onTouchCancel: () => { start.current = null; },
+    onTouchEnd: (event: ReactTouchEvent) => {
+      const point = start.current;
+      start.current = null;
+      if (!point || !event.changedTouches.length) return;
+      const dx = event.changedTouches[0].clientX - point.x;
+      const dy = event.changedTouches[0].clientY - point.y;
+      if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { if (dx > 0) previous(); else next(); }
+    }
+  };
+  return { today, monday, currentMonday, earliestMonday, previous, next, reset: () => setSelectedMonday(null), swipe };
+}
+
+function WeeklyHistoryNavigation({ history }: { history: ReturnType<typeof useWeeklyHistory> }) {
+  return <nav className="weeklyHistoryNavigation" aria-label="Historial de pujas semanales">
+    <button type="button" aria-label="Semana anterior" disabled={history.monday <= history.earliestMonday} onClick={history.previous}>← Anterior</button>
+    <div aria-live="polite"><strong>{formatShortDate(history.monday)} — {formatShortDate(addDays(history.monday, 6))}</strong><small>{history.monday === history.currentMonday ? "Semana actual" : "Semana histórica"} · Desliza para cambiar</small></div>
+    <button type="button" aria-label="Semana siguiente" disabled={history.monday >= history.currentMonday} onClick={history.next}>Siguiente →</button>
+    {history.monday !== history.currentMonday ? <button type="button" onClick={history.reset}>Volver a esta semana</button> : null}
+  </nav>;
+}
+
 function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDraw[]; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
-  const [showTotal, setShowTotal] = useState(false);
-  const today = getDominicanClock().date;
-  const monday = getWeekMonday(today);
+  const history = useWeeklyHistory(results);
+  const { today, monday } = history;
   const sunday = addDays(monday, 6);
   const baseResults = results.filter((draw) => draw.date < monday);
-  const rankings = buildQuinielonV2Rankings(baseResults.length ? baseResults : results, variant);
+  const rankings = buildQuinielonV2Rankings(baseResults, variant);
   const rotations = baseResults.length ? buildQuinielonV2WeeklyRotations(results, monday, variant) : [];
   const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
   const days = weekDates.map((date) => ({
@@ -751,7 +790,8 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
   const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
-    <section className="card weeklyTopChallenge quinielonV2Weekly">
+    <section className="card weeklyTopChallenge quinielonV2Weekly" {...history.swipe}>
+      <WeeklyHistoryNavigation history={history} />
       <header className="weeklyTopHeader">
         <div><span className="panelLabel primeraLabel">Puja semanal {investors ? "Inversionistas" : "V2"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
         <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div>
@@ -776,8 +816,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         </div>)}</div> : <p>Sin cambios de grupo esta semana.</p>}
       </aside>
       <div className="weeklyTopActions">
-        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((value) => !value)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
-        {showTotal ? <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador actual: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el marcador usando la plantilla {investors ? "de Inversionistas" : "V2"} del lunes.</p>}
+        <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div>
       </div>
     </section>
   );
@@ -1267,12 +1306,11 @@ function WeeklyTopChallenge({
   rankingOffset?: number;
   variant?: "default" | "investor" | "bank";
 }) {
-  const [showTotal, setShowTotal] = useState(false);
-  const today = getDominicanClock().date;
-  const monday = getWeekMonday(today);
+  const history = useWeeklyHistory(results);
+  const { today, monday } = history;
   const weekDates = Array.from({ length: 7 }, (_, index) => addDays(monday, index));
   const rankingResults = results.filter((draw) => draw.date < monday);
-  const rankingBase = rankingResults.length ? rankingResults : results;
+  const rankingBase = rankingResults;
   const weeklyRotations = rankingResults.length ? buildWeeklyRotations(results, monday, rankingBase) : [];
   const exclusiveRankings = buildLaPrimeraExclusiveRankings(rankingBase);
   const selectedRanking = variant === "bank"
@@ -1311,7 +1349,8 @@ function WeeklyTopChallenge({
   const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
-    <section className={`card weeklyTopChallenge ${variant === "investor" ? "weeklyInvestorChallenge" : variant === "bank" ? "weeklyBankChallenge" : ""}`}>
+    <section className={`card weeklyTopChallenge ${variant === "investor" ? "weeklyInvestorChallenge" : variant === "bank" ? "weeklyBankChallenge" : ""}`} {...history.swipe}>
+      <WeeklyHistoryNavigation history={history} />
       <header className="weeklyTopHeader">
         <div>
           <span className="panelLabel primeraLabel">Puja semanal · 14 tandas</span>
@@ -1362,8 +1401,7 @@ function WeeklyTopChallenge({
       </aside>
 
       <div className="weeklyTopActions">
-        <button className="primaryButton weeklyCalculateButton" onClick={() => setShowTotal((visible) => !visible)}>{showTotal ? "Ocultar total semanal" : "Calcular total semanal"}</button>
-        {showTotal ? <div className="weeklyTopSummary"><strong>{oursPercentage}% Nosotros · {investorsPercentage}% Inversionistas · {bankPercentage}% Banca</strong><p>Marcador actual: <b>{ours}–{investors}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div> : <p className="weeklySummaryHint">Calcula el ponderado entre Nosotros, Inversionistas y Banca con las tandas disponibles.</p>}
+        <div className="weeklyTopSummary"><strong>{oursPercentage}% Nosotros · {investorsPercentage}% Inversionistas · {bankPercentage}% Banca</strong><p>Marcador de la semana: <b>{ours}–{investors}–{bank}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div>
       </div>
     </section>
   );
