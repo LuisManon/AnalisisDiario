@@ -1,4 +1,4 @@
-import type { LaPrimeraSession } from "./types";
+import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
 export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean };
 export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; blockStarts?: number[]; algorithmVersion?: string };
 export function subtractMonths(date: string, months: number) {
@@ -66,4 +66,14 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
     if (investors) return {investors, mixed: true};
   }
   throw new Error("No hay un reparto equilibrado que evite las dos tandas anteriores con estos números. Se conserva el reparto guardado; no se han forzado repeticiones.");
+}
+
+export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
+export const investorWinnerStartDate = "2026-09-29";
+export type InvestorWinner = { number: number; name: string | null; recorded: boolean };
+export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null): InvestorWinner | null {
+  if (draw.date < investorWinnerStartDate) return null;
+  const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
+  const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
+  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded};
 }

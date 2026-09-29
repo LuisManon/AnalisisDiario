@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { selectedAssignmentSlot, type AssignmentSessionChoice, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
+import { investorNames, selectedAssignmentSlot, type AssignmentSessionChoice, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
 
-const investorNames = ["Lenin", "Willy", "Victor", "Jose Luis"] as const;
 
 type Props = { renderNumber: (number: number, source: AssignmentNumber["source"], badge: string, winner: boolean, session: Assignment["session"]) => ReactNode };
 export function NumberDistributor({renderNumber}: Props) {

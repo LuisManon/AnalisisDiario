@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
+import { investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
 import { createPortal } from "react-dom";
 import {
@@ -743,6 +744,18 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
   const history = useWeeklyHistory(results, investors ? undefined : "2026-09-21");
   const { today, monday } = history;
   const sunday = addDays(monday, 6);
+  const [investorWinners, setInvestorWinners] = useState<{week:string; data:Record<string,InvestorWinner>; error:boolean}>({week:"",data:{},error:false});
+  useEffect(() => {
+    if (investors || addDays(monday,6) < investorWinnerStartDate) return;
+    const controller = new AbortController();
+    setInvestorWinners({week:monday,data:{},error:false});
+    fetch(`/api/quinielon/distributor?week=${monday}`,{signal:controller.signal,cache:"no-store"})
+      .then(async response => {if (!response.ok) throw new Error("No disponible"); return response.json();})
+      .then(data => {if(!controller.signal.aborted) setInvestorWinners({week:monday,data:data.winners,error:false});})
+      .catch(() => {if(!controller.signal.aborted) setInvestorWinners({week:monday,data:{},error:true});});
+    return () => controller.abort();
+  }, [investors,monday,results]);
+
   const baseResults = results.filter((draw) => draw.date < monday);
   const rankings = buildQuinielonV2Rankings(baseResults, variant);
   const rotations = baseResults.length ? buildQuinielonV2WeeklyRotations(results, monday, variant) : [];
@@ -784,6 +797,11 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? "Pendiente" : quinielonV2GroupLabels[tanda.status]}</strong>
             <small>{tanda.draw ? `${formatQuinielonNumber(tanda.draw.number)} · Quinielón` : "Esperando resultado"}</small>
+            {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
+              const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
+              if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
+              return winner.name ? `Ganador: ${winner.name}` : winner.recorded ? "Sin inversionista ganador" : "Sin reparto registrado";
+            })()}</span> : null}
             {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
           </div>)}</div>
         </article>)}

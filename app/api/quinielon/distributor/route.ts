@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -47,4 +47,15 @@ export async function POST(request: Request) {
     return NextResponse.json(assignment);
   } catch(e) { return NextResponse.json({error:e instanceof Error ? e.message : "No se pudo guardar el reparto."},{status:409}); }
   finally { release(); }
+}
+
+export async function GET(request: Request) {
+  const start = new URL(request.url).searchParams.get("week") ?? "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !Number.isFinite(Date.parse(`${start}T00:00:00Z`)) || new Date(`${start}T00:00:00Z`).toISOString().slice(0,10) !== start) return NextResponse.json({error:"Semana inválida"},{status:400});
+  try {
+    const end = shiftDate(start,6);
+    const draws = (await readLaPrimeraResults()).filter(draw => draw.date >= start && draw.date <= end && draw.date >= investorWinnerStartDate);
+    const winners = await Promise.all(draws.map(async draw => [`${draw.date}-${draw.session}`, resolveInvestorWinner(draw,await read(draw))]));
+    return NextResponse.json({winners:Object.fromEntries(winners)}, {headers:{"Cache-Control":"no-store"}});
+  } catch { return NextResponse.json({error:"No se pudieron consultar los inversionistas ganadores."},{status:503}); }
 }

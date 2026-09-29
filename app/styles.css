@@ -6595,3 +6595,5 @@ body:has(.appShell.lotoShell) {
 .distributorInvestor-noche button { background: #ffffff14; color: #fff; border-color: #77849a; }
 
 .distributorBlockLabel { margin: 4px 0; font-size: 13px; font-weight: 700; }
+
+.weeklyTanda .weeklyInvestorWinner { display: block; margin-top: 5px; font-size: 12px; font-weight: 700; color: inherit; text-transform: none; letter-spacing: normal; }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import { resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
 function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:""};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
@@ -50,4 +50,14 @@ test("block rotation does not depend on viewing order or changing number identit
   rotateBlocks(pool,{date:"2026-09-29",session:"dia"});
   assert.deepEqual(rotateBlocks(pool,{date:"2026-10-02",session:"noche"}),future);
   assert.throws(()=>rotateBlocks(pool.slice(0,79),{date:"2026-09-29",session:"dia"}));
+});
+
+test("calendar winners use saved assignments from September 29 and Seibo's stable index",()=>{
+  const assignment = snapshot([pool.slice(0,20),pool.slice(20,40),pool.slice(40,60),pool.slice(60,80)]);
+  const draw = {date:"2026-09-29",session:"dia" as const,number:23};
+  assert.deepEqual(resolveInvestorWinner(draw,assignment),{number:23,name:"Seibo",recorded:true});
+  assert.equal(resolveInvestorWinner({...draw,date:"2026-09-28"},assignment),null);
+  assert.deepEqual(resolveInvestorWinner(draw,null),{number:23,name:null,recorded:false});
+  assert.deepEqual(resolveInvestorWinner({...draw,session:"noche"},assignment),{number:23,name:null,recorded:false});
+  assert.deepEqual(resolveInvestorWinner({...draw,number:99},assignment),{number:99,name:null,recorded:true});
 });
