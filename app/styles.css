@@ -6573,3 +6573,8 @@ body:has(.appShell.lotoShell) {
 .distributor textarea { width: 100%; }
 @media(max-width: 850px) { .distributorGrid { grid-template-columns: 1fr; } .distributorHeader { align-items: flex-start; flex-direction: column; margin-bottom: 14px; } }
 @media(max-width: 380px) { .distributorNumbers { grid-template-columns: repeat(5,minmax(0,1fr)); } }
+
+.distributorControls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 16px; }
+.distributorControls .v2SymbolControls { margin: 0; }
+.distributorSession { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.distributorSession select { padding: 9px 12px; max-width: 100%; border: 1px solid #d5d5dc; border-radius: 9px; background: #f7f7f9; color: #454550; font: inherit; }

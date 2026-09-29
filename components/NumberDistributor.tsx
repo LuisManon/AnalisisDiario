@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { nextAssignmentSlot, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
+import { selectedAssignmentSlot, type AssignmentSessionChoice, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
 
 type Props = { renderNumber: (number: number, source: AssignmentNumber["source"], badge: string, winner: boolean, session: Assignment["session"]) => ReactNode };
 export function NumberDistributor({renderNumber}: Props) {
   const [assignment,setAssignment] = useState<Assignment|null>(null);
+  const [sessionChoice,setSessionChoice] = useState<AssignmentSessionChoice>("auto");
+  const [showSymbols,setShowSymbols] = useState(true);
+  const choiceRef = useRef<AssignmentSessionChoice>("auto");
   const [busy,setBusy] = useState(true);
   const [error,setError] = useState("");
   const [copied,setCopied] = useState("");
@@ -14,7 +17,7 @@ export function NumberDistributor({renderNumber}: Props) {
   async function load(smart?:boolean) {
     const id=++sequence.current; setBusy(true);setError("");setCopied("");setFallback("");
     try {
-      const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(smart === undefined ? {} : {smart})});
+      const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current, ...(smart === undefined ? {} : {smart})})});
       const data=await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el reparto.");
       if (id===sequence.current) {setAssignment(data);slotRef.current=`${data.date}-${data.session}`;}
@@ -23,9 +26,16 @@ export function NumberDistributor({renderNumber}: Props) {
   }
   useEffect(() => {
     void load();
-    const timer=window.setInterval(()=>{const slot=nextAssignmentSlot(); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},30_000);
+    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},30_000);
     return ()=>{window.clearInterval(timer);sequence.current++;};
   },[]);
+  function changeSession(value: AssignmentSessionChoice) {
+    choiceRef.current=value;
+    setSessionChoice(value);
+    setAssignment(null);
+    slotRef.current="";
+    void load();
+  }
   function text(investor?:number) {
     if(!assignment) return "";
     const [y,m,d]=assignment.date.split("-");
@@ -39,12 +49,16 @@ export function NumberDistributor({renderNumber}: Props) {
   }
   async function share(investor?:number) {const value=text(investor);try {await navigator.clipboard.writeText(value);setCopied(investor===undefined ? "Reparto copiado para WhatsApp." : `Inversionista ${investor+1} copiado.`);setFallback("");}catch {setFallback(value);setCopied("Selecciona y copia el texto para WhatsApp.");}}
   const role=(numbers:AssignmentNumber[])=>{const casa=numbers.filter(n=>n.source==="casa").length;return casa===numbers.length&&casa ? "Casa · fuertes" : casa===0 ? "Respaldo" : `${casa} Casa · ${numbers.length-casa} Respaldo`;};
-  return <section className="card distributor" aria-label="Asignador de números por tanda" aria-busy={busy}>
+  return <section className={`card distributor${showSymbols ? "" : " hideNumberSymbols"}`} aria-label="Asignador de números por tanda" aria-busy={busy}>
     <header className="distributorHeader"><div><span className="panelLabel">Asignador por tanda</span><h2>Cuatro inversionistas</h2><p>{assignment ? `${assignment.date.split("-").reverse().join("-")} · ${assignment.session === "dia" ? "Día · 12:00 PM" : "Noche · 7:00 PM"}` : "Preparando la próxima tanda…"}</p></div><button type="button" disabled={!assignment||busy||Boolean(error)} onClick={()=>void share()}>Compartir · Copiar WhatsApp</button></header>
+    <div className="distributorControls">
+      <label className="distributorSession">Tanda <select aria-label="Tanda del asignador" value={sessionChoice} onChange={e=>changeSession(e.target.value as AssignmentSessionChoice)}><option value="auto">Automática · próxima tanda</option><option value="dia">Día · próximo sorteo</option><option value="noche">Noche · próximo sorteo</option></select></label>
+      <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={e=>setShowSymbols(e.target.checked)} /> Mostrar coronas, hielo y cristales del asignador</label></div>
+    </div>
     <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={assignment?.smart??false} disabled={busy} onChange={e=>void load(e.target.checked)} /> Repartidor inteligente</label><small>{assignment?.smart ? `${assignment.excluded} con cristal o hielo excluidos · reparto equilibrado` : "Top 20 de Casa, siguientes 20 y dos grupos de 20 de Respaldo"}</small></div>
     {busy ? <p role="status">Guardando el reparto de la tanda…</p> : null}
     {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
-    {assignment ? <><div className="distributorGrid">{assignment.investors.map((numbers,i)=><article key={i}><header><div><h3>Inversionista {i+1}</h3><small>{role(numbers)} · {numbers.length} números</small></div><button type="button" aria-label={`Copiar jugadas de Inversionista ${i+1}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button></header><div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>{!numbers.length?<p>Sin números disponibles.</p>:null}</article>)}</div><p className="distributorNote">Reparto guardado y estable durante la tanda. Cambio automático a las 12:00 PM y 7:00 PM (hora dominicana). {assignment.priorCount===2 ? "Sin repetir números por inversionista de las dos tandas anteriores." : `Comprobado contra ${assignment.priorCount} ${assignment.priorCount===1 ? "tanda guardada" : "tandas guardadas"}; las asignaciones manuales anteriores no están registradas.`}</p></> : null}
+    {assignment ? <><div className="distributorGrid">{assignment.investors.map((numbers,i)=><article key={i}><header><div><h3>Inversionista {i+1}</h3><small>{role(numbers)} · {numbers.length} números</small></div><button type="button" aria-label={`Copiar jugadas de Inversionista ${i+1}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button></header><div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>{!numbers.length?<p>Sin números disponibles.</p>:null}</article>)}</div><p className="distributorNote">Reparto guardado y estable durante la tanda. {sessionChoice === "auto" ? "Cambio automático a las 12:00 PM y 7:00 PM (hora dominicana)." : "Mostrando el próximo sorteo de la tanda seleccionada."} {assignment.priorCount===2 ? "Sin repetir números por inversionista de las dos tandas anteriores." : `Comprobado contra ${assignment.priorCount} ${assignment.priorCount===1 ? "tanda guardada" : "tandas guardadas"}; las asignaciones manuales anteriores no están registradas.`}</p></> : null}
     <p role="status" className="distributorNote">{copied}</p>{fallback?<textarea aria-label="Texto para copiar a WhatsApp" readOnly value={fallback} onFocus={e=>e.target.select()} rows={8}/>:null}
   </section>;
 }

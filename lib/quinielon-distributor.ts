@@ -16,6 +16,15 @@ export function nextAssignmentSlot(now = new Date()) {
   const minutes = Number(parts.hour) * 60 + Number(parts.minute);
   return { date: minutes >= 1140 ? shiftDate(date, 1) : date, session: (minutes < 720 || minutes >= 1140 ? "dia" : "noche") as LaPrimeraSession };
 }
+export type AssignmentSessionChoice = "auto" | LaPrimeraSession;
+export function selectedAssignmentSlot(choice: AssignmentSessionChoice = "auto", now = new Date()) {
+  const next = nextAssignmentSlot(now);
+  if (choice === "auto" || choice === next.session) return next;
+  return { date: next.session === "noche" ? shiftDate(next.date, 1) : next.date, session: choice };
+}
+export function followingSlot(slot: { date: string; session: LaPrimeraSession }) {
+  return { date: slot.session === "noche" ? shiftDate(slot.date, 1) : slot.date, session: (slot.session === "dia" ? "noche" : "dia") as LaPrimeraSession };
+}
 export function previousSlot(slot: { date: string; session: LaPrimeraSession }) { return { date: slot.session === "dia" ? shiftDate(slot.date, -1) : slot.date, session: (slot.session === "dia" ? "noche" : "dia") as LaPrimeraSession }; }
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
 // Bipartite matching with capacity slots: hard exclusion of each investor's previous two draws.
