@@ -759,6 +759,30 @@ function WeeklyHistoryNavigation({ history, label = "Historial de pujas semanale
   </nav>;
 }
 
+function AnimatedWeek({ monday, children }: { monday: string; children: ReactNode }) {
+  const container = useRef<HTMLDivElement>(null);
+  const previousMonday = useRef(monday);
+  useLayoutEffect(() => {
+    const previous = previousMonday.current;
+    previousMonday.current = monday;
+    if (previous === monday || !container.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const direction = monday > previous ? 1 : -1;
+    const animations: Animation[] = [container.current.animate([
+      { opacity: 0, transform: `translateX(${direction * 36}px) scale(.985)` },
+      { opacity: 1, transform: "translateX(0) scale(1)" }
+    ], { duration: 380, easing: "cubic-bezier(.16,1,.3,1)" })];
+    const cards = Array.from(container.current.querySelectorAll<HTMLElement>(".weeklyDayCard"));
+    cards.forEach((card, index) => {
+      animations.push(card.animate([
+        { opacity: 0, transform: `translate(${direction * 16}px, 10px)` },
+        { opacity: 1, transform: "translate(0, 0)" }
+      ], { duration: 340, delay: (direction > 0 ? index : cards.length - index - 1) * 25, fill: "backwards", easing: "cubic-bezier(.16,1,.3,1)" }));
+    });
+    return () => animations.forEach((animation) => animation.cancel());
+  }, [monday]);
+  return <div className="weeklyAnimationViewport"><div ref={container}>{children}</div></div>;
+}
+
 function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDraw[]; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
   // Fixed starting week: keep accumulating future weeks from this date.
@@ -794,6 +818,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
   return (
     <section className="card weeklyTopChallenge quinielonV2Weekly" {...history.swipe}>
       <WeeklyHistoryNavigation history={history} label={investors ? "Historial de pujas semanales" : "Historial del calendario de sorteos"} />
+      <AnimatedWeek monday={monday}>
       <header className="weeklyTopHeader">
         <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
         {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
@@ -820,6 +845,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
       <div className="weeklyTopActions">
         <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div>
       </div>
+      </AnimatedWeek>
     </section>
   );
 }

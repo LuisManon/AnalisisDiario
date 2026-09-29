@@ -6549,3 +6549,5 @@ body:has(.appShell.lotoShell) {
 .numberHistoryDates { margin: 10px 0 0; padding-left: 26px; }
 .numberHistoryDates li { padding: 5px 0; border-bottom: 1px solid #f1e9ed; }
 @media (prefers-reduced-motion: reduce) { .numberHistoryExpansion { transition: none; } }
+
+.weeklyAnimationViewport { overflow: clip; padding: 6px; margin: -6px; }
