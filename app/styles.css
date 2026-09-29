@@ -6536,3 +6536,7 @@ body:has(.appShell.lotoShell) {
   box-shadow: inset 2px 3px 6px #ffffffb3, inset -4px -6px 9px #bb705033, 0 5px 10px #a5785933;
 }
 .rosterFilterControls { margin: 16px 0 4px; font-size: .85rem; }
+.v2SelectionCard-noche .rosterFilterControls,
+.v2SelectionCard-noche .rosterFilterControls label,
+.v2SelectionCard-noche .rosterFilterControls small,
+.v2SelectionCard-noche > .muted { color: #fff; }
