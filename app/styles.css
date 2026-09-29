@@ -6597,3 +6597,29 @@ body:has(.appShell.lotoShell) {
 .distributorBlockLabel { margin: 4px 0; font-size: 13px; font-weight: 700; }
 
 .weeklyTanda .weeklyInvestorWinner { display: block; margin-top: 5px; font-size: 12px; font-weight: 700; color: inherit; text-transform: none; letter-spacing: normal; }
+
+/* Share row sizing across all seven days, including days without a winner label. */
+.quinielonV2Weekly .weeklyDayGrid {
+  grid-template-rows: auto repeat(2, minmax(112px, 1fr));
+}
+.quinielonV2Weekly .weeklyDayCard {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+}
+.quinielonV2Weekly .weeklyTandas {
+  grid-row: 2 / span 2;
+  grid-template-rows: subgrid;
+  row-gap: 1px;
+}
+.quinielonV2Weekly .weeklyTanda {
+  align-content: start;
+  gap: 3px;
+}
+.quinielonV2Weekly .weeklyInvestorWinner {
+  margin-top: 2px;
+  font-size: .72rem;
+  line-height: 1.3;
+  font-weight: 600;
+}

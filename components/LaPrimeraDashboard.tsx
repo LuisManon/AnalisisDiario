@@ -800,7 +800,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
-              return winner.name ? `Ganador: ${winner.name}` : winner.recorded ? "Sin inversionista ganador" : "Sin reparto registrado";
+              return winner.name ? `Ganador: ${winner.name}` : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
             })()}</span> : null}
             {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
           </div>)}</div>
