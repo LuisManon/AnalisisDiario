@@ -3947,45 +3947,23 @@ body:has(.appShell.primeraShell) {
 
 .v2LatestCard.dia {
   background:
-    radial-gradient(ellipse at 12% 28%, #ffffffb3 0 7%, transparent 18%),
-    radial-gradient(ellipse at 27% 32%, #ffffff99 0 9%, transparent 22%),
-    radial-gradient(ellipse at 76% 72%, #ffffffb3 0 10%, transparent 24%),
-    radial-gradient(ellipse at 93% 65%, #ffffff99 0 8%, transparent 20%),
-    linear-gradient(145deg, #dceefa, #f3f9fd);
+    radial-gradient(ellipse at 12% 32%, #ffffffed 0 10%, transparent 23%),
+    radial-gradient(ellipse at 30% 36%, #ffffffd9 0 12%, transparent 26%),
+    radial-gradient(ellipse at 76% 76%, #ffffffed 0 12%, transparent 27%),
+    radial-gradient(ellipse at 96% 68%, #ffffffd9 0 10%, transparent 24%),
+    linear-gradient(145deg, #bbdef5, #eaf5fc);
   box-shadow: inset 0 0 0 1px rgba(73, 102, 126, 0.14);
 }
 
 .v2LatestCard.dia .v2SkyIcon {
-  background: #f5a623;
-  clip-path: polygon(
-    50% 0%, 57% 19%, 69% 4%, 72% 25%,
-    85% 15%, 82% 35%, 100% 31%, 86% 45%,
-    100% 50%, 81% 57%, 96% 69%, 75% 72%,
-    85% 85%, 65% 82%, 69% 100%, 55% 86%,
-    50% 100%, 43% 81%, 31% 96%, 28% 75%,
-    15% 85%, 18% 65%, 0% 69%, 14% 55%,
-    0% 50%, 19% 43%, 4% 31%, 25% 28%,
-    15% 15%, 35% 18%, 31% 0%, 45% 14%
-  );
-  height: 63px;
+  background: radial-gradient(circle at top right, #ffe55c 0%, #ffe778ba 25%, #fff0a65c 48%, transparent 72%);
+  height: 170px;
+  width: 180px;
   position: absolute;
-  right: 14px;
-  top: 14px;
-  width: 63px;
-  z-index: 2;
-}
-
-.v2LatestCard.dia .v2SkyIcon::before {
-  background: #ffdf18;
-  border: 2px solid #ffc24a;
-  border-radius: 50%;
-  content: "";
-  height: 45px;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 45px;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .v2LatestCard.noche {
@@ -6550,3 +6528,11 @@ body:has(.appShell.lotoShell) {
 .v2SymbolControls input:checked::after { transform: translateX(18px); }
 .v2SymbolControls input:focus-visible { outline: 2px solid #d71932; outline-offset: 3px; }
 .hideNumberSymbols .primeraBallWinner::after, .hideNumberSymbols .frozenBallBadge, .hideNumberSymbols .rosterMovementBadge { display: none; }
+
+.primeraTheme .v2LatestCard.dia .primeraBall {
+  background: radial-gradient(ellipse at 28% 18%, #fffaf0 0%, #ffe5c9 32%, #f7b995 68%, #dc896e 100%);
+  color: #713b2d;
+  border-color: #e9ab8c;
+  box-shadow: inset 2px 3px 6px #ffffffb3, inset -4px -6px 9px #bb705033, 0 5px 10px #a5785933;
+}
+.rosterFilterControls { margin: 16px 0 4px; font-size: .85rem; }

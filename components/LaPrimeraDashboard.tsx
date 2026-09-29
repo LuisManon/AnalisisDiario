@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
 import {
   buildLaPrimeraStats,
@@ -204,7 +204,7 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 
 export function LaPrimeraDashboard({ initialData }: Props) {
   const [data, setData] = useState(initialData);
-  const [product, setProduct] = useState<LaPrimeraProduct>("inversionistas");
+  const [product, setProduct] = useState<LaPrimeraProduct>("quinielon-v2");
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [status, setStatus] = useState(`Data local: ${initialData.results.length} sorteos cargados.`);
   const [session, setSession] = useState<LaPrimeraFilter>("todos");
@@ -610,11 +610,11 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
   return (
     <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
-      <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
       <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>Quinielón V2</button>
-      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
+      <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
+      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
     </nav>
   );
 }
@@ -1485,7 +1485,7 @@ function NumberDetails({ results, number, session, children }: { results: LaPrim
   }, [position]);
   const today = getDominicanClock().date;
   return <>
-    <span ref={trigger} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onMouseEnter={() => { cancel(); timer.current = setTimeout(open, 500); }} onMouseLeave={cancel} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
+    <span ref={trigger} data-roster-number={number} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onMouseEnter={() => { cancel(); timer.current = setTimeout(open, 500); }} onMouseLeave={cancel} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
     {position ? createPortal(<div ref={panel} className="numberDetailsPopover" role="dialog" aria-label={`Detalles del número ${formatQuinielonNumber(number)}`} style={position}>
       <header><strong>Número {formatQuinielonNumber(number)}</strong><button type="button" aria-label="Cerrar detalles" onClick={() => { setPosition(null); trigger.current?.focus(); }}>×</button></header>
       {(session ? [session] : ["dia", "noche"] as const).map((tanda) => {
@@ -1528,20 +1528,51 @@ function NumberGridCard({
   results: LaPrimeraDraw[];
   delaySession?: LaPrimeraSession;
 }) {
+  const [hideDelayed, setHideDelayed] = useState(false);
+  const grid = useRef<HTMLDivElement>(null);
+  const previousPositions = useRef(new Map<string, DOMRect>());
+  const hasCrystalFor = (number: number) => {
+    const lastDate = crystalReferenceDate && delaySession
+      ? results.find((draw) => draw.session === delaySession && draw.number === number)?.date
+      : undefined;
+    return Boolean(crystalReferenceDate && lastDate
+      && lastDate <= subtractMonths(crystalReferenceDate, 4)
+      && lastDate > subtractMonths(crystalReferenceDate, 6));
+  };
+  const visibleRanking = hideDelayed && crystalReferenceDate
+    ? ranking.filter((item) => !frozenByNumber.get(item.number)?.length && !hasCrystalFor(item.number))
+    : ranking;
+  function toggleDelayed(checked: boolean) {
+    previousPositions.current.clear();
+    grid.current?.querySelectorAll<HTMLElement>("[data-roster-number]").forEach((element) => {
+      element.getAnimations().forEach((animation) => animation.cancel());
+      previousPositions.current.set(element.dataset.rosterNumber!, element.getBoundingClientRect());
+    });
+    setHideDelayed(checked);
+  }
+  useLayoutEffect(() => {
+    if (!previousPositions.current.size || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    grid.current?.querySelectorAll<HTMLElement>("[data-roster-number]").forEach((element) => {
+      const before = previousPositions.current.get(element.dataset.rosterNumber!);
+      const after = element.getBoundingClientRect();
+      element.animate(before
+        ? [{ transform: `translate(${before.left - after.left}px, ${before.top - after.top}px)` }, { transform: "translate(0, 0)" }]
+        : [{ opacity: 0, transform: "scale(.75)" }, { opacity: 1, transform: "scale(1)" }],
+      { duration: 320, easing: "cubic-bezier(.2,.8,.2,1)" });
+    });
+    previousPositions.current.clear();
+  }, [hideDelayed]);
   return (
     <article className={`card primeraCard numberGridCard ${session ? `v2SelectionCard v2SelectionCard-${session}` : ""} ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
       <h3>{title}</h3>
       {session && selectionDate ? <div className="v2SelectionStamp"><span>{formatSession(session)} · {laPrimeraSchedules[session].time}</span><time dateTime={selectionDate}>{new Intl.DateTimeFormat("es-DO", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Santo_Domingo" }).format(new Date(`${selectionDate}T12:00:00-04:00`))}</time></div> : null}
-      <div className="bankNumberGrid">
-        {ranking.map((item, index) => {
+      {crystalReferenceDate ? <div className="v2SymbolControls rosterFilterControls"><label><input type="checkbox" role="switch" checked={hideDelayed} onChange={(event) => toggleDelayed(event.target.checked)} /> Ocultar números con ❄️ y 🧊</label><small aria-live="polite">{visibleRanking.length} de {ranking.length} números</small></div> : null}
+      {visibleRanking.length === 0 ? <p className="muted" role="status">Todos los números de esta tarjeta tienen cristal o hielo.</p> : null}
+      <div className="bankNumberGrid" ref={grid}>
+        {visibleRanking.map((item, index) => {
           const movement = movementByNumber.get(item.number);
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
-          const lastDate = crystalReferenceDate && delaySession
-            ? results.find((draw) => draw.session === delaySession && draw.number === item.number)?.date
-            : undefined;
-          const hasCrystal = Boolean(crystalReferenceDate && lastDate
-            && lastDate <= subtractMonths(crystalReferenceDate, 4)
-            && lastDate > subtractMonths(crystalReferenceDate, 6));
+          const hasCrystal = hasCrystalFor(item.number);
           const frozenLabel = frozenSessions.length
             ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
             : "";
