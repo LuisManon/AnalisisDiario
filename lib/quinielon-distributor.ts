@@ -61,8 +61,14 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
         }
       }
     }
-    // Never silently break the no-repeat rule to keep the original group split.
-    throw new Error("No es posible mantener 20 de Casa / 20 de Respaldo sin repetir las dos tandas anteriores. Activa Repartidor inteligente para permitir mezclar los grupos.");
+    // Rebuild the blocks before giving up: rankings change between Day and Night.
+    for (const pair of pairs) {
+      const investors = match([20,20,20,20], pair);
+      if (investors) return {investors, mixed:false};
+    }
+    // Normal mode keeps all 80 numbers. Mixing sources is preferable to forcing repeats.
+    // Smart mode differs by filtering delayed numbers, not by unlocking matching.
+
   }
   const order = [0,1,2,3].sort((a,b) => hash(seed+a)-hash(seed+b));
   // Try every balanced capacity permutation, as a remainder may constrain a particular investor.

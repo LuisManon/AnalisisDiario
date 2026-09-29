@@ -6578,3 +6578,18 @@ body:has(.appShell.lotoShell) {
 .distributorControls .v2SymbolControls { margin: 0; }
 .distributorSession { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 .distributorSession select { padding: 9px 12px; max-width: 100%; border: 1px solid #d5d5dc; border-radius: 9px; background: #f7f7f9; color: #454550; font: inherit; }
+
+.distributorGrid .distributorInvestor-dia {
+  background: radial-gradient(ellipse at top right, #ffe996a6, transparent 48%), radial-gradient(ellipse at 18% 40%, #ffffffd9 0 12%, transparent 35%), linear-gradient(145deg, #dceefb, #f4faff);
+  border-color: #c5dce9;
+}
+.distributorGrid .distributorInvestor-dia h3 { color: #243e54; }
+.distributorGrid .distributorInvestor-dia small { color: #415c72; }
+.distributorGrid .distributorInvestor-noche {
+  background: radial-gradient(circle at 85% 15%, #e2edff85 1px, transparent 2px), radial-gradient(circle at 65% 32%, #e2edff85 1px, transparent 2px), radial-gradient(circle at 15% 75%, #e2edff66 1px, transparent 2px), linear-gradient(145deg, #27344e, #172339);
+  border-color: #52607a;
+  color: #fff;
+}
+.distributorGrid .distributorInvestor-noche h3,
+.distributorGrid .distributorInvestor-noche small { color: #fff; }
+.distributorInvestor-noche button { background: #ffffff14; color: #fff; border-color: #77849a; }

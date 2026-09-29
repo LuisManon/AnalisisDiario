@@ -41,3 +41,23 @@ test("preparing an earlier session protects an already saved later assignment",(
   const earlier = distribute(pool,[later],false,"earlier");
   verify(earlier.investors,pool,[later]);
 });
+
+test("normal mode rebuilds changing blocks without excluding any of the 80 numbers",()=>{
+  const prior:AssignmentNumber[][]=[[],[],[],[]];
+  pool.forEach(n=>prior[n.number%4].push(n));
+  const history=[snapshot(prior)];
+  const result=distribute(pool,history,false,"changed-day-night-ranking");
+  verify(result.investors,pool,history);
+  assert.deepEqual(result.investors.map(items=>items.length),[20,20,20,20]);
+  assert.equal(result.mixed,false);
+});
+test("normal mode can mix sources when source-only matching is impossible",()=>{
+  // Across two saved draws, every pair of investors has held some Casa numbers.
+  const pairs=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+  const first:AssignmentNumber[][]=[[],[],[],[]],second:AssignmentNumber[][]=[[],[],[],[]];
+  pool.forEach((n,i)=>{ const [a,b]=pairs[i%pairs.length];first[a].push(n);second[b].push(n); });
+  const history=[snapshot(first),snapshot(second)];
+  const result=distribute(pool,history,false,"mixed-needed");
+  verify(result.investors,pool,history);
+  assert.equal(result.mixed,true);
+});
