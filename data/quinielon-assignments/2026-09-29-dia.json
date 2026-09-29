@@ -493,7 +493,14 @@
     ]
   ],
   "mixed": false,
+  "blockStarts": [
+    1,
+    21,
+    41,
+    61
+  ],
+  "algorithmVersion": "blocks-v1",
   "excluded": 0,
   "priorCount": 0,
-  "createdAt": "2026-09-29T03:54:11.060Z"
+  "createdAt": "2026-09-29T13:22:48.430Z"
 }
