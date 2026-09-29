@@ -1,6 +1,6 @@
 import type { LaPrimeraSession } from "./types";
 export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean };
-export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string };
+export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; blockStarts?: number[]; algorithmVersion?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
   const day = value.getUTCDate();
@@ -26,11 +26,21 @@ export function followingSlot(slot: { date: string; session: LaPrimeraSession })
   return { date: slot.session === "noche" ? shiftDate(slot.date, 1) : slot.date, session: (slot.session === "dia" ? "noche" : "dia") as LaPrimeraSession };
 }
 export function previousSlot(slot: { date: string; session: LaPrimeraSession }) { return { date: slot.session === "dia" ? shiftDate(slot.date, -1) : slot.date, session: (slot.session === "dia" ? "noche" : "dia") as LaPrimeraSession }; }
+export const blockRotationVersion = "blocks-v1";
+export function rotateBlocks(pool: AssignmentNumber[], slot: { date: string; session: LaPrimeraSession }) {
+  if (pool.length !== 80 || new Set(pool.map(n => n.number)).size !== 80) throw new Error("Se necesitan 80 números distintos para repartir cuatro bloques de 20.");
+  const cycle = [0, 2, 1, 3]; // 1–20 → 41–60 → 21–40 → 61–80
+  const days = Math.round((Date.parse(`${slot.date}T00:00:00Z`) - Date.parse("2026-09-29T00:00:00Z")) / 86_400_000);
+  if (!Number.isFinite(days)) throw new Error("Fecha de reparto inválida.");
+  const turn = days * 2 + (slot.session === "noche" ? 1 : 0);
+  const blockIndexes = [0,1,2,3].map(initial => cycle[((cycle.indexOf(initial) + turn) % 4 + 4) % 4]);
+  return { investors: blockIndexes.map(block => pool.slice(block * 20, block * 20 + 20)), mixed: false,
+    blockStarts: blockIndexes.map(block => block * 20 + 1), algorithmVersion: blockRotationVersion };
+}
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
 // Bipartite matching with capacity slots: hard exclusion of each investor's previous two draws.
 export function distribute(pool: AssignmentNumber[], previous: Assignment[], smart: boolean, seed: string) {
   const blocked = Array.from({ length: 4 }, (_, i) => new Set(previous.flatMap(p => p.investors[i].map(n => n.number))));
-  const pairs = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]].sort((a,b) => hash(seed+a.join())-hash(seed+b.join()));
   function match(capacities: number[], housePair?: number[]) {
     const slots = capacities.flatMap((count, investor) => Array.from({length: count}, () => investor));
     const owners = slots.map(() => -1);
@@ -45,30 +55,6 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
     owners.forEach((owner, slot) => { if (owner >= 0) output[slots[slot]].push(pool[owner]); });
     output.forEach(items => items.sort((a,b) => pool.indexOf(a)-pool.indexOf(b)));
     return output;
-  }
-  if (!smart && pool.length === 80 && pool.filter(n => n.source === "casa").length === 40) {
-    const casa = pool.filter(n => n.source === "casa"), respaldo = pool.filter(n => n.source === "respaldo");
-    const blocks = [casa.slice(0,20), casa.slice(20), respaldo.slice(0,20), respaldo.slice(20)];
-    if (previous.length === 0) return {investors: blocks, mixed:false};
-    for (const pair of pairs) {
-      const others = [0,1,2,3].filter(i => !pair.includes(i));
-      for (const house of [pair,[...pair].reverse()]) for (const reserve of [others,[...others].reverse()]) {
-        const order = [...house,...reserve];
-        if (blocks.every((block,b) => block.every(n => !blocked[order[b]].has(n.number)))) {
-          const investors: AssignmentNumber[][] = [[],[],[],[]];
-          blocks.forEach((block,b) => { investors[order[b]] = block; });
-          return {investors,mixed:false};
-        }
-      }
-    }
-    // Rebuild the blocks before giving up: rankings change between Day and Night.
-    for (const pair of pairs) {
-      const investors = match([20,20,20,20], pair);
-      if (investors) return {investors, mixed:false};
-    }
-    // Normal mode keeps all 80 numbers. Mixing sources is preferable to forcing repeats.
-    // Smart mode differs by filtering delayed numbers, not by unlocking matching.
-
   }
   const order = [0,1,2,3].sort((a,b) => hash(seed+a)-hash(seed+b));
   // Try every balanced capacity permutation, as a remainder may constrain a particular investor.

@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const p1 = previousSlot(slot), p2 = previousSlot(p1);
     const history = (await Promise.all([read(p1), read(p2)])).filter((a): a is Assignment => Boolean(a));
     const smart = body?.smart ?? existing?.smart ?? history[0]?.smart ?? false;
-    if (existing && existing.smart === smart) return NextResponse.json(existing);
+    if (existing && existing.smart === smart && (smart || existing.algorithmVersion === blockRotationVersion)) return NextResponse.json(existing);
     const results = (await readLaPrimeraResults()).filter(d => d.date < slot.date || (d.date === slot.date && slot.session === "noche" && d.session === "dia"));
     if (!results.length) throw new Error("No hay resultados disponibles para construir el reparto.");
     const rankings = buildQuinielonV2Rankings(results)[slot.session];
@@ -38,8 +38,8 @@ export async function POST(request: Request) {
     const eligible = smart ? pool.filter(n => !n.badge) : pool;
     // A later draw may already have been prepared from the selector. Protect it too.
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
-    const future = (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a));
-    const allocation = distribute(eligible,[...history,...future],smart,`${slot.date}-${slot.session}`);
+    const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
+    const allocation = smart ? distribute(eligible,[...history,...future],true,`${slot.date}-${slot.session}`) : rotateBlocks(pool,slot);
     const assignment: Assignment = {...slot, smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
     const content = JSON.stringify(assignment,null,2)+"\n";
     if (isGitHubDataStoreEnabled()) await writeGitHubSnapshot(file(slot),content,existing ? JSON.stringify(existing,null,2)+"\n" : null,`Save Quinielon assignment ${slot.date} ${slot.session}`);
