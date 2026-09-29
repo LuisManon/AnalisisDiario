@@ -6540,3 +6540,12 @@ body:has(.appShell.lotoShell) {
 .v2SelectionCard-noche .rosterFilterControls label,
 .v2SelectionCard-noche .rosterFilterControls small,
 .v2SelectionCard-noche > .muted { color: #fff; }
+
+.numberHistoryToggle { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; margin-top: 12px; padding: 9px 10px; border: 1px solid #eadde2; border-radius: 9px; background: #faf3f5; color: #9b2038; cursor: pointer; font: inherit; font-weight: 600; }
+.numberHistoryToggle:focus-visible { outline: 2px solid #b2223b; outline-offset: 2px; }
+.numberHistoryExpansion { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 280ms ease, opacity 280ms ease; }
+.numberHistoryExpansion.expanded { grid-template-rows: 1fr; opacity: 1; }
+.numberHistoryExpansion > div { min-height: 0; overflow: hidden; }
+.numberHistoryDates { margin: 10px 0 0; padding-left: 26px; }
+.numberHistoryDates li { padding: 5px 0; border-bottom: 1px solid #f1e9ed; }
+@media (prefers-reduced-motion: reduce) { .numberHistoryExpansion { transition: none; } }

@@ -1438,7 +1438,7 @@ function buildNumberMovements(rotations: Array<{ number: number; date: string; f
 function formatNumberDelay(lastDate: string, today: string) {
   const last = new Date(`${lastDate}T00:00:00Z`);
   const current = new Date(`${today}T00:00:00Z`);
-  if (current <= last) return "0 meses y 0 días sin salir";
+  if (current <= last) return "0 días sin salir";
   let months = (current.getUTCFullYear() - last.getUTCFullYear()) * 12 + current.getUTCMonth() - last.getUTCMonth();
   const anniversary = (offset: number) => {
     const date = new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth() + offset, 1));
@@ -1448,6 +1448,7 @@ function formatNumberDelay(lastDate: string, today: string) {
   };
   if (anniversary(months) > current) months -= 1;
   const days = Math.floor((current.getTime() - anniversary(months).getTime()) / 86_400_000);
+  if (months === 0) return `${days} ${days === 1 ? "día" : "días"} sin salir`;
   return `${months} ${months === 1 ? "mes" : "meses"} y ${days} ${days === 1 ? "día" : "días"} sin salir`;
 }
 
@@ -1456,44 +1457,52 @@ function NumberDetails({ results, number, session, children }: { results: LaPrim
   const panel = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+  const [expandedHistory, setExpandedHistory] = useState<Record<LaPrimeraSession, boolean>>({ dia: false, noche: false });
   const cancel = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
   const open = () => {
     cancel();
     const rect = trigger.current?.getBoundingClientRect();
     if (!rect) return;
     window.dispatchEvent(new Event("quinielon-close-details"));
+    setExpandedHistory({ dia: false, noche: false });
     setPosition({ left: Math.max(12, Math.min(rect.left + rect.width / 2 - 140, window.innerWidth - 292)), top: Math.max(12, Math.min(rect.bottom + 10, window.innerHeight - (session ? 245 : 380))) });
   };
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   useEffect(() => {
     if (!position) return;
     const close = () => setPosition(null);
+    const onScroll = (event: Event) => { if (!(event.target instanceof Node) || !panel.current?.contains(event.target)) close(); };
     const outside = (event: PointerEvent) => { if (!panel.current?.contains(event.target as Node) && !trigger.current?.contains(event.target as Node)) close(); };
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { close(); trigger.current?.focus(); } };
     document.addEventListener("pointerdown", outside);
     document.addEventListener("keydown", escape);
     window.addEventListener("quinielon-close-details", close);
     window.addEventListener("resize", close);
-    window.addEventListener("scroll", close, true);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
       document.removeEventListener("pointerdown", outside);
       document.removeEventListener("keydown", escape);
       window.removeEventListener("quinielon-close-details", close);
       window.removeEventListener("resize", close);
-      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("scroll", onScroll, true);
     };
   }, [position]);
   const today = getDominicanClock().date;
   return <>
     <span ref={trigger} data-roster-number={number} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onMouseEnter={() => { cancel(); timer.current = setTimeout(open, 500); }} onMouseLeave={cancel} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
-    {position ? createPortal(<div ref={panel} className="numberDetailsPopover" role="dialog" aria-label={`Detalles del número ${formatQuinielonNumber(number)}`} style={position}>
+    {position ? createPortal(<div ref={panel} className="numberDetailsPopover" role="dialog" aria-label={`Detalles del número ${formatQuinielonNumber(number)}`} style={{ ...position, maxHeight: `calc(100dvh - ${position.top + 12}px)` }}>
       <header><strong>Número {formatQuinielonNumber(number)}</strong><button type="button" aria-label="Cerrar detalles" onClick={() => { setPosition(null); trigger.current?.focus(); }}>×</button></header>
       {(session ? [session] : ["dia", "noche"] as const).map((tanda) => {
         const draws = results.filter((draw) => draw.session === tanda && draw.date <= today);
-        const hits = draws.filter((draw) => draw.number === number);
+        const hits = draws.filter((draw) => draw.number === number).sort((a, b) => b.date.localeCompare(a.date));
         const rank = buildLaPrimeraFrequencyRanking(draws).findIndex((item) => item.number === number) + 1;
         const lastDate = hits.reduce((latest, draw) => draw.date > latest ? draw.date : latest, "");
-        return <section key={tanda}><b>{tanda === "dia" ? "Día" : "Noche"}</b><p>Top 100 por frecuencia: <strong>#{rank} de 100</strong></p><p>Ha salido <strong>{hits.length}</strong> {hits.length === 1 ? "vez" : "veces"} en <strong>{draws.length}</strong> sorteos.</p><p>{lastDate ? formatNumberDelay(lastDate, today) : "Sin salida registrada en el historial disponible"}</p>{lastDate ? <small>Última vez: {formatShortDate(lastDate)}</small> : null}</section>;
+        return <section key={tanda}><b>{tanda === "dia" ? "Día" : "Noche"}</b><p>Top 100 por frecuencia: <strong>#{rank} de 100</strong></p><p>Ha salido <strong>{hits.length}</strong> {hits.length === 1 ? "vez" : "veces"} en <strong>{draws.length}</strong> sorteos.</p><p>{lastDate ? formatNumberDelay(lastDate, today) : "Sin salida registrada en el historial disponible"}</p>{lastDate ? <small>Última vez: {formatShortDate(lastDate)}</small> : null}
+          {hits.length ? <>
+            <button type="button" className="numberHistoryToggle" aria-expanded={expandedHistory[tanda]} onClick={() => setExpandedHistory((current) => ({ ...current, [tanda]: !current[tanda] }))}>{expandedHistory[tanda] ? "Ver menos" : `Ver historial completo (${hits.length})`} <span aria-hidden="true">{expandedHistory[tanda] ? "−" : "+"}</span></button>
+            <div className={`numberHistoryExpansion${expandedHistory[tanda] ? " expanded" : ""}`} aria-hidden={!expandedHistory[tanda]}><div><ol className="numberHistoryDates">{hits.map((draw, index) => <li key={`${draw.date}-${index}`}><time dateTime={draw.date}>{formatShortDate(draw.date)}</time></li>)}</ol></div></div>
+          </> : null}
+        </section>;
       })}
     </div>, document.body) : null}
   </>;
