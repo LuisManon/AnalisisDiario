@@ -750,8 +750,8 @@ function useWeeklyHistory(results: LaPrimeraDraw[], historyStart?: string) {
   return { today, monday, currentMonday, earliestMonday, previous, next, reset: () => setSelectedMonday(null), swipe };
 }
 
-function WeeklyHistoryNavigation({ history }: { history: ReturnType<typeof useWeeklyHistory> }) {
-  return <nav className="weeklyHistoryNavigation" aria-label="Historial de pujas semanales">
+function WeeklyHistoryNavigation({ history, label = "Historial de pujas semanales" }: { history: ReturnType<typeof useWeeklyHistory>; label?: string }) {
+  return <nav className="weeklyHistoryNavigation" aria-label={label}>
     <button type="button" aria-label="Semana anterior" disabled={history.monday <= history.earliestMonday} onClick={history.previous}>← Anterior</button>
     <div aria-live="polite"><strong>{formatShortDate(history.monday)} — {formatShortDate(addDays(history.monday, 6))}</strong><small>{history.monday === history.currentMonday ? "Semana actual" : "Semana histórica"} · Desliza para cambiar</small></div>
     <button type="button" aria-label="Semana siguiente" disabled={history.monday >= history.currentMonday} onClick={history.next}>Siguiente →</button>
@@ -793,9 +793,9 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
 
   return (
     <section className="card weeklyTopChallenge quinielonV2Weekly" {...history.swipe}>
-      <WeeklyHistoryNavigation history={history} />
+      <WeeklyHistoryNavigation history={history} label={investors ? "Historial de pujas semanales" : "Historial del calendario de sorteos"} />
       <header className="weeklyTopHeader">
-        <div><span className="panelLabel primeraLabel">Puja semanal {investors ? "Inversionistas" : "V2"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
+        <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
         <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div>
       </header>
       <div className="weeklyDayGrid">
@@ -867,8 +867,8 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
       return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
     <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "V2"} mantiene clasificaciones independientes por tanda.</span></section>
-    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, hielo y cristales</label><small>❄️ 4 y 5 meses sin salir · 🧊 6 meses o más</small></div> : null}
     <QuinielonV2WeeklyChallenge results={results} variant={variant} />
+    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, hielo, cristales y flechas de rotación</label><small>❄️ 4 y 5 meses sin salir · 🧊 6 meses o más</small></div> : null}
     {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
       <header><span>Clasificación {investors ? "Inversionistas" : "V2"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
       <div className="twoColumn">{(["dia", "noche"] as const).map((session) => {

@@ -6549,4 +6549,4 @@ body:has(.appShell.lotoShell) {
 .v2SymbolControls input:checked { background: #d71932; }
 .v2SymbolControls input:checked::after { transform: translateX(18px); }
 .v2SymbolControls input:focus-visible { outline: 2px solid #d71932; outline-offset: 3px; }
-.hideNumberSymbols .primeraBallWinner::after, .hideNumberSymbols .frozenBallBadge { display: none; }
+.hideNumberSymbols .primeraBallWinner::after, .hideNumberSymbols .frozenBallBadge, .hideNumberSymbols .rosterMovementBadge { display: none; }
