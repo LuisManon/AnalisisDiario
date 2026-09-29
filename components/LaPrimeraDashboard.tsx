@@ -796,7 +796,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
       <WeeklyHistoryNavigation history={history} label={investors ? "Historial de pujas semanales" : "Historial del calendario de sorteos"} />
       <header className="weeklyTopHeader">
         <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
-        <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div>
+        {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
       </header>
       <div className="weeklyDayGrid">
         {days.map((day) => <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
