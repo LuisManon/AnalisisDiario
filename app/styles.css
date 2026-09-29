@@ -6551,3 +6551,25 @@ body:has(.appShell.lotoShell) {
 @media (prefers-reduced-motion: reduce) { .numberHistoryExpansion { transition: none; } }
 
 .weeklyAnimationViewport { overflow: clip; padding: 6px; margin: -6px; }
+
+.numberHistoryToggle { background: #f1f1f3; border-color: #dadade; color: #50505a; }
+.numberHistoryToggle:focus-visible { outline-color: #777780; }
+.distributor { margin: 20px 0; }
+.distributorHeader, .distributorGrid article > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.distributorHeader h2 { margin: 6px 0; }
+.distributorHeader p { margin: 4px 0 16px; }
+.distributor button { border: 1px solid #d5d5dc; background: #f1f1f4; color: #454550; border-radius: 9px; padding: 9px 12px; cursor: pointer; }
+.distributor button:disabled { opacity: .5; cursor: default; }
+.distributorGrid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.distributorGrid article { border: 1px solid #e2e0e4; background: #faf9fb; border-radius: 14px; padding: 14px; }
+.distributorGrid h3 { margin: 0 0 4px; font-size: 15px; }
+.distributorGrid small { color: #66616b; }
+.distributorNumbers { display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 12px 5px; margin-top: 20px; }
+.distributorNumbers > span { justify-self: center; }
+.primeraTheme .distributorNumbers .primeraBall { width: 30px; height: 30px; font-size: 12px; }
+.distributorNumbers .frozenBallBadge { font-size: 12px; left: -5px; top: -8px; }
+.distributorNote { font-size: 12px; color: #6b6570; line-height: 1.5; }
+.distributorError { color: #9b2038; }
+.distributor textarea { width: 100%; }
+@media(max-width: 850px) { .distributorGrid { grid-template-columns: 1fr; } .distributorHeader { align-items: flex-start; flex-direction: column; margin-bottom: 14px; } }
+@media(max-width: 380px) { .distributorNumbers { grid-template-columns: repeat(5,minmax(0,1fr)); } }

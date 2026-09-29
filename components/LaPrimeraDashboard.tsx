@@ -1,6 +1,8 @@
 "use client";
 
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
+import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
+import { NumberDistributor } from "./NumberDistributor";
 import { createPortal } from "react-dom";
 import {
   buildLaPrimeraStats,
@@ -610,7 +612,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
   return (
     <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
-      <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>Quinielón V2</button>
+      <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>El Quinielón 2.0</button>
       <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
       <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
       <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
@@ -623,54 +625,6 @@ type QuinielonV2Group = "nosotros" | "inversionistas" | "banca";
 
 type QuinielonVariant = "quinielon-v2" | "inversionistas";
 
-function buildQuinielonV2Rankings(results: LaPrimeraDraw[], variant: QuinielonVariant = "quinielon-v2") {
-  const split = (session: LaPrimeraSession) => {
-    const scoped = results.filter((draw) => draw.session === session);
-    const ranking = buildLaPrimeraFrequencyRanking(scoped);
-    const referenceDate = results.reduce((latest, draw) => draw.date > latest ? draw.date : latest, "");
-    const delayThreshold = referenceDate ? subtractMonths(referenceDate, 6) : "";
-    const lastDate = (number: number) => scoped.reduce(
-      (latest, draw) => draw.number === number && draw.date > latest ? draw.date : latest,
-      ""
-    );
-    const isDelayed = (number: number) => {
-      const latest = lastDate(number);
-      return !latest || latest <= delayThreshold;
-    };
-    if (variant === "inversionistas") {
-      const active = ranking.filter((item) => !isDelayed(item.number));
-      const nosotros = active.slice(0, 30);
-      const inversionistas = active.slice(30, 60);
-      const selected = new Set([...nosotros, ...inversionistas].map((item) => item.number));
-      const banca = ranking.filter((item) => !selected.has(item.number)).sort((a, b) =>
-        Number(isDelayed(b.number)) - Number(isDelayed(a.number)) ||
-        a.count - b.count || lastDate(a.number).localeCompare(lastDate(b.number)) || a.number - b.number
-      );
-      return { nosotros, inversionistas, banca };
-    }
-    const originalTop = ranking.slice(0, 40);
-    const displacedTop = new Set(originalTop.filter((item) => isDelayed(item.number)).map((item) => item.number));
-    const nosotros = ranking.filter((item) => !isDelayed(item.number)).slice(0, 40);
-    const ours = new Set(nosotros.map((item) => item.number));
-    const remaining = ranking.filter((item) => !ours.has(item.number));
-    const bank = remaining
-      .filter((item) => !displacedTop.has(item.number))
-      .sort((a, b) =>
-        Number(isDelayed(b.number)) - Number(isDelayed(a.number)) ||
-        a.count - b.count ||
-        lastDate(a.number).localeCompare(lastDate(b.number)) ||
-        a.number - b.number
-      )
-      .slice(0, 20);
-    const bankNumbers = new Set(bank.map((item) => item.number));
-    return {
-      nosotros,
-      inversionistas: remaining.filter((item) => !bankNumbers.has(item.number)),
-      banca: bank
-    };
-  };
-  return { dia: split("dia"), noche: split("noche") };
-}
 
 function quinielonV2GroupForNumber(
   rankings: ReturnType<typeof buildQuinielonV2Rankings>,
@@ -888,15 +842,15 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
 
   return <main className={`primeraTheme quinielonV2Theme${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
     <ProductSwitch product={variant} onChange={onProductChange} />
-    <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "Quinielón V2"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
+    <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "El Quinielón 2.0"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
       const latest = latestBySession[session];
       return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
-    <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "V2"} mantiene clasificaciones independientes por tanda.</span></section>
+    <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
     <QuinielonV2WeeklyChallenge results={results} variant={variant} />
     {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, hielo, cristales y flechas de rotación</label><small>❄️ 4 y 5 meses sin salir · 🧊 6 meses o más</small></div> : null}
     {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
-      <header><span>Clasificación {investors ? "Inversionistas" : "V2"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
+      <header><span>Clasificación {investors ? "Inversionistas" : "El Quinielón 2.0"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
       <div className="twoColumn">{(["dia", "noche"] as const).map((session) => {
         const infoKey = `${group.key}-${session}`;
         const ranking = rankings[session][group.key];
@@ -907,6 +861,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
         </div>;
       })}</div>
     </section>)}
+    {!investors ? <NumberDistributor renderNumber={(number, source, badge, winner, session) => <NumberDetails results={results} number={number} session={session}><QuinielonBall number={number} tone={source === "casa" ? "red" : "gold"} winner={winner} />{badge ? <span className="frozenBallBadge" role="img" aria-label={badge === "🧊" ? "6 meses o más sin salir" : "4 y 5 meses sin salir"}>{badge}</span> : null}</NumberDetails>} /> : null}
     <p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
   </main>;
 }
@@ -1481,19 +1436,15 @@ function formatNumberDelay(lastDate: string, today: string) {
 function NumberDetails({ results, number, session, children }: { results: LaPrimeraDraw[]; number: number; session?: LaPrimeraSession; children: ReactNode }) {
   const trigger = useRef<HTMLSpanElement>(null);
   const panel = useRef<HTMLDivElement>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
   const [expandedHistory, setExpandedHistory] = useState<Record<LaPrimeraSession, boolean>>({ dia: false, noche: false });
-  const cancel = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
   const open = () => {
-    cancel();
     const rect = trigger.current?.getBoundingClientRect();
     if (!rect) return;
     window.dispatchEvent(new Event("quinielon-close-details"));
     setExpandedHistory({ dia: false, noche: false });
     setPosition({ left: Math.max(12, Math.min(rect.left + rect.width / 2 - 140, window.innerWidth - 292)), top: Math.max(12, Math.min(rect.bottom + 10, window.innerHeight - (session ? 245 : 380))) });
   };
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   useEffect(() => {
     if (!position) return;
     const close = () => setPosition(null);
@@ -1515,7 +1466,7 @@ function NumberDetails({ results, number, session, children }: { results: LaPrim
   }, [position]);
   const today = getDominicanClock().date;
   return <>
-    <span ref={trigger} data-roster-number={number} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onMouseEnter={() => { cancel(); timer.current = setTimeout(open, 500); }} onMouseLeave={cancel} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
+    <span ref={trigger} data-roster-number={number} className="rosterBallWrap rosterBallDetails" role="button" tabIndex={0} aria-label={`Ver detalles del número ${formatQuinielonNumber(number)}`} aria-haspopup="dialog" aria-expanded={Boolean(position)} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>{children}</span>
     {position ? createPortal(<div ref={panel} className="numberDetailsPopover" role="dialog" aria-label={`Detalles del número ${formatQuinielonNumber(number)}`} style={{ ...position, maxHeight: `calc(100dvh - ${position.top + 12}px)` }}>
       <header><strong>Número {formatQuinielonNumber(number)}</strong><button type="button" aria-label="Cerrar detalles" onClick={() => { setPosition(null); trigger.current?.focus(); }}>×</button></header>
       {(session ? [session] : ["dia", "noche"] as const).map((tanda) => {

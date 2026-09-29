@@ -110,3 +110,21 @@ export async function writeGitHubJsonFile(filePath: string, content: string, com
   if (!response.ok) throw new Error(`GitHub no pudo guardar ${filePath}: HTTP ${response.status}.`);
   return true;
 }
+
+// Snapshot writes must compare against the version read by the caller, across server instances.
+export async function writeGitHubSnapshot(filePath: string, content: string, expectedContent: string | null, commitMessage: string) {
+  const config = getConfig();
+  if (!config) throw new Error("El almacenamiento compartido no está configurado.");
+  const url = `${githubApiBase}/repos/${config.repository}/contents/${filePath}`;
+  const current = await fetch(`${url}?ref=${encodeURIComponent(config.branch)}`, { cache: "no-store", headers: getHeaders(config.token), signal: AbortSignal.timeout(20_000) });
+  if (!current.ok && current.status !== 404) throw new Error("No se pudo comprobar el reparto guardado.");
+  const payload: GitHubContentResponse | null = current.status === 404 ? null : await current.json();
+  const raw = payload?.content ? fromBase64(payload.content) : null;
+  if (raw?.trim() === content.trim()) return;
+  if ((raw?.trim() ?? null) !== (expectedContent?.trim() ?? null)) throw new Error("El reparto cambió en otra sesión. Pulsa Reintentar para cargarlo.");
+  const response = await fetch(url, { method: "PUT", cache: "no-store", headers: getHeaders(config.token), signal: AbortSignal.timeout(20_000), body: JSON.stringify({
+    branch: config.branch, committer: { email: config.committerEmail, name: config.committerName },
+    content: toBase64(content), message: commitMessage, ...(payload?.sha ? {sha:payload.sha} : {})
+  }) });
+  if (!response.ok) throw new Error("No se pudo guardar el reparto o fue actualizado en otra sesión. Pulsa Reintentar.");
+}
