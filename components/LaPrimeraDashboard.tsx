@@ -718,7 +718,7 @@ function WeeklyPreviousDate({ results, number, session, date }: { results: LaPri
   return <small>Última vez: {previousDate ? <time dateTime={previousDate}>{formatShortDate(previousDate)}</time> : "Sin registro anterior"}</small>;
 }
 
-function useWeeklyHistory(results: LaPrimeraDraw[]) {
+function useWeeklyHistory(results: LaPrimeraDraw[], historyStart?: string) {
   const [today, setToday] = useState(() => getDominicanClock().date);
   const [selectedMonday, setSelectedMonday] = useState<string | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -730,7 +730,8 @@ function useWeeklyHistory(results: LaPrimeraDraw[]) {
   // Only include weeks with earlier results to reconstruct the Monday lineup.
   const firstDate = results.reduce((earliest, draw) => draw.date < earliest ? draw.date : earliest, today);
   const firstMonday = addDays(getWeekMonday(firstDate), 7);
-  const earliestMonday = firstMonday < currentMonday ? firstMonday : currentMonday;
+  const availableMonday = historyStart && historyStart > firstMonday ? historyStart : firstMonday;
+  const earliestMonday = availableMonday < currentMonday ? availableMonday : currentMonday;
   const monday = selectedMonday && selectedMonday >= earliestMonday && selectedMonday <= currentMonday ? selectedMonday : currentMonday;
   const previous = () => { const value = addDays(monday, -7); if (value >= earliestMonday) setSelectedMonday(value); };
   const next = () => { const value = addDays(monday, 7); if (value <= currentMonday) setSelectedMonday(value === currentMonday ? null : value); };
@@ -760,7 +761,8 @@ function WeeklyHistoryNavigation({ history }: { history: ReturnType<typeof useWe
 
 function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDraw[]; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
-  const history = useWeeklyHistory(results);
+  // Fixed starting week: keep accumulating future weeks from this date.
+  const history = useWeeklyHistory(results, investors ? undefined : "2026-09-21");
   const { today, monday } = history;
   const sunday = addDays(monday, 6);
   const baseResults = results.filter((draw) => draw.date < monday);
@@ -829,6 +831,7 @@ function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { r
 
 function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void; status: string; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
+  const [showSymbols, setShowSymbols] = useState(true);
   const [openInfo, setOpenInfo] = useState<string | null>(null);
   const [today, setToday] = useState(() => getDominicanClock().date);
   useEffect(() => {
@@ -857,13 +860,14 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
     { key: "banca", title: "Banca", description: investors ? "Los 40 restantes, incluidos todos los números con 6 meses o más sin salir." : "Los 20 restantes, donde se concentran los de menor frecuencia y mayor atraso.", tone: "dark" }
   ];
 
-  return <main className="primeraTheme quinielonV2Theme">
+  return <main className={`primeraTheme quinielonV2Theme${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
     <ProductSwitch product={variant} onChange={onProductChange} />
     <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "Quinielón V2"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
       const latest = latestBySession[session];
       return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
     <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "V2"} mantiene clasificaciones independientes por tanda.</span></section>
+    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, hielo y cristales</label><small>❄️ 4 y 5 meses sin salir · 🧊 6 meses o más</small></div> : null}
     <QuinielonV2WeeklyChallenge results={results} variant={variant} />
     {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
       <header><span>Clasificación {investors ? "Inversionistas" : "V2"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
@@ -873,7 +877,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
         return <div className="v2RosterColumn" key={session}>
           <div className="v2RosterColumnTitle"><strong>{group.title} · {formatSession(session)}</strong><span className={`v2SessionIcon ${session}`} aria-hidden="true">{session === "dia" ? "☀️" : "🌙"}</span><RosterDelayButton label={`${group.title} ${formatSession(session)}`} isOpen={openInfo === infoKey} onClick={() => setOpenInfo((value) => value === infoKey ? null : infoKey)} /></div>
           {openInfo === infoKey ? <QuinielonV2DelayPanel results={results} ranking={ranking} session={session} referenceDate={referenceDate} /> : null}
-          <NumberGridCard results={results} delaySession={session} title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? (investors ? "30 números" : "40 números de respaldo") : (investors ? "40 números restantes" : "20 números restantes")} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={!investors && ranking.length > 20} session={session} selectionDate={today} movementByNumber={movements[session]} />
+          <NumberGridCard crystalReferenceDate={!investors ? referenceDate : undefined} results={results} delaySession={session} title={group.key === "nosotros" ? "Selección de La Casa" : group.key === "inversionistas" ? (investors ? "30 números" : "40 números de respaldo") : (investors ? "40 números restantes" : "20 números restantes")} ranking={ranking} winningNumbers={weeklyWinningNumbers[session]} frozenByNumber={frozen(ranking, session)} frozenMonths={6} tone={group.tone} separateRows={!investors && ranking.length > 20} session={session} selectionDate={today} movementByNumber={movements[session]} />
         </div>;
       })}</div>
     </section>)}
@@ -1504,6 +1508,7 @@ function NumberGridCard({
   frozenByNumber = new Map(),
   tone = "red",
   frozenMonths = 6,
+  crystalReferenceDate,
   separateRows = false,
   session,
   selectionDate,
@@ -1515,6 +1520,7 @@ function NumberGridCard({
   frozenByNumber?: ReadonlyMap<number, readonly LaPrimeraSession[]>;
   tone?: "red" | "gold" | "dark";
   frozenMonths?: number;
+  crystalReferenceDate?: string;
   separateRows?: boolean;
   session?: LaPrimeraSession;
   selectionDate?: string;
@@ -1530,6 +1536,12 @@ function NumberGridCard({
         {ranking.map((item, index) => {
           const movement = movementByNumber.get(item.number);
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
+          const lastDate = crystalReferenceDate && delaySession
+            ? results.find((draw) => draw.session === delaySession && draw.number === item.number)?.date
+            : undefined;
+          const hasCrystal = Boolean(crystalReferenceDate && lastDate
+            && lastDate <= subtractMonths(crystalReferenceDate, 4)
+            && lastDate > subtractMonths(crystalReferenceDate, 6));
           const frozenLabel = frozenSessions.length
             ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
             : "";
@@ -1537,7 +1549,7 @@ function NumberGridCard({
             <Fragment key={item.number}>
               {separateRows && index > 0 && index % 10 === 0 ? <span className={`numberGridDivider${index % 20 !== 0 ? " numberGridDividerMobile" : ""}`} aria-hidden="true" /> : null}
             <NumberDetails results={results} number={item.number} session={delaySession}>
-              {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : null}
+              {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : hasCrystal ? <span className="frozenBallBadge" role="img" aria-label="4 y 5 meses sin salir">❄️</span> : null}
               <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
               {movement ? <span className="rosterMovementBadge" role="img" aria-label={movement.label}>{movement.direction === "up" ? "↑" : "↓"}</span> : null}
             </NumberDetails>

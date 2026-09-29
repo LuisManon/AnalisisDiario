@@ -6541,3 +6541,12 @@ body:has(.appShell.lotoShell) {
 @media (max-width: 600px) {
   .weeklyHistoryNavigation > div { order: -1; width: 100%; }
 }
+
+.v2SymbolControls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-bottom: 20px; }
+.v2SymbolControls label { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
+.v2SymbolControls input { appearance: none; width: 42px; height: 24px; border-radius: 20px; background: #9ca3af; cursor: pointer; position: relative; flex-shrink: 0; }
+.v2SymbolControls input::after { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: transform .15s; }
+.v2SymbolControls input:checked { background: #d71932; }
+.v2SymbolControls input:checked::after { transform: translateX(18px); }
+.v2SymbolControls input:focus-visible { outline: 2px solid #d71932; outline-offset: 3px; }
+.hideNumberSymbols .primeraBallWinner::after, .hideNumberSymbols .frozenBallBadge { display: none; }
