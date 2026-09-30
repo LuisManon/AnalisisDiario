@@ -6626,6 +6626,7 @@ body:has(.appShell.lotoShell) {
 
 /* La Casa: soft pink balls matching the reference, in both sessions and the distributor. */
 .primeraTheme.quinielon20Theme .nosotrosRosterSection .primeraBall:not(.gold):not(.dark),
+.primeraTheme.quinielon20Theme .v2LatestCard.dia .primeraBall,
 .primeraTheme.quinielon20Theme .distributorNumbers .primeraBall:not(.gold):not(.dark) {
   background: linear-gradient(145deg, #fff 8%, #fff6f8 42%, #ffd0da 100%);
   border: 2px solid #fff;
