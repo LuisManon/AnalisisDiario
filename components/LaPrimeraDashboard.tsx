@@ -858,7 +858,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
     { key: "banca", title: "Banca", description: investors ? "Los 40 restantes, incluidos todos los números con 6 meses o más sin salir." : "Los 20 restantes, donde se concentran los de menor frecuencia y mayor atraso.", tone: "dark" }
   ];
 
-  return <main className={`primeraTheme quinielonV2Theme${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
+  return <main className={`primeraTheme quinielonV2Theme${!investors ? " quinielon20Theme" : ""}${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
     <ProductSwitch product={variant} onChange={onProductChange} />
     <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "El Quinielón 2.0"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
       const latest = latestBySession[session];
