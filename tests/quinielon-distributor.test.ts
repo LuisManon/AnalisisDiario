@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import { validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
-function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:""};}
+function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:"2026-09-29T10:00:00Z"};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
   assert.deepEqual(investors.flat().map(n=>n.number).sort((a,b)=>a-b),selected.map(n=>n.number).sort((a,b)=>a-b));
   assert.ok(Math.max(...investors.map(i=>i.length))-Math.min(...investors.map(i=>i.length))<=1);
@@ -63,8 +63,34 @@ test("calendar winners use saved assignments from September 29 and Seibo's stabl
 });
 
 test("a number moved from Banca to Jose Luis's reserve is scored for Inversionistas",()=>{
-  const assignment = snapshot([[],[],[],[{number:80,source:"respaldo",badge:"",winner:false}]]);
+  const assignment = snapshot([pool.slice(0,20),pool.slice(20,40),pool.slice(40,60),pool.slice(60,80).map(item=>item.number===60 ? {...item,number:80} : item)]);
   assert.deepEqual(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:80},assignment),{number:80,name:"Jose Luis",recorded:true,group:"inversionistas"});
   const smart={...assignment,smart:true};
-  assert.equal(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:42},smart)?.group,null);
+  assert.equal(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:99},smart)?.group,null);
+});
+
+test("double validation blocks duplicate owners and contradictory source groups",()=>{
+  const assignment=snapshot([pool.slice(0,20),pool.slice(20,40),pool.slice(40,60),pool.slice(60,80)]);
+  assignment.roster=Array.from({length:100},(_,number)=>({number,group:number<40?"nosotros":number<80?"inversionistas":"banca"}));
+  assert.equal(validateAssignment(assignment),null);
+  const duplicate=structuredClone(assignment);
+  duplicate.investors[3][0]={...duplicate.investors[0][0]};
+  assert.ok(validateAssignment(duplicate));
+  assert.ok(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:0},duplicate)?.validationError);
+  const wrongGroup=structuredClone(assignment); wrongGroup.investors[3][0].source="casa";
+  assert.ok(validateAssignment(wrongGroup));
+  assert.equal(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:60},wrongGroup)?.name,null);
+});
+test("later rotation cannot change a closed session's owner or group",()=>{
+  const first={...snapshot(rotateBlocks(pool,{date:"2026-09-29",session:"dia"}).investors),blockStarts:[1,21,41,61]};
+  const later={...snapshot(rotateBlocks(pool,{date:"2026-09-29",session:"noche"}).investors),session:"noche" as const};
+  const draw={date:"2026-09-29",session:"dia" as const,number:61};
+  assert.equal(resolveInvestorWinner(draw,first)?.name,"Jose Luis");
+  assert.equal(resolveInvestorWinner({...draw,session:"noche"},later)?.name,"Seibo");
+  assert.equal(resolveInvestorWinner(draw,first)?.name,"Jose Luis");
+  assert.equal(validateAssignment({...first,createdAt:"2026-09-29T16:00:00Z"}),"Reparto fuera de la tanda");
+});
+test("smart-filtered numbers keep their saved group even without an investor",()=>{
+  const assignment={...snapshot([[],[],[],[]]),smart:true,roster:Array.from({length:100},(_,number)=>({number,group:(number<40?"nosotros":number<80?"inversionistas":"banca") as "nosotros"|"inversionistas"|"banca"}))};
+  assert.deepEqual(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:61},assignment),{number:61,name:null,recorded:true,group:"inversionistas"});
 });

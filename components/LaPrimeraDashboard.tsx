@@ -767,12 +767,8 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
       const winner = investorWinners.week === monday ? investorWinners.data[`${date}-${session}`] : undefined;
       let status: QuinielonV2Group | "pendiente" = draw ? quinielonV2GroupForNumber(rankings, session, draw.number) : "pendiente";
       if (!investors && draw && date >= investorWinnerStartDate) {
-        // Use the frozen assignment for that draw, never Monday's roster or today's ranking.
-        if (winner?.number === draw.number && winner.group) status = winner.group;
-        else {
-          const beforeDraw = results.filter(item => item.date < date || (item.date === date && session === "noche" && item.session === "dia"));
-          status = quinielonV2GroupForNumber(buildQuinielonV2Rankings(beforeDraw, variant),session,draw.number);
-        }
+        // A closed draw is scored only from a validated snapshot of that exact session.
+        status = winner?.number === draw.number && !winner.validationError && winner.group ? winner.group : "pendiente";
       }
       return { session, draw, status };
     })
@@ -789,7 +785,8 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
     banca: 0
   };
   percentages.banca = resolved.length ? Math.max(0, 100 - percentages.nosotros - percentages.inversionistas) : 0;
-  const pending = 14 - resolved.length;
+  const pending = days.flatMap(day=>day.tandas).filter(tanda=>!tanda.draw).length;
+  const awaitingValidation = days.flatMap(day=>day.tandas).filter(tanda=>tanda.draw && tanda.status === "pendiente").length;
   const lastResolvedDate = days.filter((day) => day.tandas.some((tanda) => tanda.status !== "pendiente")).at(-1)?.date;
 
   return (
@@ -797,7 +794,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
       <WeeklyHistoryNavigation history={history} label={investors ? "Historial de pujas semanales" : "Historial del calendario de sorteos"} />
       <AnimatedWeek monday={monday}>
       <header className="weeklyTopHeader">
-        <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "Desde el 29 de septiembre, el grupo y el ganador corresponden al reparto guardado de cada tanda. Sin reparto, el grupo se calcula con los resultados anteriores al sorteo."}</p></div>
+        <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "Desde el 29 de septiembre, el grupo y el ganador corresponden al reparto guardado de cada tanda. Las tandas sin un reparto validado quedan pendientes de revisión."}</p></div>
         {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
       </header>
       <div className="weeklyDayGrid">
@@ -805,11 +802,12 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
           <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div></header>
           <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
             <span>{formatSession(tanda.session)}</span>
-            <strong>{tanda.status === "pendiente" ? "Pendiente" : quinielonV2GroupLabels[tanda.status]}</strong>
+            <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
             <small>{tanda.draw ? `${formatQuinielonNumber(tanda.draw.number)} · Quinielón` : "Esperando resultado"}</small>
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
+              if (winner.validationError) return "Reparto por revisar";
               return winner.name ? `Ganador: ${winner.name}` : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
             })()}</span> : null}
             {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
@@ -825,7 +823,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         </div>)}</div> : <p>Sin cambios de grupo esta semana.</p>}
       </aside>
       <div className="weeklyTopActions">
-        <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : "La semana está completa."}</p></div>
+        <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {awaitingValidation ? `${awaitingValidation} tandas pendientes de validación. ` : ""}{pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : awaitingValidation ? "" : "La semana está completa."}</p></div>
       </div>
       </AnimatedWeek>
     </section>

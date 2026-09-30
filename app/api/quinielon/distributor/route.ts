@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -26,7 +26,11 @@ export async function POST(request: Request) {
     const p1 = previousSlot(slot), p2 = previousSlot(p1);
     const history = (await Promise.all([read(p1), read(p2)])).filter((a): a is Assignment => Boolean(a));
     const smart = body?.smart ?? existing?.smart ?? history[0]?.smart ?? false;
-    if (existing && existing.smart === smart && (smart || existing.algorithmVersion === blockRotationVersion)) return NextResponse.json(existing);
+    if (existing && existing.smart === smart && (smart || existing.algorithmVersion === blockRotationVersion)) {
+      const error = validateAssignment(existing);
+      if(error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
+      return NextResponse.json(existing);
+    }
     const results = (await readLaPrimeraResults()).filter(d => d.date < slot.date || (d.date === slot.date && slot.session === "noche" && d.session === "dia"));
     if (!results.length) throw new Error("No hay resultados disponibles para construir el reparto.");
     const rankings = buildQuinielonV2Rankings(results)[slot.session];
@@ -40,7 +44,10 @@ export async function POST(request: Request) {
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
     const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
     const allocation = smart ? distribute(eligible,[...history,...future],true,`${slot.date}-${slot.session}`) : rotateBlocks(pool,slot);
-    const assignment: Assignment = {...slot, smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
+    const assignment: Assignment = {...slot, roster: [...rankings.nosotros.map(item=>({number:item.number,group:"nosotros" as const})),...rankings.inversionistas.map(item=>({number:item.number,group:"inversionistas" as const})),...rankings.banca.map(item=>({number:item.number,group:"banca" as const}))], smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
+    const validationError=validateAssignment(assignment);
+    if(validationError) throw new Error(`No se guardó el reparto: ${validationError}.`);
+    if(Date.now() >= assignmentDeadline(slot)) throw new Error("La tanda cerró mientras se preparaba el reparto. Actualiza para cargar la próxima.");
     const content = JSON.stringify(assignment,null,2)+"\n";
     if (isGitHubDataStoreEnabled()) await writeGitHubSnapshot(file(slot),content,existing ? JSON.stringify(existing,null,2)+"\n" : null,`Save Quinielon assignment ${slot.date} ${slot.session}`);
     else { if (process.env.VERCEL) throw new Error("Configura el almacenamiento de GitHub para guardar los repartos."); const destination=path.join(process.cwd(),file(slot)); await fs.mkdir(path.dirname(destination),{recursive:true}); await fs.writeFile(destination,content,"utf8"); }

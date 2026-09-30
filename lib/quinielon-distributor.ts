@@ -1,6 +1,6 @@
 import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
 export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean };
-export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; blockStarts?: number[]; algorithmVersion?: string };
+export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"}>; blockStarts?: number[]; algorithmVersion?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
   const day = value.getUTCDate();
@@ -68,14 +68,40 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
   throw new Error("No hay un reparto equilibrado que evite las dos tandas anteriores con estos números. Se conserva el reparto guardado; no se han forzado repeticiones.");
 }
 
+export function assignmentDeadline(slot: {date:string; session:LaPrimeraSession}) {
+  return Date.parse(`${slot.date}T${slot.session === "dia" ? "12" : "19"}:00:00-04:00`);
+}
+export function validateAssignment(assignment: Assignment): string | null {
+  if (!assignment || !Array.isArray(assignment.investors) || assignment.investors.length !== 4 || assignment.investors.some(items => !Array.isArray(items))) return "Reparto incompleto";
+  if (!["dia","noche"].includes(assignment.session) || !Number.isFinite(assignmentDeadline(assignment)) || !Number.isFinite(Date.parse(assignment.createdAt)) || Date.parse(assignment.createdAt) >= assignmentDeadline(assignment)) return "Reparto fuera de la tanda";
+  const items=assignment.investors.flat();
+  if(items.some(item => !item || !Number.isInteger(item.number) || item.number<0 || item.number>99 || !["casa","respaldo"].includes(item.source))) return "Número o grupo inválido";
+  if(new Set(items.map(item=>item.number)).size !== items.length) return "Número asignado más de una vez";
+  const sizes=assignment.investors.map(items=>items.length);
+  if(assignment.smart ? items.length>80 || Math.max(...sizes)-Math.min(...sizes)>1 || items.some(item=>Boolean(item.badge)) : sizes.some(size=>size!==20)) return "Cantidades o filtros inconsistentes";
+  if(assignment.roster) {
+    const roster=assignment.roster;
+    if(roster.length!==100 || new Set(roster.map(item=>item.number)).size!==100 || roster.some(item=>!Number.isInteger(item.number)||item.number<0||item.number>99||!["nosotros","inversionistas","banca"].includes(item.group))) return "Clasificación incompleta";
+    if(roster.filter(item=>item.group!=="banca").length!==80) return "Clasificación fuera del top 80";
+    if(items.some(item=>roster.find(entry=>entry.number===item.number)?.group !== (item.source==="casa"?"nosotros":"inversionistas"))) return "El grupo no coincide con la clasificación guardada";
+  }
+  if(!assignment.smart && assignment.blockStarts) {
+    if(assignment.blockStarts.length!==4 || [...assignment.blockStarts].sort((a,b)=>a-b).join()!=="1,21,41,61") return "Bloques inválidos";
+    if(assignment.investors.some((items,i)=>items.some(item=>item.source!==(assignment.blockStarts![i]<=21?"casa":"respaldo")))) return "El grupo no coincide con su bloque";
+  }
+  return null;
+}
+
 export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
 export const investorWinnerStartDate = "2026-09-29";
-export type InvestorWinner = { number: number; name: string | null; recorded: boolean; group: "nosotros" | "inversionistas" | "banca" | null };
+export type InvestorWinner = { number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
 export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;
   const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
+  const validationError = recorded ? validateAssignment(assignment!) : null;
+  if(validationError) return {number:draw.number,name:null,recorded:true,group:null,validationError};
   const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
-  const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded && !assignment!.smart ? "banca" : null;
+  const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
   return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group};
 }
