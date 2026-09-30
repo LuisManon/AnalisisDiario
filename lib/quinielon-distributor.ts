@@ -70,10 +70,12 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
 
 export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
 export const investorWinnerStartDate = "2026-09-29";
-export type InvestorWinner = { number: number; name: string | null; recorded: boolean };
+export type InvestorWinner = { number: number; name: string | null; recorded: boolean; group: "nosotros" | "inversionistas" | "banca" | null };
 export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;
   const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
   const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
-  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded};
+  const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
+  const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded && !assignment!.smart ? "banca" : null;
+  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group};
 }

@@ -55,9 +55,16 @@ test("block rotation does not depend on viewing order or changing number identit
 test("calendar winners use saved assignments from September 29 and Seibo's stable index",()=>{
   const assignment = snapshot([pool.slice(0,20),pool.slice(20,40),pool.slice(40,60),pool.slice(60,80)]);
   const draw = {date:"2026-09-29",session:"dia" as const,number:23};
-  assert.deepEqual(resolveInvestorWinner(draw,assignment),{number:23,name:"Seibo",recorded:true});
+  assert.deepEqual(resolveInvestorWinner(draw,assignment),{number:23,name:"Seibo",recorded:true,group:"nosotros"});
   assert.equal(resolveInvestorWinner({...draw,date:"2026-09-28"},assignment),null);
-  assert.deepEqual(resolveInvestorWinner(draw,null),{number:23,name:null,recorded:false});
-  assert.deepEqual(resolveInvestorWinner({...draw,session:"noche"},assignment),{number:23,name:null,recorded:false});
-  assert.deepEqual(resolveInvestorWinner({...draw,number:99},assignment),{number:99,name:null,recorded:true});
+  assert.deepEqual(resolveInvestorWinner(draw,null),{number:23,name:null,recorded:false,group:null});
+  assert.deepEqual(resolveInvestorWinner({...draw,session:"noche"},assignment),{number:23,name:null,recorded:false,group:null});
+  assert.deepEqual(resolveInvestorWinner({...draw,number:99},assignment),{number:99,name:null,recorded:true,group:"banca"});
+});
+
+test("a number moved from Banca to Jose Luis's reserve is scored for Inversionistas",()=>{
+  const assignment = snapshot([[],[],[],[{number:80,source:"respaldo",badge:"",winner:false}]]);
+  assert.deepEqual(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:80},assignment),{number:80,name:"Jose Luis",recorded:true,group:"inversionistas"});
+  const smart={...assignment,smart:true};
+  assert.equal(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:42},smart)?.group,null);
 });

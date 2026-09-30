@@ -764,7 +764,17 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
     date,
     tandas: (["dia", "noche"] as const).map((session) => {
       const draw = results.find((item) => item.date === date && item.session === session);
-      return { session, draw, status: draw ? quinielonV2GroupForNumber(rankings, session, draw.number) : "pendiente" as const };
+      const winner = investorWinners.week === monday ? investorWinners.data[`${date}-${session}`] : undefined;
+      let status: QuinielonV2Group | "pendiente" = draw ? quinielonV2GroupForNumber(rankings, session, draw.number) : "pendiente";
+      if (!investors && draw && date >= investorWinnerStartDate) {
+        // Use the frozen assignment for that draw, never Monday's roster or today's ranking.
+        if (winner?.number === draw.number && winner.group) status = winner.group;
+        else {
+          const beforeDraw = results.filter(item => item.date < date || (item.date === date && session === "noche" && item.session === "dia"));
+          status = quinielonV2GroupForNumber(buildQuinielonV2Rankings(beforeDraw, variant),session,draw.number);
+        }
+      }
+      return { session, draw, status };
     })
   }));
   const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
@@ -787,7 +797,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
       <WeeklyHistoryNavigation history={history} label={investors ? "Historial de pujas semanales" : "Historial del calendario de sorteos"} />
       <AnimatedWeek monday={monday}>
       <header className="weeklyTopHeader">
-        <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "La Casa prioriza frecuencia y excluye atrasos de 6 meses; la alineación queda congelada al comenzar el lunes."}</p></div>
+        <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "Desde el 29 de septiembre, el grupo y el ganador corresponden al reparto guardado de cada tanda. Sin reparto, el grupo se calcula con los resultados anteriores al sorteo."}</p></div>
         {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
       </header>
       <div className="weeklyDayGrid">
