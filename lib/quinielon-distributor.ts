@@ -159,6 +159,7 @@ export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
 export const investorWinnerStartDate = "2026-09-29";
 // Fixed rollout date: earlier winners never receive retroactive wager/prize details.
 export const investorPrizeStartDate = "2026-10-02";
+export const calendarDelayBadgeStartDate = "2026-10-02";
 export type InvestorWinner = { delayBadge?: DelayBadge; tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
 export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null, results?: LaPrimeraDraw[]): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;

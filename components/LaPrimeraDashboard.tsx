@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
 import { updateWeeklyGesture, finishWeeklyGesture, type WeeklyGesture } from "../lib/weekly-swipe";
-import { numberDelayBadge, tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
+import { calendarDelayBadgeStartDate, numberDelayBadge, tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
 import { createPortal } from "react-dom";
 import {
@@ -775,7 +775,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         // A closed draw is scored only from a validated snapshot of that exact session.
         status = winner?.number === draw.number && !winner.validationError && winner.group ? winner.group : "pendiente";
       }
-      const delayBadge = draw ? winner?.delayBadge ?? numberDelayBadge(results, draw.number, draw) : "";
+      const delayBadge = draw && date >= calendarDelayBadgeStartDate ? winner?.delayBadge ?? numberDelayBadge(results, draw.number, draw) : "";
       return { session, draw, status, delayBadge };
     })
   }));
