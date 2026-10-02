@@ -810,7 +810,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
             {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>Quinielón</small></div> : <small>Esperando resultado</small>}
-            {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "❄️" ? "Antes del sorteo: 4 o 5 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "❄️" ? "Era hielo" : "Era cristal de hielo"}</span> : null}
+            {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "❄️" ? "Antes del sorteo: 4 o 5 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "❄️" ? "Era cristal de hielo" : "Era hielo"}</span> : null}
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
