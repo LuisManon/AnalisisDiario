@@ -2,7 +2,8 @@
 
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
-import { investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
+import { updateWeeklyGesture, finishWeeklyGesture, type WeeklyGesture } from "../lib/weekly-swipe";
+import { tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
 import { createPortal } from "react-dom";
 import {
@@ -676,7 +677,7 @@ function WeeklyPreviousDate({ results, number, session, date }: { results: LaPri
 function useWeeklyHistory(results: LaPrimeraDraw[], historyStart?: string) {
   const [today, setToday] = useState(() => getDominicanClock().date);
   const [selectedMonday, setSelectedMonday] = useState<string | null>(null);
-  const start = useRef<{ x: number; y: number } | null>(null);
+  const start = useRef<WeeklyGesture | null>(null);
   useEffect(() => {
     const timer = window.setInterval(() => setToday(getDominicanClock().date), 60_000);
     return () => window.clearInterval(timer);
@@ -691,15 +692,19 @@ function useWeeklyHistory(results: LaPrimeraDraw[], historyStart?: string) {
   const previous = () => { const value = addDays(monday, -7); if (value >= earliestMonday) setSelectedMonday(value); };
   const next = () => { const value = addDays(monday, 7); if (value <= currentMonday) setSelectedMonday(value === currentMonday ? null : value); };
   const swipe = {
-    onTouchStart: (event: ReactTouchEvent) => { start.current = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null; },
+    onTouchStart: (event: ReactTouchEvent) => { start.current = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY, direction: "pending" } : null; },
+    onTouchMove: (event: ReactTouchEvent) => {
+      if (event.touches.length !== 1) { start.current = null; return; }
+      if (start.current) start.current = updateWeeklyGesture(start.current, event.touches[0].clientX, event.touches[0].clientY);
+    },
     onTouchCancel: () => { start.current = null; },
     onTouchEnd: (event: ReactTouchEvent) => {
       const point = start.current;
       start.current = null;
       if (!point || !event.changedTouches.length) return;
-      const dx = event.changedTouches[0].clientX - point.x;
-      const dy = event.changedTouches[0].clientY - point.y;
-      if (Math.abs(dx) >= 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { if (dx > 0) previous(); else next(); }
+      const direction = finishWeeklyGesture(point, event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+      if (direction === "previous") previous();
+      if (direction === "next") next();
     }
   };
   return { today, monday, currentMonday, earliestMonday, previous, next, reset: () => setSelectedMonday(null), swipe };
@@ -808,7 +813,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
               if (winner.validationError) return "Reparto por revisar";
-              return winner.name ? `Ganador: ${winner.name}` : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
+              return winner.name ? <><span>Ganador: {winner.name} · {formatQuinielonNumber(winner.number)}</span>{day.date < investorPrizeStartDate ? null : winner.betAmount !== undefined && winner.potentialPrize !== undefined ? <><small>{winner.tier ? tierLabels[winner.tier] : ""}</small><small>Apuesta: {formatInvestment(winner.betAmount)}</small><small>Premio: {formatInvestment(winner.potentialPrize)}</small></> : <small>Sin apuesta registrada</small>}</> : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
             })()}</span> : null}
             {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
           </div>)}</div>

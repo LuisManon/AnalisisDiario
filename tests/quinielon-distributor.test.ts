@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import { historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
 function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:"2026-09-29T10:00:00Z"};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
@@ -93,4 +93,105 @@ test("later rotation cannot change a closed session's owner or group",()=>{
 test("smart-filtered numbers keep their saved group even without an investor",()=>{
   const assignment={...snapshot([[],[],[],[]]),smart:true,roster:Array.from({length:100},(_,number)=>({number,group:(number<40?"nosotros":number<80?"inversionistas":"banca") as "nosotros"|"inversionistas"|"banca"}))};
   assert.deepEqual(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:61},assignment),{number:61,name:null,recorded:true,group:"inversionistas"});
+});
+
+test("64–68 eligible numbers retain exact tiers, wagers and full coverage across draws", () => {
+  for (const size of [64,65,66,67,68]) {
+    // Reverse numeric order to prove categories follow ranking, not number identity.
+    const selected = pool.slice(0,size).reverse();
+    let history: Assignment[] = [];
+    for (let turn=0; turn<6; turn++) {
+      const result = distribute(selected,history,true,`pricing-${size}-${turn}`);
+      verify(result.investors,selected,history);
+      assert.equal(result.allocationWarning,undefined);
+      assert.equal(result.investors.filter(items=>items.length===17).length,size-64);
+      result.investors.forEach(items => {
+        assert.equal(items.filter(item=>item.tier==="hot").length,4);
+        assert.equal(items.filter(item=>item.tier==="intermediate").length,5);
+        assert.equal(items.filter(item=>item.tier==="remaining").length,items.length-9);
+        assert.equal(assignmentInvestment(items),items.length===16?10250:10150);
+        items.forEach(item => {
+          const rank = selected.findIndex(n=>n.number===item.number);
+          assert.equal(item.tier,rank<16?"hot":rank<36?"intermediate":"remaining");
+          assert.equal(item.betAmount,item.tier==="hot"?(items.length===16?1000:850):item.tier==="intermediate"?550:500);
+          assert.equal(historicalWager(item,result)?.potentialPrize,item.betAmount!*80);
+        });
+      });
+      assert.equal(assignmentInvestment(result.investors.flat()),(68-size)*10250+(size-64)*10150);
+      const saved = {...snapshot(result.investors),...result,smart:true};
+      assert.equal(validateAssignment(saved),null);
+      history=[saved,...history].slice(0,2);
+    }
+  }
+});
+
+test("category fallback is explicit and never relaxes protected ownership", () => {
+  const selected = pool.slice(0,64);
+  const previous=[snapshot([selected.slice(0,16),[],[],[]])];
+  const result=distribute(selected,previous,true,"tier-conflict");
+  verify(result.investors,selected,previous);
+  assert.ok(result.allocationWarning);
+  assert.equal(result.investors[0].filter(item=>item.tier==="hot").length,0);
+  assert.deepEqual(result,distribute(selected,previous,true,"tier-conflict"));
+  assert.throws(()=>distribute([selected[0],selected[0]],[],true,"duplicate"),/duplicados/);
+});
+
+test("future assignments passed by the API remain hard exclusions", () => {
+  const selected=pool.slice(0,68);
+  const earlier=distribute(selected,[],true,"earlier");
+  const later=distribute(selected,[snapshot(earlier.investors)],true,"later");
+  const protectedDraws=[snapshot(earlier.investors),snapshot(later.investors)];
+  verify(distribute(selected,protectedDraws,true,"middle").investors,selected,protectedDraws);
+});
+
+test("calendar prizes survive serialization and use historical amounts and multiplier", () => {
+  const allocation=distribute(pool.slice(0,64),[],true,"historical");
+  const saved: Assignment=JSON.parse(JSON.stringify({...snapshot(allocation.investors),...allocation,smart:true,date:"2026-10-02",createdAt:"2026-10-02T10:00:00Z"}));
+  for (const tier of ["hot","intermediate","remaining"]) {
+    const item=saved.investors[0].find(n=>n.tier===tier)!;
+    const winner=resolveInvestorWinner({date:saved.date,session:saved.session,number:item.number},saved)!;
+    assert.equal(winner.tier,tier);
+    assert.equal(winner.betAmount,item.betAmount);
+    assert.equal(winner.potentialPrize,item.betAmount!*80);
+    item.betAmount=123; // Simulate a different historical tariff; never infer from tier.
+    saved.prizeMultiplier=90;
+    assert.equal(resolveInvestorWinner({date:saved.date,session:saved.session,number:item.number},saved)?.potentialPrize,11070);
+    saved.prizeMultiplier=80;
+  }
+  const broken=structuredClone(saved); delete broken.investors[0][0].betAmount;
+  assert.ok(validateAssignment(broken));
+  const legacy=snapshot(rotateBlocks(pool,{date:saved.date,session:saved.session}).investors);
+  assert.equal(resolveInvestorWinner({date:saved.date,session:saved.session,number:0},legacy)?.betAmount,undefined);
+  assert.equal(assignmentInvestment(legacy.investors[0]),null);
+});
+
+test("unapproved quantities keep assignment compatibility without invented wagers", () => {
+  const result=distribute(pool.slice(0,53),[],true,"unpriced");
+  assert.ok(result.allocationWarning);
+  assert.ok(result.investors.flat().every(item=>item.betAmount===undefined));
+  assert.equal(assignmentInvestment(result.investors.flat()),null);
+});
+
+
+test("calendar prizes start on October 2 without changing earlier winners", () => {
+  const allocation = distribute(pool.slice(0,64),[],true,"rollout");
+  for (const date of ["2026-10-01", "2026-10-02", "2026-10-03"]) {
+    for (const session of ["dia", "noche"] as const) {
+      const assignment: Assignment = {...snapshot(allocation.investors), ...allocation, smart:true, date, session, createdAt:`${date}T10:00:00Z`};
+      const item = assignment.investors[0][0];
+      const winner = resolveInvestorWinner({date,session,number:item.number},assignment)!;
+      assert.equal(winner.name,"Lenin");
+      assert.equal(winner.recorded,true);
+      assert.equal(winner.group,item.source === "casa" ? "nosotros" : "inversionistas");
+      if (date < "2026-10-02") {
+        assert.equal(winner.betAmount,undefined);
+        assert.equal(winner.potentialPrize,undefined);
+        assert.equal(winner.tier,undefined);
+      } else {
+        assert.equal(winner.betAmount,item.betAmount);
+        assert.equal(winner.potentialPrize,item.betAmount!*80);
+        assert.equal(winner.tier,item.tier);
+      }
+    }
+  }
 });

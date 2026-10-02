@@ -1,6 +1,9 @@
 import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
-export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean };
-export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"}>; blockStarts?: number[]; algorithmVersion?: string };
+export type AssignmentTier = "hot" | "intermediate" | "remaining";
+export const tierLabels: Record<AssignmentTier, string> = { hot: "🔥 Caliente", intermediate: "🟡 Intermedio", remaining: "🔵 Restante" };
+export const formatInvestment = (amount: number) => `RD$${amount.toLocaleString("en-US")}`;
+export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean; tier?: AssignmentTier; betAmount?: number };
+export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
   const day = value.getUTCDate();
@@ -38,34 +41,65 @@ export function rotateBlocks(pool: AssignmentNumber[], slot: { date: string; ses
     blockStarts: blockIndexes.map(block => block * 20 + 1), algorithmVersion: blockRotationVersion };
 }
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
-// Bipartite matching with capacity slots: hard exclusion of each investor's previous two draws.
-export function distribute(pool: AssignmentNumber[], previous: Assignment[], smart: boolean, seed: string) {
+// The caller supplies the eligible pool in global ranking order. Hashes only break
+// ownership ties; they never determine a number's category or strength.
+export function distribute(pool: AssignmentNumber[], previous: Assignment[], smart: boolean, seed: string): Pick<Assignment, "investors" | "mixed" | "algorithmVersion" | "prizeMultiplier" | "allocationWarning"> {
+  if (new Set(pool.map(item => item.number)).size !== pool.length) throw new Error("El pool contiene números duplicados.");
+  const ranked = pool.map((item, index) => smart ? {...item, tier: (index < 16 ? "hot" : index < 36 ? "intermediate" : "remaining") as AssignmentTier} : {...item});
   const blocked = Array.from({ length: 4 }, (_, i) => new Set(previous.flatMap(p => p.investors[i].map(n => n.number))));
-  function match(capacities: number[], housePair?: number[]) {
-    const slots = capacities.flatMap((count, investor) => Array.from({length: count}, () => investor));
+  function match(capacities: number[], strictTiers: boolean) {
+    const slots = capacities.flatMap((count, investor) => Array.from({length: count}, (_, index) => ({investor, tier: index < 4 ? "hot" : index < 9 ? "intermediate" : "remaining"})));
     const owners = slots.map(() => -1);
+    const candidates = ranked.map(item => slots.map((slot, index) => ({...slot, index}))
+      .filter(slot => !blocked[slot.investor].has(item.number) && (!strictTiers || item.tier === slot.tier))
+      .sort((a,b) => Number(b.tier === item.tier) - Number(a.tier === item.tier) || hash(`${seed}:${item.number}:${a.index}`)-hash(`${seed}:${item.number}:${b.index}`)));
     function place(index: number, visited: Set<number>): boolean {
-      const item = pool[index];
-      const candidates = slots.map((investor, slot) => ({investor, slot})).filter(({investor}) => !blocked[investor].has(item.number) && (!housePair || housePair.includes(investor) === (item.source === "casa"))).sort((a,b) => hash(`${seed}:${item.number}:${a.slot}`)-hash(`${seed}:${item.number}:${b.slot}`));
-      for (const {slot} of candidates) { if (visited.has(slot)) continue; visited.add(slot); if (owners[slot] === -1 || place(owners[slot], visited)) { owners[slot] = index; return true; } }
+      for (const {index: slot} of candidates[index]) {
+        if (visited.has(slot)) continue;
+        visited.add(slot);
+        if (owners[slot] === -1 || place(owners[slot], visited)) { owners[slot] = index; return true; }
+      }
       return false;
     }
-    for (let i=0; i<pool.length; i++) if (!place(i, new Set())) return null;
+    for (let i=0; i<ranked.length; i++) if (!place(i, new Set())) return null;
     const output: AssignmentNumber[][] = [[],[],[],[]];
-    owners.forEach((owner, slot) => { if (owner >= 0) output[slots[slot]].push(pool[owner]); });
-    output.forEach(items => items.sort((a,b) => pool.indexOf(a)-pool.indexOf(b)));
+    owners.forEach((owner, slot) => { if (owner >= 0) output[slots[slot].investor].push(ranked[owner]); });
+    output.forEach(items => items.sort((a,b) => ranked.indexOf(a)-ranked.indexOf(b)));
     return output;
   }
   const order = [0,1,2,3].sort((a,b) => hash(seed+a)-hash(seed+b));
-  // Try every balanced capacity permutation, as a remainder may constrain a particular investor.
-  for (let mask=0; mask<16; mask++) {
-    if (mask.toString(2).replaceAll("0", "").length !== pool.length%4) continue;
-    const capacities = Array(4).fill(Math.floor(pool.length/4));
-    order.forEach((investor,i) => { if (mask & (1<<i)) capacities[investor]++; });
-    const investors = match(capacities);
-    if (investors) return {investors, mixed: true};
+  // Exhaust all balanced capacity permutations with exact tiers before falling
+  // back to the original hard-history matching. History is never relaxed.
+  for (const strictTiers of smart && pool.length >= 36 ? [true, false] : [false]) {
+    for (let mask=0; mask<16; mask++) {
+      if (mask.toString(2).replaceAll("0", "").length !== pool.length%4) continue;
+      const capacities = Array<number>(4).fill(Math.floor(pool.length/4));
+      order.forEach((investor,i) => { if (mask & (1<<i)) capacities[investor]++; });
+      const investors = match(capacities, strictTiers);
+      if (!investors) continue;
+      if (!smart) return {investors, mixed: true};
+      const warnings: string[] = [];
+      if (!strictTiers) warnings.push("No fue posible cumplir 4 calientes y 5 intermedios por inversionista. Se conservaron la unicidad, los bloqueos históricos y las cantidades equilibradas.");
+      if (capacities.some(size => size !== 16 && size !== 17)) warnings.push("La tabla de inversión solo está definida para 16 o 17 números; las cantidades distintas quedan sin apuesta registrada.");
+      const priced = investors.map(items => items.map(item => ({...item,
+        betAmount: items.length === 16 || items.length === 17
+          ? item.tier === "hot" ? (items.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500
+          : undefined
+      })));
+      return {investors: priced, mixed: true, algorithmVersion: "tiers-v1", prizeMultiplier: 80,
+        ...(warnings.length ? {allocationWarning: warnings.join(" ")} : {})};
+    }
   }
-  throw new Error("No hay un reparto equilibrado que evite las dos tandas anteriores con estos números. Se conserva el reparto guardado; no se han forzado repeticiones.");
+  throw new Error("No hay un reparto equilibrado que evite las tandas protegidas con estos números. Se conserva el reparto guardado; no se han forzado repeticiones.");
+}
+
+// Derive prizes only from the saved wager and saved multiplier, never today's rates.
+export function historicalWager(item: AssignmentNumber, assignment: Pick<Assignment, "prizeMultiplier">) {
+  if (item.betAmount === undefined || assignment.prizeMultiplier === undefined) return null;
+  return {tier: item.tier, betAmount: item.betAmount, potentialPrize: item.betAmount * assignment.prizeMultiplier};
+}
+export function assignmentInvestment(items: AssignmentNumber[]): number | null {
+  return items.length && items.every(item => item.betAmount !== undefined) ? items.reduce((sum, item) => sum + item.betAmount!, 0) : null;
 }
 
 export function assignmentDeadline(slot: {date:string; session:LaPrimeraSession}) {
@@ -76,6 +110,9 @@ export function validateAssignment(assignment: Assignment): string | null {
   if (!["dia","noche"].includes(assignment.session) || !Number.isFinite(assignmentDeadline(assignment)) || !Number.isFinite(Date.parse(assignment.createdAt)) || Date.parse(assignment.createdAt) >= assignmentDeadline(assignment)) return "Reparto fuera de la tanda";
   const items=assignment.investors.flat();
   if(items.some(item => !item || !Number.isInteger(item.number) || item.number<0 || item.number>99 || !["casa","respaldo"].includes(item.source))) return "Número o grupo inválido";
+  if (assignment.prizeMultiplier !== undefined && (!Number.isFinite(assignment.prizeMultiplier) || assignment.prizeMultiplier <= 0)) return "Multiplicador inválido";
+  if (items.some(item => (item.tier !== undefined && !["hot","intermediate","remaining"].includes(item.tier)) || (item.betAmount !== undefined && (!Number.isFinite(item.betAmount) || item.betAmount <= 0 || !item.tier || assignment.prizeMultiplier === undefined)))) return "Apuesta histórica inválida";
+  if (assignment.algorithmVersion === "tiers-v1" && (!assignment.smart || assignment.prizeMultiplier === undefined || items.some(item => !item.tier) || assignment.investors.some(numbers => (numbers.length === 16 || numbers.length === 17) && numbers.some(item => item.betAmount === undefined)))) return "Inversión incompleta";
   if(new Set(items.map(item=>item.number)).size !== items.length) return "Número asignado más de una vez";
   const sizes=assignment.investors.map(items=>items.length);
   if(assignment.smart ? items.length>80 || Math.max(...sizes)-Math.min(...sizes)>1 || items.some(item=>Boolean(item.badge)) : sizes.some(size=>size!==20)) return "Cantidades o filtros inconsistentes";
@@ -94,7 +131,9 @@ export function validateAssignment(assignment: Assignment): string | null {
 
 export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
 export const investorWinnerStartDate = "2026-09-29";
-export type InvestorWinner = { number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
+// Fixed rollout date: earlier winners never receive retroactive wager/prize details.
+export const investorPrizeStartDate = "2026-10-02";
+export type InvestorWinner = { tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
 export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;
   const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
@@ -103,5 +142,5 @@ export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignmen
   const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
   const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
-  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group};
+  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
 }

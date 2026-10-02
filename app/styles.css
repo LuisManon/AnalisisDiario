@@ -6634,3 +6634,10 @@ body:has(.appShell.lotoShell) {
   box-shadow: 0 6px 15px rgba(222, 145, 163, .12);
   font-weight: 800;
 }
+
+.distributorNumbers.distributorPricedNumbers { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.distributorPricedNumbers > span { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 12px 4px; border: 1px solid #8884; border-radius: 10px; }
+.distributorPricedNumbers > span > small { font-size: 11px; text-align: center; }
+.distributorPricedNumbers > span > strong { font-size: 13px; }
+.distributorInvestor-noche > p { color: #fff; }
+.weeklyInvestorWinner > span, .weeklyInvestorWinner > small { display: block; }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
+import { buildLaPrimeraFrequencyRanking } from "../../../../lib/la-primera";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
 import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
@@ -39,7 +40,8 @@ export async function POST(request: Request) {
       const last = results.filter(draw => draw.session === slot.session && draw.number === item.number).reduce((date,draw) => draw.date > date ? draw.date : date,"");
       return { number:item.number, source, badge: !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : "", winner: results.some(draw => draw.session === slot.session && draw.number === item.number && draw.date >= monday) };
     }));
-    const eligible = smart ? pool.filter(n => !n.badge) : pool;
+    const strength = new Map(buildLaPrimeraFrequencyRanking(results.filter(draw => draw.session === slot.session)).map((item, index) => [item.number, index]));
+    const eligible = smart ? pool.filter(n => !n.badge).sort((a,b) => strength.get(a.number)! - strength.get(b.number)!) : pool;
     // A later draw may already have been prepared from the selector. Protect it too.
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
     const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
