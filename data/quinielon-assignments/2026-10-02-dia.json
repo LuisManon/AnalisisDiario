@@ -415,7 +415,31 @@
         "betAmount": 1000
       },
       {
+        "number": 8,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 88,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
         "number": 90,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 32,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -423,7 +447,7 @@
         "betAmount": 550
       },
       {
-        "number": 32,
+        "number": 36,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -459,30 +483,6 @@
         "source": "respaldo",
         "badge": "",
         "winner": true,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 38,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 42,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 43,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false,
         "tier": "remaining",
         "betAmount": 500
       },
@@ -537,7 +537,7 @@
     ],
     [
       {
-        "number": 72,
+        "number": 64,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -545,7 +545,7 @@
         "betAmount": 850
       },
       {
-        "number": 33,
+        "number": 72,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -573,19 +573,11 @@
         "source": "casa",
         "badge": "",
         "winner": false,
-        "tier": "hot",
-        "betAmount": 850
+        "tier": "intermediate",
+        "betAmount": 550
       },
       {
         "number": 51,
-        "source": "casa",
-        "badge": "",
-        "winner": false,
-        "tier": "hot",
-        "betAmount": 850
-      },
-      {
-        "number": 75,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -593,7 +585,7 @@
         "betAmount": 550
       },
       {
-        "number": 82,
+        "number": 94,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -609,23 +601,15 @@
         "betAmount": 550
       },
       {
+        "number": 80,
+        "source": "respaldo",
+        "badge": "",
+        "winner": true,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
         "number": 81,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 85,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 92,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -641,7 +625,23 @@
         "betAmount": 500
       },
       {
-        "number": 26,
+        "number": 11,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 42,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 43,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -683,7 +683,7 @@
         "betAmount": 850
       },
       {
-        "number": 71,
+        "number": 33,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -699,7 +699,7 @@
         "betAmount": 850
       },
       {
-        "number": 39,
+        "number": 10,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -707,7 +707,7 @@
         "betAmount": 850
       },
       {
-        "number": 94,
+        "number": 39,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -715,7 +715,15 @@
         "betAmount": 550
       },
       {
-        "number": 8,
+        "number": 75,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 82,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -739,28 +747,12 @@
         "betAmount": 550
       },
       {
-        "number": 88,
-        "source": "casa",
-        "badge": "",
-        "winner": false,
-        "tier": "intermediate",
-        "betAmount": 550
-      },
-      {
         "number": 98,
         "source": "casa",
         "badge": "",
         "winner": false,
-        "tier": "intermediate",
-        "betAmount": 550
-      },
-      {
-        "number": 36,
-        "source": "casa",
-        "badge": "",
-        "winner": false,
-        "tier": "intermediate",
-        "betAmount": 550
+        "tier": "remaining",
+        "betAmount": 500
       },
       {
         "number": 3,
@@ -780,6 +772,14 @@
       },
       {
         "number": 9,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 26,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -813,14 +813,6 @@
     ],
     [
       {
-        "number": 64,
-        "source": "casa",
-        "badge": "",
-        "winner": false,
-        "tier": "hot",
-        "betAmount": 850
-      },
-      {
         "number": 77,
         "source": "casa",
         "badge": "",
@@ -829,7 +821,7 @@
         "betAmount": 850
       },
       {
-        "number": 86,
+        "number": 71,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -837,7 +829,7 @@
         "betAmount": 850
       },
       {
-        "number": 10,
+        "number": 86,
         "source": "casa",
         "badge": "",
         "winner": false,
@@ -893,15 +885,7 @@
         "betAmount": 550
       },
       {
-        "number": 80,
-        "source": "respaldo",
-        "badge": "",
-        "winner": true,
-        "tier": "remaining",
-        "betAmount": 500
-      },
-      {
-        "number": 93,
+        "number": 85,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -909,7 +893,15 @@
         "betAmount": 500
       },
       {
-        "number": 11,
+        "number": 92,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 93,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -926,6 +918,14 @@
       },
       {
         "number": 30,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 38,
         "source": "respaldo",
         "badge": "",
         "winner": false,
@@ -951,10 +951,10 @@
     ]
   ],
   "mixed": true,
-  "algorithmVersion": "tiers-v1",
+  "algorithmVersion": "tiers-v2",
   "prizeMultiplier": 80,
-  "allocationWarning": "No fue posible cumplir 4 calientes y 5 intermedios por inversionista. Se conservaron la unicidad, los bloqueos históricos y las cantidades equilibradas.",
+  "allocationWarning": "Se ajustó la selección por los bloqueos históricos: cada inversionista conserva 4 calientes de Casa (top 40), 5 intermedios y 7/8 restantes.",
   "excluded": 13,
   "priorCount": 2,
-  "createdAt": "2026-10-02T13:32:48.023Z"
+  "createdAt": "2026-10-02T14:51:03.625Z"
 }
