@@ -40,18 +40,23 @@ export function rotateBlocks(pool: AssignmentNumber[], slot: { date: string; ses
   return { investors: blockIndexes.map(block => pool.slice(block * 20, block * 20 + 20)), mixed: false,
     blockStarts: blockIndexes.map(block => block * 20 + 1), algorithmVersion: blockRotationVersion };
 }
+export const smartDistributionVersion = "tiers-v2";
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
 // The caller supplies the eligible pool in global ranking order. Hashes only break
 // ownership ties; they never determine a number's category or strength.
 export function distribute(pool: AssignmentNumber[], previous: Assignment[], smart: boolean, seed: string): Pick<Assignment, "investors" | "mixed" | "algorithmVersion" | "prizeMultiplier" | "allocationWarning"> {
   if (new Set(pool.map(item => item.number)).size !== pool.length) throw new Error("El pool contiene números duplicados.");
-  const ranked = pool.map((item, index) => smart ? {...item, tier: (index < 16 ? "hot" : index < 36 ? "intermediate" : "remaining") as AssignmentTier} : {...item});
+  if (smart && (pool.length < 64 || pool.length > 68)) throw new Error("Se necesitan entre 64 y 68 números elegibles para mantener 16/17 jugadas y la inversión de RD$10,250/RD$10,150 por inversionista.");
+  const hot = new Set(pool.filter(item => item.source === "casa").slice(0,16).map(item => item.number));
+  if (smart && hot.size < 16) throw new Error("No hay 16 números elegibles de Casa (top 40) para entregar 4 calientes a cada inversionista.");
+  const intermediate = new Set(pool.filter(item => !hot.has(item.number)).slice(0,20).map(item => item.number));
+  const ranked = pool.map(item => smart ? {...item, tier: (hot.has(item.number) ? "hot" : intermediate.has(item.number) ? "intermediate" : "remaining") as AssignmentTier} : {...item});
   const blocked = Array.from({ length: 4 }, (_, i) => new Set(previous.flatMap(p => p.investors[i].map(n => n.number))));
   function match(capacities: number[], strictTiers: boolean) {
     const slots = capacities.flatMap((count, investor) => Array.from({length: count}, (_, index) => ({investor, tier: index < 4 ? "hot" : index < 9 ? "intermediate" : "remaining"})));
     const owners = slots.map(() => -1);
     const candidates = ranked.map(item => slots.map((slot, index) => ({...slot, index}))
-      .filter(slot => !blocked[slot.investor].has(item.number) && (!strictTiers || item.tier === slot.tier))
+      .filter(slot => !blocked[slot.investor].has(item.number) && (strictTiers ? item.tier === slot.tier : !smart || slot.tier !== "hot" || item.source === "casa"))
       .sort((a,b) => Number(b.tier === item.tier) - Number(a.tier === item.tier) || hash(`${seed}:${item.number}:${a.index}`)-hash(`${seed}:${item.number}:${b.index}`)));
     function place(index: number, visited: Set<number>): boolean {
       for (const {index: slot} of candidates[index]) {
@@ -65,12 +70,21 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
     const output: AssignmentNumber[][] = [[],[],[],[]];
     owners.forEach((owner, slot) => { if (owner >= 0) output[slots[slot].investor].push(ranked[owner]); });
     output.forEach(items => items.sort((a,b) => ranked.indexOf(a)-ranked.indexOf(b)));
+    if (smart && !strictTiers) {
+      // Each investor has at least four Casa numbers from matching. Classify by
+      // actual rank within that feasible allocation, never by hash or source alone.
+      return output.map(items => {
+        const selectedHot = new Set(items.filter(item => item.source === "casa").slice(0,4).map(item => item.number));
+        const selectedIntermediate = new Set(items.filter(item => !selectedHot.has(item.number)).slice(0,5).map(item => item.number));
+        return items.map(item => ({...item, tier: (selectedHot.has(item.number) ? "hot" : selectedIntermediate.has(item.number) ? "intermediate" : "remaining") as AssignmentTier}));
+      });
+    }
     return output;
   }
   const order = [0,1,2,3].sort((a,b) => hash(seed+a)-hash(seed+b));
-  // Exhaust all balanced capacity permutations with exact tiers before falling
-  // back to the original hard-history matching. History is never relaxed.
-  for (const strictTiers of smart && pool.length >= 36 ? [true, false] : [false]) {
+  // First try the globally strongest Casa candidates. If blocked, expand within
+  // Casa while preserving all quotas and historical exclusions.
+  for (const strictTiers of smart ? [true, false] : [false]) {
     for (let mask=0; mask<16; mask++) {
       if (mask.toString(2).replaceAll("0", "").length !== pool.length%4) continue;
       const capacities = Array<number>(4).fill(Math.floor(pool.length/4));
@@ -79,18 +93,15 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
       if (!investors) continue;
       if (!smart) return {investors, mixed: true};
       const warnings: string[] = [];
-      if (!strictTiers) warnings.push("No fue posible cumplir 4 calientes y 5 intermedios por inversionista. Se conservaron la unicidad, los bloqueos históricos y las cantidades equilibradas.");
-      if (capacities.some(size => size !== 16 && size !== 17)) warnings.push("La tabla de inversión solo está definida para 16 o 17 números; las cantidades distintas quedan sin apuesta registrada.");
+      if (!strictTiers) warnings.push("Se ajustó la selección por los bloqueos históricos: cada inversionista conserva 4 calientes de Casa (top 40), 5 intermedios y 7/8 restantes.");
       const priced = investors.map(items => items.map(item => ({...item,
-        betAmount: items.length === 16 || items.length === 17
-          ? item.tier === "hot" ? (items.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500
-          : undefined
+        betAmount: item.tier === "hot" ? (items.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500
       })));
-      return {investors: priced, mixed: true, algorithmVersion: "tiers-v1", prizeMultiplier: 80,
+      return {investors: priced, mixed: true, algorithmVersion: smartDistributionVersion, prizeMultiplier: 80,
         ...(warnings.length ? {allocationWarning: warnings.join(" ")} : {})};
     }
   }
-  throw new Error("No hay un reparto equilibrado que evite las tandas protegidas con estos números. Se conserva el reparto guardado; no se han forzado repeticiones.");
+  throw new Error("No es posible entregar 4 calientes de Casa, 5 intermedios y 7/8 restantes a cada inversionista sin repetir números de las tandas protegidas. Se conserva el reparto guardado; no se han forzado repeticiones.");
 }
 
 // Derive prizes only from the saved wager and saved multiplier, never today's rates.
@@ -116,6 +127,16 @@ export function validateAssignment(assignment: Assignment): string | null {
   if(new Set(items.map(item=>item.number)).size !== items.length) return "Número asignado más de una vez";
   const sizes=assignment.investors.map(items=>items.length);
   if(assignment.smart ? items.length>80 || Math.max(...sizes)-Math.min(...sizes)>1 || items.some(item=>Boolean(item.badge)) : sizes.some(size=>size!==20)) return "Cantidades o filtros inconsistentes";
+  if (assignment.algorithmVersion === smartDistributionVersion) {
+    if (!assignment.smart || assignment.prizeMultiplier !== 80 || assignment.investors.some(numbers =>
+      ![16,17].includes(numbers.length) ||
+      numbers.filter(item => item.tier === "hot").length !== 4 ||
+      numbers.filter(item => item.tier === "intermediate").length !== 5 ||
+      numbers.filter(item => item.tier === "remaining").length !== numbers.length - 9 ||
+      numbers.some(item => item.tier === "hot" && item.source !== "casa") ||
+      numbers.some(item => item.betAmount !== (item.tier === "hot" ? (numbers.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500))
+    )) return "El reparto debe tener 4 calientes de Casa, 5 intermedios, 7/8 restantes y la inversión aprobada";
+  }
   if(assignment.roster) {
     const roster=assignment.roster;
     if(roster.length!==100 || new Set(roster.map(item=>item.number)).size!==100 || roster.some(item=>!Number.isInteger(item.number)||item.number<0||item.number>99||!["nosotros","inversionistas","banca"].includes(item.group))) return "Clasificación incompleta";

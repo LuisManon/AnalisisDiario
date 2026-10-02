@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import { smartDistributionVersion, historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
 function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:"2026-09-29T10:00:00Z"};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
@@ -8,14 +8,14 @@ function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], p
   assert.ok(Math.max(...investors.map(i=>i.length))-Math.min(...investors.map(i=>i.length))<=1);
   investors.forEach((items,i)=>assert.ok(items.every(n=>previous.every(p=>!p.investors[i].some(old=>old.number===n.number)))));
 }
-test("smart mode balances filtered numbers with no repeats, including odd totals",()=>{
-  for(const size of [0,1,3,17,53,79,80]) {let history:Assignment[]=[];const selected=pool.slice(0,size);for(let turn=0;turn<8;turn++){const r=distribute(selected,history,true,`${size}-${turn}`);verify(r.investors,selected,history);history=[snapshot(r.investors),...history].slice(0,2);}}
+test("generic matching balances numbers with no repeats, including odd totals",()=>{
+  for(const size of [0,1,3,17,53,79,80]) {let history:Assignment[]=[];const selected=pool.slice(0,size);for(let turn=0;turn<8;turn++){const r=distribute(selected,history,false,`${size}-${turn}`);verify(r.investors,selected,history);history=[snapshot(r.investors),...history].slice(0,2);}}
 });
 test("impossible assignment is rejected rather than repeating",()=>{
-  const previous=[snapshot([pool,[],[],[]]),snapshot([[],pool,[],[]])];assert.throws(()=>distribute(pool,previous,true,"blocked"));
+  const selected=pool.slice(0,64); const previous=[snapshot([selected,[],[],[]]),snapshot([[],selected,[],[]])];assert.throws(()=>distribute(selected,previous,true,"blocked"),/tandas protegidas/);
 });
 test("stable seed and Dominican cutoff dates",()=>{
-  assert.deepEqual(distribute(pool,[],true,"seed"),distribute(pool,[],true,"seed"));
+  assert.deepEqual(distribute(pool.slice(0,64),[],true,"seed"),distribute(pool.slice(0,64),[],true,"seed"));
   assert.deepEqual(nextAssignmentSlot(new Date("2026-09-29T15:59:00Z")),{date:"2026-09-29",session:"dia"});
   assert.deepEqual(nextAssignmentSlot(new Date("2026-09-29T16:00:00Z")),{date:"2026-09-29",session:"noche"});
   assert.deepEqual(nextAssignmentSlot(new Date("2026-09-29T23:00:00Z")),{date:"2026-09-30",session:"dia"});
@@ -111,8 +111,10 @@ test("64–68 eligible numbers retain exact tiers, wagers and full coverage acro
         assert.equal(items.filter(item=>item.tier==="remaining").length,items.length-9);
         assert.equal(assignmentInvestment(items),items.length===16?10250:10150);
         items.forEach(item => {
-          const rank = selected.findIndex(n=>n.number===item.number);
-          assert.equal(item.tier,rank<16?"hot":rank<36?"intermediate":"remaining");
+          const hot = selected.filter(n=>n.source === "casa").slice(0,16);
+          const intermediate = selected.filter(n=>!hot.includes(n)).slice(0,20);
+          assert.equal(item.tier,hot.some(n=>n.number===item.number)?"hot":intermediate.some(n=>n.number===item.number)?"intermediate":"remaining");
+          if (item.tier === "hot") assert.equal(item.source,"casa");
           assert.equal(item.betAmount,item.tier==="hot"?(items.length===16?1000:850):item.tier==="intermediate"?550:500);
           assert.equal(historicalWager(item,result)?.potentialPrize,item.betAmount!*80);
         });
@@ -125,13 +127,18 @@ test("64–68 eligible numbers retain exact tiers, wagers and full coverage acro
   }
 });
 
-test("category fallback is explicit and never relaxes protected ownership", () => {
+test("blocked top 16 expand within Casa while retaining all quotas and investment", () => {
   const selected = pool.slice(0,64);
   const previous=[snapshot([selected.slice(0,16),[],[],[]])];
   const result=distribute(selected,previous,true,"tier-conflict");
   verify(result.investors,selected,previous);
   assert.ok(result.allocationWarning);
-  assert.equal(result.investors[0].filter(item=>item.tier==="hot").length,0);
+  result.investors.forEach(items => {
+    assert.equal(items.filter(item=>item.tier === "hot").length,4);
+    assert.ok(items.filter(item=>item.tier === "hot").every(item=>item.source === "casa"));
+    assert.equal(items.filter(item=>item.tier === "intermediate").length,5);
+    assert.equal(assignmentInvestment(items),10250);
+  });
   assert.deepEqual(result,distribute(selected,previous,true,"tier-conflict"));
   assert.throws(()=>distribute([selected[0],selected[0]],[],true,"duplicate"),/duplicados/);
 });
@@ -153,6 +160,7 @@ test("calendar prizes survive serialization and use historical amounts and multi
     assert.equal(winner.tier,tier);
     assert.equal(winner.betAmount,item.betAmount);
     assert.equal(winner.potentialPrize,item.betAmount!*80);
+    saved.algorithmVersion="tiers-v1"; // A separately versioned historical tariff.
     item.betAmount=123; // Simulate a different historical tariff; never infer from tier.
     saved.prizeMultiplier=90;
     assert.equal(resolveInvestorWinner({date:saved.date,session:saved.session,number:item.number},saved)?.potentialPrize,11070);
@@ -165,11 +173,8 @@ test("calendar prizes survive serialization and use historical amounts and multi
   assert.equal(assignmentInvestment(legacy.investors[0]),null);
 });
 
-test("unapproved quantities keep assignment compatibility without invented wagers", () => {
-  const result=distribute(pool.slice(0,53),[],true,"unpriced");
-  assert.ok(result.allocationWarning);
-  assert.ok(result.investors.flat().every(item=>item.betAmount===undefined));
-  assert.equal(assignmentInvestment(result.investors.flat()),null);
+test("unsupported quantities are rejected instead of changing quotas or inventing wagers", () => {
+  for (const size of [0,17,53,63,69,80]) assert.throws(()=>distribute(pool.slice(0,size),[],true,"unpriced"),/64 y 68/);
 });
 
 
@@ -193,5 +198,39 @@ test("calendar prizes start on October 2 without changing earlier winners", () =
         assert.equal(winner.tier,item.tier);
       }
     }
+  }
+});
+
+
+test("hot candidates always come from Casa even when Respaldo ranks higher", () => {
+  const selected=[...pool.slice(40,68),...pool.slice(0,40)];
+  const result=distribute(selected,[],true,"source-ranked");
+  assert.equal(result.algorithmVersion,smartDistributionVersion);
+  result.investors.forEach(items => {
+    assert.equal(items.filter(n=>n.tier==="hot").length,4);
+    assert.ok(items.filter(n=>n.tier==="hot").every(n=>n.source==="casa"));
+    assert.ok(items.filter(n=>n.tier==="remaining").every(n=>n.betAmount===500));
+    assert.equal(assignmentInvestment(items),10150);
+  });
+});
+
+test("impossible Casa quotas fail without assigning Respaldo as hot", () => {
+  const selected=pool.slice(0,64);
+  assert.throws(()=>distribute(selected,[snapshot([pool.slice(0,40),[],[],[]])],true,"all-house-blocked"),/4 calientes de Casa/);
+  const insufficient=selected.map((n,i)=>({...n,source:(i<15?"casa":"respaldo") as AssignmentNumber["source"]}));
+  assert.throws(()=>distribute(insufficient,[],true,"too-few-house"),/16 números elegibles de Casa/);
+});
+
+test("v2 saved assignments reject incorrect quotas, source or investment", () => {
+  const allocation=distribute(pool.slice(0,64),[],true,"validate-v2");
+  const saved:Assignment={...snapshot(allocation.investors),...allocation,smart:true};
+  assert.equal(validateAssignment(saved),null);
+  for (const change of ["tier","source","amount"] as const) {
+    const broken=structuredClone(saved);
+    const hot=broken.investors[0].find(n=>n.tier==="hot")!;
+    if(change==="tier") hot.tier="remaining";
+    if(change==="source") hot.source="respaldo";
+    if(change==="amount") hot.betAmount=500;
+    assert.ok(validateAssignment(broken));
   }
 });

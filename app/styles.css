@@ -6658,3 +6658,9 @@ body:has(.appShell.lotoShell) {
 .distributorPrizes p { margin: 8px 0 0; }
 .distributorGrandTotal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 12px; border-top: 1px solid #e3e3e9; font-size: 14px; }
 .weeklyInvestorWinner > span, .weeklyInvestorWinner > small { display: block; }
+.distributorBetNumbers > .distributorSourceBall { border-radius: 50%; border: 1px solid #fff; padding: 6px; min-width: 34px; }
+.distributorBetNumbers > .distributorSourceBall-casa, .distributorSourceLegend .distributorSourceBall-casa { background: linear-gradient(145deg, #fff6f8, #ffd0da); color: #2d2024; box-shadow: inset 0 -2px 3px #dd99aa33; }
+.distributorBetNumbers > .distributorSourceBall-respaldo, .distributorSourceLegend .distributorSourceBall-respaldo { background: linear-gradient(145deg, #fff4bd, #e8bb48); color: #44300b; box-shadow: inset 0 -2px 3px #aa772233; }
+.distributorSourceLegend, .distributorSourceLegend > span { display: inline-flex; align-items: center; gap: 6px; }
+.distributorSourceLegend { flex-wrap: wrap; gap: 14px; }
+.distributorSourceLegend i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }

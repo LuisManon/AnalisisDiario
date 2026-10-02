@@ -4,7 +4,7 @@ import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildLaPrimeraFrequencyRanking } from "../../../../lib/la-primera";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const p1 = previousSlot(slot), p2 = previousSlot(p1);
     const history = (await Promise.all([read(p1), read(p2)])).filter((a): a is Assignment => Boolean(a));
     const smart = body?.smart ?? existing?.smart ?? history[0]?.smart ?? false;
-    if (existing && existing.smart === smart && (smart || existing.algorithmVersion === blockRotationVersion)) {
+    if (existing && existing.smart === smart && (existing.algorithmVersion === (smart ? smartDistributionVersion : blockRotationVersion))) {
       const error = validateAssignment(existing);
       if(error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
       return NextResponse.json(existing);

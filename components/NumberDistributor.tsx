@@ -15,13 +15,13 @@ function wagerGroups(numbers: AssignmentNumber[]) {
   return [...groups.values()].sort((a,b) => (a.tier ? order[a.tier] : 3) - (b.tier ? order[b.tier] : 3));
 }
 
-function SmartInvestorNumbers({numbers, assignment}: {numbers: AssignmentNumber[]; assignment: Assignment}) {
+function SmartInvestorNumbers({numbers, assignment, showGroupColors}: {numbers: AssignmentNumber[]; assignment: Assignment; showGroupColors: boolean}) {
   const groups = wagerGroups(numbers);
   return <>
     <div className="distributorWagerGroups">
       {groups.map(group => <section className="distributorWagerGroup" key={`${group.tier}-${group.amount}`} aria-label={`${group.tier ? tierLabels[group.tier] : "Números"}: ${group.amount === undefined ? "sin apuesta registrada" : `${formatInvestment(group.amount)} por número`}`}>
         <header><span>{group.tier ? tierLabels[group.tier] : "Números"}</span><strong>{group.amount === undefined ? "Sin apuesta" : <>{formatInvestment(group.amount)} <small>por número</small></>}</strong></header>
-        <div className="distributorBetNumbers">{group.numbers.map(item => <span key={item.number} aria-label={`Número ${String(item.number).padStart(2,"0")}: ${item.betAmount === undefined ? "sin apuesta registrada" : formatInvestment(item.betAmount)}`}>{String(item.number).padStart(2,"0")}</span>)}</div>
+        <div className="distributorBetNumbers">{group.numbers.map(item => <span key={item.number} className={showGroupColors ? `distributorSourceBall distributorSourceBall-${item.source}` : undefined} title={showGroupColors ? (item.source === "casa" ? "Casa · top 40" : "Respaldo") : undefined} aria-label={`Número ${String(item.number).padStart(2,"0")} · ${item.source === "casa" ? "Casa, top 40" : "Respaldo"}: ${item.betAmount === undefined ? "sin apuesta registrada" : formatInvestment(item.betAmount)}`}>{String(item.number).padStart(2,"0")}</span>)}</div>
       </section>)}
     </div>
     {groups.some(group => historicalWager(group.numbers[0],assignment)) ? <details className="distributorPrizes"><summary>Ver premios potenciales</summary>{groups.map(group => {
@@ -35,6 +35,7 @@ export function NumberDistributor({renderNumber}: Props) {
   const [assignment,setAssignment] = useState<Assignment|null>(null);
   const [sessionChoice,setSessionChoice] = useState<AssignmentSessionChoice>("auto");
   const [showSymbols,setShowSymbols] = useState(true);
+  const [showGroupColors,setShowGroupColors] = useState(false);
   const choiceRef = useRef<AssignmentSessionChoice>("auto");
   const [busy,setBusy] = useState(true);
   const [error,setError] = useState("");
@@ -101,6 +102,7 @@ export function NumberDistributor({renderNumber}: Props) {
     <header className="distributorHeader"><div><span className="panelLabel">Asignador por tanda</span><h2>Cuatro inversionistas</h2><p>{assignment ? `${assignment.date.split("-").reverse().join("-")} · ${assignment.session === "dia" ? "Día · 12:00 PM" : "Noche · 7:00 PM"}` : "Preparando la próxima tanda…"}</p></div><button type="button" disabled={!assignment||busy||Boolean(error)} onClick={()=>void share()}>Compartir · Copiar WhatsApp</button></header>
     <div className="distributorControls">
       <label className="distributorSession">Tanda <select aria-label="Tanda del asignador" value={sessionChoice} onChange={e=>changeSession(e.target.value as AssignmentSessionChoice)}><option value="auto">Automática · próxima tanda</option><option value="dia">Día · próximo sorteo</option><option value="noche">Noche · próximo sorteo</option></select></label>
+      {assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showGroupColors} onChange={e=>setShowGroupColors(e.target.checked)} /> Colores de Casa / Respaldo</label>{showGroupColors ? <small className="distributorSourceLegend"><span><i className="distributorSourceBall-casa" /> Casa · top 40</span><span><i className="distributorSourceBall-respaldo" /> Respaldo</span></small> : null}</div> : null}
       {!assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={e=>setShowSymbols(e.target.checked)} /> Mostrar símbolos y detalles del asignador</label></div> : null}
     </div>
     <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={assignment?.smart??false} disabled={busy} onChange={e=>void load(e.target.checked)} /> Repartidor inteligente</label><small>{assignment?.smart ? `${assignment.excluded} con cristal o hielo excluidos · reparto equilibrado` : "Bloques completos: 1–20 → 41–60 → 21–40 → 61–80 · cambia cada tanda"}</small></div>
@@ -108,7 +110,7 @@ export function NumberDistributor({renderNumber}: Props) {
     {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
     {assignment ? <>
       {assignment.allocationWarning ? <p role="status" className="distributorNote">{assignment.allocationWarning}</p> : null}
-      {assignment.smart ? <p className="distributorInstruction">Apuesta el monto indicado a <strong>cada número</strong> de su grupo.</p> : null}
+      {assignment.smart ? <p className="distributorInstruction">Apuesta el monto indicado a <strong>cada número</strong> de su grupo. Los 4 calientes son de Casa (top 40).</p> : null}
       <div className="distributorGrid">{assignment.investors.map((numbers,i)=>{
         const total = assignmentInvestment(numbers);
         return <article className={`distributorInvestor distributorInvestor-${assignment.session}`} key={i}>
@@ -122,7 +124,7 @@ export function NumberDistributor({renderNumber}: Props) {
             {assignment.smart ? <div className="distributorInvestorTotal"><small>Inversión</small><strong>{total === null ? "Sin registrar" : formatInvestment(total)}</strong></div> : null}
             <button type="button" aria-label={`Copiar jugadas de ${investorNames[i]}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button>
           </header>
-          {assignment.smart ? <SmartInvestorNumbers numbers={numbers} assignment={assignment} /> : <div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>}
+          {assignment.smart ? <SmartInvestorNumbers numbers={numbers} assignment={assignment} showGroupColors={showGroupColors} /> : <div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>}
           {!numbers.length ? <p>Sin números disponibles.</p> : null}
         </article>;
       })}</div>
