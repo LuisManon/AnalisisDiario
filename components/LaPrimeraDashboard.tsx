@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
 import { updateWeeklyGesture, finishWeeklyGesture, type WeeklyGesture } from "../lib/weekly-swipe";
-import { tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
+import { numberDelayBadge, tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
 import { createPortal } from "react-dom";
 import {
@@ -775,7 +775,8 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         // A closed draw is scored only from a validated snapshot of that exact session.
         status = winner?.number === draw.number && !winner.validationError && winner.group ? winner.group : "pendiente";
       }
-      return { session, draw, status };
+      const delayBadge = draw ? winner?.delayBadge ?? numberDelayBadge(results, draw.number, draw) : "";
+      return { session, draw, status, delayBadge };
     })
   }));
   const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
@@ -808,12 +809,13 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
           <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
-            <small>{tanda.draw ? `${formatQuinielonNumber(tanda.draw.number)} · Quinielón` : "Esperando resultado"}</small>
+            {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>Quinielón</small></div> : <small>Esperando resultado</small>}
+            {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "❄️" ? "Antes del sorteo: 4 o 5 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "❄️" ? "Era hielo" : "Era cristal de hielo"}</span> : null}
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
               if (winner.validationError) return "Reparto por revisar";
-              return winner.name ? <><span>Ganador: {winner.name} · {formatQuinielonNumber(winner.number)}</span>{day.date < investorPrizeStartDate ? null : winner.betAmount !== undefined && winner.potentialPrize !== undefined ? <><small>{winner.tier ? tierLabels[winner.tier] : ""}</small><small>Apuesta: {formatInvestment(winner.betAmount)}</small><small>Premio: {formatInvestment(winner.potentialPrize)}</small></> : <small>Sin apuesta registrada</small>}</> : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
+              return winner.name ? <><span>Ganador: {winner.name}</span>{day.date < investorPrizeStartDate ? null : winner.betAmount !== undefined && winner.potentialPrize !== undefined ? <><small>{winner.tier ? tierLabels[winner.tier] : ""}</small><small>Apuesta: {formatInvestment(winner.betAmount)}</small><small className="weeklyPrizeAmount">Premio: {formatInvestment(winner.potentialPrize)}</small></> : <small>Sin apuesta registrada</small>}</> : winner.recorded ? "Sin Ganadores" : "Sin reparto registrado";
             })()}</span> : null}
             {tanda.draw ? <WeeklyPreviousDate results={results} number={tanda.draw.number} session={tanda.session} date={tanda.draw.date} /> : null}
           </div>)}</div>

@@ -1,4 +1,5 @@
 "use client";
+import { createPortal } from "react-dom";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { historicalWager, assignmentInvestment, tierLabels, formatInvestment, investorNames, selectedAssignmentSlot, type AssignmentSessionChoice, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
 
@@ -39,12 +40,14 @@ export function NumberDistributor({renderNumber}: Props) {
   const choiceRef = useRef<AssignmentSessionChoice>("auto");
   const [busy,setBusy] = useState(true);
   const [error,setError] = useState("");
-  const [copied,setCopied] = useState("");
+  const [copyFeedback,setCopyFeedback] = useState<{target: number | "all"; state: "pending" | "success" | "error"; message: string} | null>(null);
+  const copySequence = useRef(0);
+  const fallbackInput = useRef<HTMLTextAreaElement>(null);
   const [fallback,setFallback] = useState("");
   const sequence = useRef(0);
   const slotRef = useRef("");
   async function load(smart?:boolean) {
-    const id=++sequence.current; setBusy(true);setError("");setCopied("");setFallback("");
+    const id=++sequence.current; setBusy(true);setError("");setCopyFeedback(null);copySequence.current++;setFallback("");
     try {
       const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current, ...(smart === undefined ? {} : {smart})})});
       const data=await response.json();
@@ -58,6 +61,15 @@ export function NumberDistributor({renderNumber}: Props) {
     const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},30_000);
     return ()=>{window.clearInterval(timer);sequence.current++;};
   },[]);
+  useEffect(() => {
+    if (copyFeedback?.state !== "success") return;
+    const timer = window.setTimeout(() => setCopyFeedback(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [copyFeedback]);
+  useEffect(() => {
+    if (fallback) { fallbackInput.current?.focus(); fallbackInput.current?.select(); }
+  }, [fallback]);
+  const allocationWarning = assignment?.allocationWarning?.startsWith("Se ajustó la selección por los bloqueos históricos:") ? undefined : assignment?.allocationWarning;
   function changeSession(value: AssignmentSessionChoice) {
     choiceRef.current=value;
     setSessionChoice(value);
@@ -93,13 +105,34 @@ export function NumberDistributor({renderNumber}: Props) {
     });
     const total = assignmentInvestment(assignment.investors.flat());
     if (investor === undefined && total !== null) lines.push(`Inversión general: ${formatInvestment(total)}`);
-    if (assignment.allocationWarning) lines.push(assignment.allocationWarning);
+    if (allocationWarning) lines.push(allocationWarning);
     return lines.join("\n").trim();
   }
-  async function share(investor?:number) {const value=text(investor);try {await navigator.clipboard.writeText(value);setCopied(investor===undefined ? "Reparto copiado para WhatsApp." : `${investorNames[investor]} copiado.`);setFallback("");}catch {setFallback(value);setCopied("Selecciona y copia el texto para WhatsApp.");}}
+  async function share(investor?:number) {
+    if (!assignment || busy || error) return;
+    const id = ++copySequence.current;
+    const target = investor ?? "all";
+    const value = text(investor);
+    setFallback("");
+    setCopyFeedback({target, state: "pending", message: "Copiando jugadas…"});
+    try {
+      await navigator.clipboard.writeText(value);
+      if (id !== copySequence.current) return;
+      setCopyFeedback({target, state: "success", message: investor === undefined ? "✓ Reparto copiado. Listo para pegar en WhatsApp." : `✓ Jugadas de ${investorNames[investor]} copiadas.`});
+    } catch {
+      if (id !== copySequence.current) return;
+      setFallback(value);
+      setCopyFeedback({target, state: "error", message: "No se pudo copiar automáticamente. Selecciona y copia este texto."});
+    }
+  }
+  function copyLabel(target: number | "all", label: string) {
+    if (copyFeedback?.target !== target) return label;
+    return copyFeedback.state === "pending" ? "Copiando…" : copyFeedback.state === "success" ? "✓ Copiado" : "Reintentar";
+  }
+
   const role=(numbers:AssignmentNumber[])=>{const casa=numbers.filter(n=>n.source==="casa").length;return casa===numbers.length&&casa ? "Casa · fuertes" : casa===0 ? "Respaldo" : `${casa} Casa · ${numbers.length-casa} Respaldo`;};
   return <section className={`card distributor${assignment?.smart ? " distributorCompact" : ""}${showSymbols ? "" : " hideNumberSymbols"}`} aria-label="Asignador de números por tanda" aria-busy={busy}>
-    <header className="distributorHeader"><div><span className="panelLabel">Asignador por tanda</span><h2>Cuatro inversionistas</h2><p>{assignment ? `${assignment.date.split("-").reverse().join("-")} · ${assignment.session === "dia" ? "Día · 12:00 PM" : "Noche · 7:00 PM"}` : "Preparando la próxima tanda…"}</p></div><button type="button" disabled={!assignment||busy||Boolean(error)} onClick={()=>void share()}>Compartir · Copiar WhatsApp</button></header>
+    <header className="distributorHeader"><div><span className="panelLabel">Asignador por tanda</span><h2>Cuatro inversionistas</h2><p>{assignment ? `${assignment.date.split("-").reverse().join("-")} · ${assignment.session === "dia" ? "Día · 12:00 PM" : "Noche · 7:00 PM"}` : "Preparando la próxima tanda…"}</p></div><button type="button" disabled={!assignment||busy||Boolean(error)||copyFeedback?.state === "pending"} onClick={()=>void share()}>{copyLabel("all", "Compartir · Copiar WhatsApp")}</button></header>
     <div className="distributorControls">
       <label className="distributorSession">Tanda <select aria-label="Tanda del asignador" value={sessionChoice} onChange={e=>changeSession(e.target.value as AssignmentSessionChoice)}><option value="auto">Automática · próxima tanda</option><option value="dia">Día · próximo sorteo</option><option value="noche">Noche · próximo sorteo</option></select></label>
       {assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showGroupColors} onChange={e=>setShowGroupColors(e.target.checked)} /> Colores de Casa / Respaldo</label>{showGroupColors ? <small className="distributorSourceLegend"><span><i className="distributorSourceBall-casa" /> Casa · top 40</span><span><i className="distributorSourceBall-respaldo" /> Respaldo</span></small> : null}</div> : null}
@@ -109,7 +142,7 @@ export function NumberDistributor({renderNumber}: Props) {
     {busy ? <p role="status">Guardando el reparto de la tanda…</p> : null}
     {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
     {assignment ? <>
-      {assignment.allocationWarning ? <p role="status" className="distributorNote">{assignment.allocationWarning}</p> : null}
+      {allocationWarning ? <p role="status" className="distributorNote">{allocationWarning}</p> : null}
       {assignment.smart ? <p className="distributorInstruction">Apuesta el monto indicado a <strong>cada número</strong> de su grupo. Los 4 calientes son de Casa (top 40).</p> : null}
       <div className="distributorGrid">{assignment.investors.map((numbers,i)=>{
         const total = assignmentInvestment(numbers);
@@ -122,7 +155,7 @@ export function NumberDistributor({renderNumber}: Props) {
               </>}
             </div>
             {assignment.smart ? <div className="distributorInvestorTotal"><small>Inversión</small><strong>{total === null ? "Sin registrar" : formatInvestment(total)}</strong></div> : null}
-            <button type="button" aria-label={`Copiar jugadas de ${investorNames[i]}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button>
+            <button type="button" aria-label={`Copiar jugadas de ${investorNames[i]}`} disabled={busy||Boolean(error)||copyFeedback?.state === "pending"} onClick={()=>void share(i)}>{copyLabel(i,"Copiar")}</button>
           </header>
           {assignment.smart ? <SmartInvestorNumbers numbers={numbers} assignment={assignment} showGroupColors={showGroupColors} /> : <div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>}
           {!numbers.length ? <p>Sin números disponibles.</p> : null}
@@ -131,6 +164,6 @@ export function NumberDistributor({renderNumber}: Props) {
       {assignment.smart ? <p className="distributorGrandTotal"><span>Inversión de los 4 inversionistas</span><strong>{assignmentInvestment(assignment.investors.flat()) === null ? "Sin registrar" : formatInvestment(assignmentInvestment(assignment.investors.flat())!)}</strong></p> : null}
       <p className="distributorNote">Reparto guardado por tanda. {sessionChoice === "auto" ? "Cambio automático a las 12:00 PM y 7:00 PM (hora dominicana)." : "Mostrando el próximo sorteo de la tanda seleccionada."} {!assignment.smart ? "Cada inversionista rota de bloque en cada tanda. Los números pueden coincidir si cambian de posición entre los rankings de Día y Noche." : assignment.priorCount===2 ? "Sin repetir números por inversionista de las dos tandas anteriores." : `Comprobado contra ${assignment.priorCount} tandas guardadas; las asignaciones manuales anteriores no están registradas.`}</p>
     </> : null}
-    <p role="status" className="distributorNote">{copied}</p>{fallback?<textarea aria-label="Texto para copiar a WhatsApp" readOnly value={fallback} onFocus={e=>e.target.select()} rows={8}/>:null}
+    {copyFeedback ? createPortal(<aside className={`distributorCopyNotice ${copyFeedback.state}`} aria-label="Estado de copia"><p role="status" aria-live="polite" aria-atomic="true">{copyFeedback.message}</p>{fallback ? <><textarea ref={fallbackInput} aria-label="Texto para copiar a WhatsApp" readOnly value={fallback} onFocus={e=>e.target.select()} rows={6}/><button type="button" onClick={()=>{setFallback("");setCopyFeedback(null);}}>Cerrar</button></> : null}</aside>, document.body) : null}
   </section>;
 }

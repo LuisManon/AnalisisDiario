@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { smartDistributionVersion, historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import { numberDelayBadge, smartDistributionVersion, historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
 function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:"2026-09-29T10:00:00Z"};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
@@ -132,7 +132,7 @@ test("blocked top 16 expand within Casa while retaining all quotas and investmen
   const previous=[snapshot([selected.slice(0,16),[],[],[]])];
   const result=distribute(selected,previous,true,"tier-conflict");
   verify(result.investors,selected,previous);
-  assert.ok(result.allocationWarning);
+  assert.equal(result.allocationWarning,undefined);
   result.investors.forEach(items => {
     assert.equal(items.filter(item=>item.tier === "hot").length,4);
     assert.ok(items.filter(item=>item.tier === "hot").every(item=>item.source === "casa"));
@@ -233,4 +233,50 @@ test("v2 saved assignments reject incorrect quotas, source or investment", () =>
     if(change==="amount") hot.betAmount=500;
     assert.ok(validateAssignment(broken));
   }
+});
+
+
+test("historical ice badges use only earlier results from the same session", () => {
+  const target={date:"2026-10-02",session:"dia" as const,number:25};
+  const irrelevant=[target,{...target,date:"2026-10-03"},{...target,date:"2026-10-01",session:"noche" as const}];
+  assert.equal(numberDelayBadge(irrelevant,25,target),"🧊");
+  for (const [date,badge] of [["2026-04-02","🧊"],["2026-04-03","❄️"],["2026-06-02","❄️"],["2026-06-03",""]]) {
+    assert.equal(numberDelayBadge([{...target,date},...irrelevant],25,target),badge);
+  }
+  // The first win ends the delay for a later draw, never for itself.
+  assert.equal(numberDelayBadge([{...target,date:"2026-04-02"},target],25,{...target,date:"2026-10-03"}),"");
+});
+
+test("calendar reconstructs legacy excluded and bank winners without modifying history", () => {
+  const assignment:Assignment={...snapshot([[],[],[],[]]),smart:true,date:"2026-10-02",createdAt:"2026-10-02T10:00:00Z",roster:Array.from({length:100},(_,number)=>({number,group:number<40?"nosotros":number<80?"inversionistas":"banca"}))};
+  const original=JSON.stringify(assignment);
+  for (const number of [61,99]) {
+    const draw={date:assignment.date,session:assignment.session,number};
+    const results=[draw,{...draw,date:"2026-05-01"}];
+    const winner=resolveInvestorWinner(draw,assignment,results)!;
+    assert.equal(winner.delayBadge,"❄️");
+    assert.equal(winner.name,null);
+    assert.equal(winner.group,number===61?"inversionistas":"banca");
+    assert.equal(winner.betAmount,undefined);
+  }
+  assert.equal(JSON.stringify(assignment),original);
+});
+
+test("saved ice classification survives later result corrections, including excluded winners", () => {
+  const assignment:Assignment={...snapshot([[],[],[],[]]),smart:true,date:"2026-10-02",createdAt:"2026-10-02T10:00:00Z",roster:Array.from({length:100},(_,number)=>({number,group:number<40?"nosotros":number<80?"inversionistas":"banca",badge:number===61?"🧊":""}))};
+  const saved:Assignment=JSON.parse(JSON.stringify(assignment));
+  const draw={date:saved.date,session:saved.session,number:61};
+  assert.equal(resolveInvestorWinner(draw,saved,[{...draw,date:"2026-10-01"}])?.delayBadge,"🧊");
+  assert.equal(resolveInvestorWinner({...draw,number:62},saved,[])?.delayBadge,"");
+});
+
+test("assigned winners keep saved badges and missing snapshots can still report delay", () => {
+  const assignment=snapshot(rotateBlocks(pool,{date:"2026-09-29",session:"dia"}).investors);
+  assignment.investors[0][0]={...assignment.investors[0][0],badge:"❄️"};
+  const draw={date:assignment.date,session:assignment.session,number:0};
+  const winner=resolveInvestorWinner(draw,assignment,[{...draw,date:"2026-09-28"}])!;
+  assert.equal(winner.delayBadge,"❄️");
+  assert.equal(winner.name,"Lenin");
+  assert.equal(winner.betAmount,undefined);
+  assert.equal(resolveInvestorWinner(draw,null,[draw,{...draw,date:"2026-01-01"}])?.delayBadge,"🧊");
 });

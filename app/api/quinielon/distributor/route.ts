@@ -4,7 +4,7 @@ import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildLaPrimeraFrequencyRanking } from "../../../../lib/la-primera";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, subtractMonths, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, numberDelayBadge, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -37,8 +37,7 @@ export async function POST(request: Request) {
     const rankings = buildQuinielonV2Rankings(results)[slot.session];
     const d = new Date(`${slot.date}T00:00:00Z`); const monday = shiftDate(slot.date,-((d.getUTCDay()+6)%7));
     const pool: AssignmentNumber[] = (["casa","respaldo"] as const).flatMap(source => (source === "casa" ? rankings.nosotros : rankings.inversionistas).map(item => {
-      const last = results.filter(draw => draw.session === slot.session && draw.number === item.number).reduce((date,draw) => draw.date > date ? draw.date : date,"");
-      return { number:item.number, source, badge: !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : "", winner: results.some(draw => draw.session === slot.session && draw.number === item.number && draw.date >= monday) };
+      return { number:item.number, source, badge: numberDelayBadge(results,item.number,slot), winner: results.some(draw => draw.session === slot.session && draw.number === item.number && draw.date >= monday) };
     }));
     const strength = new Map(buildLaPrimeraFrequencyRanking(results.filter(draw => draw.session === slot.session)).map((item, index) => [item.number, index]));
     const eligible = smart ? pool.filter(n => !n.badge).sort((a,b) => strength.get(a.number)! - strength.get(b.number)!) : pool;
@@ -46,7 +45,7 @@ export async function POST(request: Request) {
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
     const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
     const allocation = smart ? distribute(eligible,[...history,...future],true,`${slot.date}-${slot.session}`) : rotateBlocks(pool,slot);
-    const assignment: Assignment = {...slot, roster: [...rankings.nosotros.map(item=>({number:item.number,group:"nosotros" as const})),...rankings.inversionistas.map(item=>({number:item.number,group:"inversionistas" as const})),...rankings.banca.map(item=>({number:item.number,group:"banca" as const}))], smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
+    const assignment: Assignment = {...slot, roster: [...rankings.nosotros.map(item=>({number:item.number,group:"nosotros" as const,badge:numberDelayBadge(results,item.number,slot)})),...rankings.inversionistas.map(item=>({number:item.number,group:"inversionistas" as const,badge:numberDelayBadge(results,item.number,slot)})),...rankings.banca.map(item=>({number:item.number,group:"banca" as const,badge:numberDelayBadge(results,item.number,slot)}))], smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
     const validationError=validateAssignment(assignment);
     if(validationError) throw new Error(`No se guardó el reparto: ${validationError}.`);
     if(Date.now() >= assignmentDeadline(slot)) throw new Error("La tanda cerró mientras se preparaba el reparto. Actualiza para cargar la próxima.");
@@ -63,8 +62,9 @@ export async function GET(request: Request) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !Number.isFinite(Date.parse(`${start}T00:00:00Z`)) || new Date(`${start}T00:00:00Z`).toISOString().slice(0,10) !== start) return NextResponse.json({error:"Semana inválida"},{status:400});
   try {
     const end = shiftDate(start,6);
-    const draws = (await readLaPrimeraResults()).filter(draw => draw.date >= start && draw.date <= end && draw.date >= investorWinnerStartDate);
-    const winners = await Promise.all(draws.map(async draw => [`${draw.date}-${draw.session}`, resolveInvestorWinner(draw,await read(draw))]));
+    const results = await readLaPrimeraResults();
+    const draws = results.filter(draw => draw.date >= start && draw.date <= end && draw.date >= investorWinnerStartDate);
+    const winners = await Promise.all(draws.map(async draw => [`${draw.date}-${draw.session}`, resolveInvestorWinner(draw,await read(draw),results)]));
     return NextResponse.json({winners:Object.fromEntries(winners)}, {headers:{"Cache-Control":"no-store"}});
   } catch { return NextResponse.json({error:"No se pudieron consultar los inversionistas ganadores."},{status:503}); }
 }

@@ -1,9 +1,10 @@
 import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
+export type DelayBadge = "" | "❄️" | "🧊";
 export type AssignmentTier = "hot" | "intermediate" | "remaining";
 export const tierLabels: Record<AssignmentTier, string> = { hot: "🔥 Caliente", intermediate: "🟡 Intermedio", remaining: "🔵 Restante" };
 export const formatInvestment = (amount: number) => `RD$${amount.toLocaleString("en-US")}`;
 export type AssignmentNumber = { number: number; source: "casa" | "respaldo"; badge: string; winner: boolean; tier?: AssignmentTier; betAmount?: number };
-export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
+export type Assignment = { date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"; badge?: DelayBadge}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
   const day = value.getUTCDate();
@@ -11,6 +12,12 @@ export function subtractMonths(date: string, months: number) {
   value.setUTCMonth(value.getUTCMonth() - months);
   value.setUTCDate(Math.min(day, new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth() + 1, 0)).getUTCDate()));
   return value.toISOString().slice(0, 10);
+}
+// Evaluate the same session strictly before the target draw, so the winner
+// itself (or later results) cannot erase its historical delay classification.
+export function numberDelayBadge(results: LaPrimeraDraw[], number: number, slot: {date: string; session: LaPrimeraSession}): DelayBadge {
+  const last = results.reduce((latest, draw) => draw.session === slot.session && draw.number === number && draw.date < slot.date && draw.date > latest ? draw.date : latest, "");
+  return !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : "";
 }
 export function shiftDate(date: string, days: number) { const d = new Date(`${date}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); }
 export function nextAssignmentSlot(now = new Date()) {
@@ -92,13 +99,10 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
       const investors = match(capacities, strictTiers);
       if (!investors) continue;
       if (!smart) return {investors, mixed: true};
-      const warnings: string[] = [];
-      if (!strictTiers) warnings.push("Se ajustó la selección por los bloqueos históricos: cada inversionista conserva 4 calientes de Casa (top 40), 5 intermedios y 7/8 restantes.");
       const priced = investors.map(items => items.map(item => ({...item,
         betAmount: item.tier === "hot" ? (items.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500
       })));
-      return {investors: priced, mixed: true, algorithmVersion: smartDistributionVersion, prizeMultiplier: 80,
-        ...(warnings.length ? {allocationWarning: warnings.join(" ")} : {})};
+      return {investors: priced, mixed: true, algorithmVersion: smartDistributionVersion, prizeMultiplier: 80};
     }
   }
   throw new Error("No es posible entregar 4 calientes de Casa, 5 intermedios y 7/8 restantes a cada inversionista sin repetir números de las tandas protegidas. Se conserva el reparto guardado; no se han forzado repeticiones.");
@@ -140,6 +144,7 @@ export function validateAssignment(assignment: Assignment): string | null {
   if(assignment.roster) {
     const roster=assignment.roster;
     if(roster.length!==100 || new Set(roster.map(item=>item.number)).size!==100 || roster.some(item=>!Number.isInteger(item.number)||item.number<0||item.number>99||!["nosotros","inversionistas","banca"].includes(item.group))) return "Clasificación incompleta";
+    if(roster.some(item=>item.badge !== undefined && !["", "❄️", "🧊"].includes(item.badge))) return "Indicador de atraso inválido";
     if(roster.filter(item=>item.group!=="banca").length!==80) return "Clasificación fuera del top 80";
     if(items.some(item=>roster.find(entry=>entry.number===item.number)?.group !== (item.source==="casa"?"nosotros":"inversionistas"))) return "El grupo no coincide con la clasificación guardada";
   }
@@ -154,8 +159,8 @@ export const investorNames = ["Lenin", "Seibo", "Victor", "Jose Luis"] as const;
 export const investorWinnerStartDate = "2026-09-29";
 // Fixed rollout date: earlier winners never receive retroactive wager/prize details.
 export const investorPrizeStartDate = "2026-10-02";
-export type InvestorWinner = { tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
-export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null): InvestorWinner | null {
+export type InvestorWinner = { delayBadge?: DelayBadge; tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
+export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null, results?: LaPrimeraDraw[]): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;
   const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
   const validationError = recorded ? validateAssignment(assignment!) : null;
@@ -163,5 +168,7 @@ export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignmen
   const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
   const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
-  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
+  const savedBadge = recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.badge ?? item?.badge : undefined;
+  const delayBadge = savedBadge !== undefined && ["", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
+  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(results || delayBadge ? {delayBadge} : {}), ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
 }

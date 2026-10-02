@@ -6664,3 +6664,25 @@ body:has(.appShell.lotoShell) {
 .distributorSourceLegend, .distributorSourceLegend > span { display: inline-flex; align-items: center; gap: 6px; }
 .distributorSourceLegend { flex-wrap: wrap; gap: 14px; }
 .distributorSourceLegend i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }
+
+.distributorCopyNotice { position: fixed; z-index: 1000; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 12px; border: 1px solid #c5ded0; background: #effaf3; color: #185837; box-shadow: 0 6px 28px #142d2426; font-size: 14px; }
+.distributorCopyNotice p { margin: 0; line-height: 1.5; }
+.distributorCopyNotice.error { width: min(480px, calc(100vw - 32px)); background: #fff8ee; border-color: #e4ceb0; color: #654518; }
+.distributorCopyNotice textarea { display: block; margin: 10px 0; padding: 10px; border: 1px solid #d9cbb7; border-radius: 8px; background: #fff; color: #25232d; font: 13px/1.5 ui-monospace, monospace; max-height: 40vh; }
+.quinielonV2Weekly .weeklyDrawResult { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; }
+.quinielonV2Weekly .weeklyDrawResult b { font: 700 22px/1.1 ui-monospace, monospace; color: #272332; }
+.quinielonV2Weekly .weeklyTanda .weeklyDelayBadge { justify-self: start; border: 1px solid #cee4ef; border-radius: 6px; padding: 4px 6px; background: #eff8fc; color: #305b73; font-size: 11px; line-height: 1.4; letter-spacing: normal; text-transform: none; }
+.quinielonV2Weekly .weeklyInvestorWinner { border-top: 1px solid #0000000d; margin-top: 6px; padding-top: 6px; overflow-wrap: anywhere; }
+.quinielonV2Weekly .weeklyInvestorWinner > small { margin-top: 4px; }
+.quinielonV2Weekly .weeklyInvestorWinner .weeklyPrizeAmount { font-weight: 750; color: #185837; }
+@media (max-width: 1100px) {
+  .quinielonV2Weekly .weeklyDayGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; overflow: visible; }
+  .quinielonV2Weekly .weeklyDayCard { grid-row: auto; grid-template-rows: auto 1fr; }
+  .quinielonV2Weekly .weeklyTandas { grid-row: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; }
+  .quinielonV2Weekly .weeklyDayCard > header div { display: flex; align-items: baseline; gap: 8px; }
+}
+@media (max-width: 600px) {
+  .quinielonV2Weekly .weeklyDayGrid { grid-template-columns: minmax(0, 1fr); }
+}
+.distributorCopyNotice textarea { width: 100%; box-sizing: border-box; }
+.distributorCopyNotice button { border: 1px solid #d9cbb7; border-radius: 8px; padding: 7px 12px; background: #fff; color: #654518; cursor: pointer; }
