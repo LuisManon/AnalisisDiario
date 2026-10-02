@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-30",
+  "date": "2026-10-01",
   "session": "noche",
   "roster": [
     {
@@ -283,10 +283,6 @@
       "group": "inversionistas"
     },
     {
-      "number": 75,
-      "group": "inversionistas"
-    },
-    {
       "number": 79,
       "group": "inversionistas"
     },
@@ -324,7 +320,7 @@
     },
     {
       "number": 90,
-      "group": "banca"
+      "group": "inversionistas"
     },
     {
       "number": 13,
@@ -344,6 +340,10 @@
     },
     {
       "number": 63,
+      "group": "banca"
+    },
+    {
+      "number": 75,
       "group": "banca"
     },
     {
@@ -403,252 +403,8 @@
       "group": "banca"
     }
   ],
-  "smart": false,
+  "smart": true,
   "investors": [
-    [
-      {
-        "number": 83,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 6,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 29,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 37,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 42,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 45,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 47,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 52,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 60,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 67,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 75,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 79,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 84,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 86,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 93,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 98,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 30,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 55,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 65,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 74,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 41,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 38,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 49,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 73,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 81,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 82,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 89,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 1,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 8,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 12,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 15,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 17,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 32,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 33,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 53,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 58,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 59,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 69,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 71,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 72,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      }
-    ],
     [
       {
         "number": 26,
@@ -657,25 +413,7 @@
         "winner": false
       },
       {
-        "number": 78,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
         "number": 99,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 22,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 31,
         "source": "casa",
         "badge": "",
         "winner": false
@@ -705,6 +443,74 @@
         "winner": false
       },
       {
+        "number": 5,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 44,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 91,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 3,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 9,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 61,
+        "source": "casa",
+        "badge": "",
+        "winner": true
+      },
+      {
+        "number": 62,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 17,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 58,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 59,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      }
+    ],
+    [
+      {
+        "number": 78,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
         "number": 21,
         "source": "casa",
         "badge": "",
@@ -712,18 +518,6 @@
       },
       {
         "number": 25,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 35,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 39,
         "source": "casa",
         "badge": "",
         "winner": false
@@ -741,25 +535,7 @@
         "winner": false
       },
       {
-        "number": 92,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 94,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
         "number": 0,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 5,
         "source": "casa",
         "badge": "",
         "winner": false
@@ -767,6 +543,60 @@
       {
         "number": 16,
         "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 34,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 4,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 7,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 47,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 84,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 86,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 93,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 30,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 65,
+        "source": "respaldo",
         "badge": "",
         "winner": false
       }
@@ -791,61 +621,13 @@
         "winner": false
       },
       {
-        "number": 34,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 44,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 48,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
         "number": 68,
         "source": "casa",
         "badge": "",
         "winner": false
       },
       {
-        "number": 91,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
         "number": 97,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 3,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 4,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 7,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 9,
         "source": "casa",
         "badge": "",
         "winner": false
@@ -875,34 +657,161 @@
         "winner": false
       },
       {
-        "number": 61,
-        "source": "casa",
-        "badge": "",
-        "winner": true
-      },
-      {
-        "number": 62,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
         "number": 66,
         "source": "casa",
         "badge": "",
         "winner": false
+      },
+      {
+        "number": 89,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 15,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 37,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 45,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 60,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 79,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 55,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      }
+    ],
+    [
+      {
+        "number": 22,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 31,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 39,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 81,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 82,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 1,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 8,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 12,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 32,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 33,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 72,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 83,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 42,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 67,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 98,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 74,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 90,
+        "source": "respaldo",
+        "badge": "",
+        "winner": true
       }
     ]
   ],
-  "mixed": false,
-  "blockStarts": [
-    61,
-    41,
-    1,
-    21
-  ],
-  "algorithmVersion": "blocks-v1",
-  "excluded": 0,
+  "mixed": true,
+  "excluded": 14,
   "priorCount": 2,
-  "createdAt": "2026-09-30T18:02:26.720Z"
+  "createdAt": "2026-10-01T21:08:27.089Z"
 }

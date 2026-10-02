@@ -1,61 +1,9 @@
 {
-  "date": "2026-09-30",
-  "session": "noche",
+  "date": "2026-10-02",
+  "session": "dia",
   "roster": [
     {
-      "number": 26,
-      "group": "nosotros"
-    },
-    {
-      "number": 78,
-      "group": "nosotros"
-    },
-    {
-      "number": 99,
-      "group": "nosotros"
-    },
-    {
-      "number": 22,
-      "group": "nosotros"
-    },
-    {
-      "number": 31,
-      "group": "nosotros"
-    },
-    {
-      "number": 50,
-      "group": "nosotros"
-    },
-    {
-      "number": 56,
-      "group": "nosotros"
-    },
-    {
-      "number": 87,
-      "group": "nosotros"
-    },
-    {
-      "number": 96,
-      "group": "nosotros"
-    },
-    {
-      "number": 21,
-      "group": "nosotros"
-    },
-    {
-      "number": 25,
-      "group": "nosotros"
-    },
-    {
-      "number": 35,
-      "group": "nosotros"
-    },
-    {
-      "number": 39,
-      "group": "nosotros"
-    },
-    {
-      "number": 40,
+      "number": 64,
       "group": "nosotros"
     },
     {
@@ -63,99 +11,15 @@
       "group": "nosotros"
     },
     {
-      "number": 92,
-      "group": "nosotros"
-    },
-    {
-      "number": 94,
-      "group": "nosotros"
-    },
-    {
-      "number": 0,
-      "group": "nosotros"
-    },
-    {
-      "number": 5,
-      "group": "nosotros"
-    },
-    {
-      "number": 16,
-      "group": "nosotros"
-    },
-    {
-      "number": 20,
-      "group": "nosotros"
-    },
-    {
-      "number": 23,
-      "group": "nosotros"
-    },
-    {
-      "number": 28,
-      "group": "nosotros"
-    },
-    {
-      "number": 34,
-      "group": "nosotros"
-    },
-    {
-      "number": 44,
-      "group": "nosotros"
-    },
-    {
-      "number": 48,
-      "group": "nosotros"
-    },
-    {
-      "number": 68,
-      "group": "nosotros"
-    },
-    {
-      "number": 91,
-      "group": "nosotros"
-    },
-    {
-      "number": 97,
-      "group": "nosotros"
-    },
-    {
-      "number": 3,
-      "group": "nosotros"
-    },
-    {
-      "number": 4,
-      "group": "nosotros"
-    },
-    {
       "number": 7,
       "group": "nosotros"
     },
     {
-      "number": 9,
+      "number": 72,
       "group": "nosotros"
     },
     {
-      "number": 19,
-      "group": "nosotros"
-    },
-    {
-      "number": 24,
-      "group": "nosotros"
-    },
-    {
-      "number": 27,
-      "group": "nosotros"
-    },
-    {
-      "number": 51,
-      "group": "nosotros"
-    },
-    {
-      "number": 61,
-      "group": "nosotros"
-    },
-    {
-      "number": 62,
+      "number": 33,
       "group": "nosotros"
     },
     {
@@ -163,19 +27,151 @@
       "group": "nosotros"
     },
     {
-      "number": 41,
-      "group": "inversionistas"
+      "number": 71,
+      "group": "nosotros"
     },
     {
-      "number": 38,
-      "group": "inversionistas"
+      "number": 86,
+      "group": "nosotros"
     },
     {
-      "number": 49,
-      "group": "inversionistas"
+      "number": 2,
+      "group": "nosotros"
+    },
+    {
+      "number": 10,
+      "group": "nosotros"
+    },
+    {
+      "number": 18,
+      "group": "nosotros"
+    },
+    {
+      "number": 29,
+      "group": "nosotros"
+    },
+    {
+      "number": 31,
+      "group": "nosotros"
+    },
+    {
+      "number": 39,
+      "group": "nosotros"
+    },
+    {
+      "number": 51,
+      "group": "nosotros"
+    },
+    {
+      "number": 55,
+      "group": "nosotros"
+    },
+    {
+      "number": 75,
+      "group": "nosotros"
+    },
+    {
+      "number": 82,
+      "group": "nosotros"
+    },
+    {
+      "number": 94,
+      "group": "nosotros"
+    },
+    {
+      "number": 95,
+      "group": "nosotros"
+    },
+    {
+      "number": 97,
+      "group": "nosotros"
+    },
+    {
+      "number": 8,
+      "group": "nosotros"
+    },
+    {
+      "number": 22,
+      "group": "nosotros"
+    },
+    {
+      "number": 27,
+      "group": "nosotros"
+    },
+    {
+      "number": 46,
+      "group": "nosotros"
+    },
+    {
+      "number": 58,
+      "group": "nosotros"
+    },
+    {
+      "number": 63,
+      "group": "nosotros"
     },
     {
       "number": 73,
+      "group": "nosotros"
+    },
+    {
+      "number": 74,
+      "group": "nosotros"
+    },
+    {
+      "number": 88,
+      "group": "nosotros"
+    },
+    {
+      "number": 90,
+      "group": "nosotros"
+    },
+    {
+      "number": 98,
+      "group": "nosotros"
+    },
+    {
+      "number": 20,
+      "group": "nosotros"
+    },
+    {
+      "number": 28,
+      "group": "nosotros"
+    },
+    {
+      "number": 32,
+      "group": "nosotros"
+    },
+    {
+      "number": 36,
+      "group": "nosotros"
+    },
+    {
+      "number": 37,
+      "group": "nosotros"
+    },
+    {
+      "number": 52,
+      "group": "nosotros"
+    },
+    {
+      "number": 57,
+      "group": "nosotros"
+    },
+    {
+      "number": 68,
+      "group": "nosotros"
+    },
+    {
+      "number": 56,
+      "group": "inversionistas"
+    },
+    {
+      "number": 76,
+      "group": "inversionistas"
+    },
+    {
+      "number": 80,
       "group": "inversionistas"
     },
     {
@@ -183,119 +179,11 @@
       "group": "inversionistas"
     },
     {
-      "number": 82,
+      "number": 85,
       "group": "inversionistas"
     },
     {
-      "number": 89,
-      "group": "inversionistas"
-    },
-    {
-      "number": 1,
-      "group": "inversionistas"
-    },
-    {
-      "number": 8,
-      "group": "inversionistas"
-    },
-    {
-      "number": 12,
-      "group": "inversionistas"
-    },
-    {
-      "number": 15,
-      "group": "inversionistas"
-    },
-    {
-      "number": 17,
-      "group": "inversionistas"
-    },
-    {
-      "number": 32,
-      "group": "inversionistas"
-    },
-    {
-      "number": 33,
-      "group": "inversionistas"
-    },
-    {
-      "number": 53,
-      "group": "inversionistas"
-    },
-    {
-      "number": 58,
-      "group": "inversionistas"
-    },
-    {
-      "number": 59,
-      "group": "inversionistas"
-    },
-    {
-      "number": 69,
-      "group": "inversionistas"
-    },
-    {
-      "number": 71,
-      "group": "inversionistas"
-    },
-    {
-      "number": 72,
-      "group": "inversionistas"
-    },
-    {
-      "number": 83,
-      "group": "inversionistas"
-    },
-    {
-      "number": 6,
-      "group": "inversionistas"
-    },
-    {
-      "number": 29,
-      "group": "inversionistas"
-    },
-    {
-      "number": 37,
-      "group": "inversionistas"
-    },
-    {
-      "number": 42,
-      "group": "inversionistas"
-    },
-    {
-      "number": 45,
-      "group": "inversionistas"
-    },
-    {
-      "number": 47,
-      "group": "inversionistas"
-    },
-    {
-      "number": 52,
-      "group": "inversionistas"
-    },
-    {
-      "number": 60,
-      "group": "inversionistas"
-    },
-    {
-      "number": 67,
-      "group": "inversionistas"
-    },
-    {
-      "number": 75,
-      "group": "inversionistas"
-    },
-    {
-      "number": 79,
-      "group": "inversionistas"
-    },
-    {
-      "number": 84,
-      "group": "inversionistas"
-    },
-    {
-      "number": 86,
+      "number": 92,
       "group": "inversionistas"
     },
     {
@@ -303,7 +191,19 @@
       "group": "inversionistas"
     },
     {
-      "number": 98,
+      "number": 1,
+      "group": "inversionistas"
+    },
+    {
+      "number": 6,
+      "group": "inversionistas"
+    },
+    {
+      "number": 11,
+      "group": "inversionistas"
+    },
+    {
+      "number": 17,
       "group": "inversionistas"
     },
     {
@@ -311,7 +211,83 @@
       "group": "inversionistas"
     },
     {
-      "number": 55,
+      "number": 38,
+      "group": "inversionistas"
+    },
+    {
+      "number": 42,
+      "group": "inversionistas"
+    },
+    {
+      "number": 43,
+      "group": "inversionistas"
+    },
+    {
+      "number": 47,
+      "group": "inversionistas"
+    },
+    {
+      "number": 49,
+      "group": "inversionistas"
+    },
+    {
+      "number": 84,
+      "group": "inversionistas"
+    },
+    {
+      "number": 96,
+      "group": "inversionistas"
+    },
+    {
+      "number": 0,
+      "group": "inversionistas"
+    },
+    {
+      "number": 3,
+      "group": "inversionistas"
+    },
+    {
+      "number": 5,
+      "group": "inversionistas"
+    },
+    {
+      "number": 9,
+      "group": "inversionistas"
+    },
+    {
+      "number": 15,
+      "group": "inversionistas"
+    },
+    {
+      "number": 21,
+      "group": "inversionistas"
+    },
+    {
+      "number": 26,
+      "group": "inversionistas"
+    },
+    {
+      "number": 41,
+      "group": "inversionistas"
+    },
+    {
+      "number": 45,
+      "group": "inversionistas"
+    },
+    {
+      "number": 54,
+      "group": "inversionistas"
+    },
+    {
+      "number": 60,
+      "group": "inversionistas"
+    },
+    {
+      "number": 61,
+      "group": "inversionistas"
+    },
+    {
+      "number": 62,
       "group": "inversionistas"
     },
     {
@@ -319,11 +295,55 @@
       "group": "inversionistas"
     },
     {
-      "number": 74,
+      "number": 69,
       "group": "inversionistas"
     },
     {
-      "number": 90,
+      "number": 79,
+      "group": "inversionistas"
+    },
+    {
+      "number": 87,
+      "group": "inversionistas"
+    },
+    {
+      "number": 89,
+      "group": "inversionistas"
+    },
+    {
+      "number": 99,
+      "group": "inversionistas"
+    },
+    {
+      "number": 4,
+      "group": "inversionistas"
+    },
+    {
+      "number": 14,
+      "group": "inversionistas"
+    },
+    {
+      "number": 34,
+      "group": "banca"
+    },
+    {
+      "number": 83,
+      "group": "banca"
+    },
+    {
+      "number": 67,
+      "group": "banca"
+    },
+    {
+      "number": 78,
+      "group": "banca"
+    },
+    {
+      "number": 35,
+      "group": "banca"
+    },
+    {
+      "number": 12,
       "group": "banca"
     },
     {
@@ -331,101 +351,111 @@
       "group": "banca"
     },
     {
-      "number": 36,
-      "group": "banca"
-    },
-    {
-      "number": 46,
-      "group": "banca"
-    },
-    {
-      "number": 43,
-      "group": "banca"
-    },
-    {
-      "number": 63,
-      "group": "banca"
-    },
-    {
-      "number": 10,
-      "group": "banca"
-    },
-    {
-      "number": 54,
-      "group": "banca"
-    },
-    {
-      "number": 57,
-      "group": "banca"
-    },
-    {
       "number": 70,
       "group": "banca"
     },
     {
-      "number": 95,
+      "number": 16,
       "group": "banca"
     },
     {
-      "number": 80,
+      "number": 24,
       "group": "banca"
     },
     {
-      "number": 14,
+      "number": 50,
       "group": "banca"
     },
     {
-      "number": 18,
+      "number": 91,
       "group": "banca"
     },
     {
-      "number": 11,
+      "number": 53,
       "group": "banca"
     },
     {
-      "number": 2,
+      "number": 19,
       "group": "banca"
     },
     {
-      "number": 76,
+      "number": 44,
       "group": "banca"
     },
     {
-      "number": 64,
+      "number": 25,
       "group": "banca"
     },
     {
-      "number": 85,
+      "number": 40,
       "group": "banca"
     },
     {
-      "number": 88,
+      "number": 23,
+      "group": "banca"
+    },
+    {
+      "number": 48,
+      "group": "banca"
+    },
+    {
+      "number": 59,
       "group": "banca"
     }
   ],
-  "smart": false,
+  "smart": true,
   "investors": [
     [
       {
-        "number": 83,
-        "source": "respaldo",
+        "number": 8,
+        "source": "casa",
         "badge": "",
         "winner": false
       },
       {
-        "number": 6,
-        "source": "respaldo",
-        "badge": "❄️",
+        "number": 88,
+        "source": "casa",
+        "badge": "",
         "winner": false
       },
       {
-        "number": 29,
-        "source": "respaldo",
-        "badge": "❄️",
+        "number": 32,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 36,
+        "source": "casa",
+        "badge": "",
         "winner": false
       },
       {
         "number": 37,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 57,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 68,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 1,
+        "source": "respaldo",
+        "badge": "",
+        "winner": true
+      },
+      {
+        "number": 38,
         "source": "respaldo",
         "badge": "",
         "winner": false
@@ -437,7 +467,7 @@
         "winner": false
       },
       {
-        "number": 45,
+        "number": 43,
         "source": "respaldo",
         "badge": "",
         "winner": false
@@ -449,67 +479,7 @@
         "winner": false
       },
       {
-        "number": 52,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 60,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 67,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 75,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 79,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 84,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 86,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 93,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 98,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 30,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 55,
+        "number": 21,
         "source": "respaldo",
         "badge": "",
         "winner": false
@@ -521,349 +491,27 @@
         "winner": false
       },
       {
-        "number": 74,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 41,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 38,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 49,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 73,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 81,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 82,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
         "number": 89,
         "source": "respaldo",
         "badge": "",
         "winner": false
       },
       {
-        "number": 1,
+        "number": 4,
         "source": "respaldo",
         "badge": "",
         "winner": false
-      },
-      {
-        "number": 8,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 12,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 15,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 17,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 32,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 33,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 53,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 58,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 59,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 69,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 71,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
+      }
+    ],
+    [
       {
         "number": 72,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 26,
         "source": "casa",
         "badge": "",
         "winner": false
       },
       {
-        "number": 78,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 99,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 22,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 31,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 50,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 56,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 87,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 96,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 21,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 25,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 35,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 39,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 40,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 77,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 92,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 94,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 0,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 5,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 16,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 20,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 23,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 28,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 34,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 44,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 48,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 68,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 91,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 97,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 3,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 4,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 7,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 9,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 19,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 24,
-        "source": "casa",
-        "badge": "",
-        "winner": true
-      },
-      {
-        "number": 27,
+        "number": 66,
         "source": "casa",
         "badge": "",
         "winner": false
@@ -875,34 +523,301 @@
         "winner": false
       },
       {
-        "number": 61,
+        "number": 55,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 82,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 94,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 81,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 85,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 6,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 49,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 26,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 45,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 54,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 69,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 79,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 87,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 14,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      }
+    ],
+    [
+      {
+        "number": 33,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 2,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 10,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 18,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 29,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 31,
         "source": "casa",
         "badge": "",
         "winner": true
       },
       {
-        "number": 62,
+        "number": 39,
         "source": "casa",
         "badge": "",
         "winner": false
       },
       {
-        "number": 66,
+        "number": 75,
         "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 22,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 63,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 74,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 90,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 98,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 3,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 5,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 9,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 61,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      }
+    ],
+    [
+      {
+        "number": 64,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 77,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 7,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 71,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 86,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 97,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 46,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 58,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 20,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 28,
+        "source": "casa",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 80,
+        "source": "respaldo",
+        "badge": "",
+        "winner": true
+      },
+      {
+        "number": 92,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 93,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 11,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 17,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 30,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false
+      },
+      {
+        "number": 0,
+        "source": "respaldo",
         "badge": "",
         "winner": false
       }
     ]
   ],
-  "mixed": false,
-  "blockStarts": [
-    61,
-    41,
-    1,
-    21
-  ],
-  "algorithmVersion": "blocks-v1",
-  "excluded": 0,
+  "mixed": true,
+  "excluded": 13,
   "priorCount": 2,
-  "createdAt": "2026-09-30T18:02:26.720Z"
+  "createdAt": "2026-10-01T23:28:04.017Z"
 }

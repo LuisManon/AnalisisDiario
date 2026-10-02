@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-10-01",
+    "session": "dia",
+    "numbers": [
+      82,
+      93,
+      86
+    ],
+    "drawId": 2493,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
     "date": "2026-09-30",
     "session": "dia",
     "numbers": [
@@ -8,6 +19,17 @@
       74
     ],
     "drawId": 2492,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-09-30",
+    "session": "noche",
+    "numbers": [
+      47,
+      24,
+      85
+    ],
+    "drawId": 1654,
     "source": "https://laprimera.do/resultados/"
   },
   {
