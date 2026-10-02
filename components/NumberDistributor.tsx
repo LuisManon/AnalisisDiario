@@ -4,6 +4,33 @@ import { historicalWager, assignmentInvestment, tierLabels, formatInvestment, in
 
 
 type Props = { renderNumber: (number: number, source: AssignmentNumber["source"], badge: string, winner: boolean, session: Assignment["session"]) => ReactNode };
+function wagerGroups(numbers: AssignmentNumber[]) {
+  const groups = new Map<string, { tier: AssignmentNumber["tier"]; amount: number | undefined; numbers: AssignmentNumber[] }>();
+  for (const number of numbers) {
+    const key = `${number.tier ?? "unknown"}-${number.betAmount ?? "unknown"}`;
+    if (!groups.has(key)) groups.set(key, {tier: number.tier, amount: number.betAmount, numbers: []});
+    groups.get(key)!.numbers.push(number);
+  }
+  const order = {hot: 0, intermediate: 1, remaining: 2};
+  return [...groups.values()].sort((a,b) => (a.tier ? order[a.tier] : 3) - (b.tier ? order[b.tier] : 3));
+}
+
+function SmartInvestorNumbers({numbers, assignment}: {numbers: AssignmentNumber[]; assignment: Assignment}) {
+  const groups = wagerGroups(numbers);
+  return <>
+    <div className="distributorWagerGroups">
+      {groups.map(group => <section className="distributorWagerGroup" key={`${group.tier}-${group.amount}`} aria-label={`${group.tier ? tierLabels[group.tier] : "Números"}: ${group.amount === undefined ? "sin apuesta registrada" : `${formatInvestment(group.amount)} por número`}`}>
+        <header><span>{group.tier ? tierLabels[group.tier] : "Números"}</span><strong>{group.amount === undefined ? "Sin apuesta" : <>{formatInvestment(group.amount)} <small>por número</small></>}</strong></header>
+        <div className="distributorBetNumbers">{group.numbers.map(item => <span key={item.number} aria-label={`Número ${String(item.number).padStart(2,"0")}: ${item.betAmount === undefined ? "sin apuesta registrada" : formatInvestment(item.betAmount)}`}>{String(item.number).padStart(2,"0")}</span>)}</div>
+      </section>)}
+    </div>
+    {groups.some(group => historicalWager(group.numbers[0],assignment)) ? <details className="distributorPrizes"><summary>Ver premios potenciales</summary>{groups.map(group => {
+      const wager = historicalWager(group.numbers[0],assignment);
+      return wager ? <p key={`${group.tier}-${group.amount}`}>{group.tier ? tierLabels[group.tier] : "Número"} · apuesta {formatInvestment(wager.betAmount)} → premio {formatInvestment(wager.potentialPrize)}</p> : null;
+    })}</details> : null}
+  </>;
+}
+
 export function NumberDistributor({renderNumber}: Props) {
   const [assignment,setAssignment] = useState<Assignment|null>(null);
   const [sessionChoice,setSessionChoice] = useState<AssignmentSessionChoice>("auto");
@@ -45,11 +72,21 @@ export function NumberDistributor({renderNumber}: Props) {
       if(investor !== undefined && i!==investor)return;
       lines.push(`*${investorNames[i]} · ${numbers.length} números*`);
       if (assignment.blockStarts) lines.push(`Puestos ${assignment.blockStarts[i]}–${assignment.blockStarts[i]+19}`);
-      for(const source of ["casa","respaldo"] as const) {const items=numbers.filter(n=>n.source===source);if(items.length) {lines.push(`_${source === "casa" ? "Casa" : "Respaldo"}_`);for(let j=0;j<items.length;j+=10) lines.push(items.slice(j,j+10).map(n=>String(n.number).padStart(2,"0")).join(" · "));}}
       if (assignment.smart) {
-        numbers.forEach(n => {const wager = historicalWager(n, assignment); if (wager) lines.push(`${String(n.number).padStart(2,"0")} · ${n.tier ? tierLabels[n.tier] : ""} · ${formatInvestment(wager.betAmount)} · Premio: ${formatInvestment(wager.potentialPrize)}`);});
+        for (const group of wagerGroups(numbers)) {
+          lines.push(group.amount === undefined ? "Sin apuesta registrada:" : `*${formatInvestment(group.amount)} a CADA número:*`);
+          lines.push(group.numbers.map(n=>String(n.number).padStart(2,"0")).join(" · "));
+        }
         const total = assignmentInvestment(numbers);
-        lines.push(total === null ? "Sin apuesta registrada" : `Inversión total: ${formatInvestment(total)}`);
+        lines.push(total === null ? "Sin inversión registrada" : `*Inversión total: ${formatInvestment(total)}*`);
+      } else {
+        for (const source of ["casa","respaldo"] as const) {
+          const items=numbers.filter(n=>n.source===source);
+          if (items.length) {
+            lines.push(`_${source === "casa" ? "Casa" : "Respaldo"}_`);
+            for (let j=0;j<items.length;j+=10) lines.push(items.slice(j,j+10).map(n=>String(n.number).padStart(2,"0")).join(" · "));
+          }
+        }
       }
       if(!numbers.length)lines.push("Sin números disponibles");lines.push("");
     });
@@ -60,19 +97,38 @@ export function NumberDistributor({renderNumber}: Props) {
   }
   async function share(investor?:number) {const value=text(investor);try {await navigator.clipboard.writeText(value);setCopied(investor===undefined ? "Reparto copiado para WhatsApp." : `${investorNames[investor]} copiado.`);setFallback("");}catch {setFallback(value);setCopied("Selecciona y copia el texto para WhatsApp.");}}
   const role=(numbers:AssignmentNumber[])=>{const casa=numbers.filter(n=>n.source==="casa").length;return casa===numbers.length&&casa ? "Casa · fuertes" : casa===0 ? "Respaldo" : `${casa} Casa · ${numbers.length-casa} Respaldo`;};
-  return <section className={`card distributor${showSymbols ? "" : " hideNumberSymbols"}`} aria-label="Asignador de números por tanda" aria-busy={busy}>
+  return <section className={`card distributor${assignment?.smart ? " distributorCompact" : ""}${showSymbols ? "" : " hideNumberSymbols"}`} aria-label="Asignador de números por tanda" aria-busy={busy}>
     <header className="distributorHeader"><div><span className="panelLabel">Asignador por tanda</span><h2>Cuatro inversionistas</h2><p>{assignment ? `${assignment.date.split("-").reverse().join("-")} · ${assignment.session === "dia" ? "Día · 12:00 PM" : "Noche · 7:00 PM"}` : "Preparando la próxima tanda…"}</p></div><button type="button" disabled={!assignment||busy||Boolean(error)} onClick={()=>void share()}>Compartir · Copiar WhatsApp</button></header>
     <div className="distributorControls">
       <label className="distributorSession">Tanda <select aria-label="Tanda del asignador" value={sessionChoice} onChange={e=>changeSession(e.target.value as AssignmentSessionChoice)}><option value="auto">Automática · próxima tanda</option><option value="dia">Día · próximo sorteo</option><option value="noche">Noche · próximo sorteo</option></select></label>
-      <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={e=>setShowSymbols(e.target.checked)} /> Mostrar símbolos y detalles del asignador</label></div>
+      {!assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={e=>setShowSymbols(e.target.checked)} /> Mostrar símbolos y detalles del asignador</label></div> : null}
     </div>
     <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={assignment?.smart??false} disabled={busy} onChange={e=>void load(e.target.checked)} /> Repartidor inteligente</label><small>{assignment?.smart ? `${assignment.excluded} con cristal o hielo excluidos · reparto equilibrado` : "Bloques completos: 1–20 → 41–60 → 21–40 → 61–80 · cambia cada tanda"}</small></div>
     {busy ? <p role="status">Guardando el reparto de la tanda…</p> : null}
     {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
-    {assignment ? <>{assignment.allocationWarning ? <p role="status" className="distributorNote">{assignment.allocationWarning}</p> : null}<div className="distributorGrid">{assignment.investors.map((numbers,i)=><article className={`distributorInvestor distributorInvestor-${assignment.session}`} key={i}><header><div><h3>{investorNames[i]}</h3>{showSymbols && assignment.blockStarts ? <p className="distributorBlockLabel">Puestos {assignment.blockStarts[i]}–{assignment.blockStarts[i]+19}</p> : null}{showSymbols ? <small>{assignment.session === "dia" ? "Día" : "Noche"} · {role(numbers)} · {numbers.length} números</small> : null}</div><button type="button" aria-label={`Copiar jugadas de ${investorNames[i]}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button></header><div className={`distributorNumbers${assignment.smart ? " distributorPricedNumbers" : ""}`}>{numbers.map(n=>{
-      const wager = historicalWager(n, assignment);
-      return <span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}{assignment.smart ? <><small>{n.tier ? tierLabels[n.tier] : "Categoría no registrada"}</small>{wager ? <><strong>{formatInvestment(wager.betAmount)}</strong><small>Premio: {formatInvestment(wager.potentialPrize)}</small></> : <small>Sin apuesta registrada</small>}</> : null}</span>;
-    })}</div>{assignment.smart ? <p>Total de números: {numbers.length}<br />{assignmentInvestment(numbers) === null ? "Sin inversión registrada" : `Inversión total: ${formatInvestment(assignmentInvestment(numbers)!)}`}</p> : null}{!numbers.length?<p>Sin números disponibles.</p>:null}</article>)}</div>{assignment.smart ? <p><strong>{assignmentInvestment(assignment.investors.flat()) === null ? "Inversión general no disponible" : `Inversión general: ${formatInvestment(assignmentInvestment(assignment.investors.flat())!)}`}</strong></p> : null}<p className="distributorNote">Reparto guardado por tanda. {sessionChoice === "auto" ? "Cambio automático a las 12:00 PM y 7:00 PM (hora dominicana)." : "Mostrando el próximo sorteo de la tanda seleccionada."} {!assignment.smart ? "Cada inversionista rota de bloque en cada tanda. Los números pueden coincidir si cambian de posición entre los rankings de Día y Noche." : assignment.priorCount===2 ? "Sin repetir números por inversionista de las dos tandas anteriores." : `Comprobado contra ${assignment.priorCount} tandas guardadas; las asignaciones manuales anteriores no están registradas.`}</p></> : null}
+    {assignment ? <>
+      {assignment.allocationWarning ? <p role="status" className="distributorNote">{assignment.allocationWarning}</p> : null}
+      {assignment.smart ? <p className="distributorInstruction">Apuesta el monto indicado a <strong>cada número</strong> de su grupo.</p> : null}
+      <div className="distributorGrid">{assignment.investors.map((numbers,i)=>{
+        const total = assignmentInvestment(numbers);
+        return <article className={`distributorInvestor distributorInvestor-${assignment.session}`} key={i}>
+          <header>
+            <div><h3>{investorNames[i]}</h3>
+              {assignment.smart ? <small>{numbers.length} números · {assignment.session === "dia" ? "Día" : "Noche"}</small> : <>
+                {showSymbols && assignment.blockStarts ? <p className="distributorBlockLabel">Puestos {assignment.blockStarts[i]}–{assignment.blockStarts[i]+19}</p> : null}
+                {showSymbols ? <small>{assignment.session === "dia" ? "Día" : "Noche"} · {role(numbers)} · {numbers.length} números</small> : null}
+              </>}
+            </div>
+            {assignment.smart ? <div className="distributorInvestorTotal"><small>Inversión</small><strong>{total === null ? "Sin registrar" : formatInvestment(total)}</strong></div> : null}
+            <button type="button" aria-label={`Copiar jugadas de ${investorNames[i]}`} disabled={busy||Boolean(error)} onClick={()=>void share(i)}>Copiar</button>
+          </header>
+          {assignment.smart ? <SmartInvestorNumbers numbers={numbers} assignment={assignment} /> : <div className="distributorNumbers">{numbers.map(n=><span key={n.number}>{renderNumber(n.number,n.source,n.badge,n.winner,assignment.session)}</span>)}</div>}
+          {!numbers.length ? <p>Sin números disponibles.</p> : null}
+        </article>;
+      })}</div>
+      {assignment.smart ? <p className="distributorGrandTotal"><span>Inversión de los 4 inversionistas</span><strong>{assignmentInvestment(assignment.investors.flat()) === null ? "Sin registrar" : formatInvestment(assignmentInvestment(assignment.investors.flat())!)}</strong></p> : null}
+      <p className="distributorNote">Reparto guardado por tanda. {sessionChoice === "auto" ? "Cambio automático a las 12:00 PM y 7:00 PM (hora dominicana)." : "Mostrando el próximo sorteo de la tanda seleccionada."} {!assignment.smart ? "Cada inversionista rota de bloque en cada tanda. Los números pueden coincidir si cambian de posición entre los rankings de Día y Noche." : assignment.priorCount===2 ? "Sin repetir números por inversionista de las dos tandas anteriores." : `Comprobado contra ${assignment.priorCount} tandas guardadas; las asignaciones manuales anteriores no están registradas.`}</p>
+    </> : null}
     <p role="status" className="distributorNote">{copied}</p>{fallback?<textarea aria-label="Texto para copiar a WhatsApp" readOnly value={fallback} onFocus={e=>e.target.select()} rows={8}/>:null}
   </section>;
 }
