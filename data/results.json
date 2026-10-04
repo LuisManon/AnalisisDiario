@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-10-03",
+    "day": "sabado",
+    "numbers": [
+      4,
+      12,
+      14,
+      17,
+      27,
+      37
+    ],
+    "plus": 1,
+    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/loto-mas"
+  },
+  {
     "date": "2026-09-30",
     "day": "miercoles",
     "numbers": [
@@ -11,7 +25,7 @@
       38
     ],
     "plus": 12,
-    "source": "https://www.loteriasdominicanas.com.do/loteria-leidsa/loto-mas"
+    "source": "https://www.yelu.do/leidsa/results/loto-mas"
   },
   {
     "date": "2026-09-26",
