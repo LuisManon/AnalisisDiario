@@ -6686,3 +6686,35 @@ body:has(.appShell.lotoShell) {
 }
 .distributorCopyNotice textarea { width: 100%; box-sizing: border-box; }
 .distributorCopyNotice button { border: 1px solid #d9cbb7; border-radius: 8px; padding: 7px 12px; background: #fff; color: #654518; cursor: pointer; }
+
+/* Super Kino TV */
+.kinoTheme .hero { grid-template-columns: 1fr 1.2fr; }
+.kinoBalls { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0; }
+.kinoTheme .kinoBalls .ball { width:36px; height:36px; font-size:14px; flex:0 0 36px; }
+.kinoTheme .card { margin-bottom:22px; }
+.kinoTheme p { line-height:1.65; }
+.kinoNote { border-left:4px solid #2176ad; }
+.kinoColumns { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.kinoRankRow { display:flex; gap:12px; align-items:center; padding:9px 0; border-bottom:1px solid #e8edf1; }
+.kinoRankRow small { display:block; color:#586576; margin-top:5px; }
+.kinoRank.hot { border-top:4px solid #e88630; }
+.kinoRank.cold { border-top:4px solid #298ec3; }
+.kinoRank.gap { border-top:4px solid #8170ac; }
+.kinoSectionHead { display:flex; justify-content:space-between; gap:18px; align-items:center; flex-wrap:wrap; }
+.kinoPlays { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:20px 0; }
+.kinoPlay { background:#f5f8fc; border:1px solid #dbe3ee; border-radius:12px; padding:18px; }
+.kinoPlay > strong { color:#215c96; }
+.kinoBottom { grid-template-columns:minmax(250px,.8fr) minmax(0,1.2fr); }
+.kinoNumberGrid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:6px; }
+.kinoNumberGrid > div { display:flex; flex-direction:column; text-align:center; padding:8px 2px; border-radius:6px; background:#edf3fa; gap:4px; }
+.kinoNumberGrid span { font-size:12px; color:#536577; }
+.kinoHistory article { padding:12px 0; border-bottom:1px solid #e3e8ef; }
+.kinoTheme select { padding:8px; margin-left:8px; border:1px solid #c3cfdb; border-radius:6px; }
+.kinoTheme table { width:100%; }
+.kinoTheme th,.kinoTheme td { text-align:left; padding:12px; border-bottom:1px solid #e3e8ef; }
+@media(max-width:900px) { .kinoColumns,.kinoTheme .hero,.kinoBottom {grid-template-columns:1fr;} .kinoNumberGrid {grid-template-columns:repeat(7,minmax(0,1fr));} }
+@media(max-width:600px) { .kinoPlays {grid-template-columns:1fr;} .kinoTheme .kinoBalls {gap:5px;} .kinoTheme .kinoBalls .ball {width:30px;height:30px;flex-basis:30px;font-size:12px;} }
+.kinoTheme button { border:1px solid #bed0e4; border-radius:9px; background:#fff; color:#214a77; padding:10px 16px; font:inherit; font-weight:600; cursor:pointer; }
+.kinoTheme button:hover:not(:disabled) { background:#edf4fc; border-color:#5891c4; }
+.kinoTheme button:disabled { opacity:.5; cursor:default; }
+.kinoTheme button:focus-visible,.kinoTheme select:focus-visible { outline:3px solid #7bb4e6; outline-offset:2px; }

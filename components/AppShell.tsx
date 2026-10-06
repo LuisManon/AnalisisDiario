@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { SuperKinoDashboard } from "./SuperKinoDashboard";
+import type { KinoDraw } from "../lib/super-kino";
 import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
 import { LotekaRepartideraDashboard } from "./LotekaRepartideraDashboard";
@@ -8,6 +10,7 @@ import { QuinielaPaleDashboard } from "./QuinielaPaleDashboard";
 import type { DrawResult, LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "../lib/types";
 
 type AppShellProps = {
+  kinoResults: KinoDraw[];
   lotoResults: DrawResult[];
   laPrimeraResults: LaPrimeraDraw[];
   laPrimeraQuinielaResults: LaPrimeraQuinielaDraw[];
@@ -16,10 +19,10 @@ type AppShellProps = {
   quinielaPaleResults: QuinielaPaleDraw[];
 };
 
-type ActiveTab = "loto" | "quiniela" | "primera" | "loteka";
+type ActiveTab = "kino" | "loto" | "quiniela" | "primera" | "loteka";
 
-export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResults, laPrimeraLoto5Results, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("primera");
+export function AppShell({ kinoResults, lotoResults, laPrimeraResults, laPrimeraQuinielaResults, laPrimeraLoto5Results, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("kino");
 
   function changeTab(tab: ActiveTab) {
     setActiveTab(tab);
@@ -28,23 +31,22 @@ export function AppShell({ lotoResults, laPrimeraResults, laPrimeraQuinielaResul
   return (
     <div className={`appShell ${activeTab === "primera" ? "primeraShell" : activeTab === "loteka" ? "lotekaShell" : "lotoShell"}`}>
       <nav className="appTabs" aria-label="Secciones de analisis">
-        <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>
-          La Primera
-        </button>
-        <button className={activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("loto")}>
-          LEIDSA
-        </button>
+        <button className={activeTab === "kino" || activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("kino")}>LEIDSA</button>
+        <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>La Primera</button>
         <button className={activeTab === "loteka" ? "active lotekaTab" : "lotekaTab"} onClick={() => changeTab("loteka")}>
           Loteka
         </button>
       </nav>
-      {activeTab === "loto" || activeTab === "quiniela" ? (
+      {activeTab === "kino" || activeTab === "loto" || activeTab === "quiniela" ? (
         <nav className="leidsaProductSwitch" aria-label="Producto de LEIDSA">
+          <button className={activeTab === "kino" ? "active" : ""} onClick={() => changeTab("kino")}>Super Kino TV</button>
           <button className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>Loto Más</button>
           <button className={activeTab === "quiniela" ? "active" : ""} onClick={() => changeTab("quiniela")}>Quiniela Palé</button>
         </nav>
       ) : null}
-      {activeTab === "loto" ? (
+      {activeTab === "kino" ? (
+        <SuperKinoDashboard initialResults={kinoResults} />
+      ) : activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
       ) : activeTab === "quiniela" ? (
         <QuinielaPaleDashboard initialData={{ results: quinielaPaleResults }} />

@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import fs from "node:fs";
+import { buildKinoPlays, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, parseKinoArchive, KINO_ANALYSIS_START } from "../lib/super-kino.ts";
+const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
+const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
+test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.equal(draws[0].date,'2026-10-05');assert.equal(sample.length,21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
+test('frequency accounts for every ball and absent numbers',()=>{const stats=kinoStats([draws[0]]);assert.equal(stats.reduce((sum,s)=>sum+s.count,0),20);assert.equal(stats.find(s=>s.number===draws[0].numbers[0])?.gap,0);assert.equal(stats.filter(s=>s.lastDate===null).length,64);assert.equal(kinoStats([]).length,84);});
+test('ten distinct reproducible exploratory plays respect group quotas',()=>{const plays=buildKinoPlays(sample);const groups=kinoGroups(sample);assert.equal(plays.length,10);assert.equal(new Set(plays.map(p=>p.numbers.join(','))).size,10);assert.deepEqual(plays,buildKinoPlays([...sample].reverse()));for(const p of plays){assert.equal(new Set(p.numbers).size,10);assert.ok(p.numbers.every(n=>n>=1&&n<=84));assert.equal(p.numbers.filter(n=>groups.hot.some(s=>s.number===n)).length,p.hot);assert.equal(p.numbers.filter(n=>groups.cold.some(s=>s.number===n)).length,p.cold);}assert.deepEqual(buildKinoPlays([]),[]);});
+test('parser rejects missing and duplicate balls',()=>{const row=(nums:number[])=>`<tr><td><a href="/resultados/2026-10-05/">Date</a></td><td class="lad-t-kino">${nums.map(n=>`<span class="b">${n}</span>`).join('')}</td></tr>`;assert.equal(parseKinoArchive(row(draws[0].numbers),draws[0].source)[0].date,'2026-10-05');assert.throws(()=>parseKinoArchive(row(Array(20).fill(1)),draws[0].source));assert.throws(()=>parseKinoArchive('<html>Error</html>',draws[0].source));});
+test('official prizes include zero hits and revised nine-hit prize',()=>{assert.equal(kinoPrize(0),80);assert.equal(kinoPrize(9),200000);assert.equal(kinoPrize(10),25000000);assert.equal(kinoPrize(4),0);});
