@@ -1,0 +1,1051 @@
+{
+  "date": "2026-10-06",
+  "session": "noche",
+  "roster": [
+    {
+      "number": 26,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 78,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 99,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 22,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 31,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 50,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 56,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 77,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 87,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 96,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 21,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 25,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 35,
+      "group": "nosotros",
+      "badge": "❄️"
+    },
+    {
+      "number": 39,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 40,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 92,
+      "group": "nosotros",
+      "badge": "❄️"
+    },
+    {
+      "number": 94,
+      "group": "nosotros",
+      "badge": "❄️"
+    },
+    {
+      "number": 0,
+      "group": "nosotros",
+      "badge": "❄️"
+    },
+    {
+      "number": 5,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 16,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 20,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 23,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 28,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 34,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 44,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 48,
+      "group": "nosotros",
+      "badge": "❄️"
+    },
+    {
+      "number": 62,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 68,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 91,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 97,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 3,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 4,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 7,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 9,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 10,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 19,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 24,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 27,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 51,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 61,
+      "group": "nosotros",
+      "badge": ""
+    },
+    {
+      "number": 41,
+      "group": "inversionistas",
+      "badge": "🧊"
+    },
+    {
+      "number": 38,
+      "group": "inversionistas",
+      "badge": "🧊"
+    },
+    {
+      "number": 66,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 73,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 81,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 82,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 89,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 1,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 8,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 12,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 15,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 17,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 32,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 33,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 45,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 53,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 58,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 59,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 69,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 71,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 72,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 83,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 86,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 6,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 29,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 37,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 42,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 47,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 52,
+      "group": "inversionistas",
+      "badge": "❄️"
+    },
+    {
+      "number": 60,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 67,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 79,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 84,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 93,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 98,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 30,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 55,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 65,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 74,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 90,
+      "group": "inversionistas",
+      "badge": ""
+    },
+    {
+      "number": 13,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 36,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 46,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 43,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 63,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 75,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 54,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 57,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 70,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 95,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 49,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 80,
+      "group": "banca",
+      "badge": "🧊"
+    },
+    {
+      "number": 14,
+      "group": "banca",
+      "badge": "❄️"
+    },
+    {
+      "number": 18,
+      "group": "banca",
+      "badge": ""
+    },
+    {
+      "number": 11,
+      "group": "banca",
+      "badge": ""
+    },
+    {
+      "number": 2,
+      "group": "banca",
+      "badge": ""
+    },
+    {
+      "number": 76,
+      "group": "banca",
+      "badge": "❄️"
+    },
+    {
+      "number": 64,
+      "group": "banca",
+      "badge": "❄️"
+    },
+    {
+      "number": 85,
+      "group": "banca",
+      "badge": ""
+    },
+    {
+      "number": 88,
+      "group": "banca",
+      "badge": ""
+    }
+  ],
+  "smart": true,
+  "investors": [
+    [
+      {
+        "number": 78,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 77,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 21,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 40,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 34,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 91,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 7,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 10,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 27,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 82,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 1,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 12,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 42,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 93,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 65,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 74,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      }
+    ],
+    [
+      {
+        "number": 99,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 22,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 96,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 16,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 1000
+      },
+      {
+        "number": 23,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 44,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 62,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 24,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 51,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 8,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 32,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 45,
+        "source": "respaldo",
+        "badge": "",
+        "winner": true,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 58,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 59,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 83,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 79,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      }
+    ],
+    [
+      {
+        "number": 31,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 50,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 87,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 5,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 20,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 28,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 3,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 4,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 9,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 81,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 15,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 33,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 86,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 37,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 47,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 67,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 98,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      }
+    ],
+    [
+      {
+        "number": 26,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 56,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 25,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 39,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 68,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 97,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 19,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 61,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 66,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 550
+      },
+      {
+        "number": 89,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 17,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 72,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 60,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 84,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 30,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 55,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      },
+      {
+        "number": 90,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 500
+      }
+    ]
+  ],
+  "mixed": true,
+  "algorithmVersion": "tiers-v3",
+  "prizeMultiplier": 80,
+  "excluded": 14,
+  "priorCount": 2,
+  "createdAt": "2026-10-06T19:50:58.968Z"
+}
