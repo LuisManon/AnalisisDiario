@@ -280,3 +280,79 @@ test("assigned winners keep saved badges and missing snapshots can still report 
   assert.equal(winner.betAmount,undefined);
   assert.equal(resolveInvestorWinner(draw,null,[draw,{...draw,date:"2026-01-01"}])?.delayBadge,"🧊");
 });
+
+function rotationFixture(session: "dia" | "noche", tier: "hot" | "intermediate" | "remaining") {
+  const eligible=pool.slice(0,68);
+  const allocation=distribute(eligible,[],true,'rotation-source');
+  const source:Assignment={...snapshot(allocation.investors),...allocation,smart:true,date:'2026-10-05',session,createdAt:'2026-10-05T10:00:00Z'};
+  const winner=source.investors.flat().find(n=>n.tier===tier)!;
+  return {eligible,source,winner,target:{date:'2026-10-06',session},draw:{date:'2026-10-05',session,number:winner.number}};
+}
+test('hot winner rotates down only in the next same session with two promotions',async()=>{
+  const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');
+  for(const session of ['dia','noche'] as const) {
+    const f=rotationFixture(session,'hot');const before=JSON.stringify(f.source);
+    const context=winnerRotationContext(f.target,f.source,f.draw);
+    const result=distribute(f.eligible,[f.source],true,'rotation-next',context);
+    const numbers=result.investors.flat();
+    assert.equal(numbers.find(n=>n.number===f.winner.number)?.tier,'remaining');
+    assert.equal(numbers.find(n=>n.number===f.winner.number)?.betAmount,500);
+    assert.equal(result.winnerRotation?.changes.length,3);
+    for(const change of result.winnerRotation!.changes) {
+      assert.equal(f.source.investors.flat().find(n=>n.number===change.number)?.tier,change.from);
+      assert.equal(numbers.find(n=>n.number===change.number)?.tier,change.to);
+    }
+    assert.equal(new Set(numbers.map(n=>n.number)).size,68);
+    for(let i=0;i<4;i++) {
+      assert.equal(result.investors[i].filter(n=>n.tier==='hot').length,4);
+      assert.equal(result.investors[i].filter(n=>n.tier==='intermediate').length,5);
+      assert.equal(assignmentInvestment(result.investors[i]),10150);
+      assert.ok(result.investors[i].every(n=>!f.source.investors[i].some(p=>p.number===n.number)));
+    }
+    const saved:Assignment={...f.source,...f.target,...result,createdAt:'2026-10-06T10:00:00Z'};
+    assert.equal(validateAssignment(saved),null);
+    assert.equal(JSON.stringify(f.source),before);
+    assert.deepEqual(result,distribute(f.eligible,[f.source],true,'rotation-next',context));
+  }
+});
+test('intermediate winner swaps with a remaining number and keeps minimum stake',async()=>{
+  const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');
+  const f=rotationFixture('dia','intermediate');
+  const result=distribute(f.eligible,[f.source],true,'rotation-intermediate',winnerRotationContext(f.target,f.source,f.draw));
+  assert.equal(result.winnerRotation?.changes.length,2);
+  assert.equal(result.investors.flat().find(n=>n.number===f.winner.number)?.betAmount,500);
+  assert.equal(result.winnerRotation?.changes[1].from,'remaining');
+  assert.equal(result.winnerRotation?.changes[1].to,'intermediate');
+});
+test('other sessions, older results, remaining winners and absent snapshots do not trigger rotation',async()=>{
+  const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');
+  const f=rotationFixture('dia','hot');
+  assert.equal(winnerRotationContext({...f.target,session:'noche'},f.source,f.draw),undefined);
+  assert.equal(winnerRotationContext(f.target,f.source,{...f.draw,date:'2026-10-04'}),undefined);
+  assert.equal(winnerRotationContext(f.target,null,f.draw),undefined);
+  const remaining=rotationFixture('dia','remaining');
+  assert.equal(winnerRotationContext(remaining.target,remaining.source,remaining.draw),undefined);
+});
+test('rotation fails closed if winner is removed and validates saved demotion metadata',async()=>{
+  const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');
+  const f=rotationFixture('dia','hot');const context=winnerRotationContext(f.target,f.source,f.draw);
+  assert.throws(()=>distribute(f.eligible.filter(n=>n.number!==f.winner.number),[f.source],true,'missing-winner',context),/permanecer/);
+  const result=distribute(f.eligible,[f.source],true,'rotation-validation',context);
+  const saved:Assignment={...f.source,...f.target,...result,createdAt:'2026-10-06T10:00:00Z'};
+  saved.winnerRotation!.session='noche';assert.match(validateAssignment(saved)!,/fuera de la tanda/);
+  saved.winnerRotation!.session='dia';saved.winnerRotation!.changes[0].to='intermediate';assert.match(validateAssignment(saved)!,/inválida/);
+});
+test('winner demotion and promotions survive the relaxed allocation fallback',async()=>{
+  const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');
+  const f=rotationFixture('dia','hot');
+  const context=winnerRotationContext(f.target,f.source,f.draw);
+  // Block every previously hot number plus the promoted candidate for one investor.
+  const blocked=snapshot([f.source.investors.flat().filter(n=>n.tier==='hot'||n.number===16),[],[],[]]);
+  const result=distribute(f.eligible,[blocked],true,'rotation-fallback',context);
+  for(const change of result.winnerRotation!.changes) assert.equal(result.investors.flat().find(n=>n.number===change.number)?.tier,change.to);
+  for(const items of result.investors) {
+    assert.equal(items.filter(n=>n.tier==='hot').length,4);
+    assert.ok(items.filter(n=>n.tier==='hot').every(n=>n.source==='casa'));
+    assert.equal(assignmentInvestment(items),10150);
+  }
+});

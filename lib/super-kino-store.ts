@@ -12,6 +12,14 @@ export async function writeKinoResults(draws: KinoDraw[]) {
   const sorted = [...new Map(valid.map(d=>[d.date,d])).values()].sort((a,b)=>b.date.localeCompare(a.date));
   const content = `${JSON.stringify(sorted,null,2)}\n`;
   if (isGitHubDataStoreEnabled()) await writeGitHubJsonFile(file,content,"Update Super Kino TV results");
-  else await fs.writeFile(path.join(process.cwd(),file),content,"utf8");
+  else {
+    const localPath = path.join(process.cwd(),file);
+    const previous = await fs.readFile(localPath,"utf8").catch(() => "");
+    if (previous !== content) {
+      const temporary = `${localPath}.tmp`;
+      await fs.writeFile(temporary,content,"utf8");
+      await fs.rename(temporary,localPath);
+    }
+  }
   return sorted;
 }

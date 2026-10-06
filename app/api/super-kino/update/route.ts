@@ -1,25 +1,31 @@
 import { NextResponse } from "next/server";
 import { readKinoResults, writeKinoResults } from "../../../../lib/super-kino-store";
-import { parseKinoArchive } from "../../../../lib/super-kino";
+import { fetchLatestKinoResults, missingKinoDates, fetchKinoAnchor } from "../../../../lib/remote-super-kino";
+import { kinoClock, kinoExpectedDate, kinoYearStart } from "../../../../lib/super-kino-clock";
 export const dynamic = "force-dynamic";
+let pending: Promise<unknown> | null = null;
+async function update() {
+  const existing = await readKinoResults();
+  const expectedDate = kinoExpectedDate();
+  const remote = await fetchLatestKinoResults(expectedDate);
+  // Repair one oldest missing block per update without refetching the entire year every minute.
+  const gaps = missingKinoDates([...existing,...remote], expectedDate, kinoYearStart(kinoClock().date));
+  if (gaps.length) {
+    try { remote.push(...await fetchKinoAnchor(gaps[Math.min(13, gaps.length - 1)])); }
+    catch { /* Keep valid current results and report outstanding gaps below. */ }
+  }
+  const merged = [...new Map([...existing,...remote].map(d=>[d.date,d])).values()];
+  const results = await writeKinoResults(merged);
+  const added = results.length-existing.length;
+  const missing = missingKinoDates(results,expectedDate,kinoYearStart(kinoClock().date));
+  const waiting = !results.some(d=>d.date===expectedDate);
+  return {results, expectedDate, waiting, missingCount:missing.length,
+    message: waiting ? `Esperando el sorteo del ${expectedDate}. Volveremos a consultar en 60 segundos.` : `${added} sorteos nuevos. Último publicado: ${results[0]?.date ?? "sin datos"}.`};
+}
 export async function GET() {
   try {
-    const existing = await readKinoResults();
-    const today = new Intl.DateTimeFormat("en-CA",{timeZone:"America/Santo_Domingo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-    const months: string[] = [];
-    const cursor = new Date(`${existing[0]?.date.slice(0,7) ?? "2026-09"}-01T00:00:00Z`);
-    const end = new Date(`${today.slice(0,7)}-01T00:00:00Z`);
-    for (;cursor<=end;cursor.setUTCMonth(cursor.getUTCMonth()+1)) months.push(cursor.toISOString().slice(0,7));
-    const remote = [];
-    for (const month of months) {
-      const source = `https://numeros.medios.com.do/leidsa/super-kino-tv/historial/${month}/`;
-      const response = await fetch(source,{cache:"no-store",signal:AbortSignal.timeout(15000)});
-      if (!response.ok) throw new Error(`Fuente de resultados: HTTP ${response.status}`);
-      remote.push(...parseKinoArchive(await response.text(),source).filter(d=>d.date<=today));
-    }
-    const results = await writeKinoResults([...existing,...remote]);
-    const added = results.length-existing.length;
-    return NextResponse.json({results,message:`${added} sorteos nuevos. Último publicado: ${results[0]?.date ?? "sin datos"}.`});
+    if (!pending) pending = update().finally(()=>{pending=null;});
+    return NextResponse.json(await pending);
   } catch (error) {
     return NextResponse.json({message:error instanceof Error ? error.message : "No se pudo actualizar Kino."},{status:502});
   }

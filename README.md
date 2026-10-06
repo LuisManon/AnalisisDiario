@@ -90,3 +90,19 @@ Despues de guardar las variables, redeploya el proyecto en Vercel.
 - Simulador de minimo 5 jugadas.
 - Pestañas para La Primera y Loteka.
 - API para resultados, simulacion, actualizacion y persistencia.
+
+### Super Kino TV
+
+LEIDSA abre en Super Kino TV. El historial muestra el último año, con días sin sorteo documentados por separado. Para volver a importar el archivo histórico:
+
+```sh
+node --experimental-strip-types scripts/import-super-kino.ts
+```
+
+Las 30 jugadas diarias se guardan en `data/super-kino-portfolio-history.json`: 10 fuertes (7 calientes / 2 intermedios / 1 frío), 10 equilibradas (4 / 4 / 2) y 10 exploratorias (3 / 3 / 4). El análisis mantiene el corte conservador del 15/09/2026 para no mezclar el antiguo universo de 80 números. Las jugadas usan los últimos 30 sorteos disponibles anteriores al objetivo y quedan fijas; los filtros solo cambian las estadísticas. Los premios se evalúan exclusivamente sobre jugadas guardadas antes del cierre, con su tabla de pagos guardada. No se crean evaluaciones retrospectivas.
+
+Con la sección abierta, se consulta cada 60 segundos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
+
+### Rotación inteligente de Quinielón 2.0
+
+`tiers-v3` conserva los niveles del reparto previo de la misma tanda cuando hay un ganador caliente o intermedio y aplica la rotación al sorteo siguiente: caliente ganador → restante, intermedio de Casa → caliente, restante → intermedio; o intermedio ganador → restante y restante → intermedio. Los reemplazos elegibles siguen el ranking actual. Los cambios quedan registrados en `winnerRotation`, con apuesta mínima de RD$500 para el ganador anterior. Se mantienen los cupos, inversiones y bloqueos de propiedad; si no existe una distribución válida, se conserva el reparto anterior y se informa el impedimento. Los repartos cerrados no se modifican.

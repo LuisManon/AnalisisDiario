@@ -1,0 +1,612 @@
+[
+  {
+    "targetDate": "2026-10-06",
+    "generatedAt": "2026-10-06T15:47:58.174Z",
+    "analysisFrom": "2026-09-15",
+    "analysisTo": "2026-10-05",
+    "sampleSize": 21,
+    "algorithm": "kino-v2",
+    "plays": [
+      {
+        "id": 1,
+        "profile": "fuerte",
+        "numbers": [
+          12,
+          19,
+          22,
+          24,
+          29,
+          36,
+          43,
+          48,
+          49,
+          69
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 2,
+        "profile": "fuerte",
+        "numbers": [
+          7,
+          14,
+          27,
+          46,
+          55,
+          58,
+          64,
+          74,
+          78,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 3,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          9,
+          16,
+          31,
+          34,
+          38,
+          42,
+          45,
+          51,
+          59
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 4,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          4,
+          11,
+          17,
+          23,
+          57,
+          60,
+          61,
+          65,
+          71
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 5,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          4,
+          11,
+          15,
+          17,
+          18,
+          59,
+          61,
+          71,
+          73
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 6,
+        "profile": "fuerte",
+        "numbers": [
+          12,
+          19,
+          22,
+          23,
+          39,
+          40,
+          43,
+          49,
+          67,
+          69
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 7,
+        "profile": "fuerte",
+        "numbers": [
+          24,
+          27,
+          41,
+          46,
+          47,
+          55,
+          58,
+          64,
+          74,
+          76
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 8,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          9,
+          16,
+          21,
+          30,
+          31,
+          38,
+          42,
+          44,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 9,
+        "profile": "fuerte",
+        "numbers": [
+          5,
+          9,
+          16,
+          20,
+          31,
+          38,
+          53,
+          54,
+          74,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 10,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          4,
+          10,
+          11,
+          42,
+          59,
+          61,
+          68,
+          71,
+          75
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 1,
+        "profile": "equilibrada",
+        "numbers": [
+          12,
+          22,
+          29,
+          36,
+          41,
+          43,
+          47,
+          48,
+          49,
+          80
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 2,
+        "profile": "equilibrada",
+        "numbers": [
+          6,
+          7,
+          14,
+          19,
+          21,
+          24,
+          27,
+          30,
+          46,
+          78
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 3,
+        "profile": "equilibrada",
+        "numbers": [
+          34,
+          35,
+          45,
+          51,
+          53,
+          54,
+          58,
+          64,
+          74,
+          84
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 4,
+        "profile": "equilibrada",
+        "numbers": [
+          9,
+          16,
+          31,
+          38,
+          57,
+          60,
+          65,
+          68,
+          75,
+          82
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 5,
+        "profile": "equilibrada",
+        "numbers": [
+          1,
+          2,
+          15,
+          18,
+          28,
+          32,
+          59,
+          61,
+          71,
+          73
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 6,
+        "profile": "equilibrada",
+        "numbers": [
+          3,
+          11,
+          17,
+          23,
+          39,
+          40,
+          50,
+          67,
+          69,
+          83
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 7,
+        "profile": "equilibrada",
+        "numbers": [
+          4,
+          5,
+          8,
+          13,
+          33,
+          37,
+          42,
+          55,
+          56,
+          76
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 8,
+        "profile": "equilibrada",
+        "numbers": [
+          21,
+          27,
+          30,
+          37,
+          44,
+          45,
+          46,
+          55,
+          58,
+          77
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 9,
+        "profile": "equilibrada",
+        "numbers": [
+          5,
+          9,
+          20,
+          53,
+          54,
+          56,
+          60,
+          72,
+          74,
+          84
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 10,
+        "profile": "equilibrada",
+        "numbers": [
+          10,
+          13,
+          15,
+          25,
+          31,
+          38,
+          42,
+          59,
+          68,
+          75
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 1,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          12,
+          22,
+          29,
+          36,
+          41,
+          43,
+          48,
+          76,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 2,
+        "profile": "exploratoria",
+        "numbers": [
+          6,
+          7,
+          14,
+          19,
+          21,
+          24,
+          27,
+          44,
+          77,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 3,
+        "profile": "exploratoria",
+        "numbers": [
+          20,
+          34,
+          35,
+          45,
+          51,
+          53,
+          58,
+          64,
+          72,
+          74
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 4,
+        "profile": "exploratoria",
+        "numbers": [
+          9,
+          10,
+          16,
+          25,
+          31,
+          57,
+          60,
+          65,
+          68,
+          82
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 5,
+        "profile": "exploratoria",
+        "numbers": [
+          1,
+          15,
+          18,
+          28,
+          59,
+          61,
+          62,
+          63,
+          71,
+          73
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 6,
+        "profile": "exploratoria",
+        "numbers": [
+          11,
+          17,
+          23,
+          39,
+          40,
+          50,
+          52,
+          67,
+          81,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 7,
+        "profile": "exploratoria",
+        "numbers": [
+          3,
+          26,
+          30,
+          46,
+          47,
+          49,
+          66,
+          69,
+          70,
+          79
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 8,
+        "profile": "exploratoria",
+        "numbers": [
+          5,
+          26,
+          34,
+          37,
+          44,
+          54,
+          55,
+          56,
+          77,
+          84
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 9,
+        "profile": "exploratoria",
+        "numbers": [
+          2,
+          13,
+          20,
+          32,
+          38,
+          42,
+          57,
+          72,
+          75,
+          79
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 10,
+        "profile": "exploratoria",
+        "numbers": [
+          4,
+          10,
+          25,
+          31,
+          33,
+          38,
+          68,
+          70,
+          73,
+          75
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      }
+    ],
+    "prizes": [
+      {
+        "hits": 10,
+        "amount": 25000000
+      },
+      {
+        "hits": 9,
+        "amount": 200000
+      },
+      {
+        "hits": 8,
+        "amount": 10000
+      },
+      {
+        "hits": 7,
+        "amount": 1000
+      },
+      {
+        "hits": 6,
+        "amount": 300
+      },
+      {
+        "hits": 5,
+        "amount": 60
+      },
+      {
+        "hits": 0,
+        "amount": 80
+      }
+    ]
+  }
+]

@@ -4,7 +4,7 @@ import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildLaPrimeraFrequencyRanking } from "../../../../lib/la-primera";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { assignmentDeadline, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, numberDelayBadge, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { assignmentDeadline, winnerRotationContext, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, numberDelayBadge, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -27,12 +27,17 @@ export async function POST(request: Request) {
     const p1 = previousSlot(slot), p2 = previousSlot(p1);
     const history = (await Promise.all([read(p1), read(p2)])).filter((a): a is Assignment => Boolean(a));
     const smart = body?.smart ?? existing?.smart ?? history[0]?.smart ?? false;
-    if (existing && existing.smart === smart && (existing.algorithmVersion === (smart ? smartDistributionVersion : blockRotationVersion))) {
+    const results = (await readLaPrimeraResults()).filter(d => d.date < slot.date || (d.date === slot.date && slot.session === "noche" && d.session === "dia"));
+    const source = history.find(a => a.date === p2.date && a.session === slot.session) ?? null;
+    const sourceDraw = results.find(d => d.date === p2.date && d.session === slot.session);
+    const rotation = smart ? winnerRotationContext(slot, source, sourceDraw) : undefined;
+    const rotationKey = rotation ? `${rotation.draw.date}:${rotation.draw.session}:${rotation.draw.number}` : "";
+    const savedRotationKey = existing?.winnerRotation ? `${existing.winnerRotation.sourceDate}:${existing.winnerRotation.session}:${existing.winnerRotation.winner}` : "";
+    if (existing && existing.smart === smart && existing.algorithmVersion === (smart ? smartDistributionVersion : blockRotationVersion) && rotationKey === savedRotationKey) {
       const error = validateAssignment(existing);
       if(error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
       return NextResponse.json(existing);
     }
-    const results = (await readLaPrimeraResults()).filter(d => d.date < slot.date || (d.date === slot.date && slot.session === "noche" && d.session === "dia"));
     if (!results.length) throw new Error("No hay resultados disponibles para construir el reparto.");
     const rankings = buildQuinielonV2Rankings(results)[slot.session];
     const d = new Date(`${slot.date}T00:00:00Z`); const monday = shiftDate(slot.date,-((d.getUTCDay()+6)%7));
@@ -44,7 +49,7 @@ export async function POST(request: Request) {
     // A later draw may already have been prepared from the selector. Protect it too.
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
     const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
-    const allocation = smart ? distribute(eligible,[...history,...future],true,`${slot.date}-${slot.session}`) : rotateBlocks(pool,slot);
+    const allocation = smart ? distribute(eligible,[...history,...future],true,`${slot.date}-${slot.session}`,rotation) : rotateBlocks(pool,slot);
     const assignment: Assignment = {...slot, roster: [...rankings.nosotros.map(item=>({number:item.number,group:"nosotros" as const,badge:numberDelayBadge(results,item.number,slot)})),...rankings.inversionistas.map(item=>({number:item.number,group:"inversionistas" as const,badge:numberDelayBadge(results,item.number,slot)})),...rankings.banca.map(item=>({number:item.number,group:"banca" as const,badge:numberDelayBadge(results,item.number,slot)}))], smart, ...allocation, excluded:pool.length-eligible.length, priorCount:history.length, createdAt:new Date().toISOString()};
     const validationError=validateAssignment(assignment);
     if(validationError) throw new Error(`No se guardó el reparto: ${validationError}.`);

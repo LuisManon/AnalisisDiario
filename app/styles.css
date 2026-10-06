@@ -6718,3 +6718,40 @@ body:has(.appShell.lotoShell) {
 .kinoTheme button:hover:not(:disabled) { background:#edf4fc; border-color:#5891c4; }
 .kinoTheme button:disabled { opacity:.5; cursor:default; }
 .kinoTheme button:focus-visible,.kinoTheme select:focus-visible { outline:3px solid #7bb4e6; outline-offset:2px; }
+
+/* Kino: two exact rows, saved portfolios and prize evaluation. */
+.kinoTheme .kinoLatest { min-width:0; }
+.kinoTheme .kinoLatest .kinoBalls { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:8px; }
+.kinoTheme .kinoLatest .ball { width:100%; height:auto; aspect-ratio:1; max-width:42px; font-size:clamp(11px,1.2vw,16px); }
+.kinoPolling { padding:10px 16px; background:#ecf5ef; border-radius:10px; color:#28613d; font-size:13px; }
+.kinoPolling.waiting { background:#fff4df; color:#875813; }
+.kinoAwardsGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:20px 0; }
+.kinoAward { padding:22px; background:#f3f7fc; border-radius:12px; border-top:4px solid #3e659b; }
+.kinoAward.fuerte { border-color:#319164; }
+.kinoAward.exploratoria { border-color:#cc8832; }
+.kinoAward > strong { display:block; font-size:28px; margin:12px 0; }
+.kinoAward small { line-height:1.6; color:#536577; }
+.kinoPortfolioScroll { max-width:100%; overflow-x:auto; margin:18px 0; padding-bottom:6px; }
+.kinoPortfolioGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; min-width:860px; }
+.kinoPlayColumn { border:1px solid #d4e1ed; border-radius:12px; overflow:hidden; background:#f6f9fc; }
+.kinoPlayColumn header { padding:16px 12px; background:#e9f2ed; border-top:4px solid #319164; }
+.kinoPlayColumn.equilibrada header { background:#eaf0f9; border-color:#3e659b; }
+.kinoPlayColumn.exploratoria header { background:#fbf1df; border-color:#cc8832; }
+.kinoPlayColumn h3 { margin:0 0 7px; font-size:18px; }
+.kinoPlayColumn header small { font-size:11px; }
+.kinoPlayRow { padding:12px 8px; display:flex; gap:6px; align-items:center; border-bottom:1px solid #e0e7ef; }
+.kinoPlayNumber { font-size:11px; color:#6a7d90; min-width:16px; }
+.kinoTheme .kinoPlayRow .kinoBalls { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); flex:1; gap:3px; margin:0; }
+.kinoTheme .kinoPlayRow .ball { width:100%; height:auto; aspect-ratio:1; font-size:11px; padding:0; min-width:0; }
+.kinoPlayColumn footer { padding:14px 10px; font-size:12px; text-align:center; color:#536577; }
+.kinoSaved { font-size:13px; color:#40624e; }
+.kinoAwards .kinoPlayRow { display:block; }
+.kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
+.kinoNote summary { cursor:pointer; color:#215c96; }
+@media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
+.kinoHistory { text-align:center; }
+.kinoHistory .kinoBalls { justify-content:center; }
+.kinoTheme .kinoHistory ~ .toolbar { justify-content:center; }
+.kinoNoDraws { display:flex; flex-wrap:wrap; justify-content:center; gap:10px 20px; margin:16px 0; font-size:13px; }
+.kinoPortfolioGrid { min-width:720px; gap:10px; }
+.kinoTheme .kinoPlayRow .ball { font-size:10px; }

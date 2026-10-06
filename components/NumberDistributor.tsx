@@ -46,19 +46,22 @@ export function NumberDistributor({renderNumber}: Props) {
   const [fallback,setFallback] = useState("");
   const sequence = useRef(0);
   const slotRef = useRef("");
+  const assignmentRef = useRef<Assignment | null>(null);
+  const loadingRef = useRef(false);
   async function load(smart?:boolean) {
+    loadingRef.current = true;
     const id=++sequence.current; setBusy(true);setError("");setCopyFeedback(null);copySequence.current++;setFallback("");
     try {
       const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current, ...(smart === undefined ? {} : {smart})})});
       const data=await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el reparto.");
-      if (id===sequence.current) {setAssignment(data);slotRef.current=`${data.date}-${data.session}`;}
+      if (id===sequence.current) {setAssignment(data);assignmentRef.current=data;slotRef.current=`${data.date}-${data.session}`;}
     } catch(e) {if(id===sequence.current) setError(e instanceof Error ? e.message : "No se pudo cargar el reparto.");}
-    finally {if(id===sequence.current) setBusy(false);}
+    finally {loadingRef.current=false;if(id===sequence.current) setBusy(false);}
   }
   useEffect(() => {
     void load();
-    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},30_000);
+    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();} else if (assignmentRef.current?.smart && !loadingRef.current) {void load();}},60_000);
     return ()=>{window.clearInterval(timer);sequence.current++;};
   },[]);
   useEffect(() => {
@@ -143,6 +146,8 @@ export function NumberDistributor({renderNumber}: Props) {
     {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
     {assignment ? <>
       {allocationWarning ? <p role="status" className="distributorNote">{allocationWarning}</p> : null}
+      {assignment.smart ? <p className="distributorNote">Rotación por tanda: caliente ganador → restante; intermedio → caliente; restante → intermedio. Si gana un intermedio, pasa a restante y un restante ocupa su lugar. El ganador sigue incluido con RD$500.</p> : null}
+      {assignment.winnerRotation ? <p className="distributorNote" role="status">Rotación aplicada por el ganador {String(assignment.winnerRotation.winner).padStart(2,"0")} del {assignment.winnerRotation.sourceDate} ({assignment.winnerRotation.session === "dia" ? "Día" : "Noche"}): {assignment.winnerRotation.changes.map(c => `${String(c.number).padStart(2,"0")}: ${tierLabels[c.from]} → ${tierLabels[c.to]}`).join(" · ")}</p> : null}
       {assignment.smart ? <p className="distributorInstruction">Apuesta el monto indicado a <strong>cada número</strong> de su grupo. Los 4 calientes son de Casa (top 40).</p> : null}
       <div className="distributorGrid">{assignment.investors.map((numbers,i)=>{
         const total = assignmentInvestment(numbers);
