@@ -6745,6 +6745,9 @@ body:has(.appShell.lotoShell) {
 .kinoTheme .kinoPlayRow .ball { width:100%; height:auto; aspect-ratio:1; font-size:11px; padding:0; min-width:0; }
 .kinoPlayColumn footer { padding:14px 10px; font-size:12px; text-align:center; color:#536577; }
 .kinoSaved { font-size:13px; color:#40624e; }
+.kinoDelayFilter { display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin:14px 0; padding:12px 14px; border-radius:10px; background:#f3f6fa; color:#40546a; font-size:13px; }
+.kinoDelayFilter > div { display:flex; flex-wrap:wrap; gap:5px; }
+.kinoDelayFilter > div > span { min-width:28px; padding:5px 6px; border-radius:14px; background:#dce6f1; color:#244b75; text-align:center; font-weight:700; }
 .kinoAwards .kinoPlayRow { display:block; }
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
 .kinoNote summary { cursor:pointer; color:#215c96; }

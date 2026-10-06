@@ -20,9 +20,17 @@ export function kinoStats(draws: KinoDraw[]) {
     return {number, count:appearances.length, percent:ordered.length ? appearances.length / ordered.length * 100 : 0, gap:gap < 0 ? ordered.length : gap, lastDate:appearances[0]?.date ?? null};
   });
 }
-export function kinoGroups(draws: KinoDraw[]) {
-  const ranked = kinoStats(draws).sort((a,b) => b.count-a.count || a.number-b.number);
-  return { hot:ranked.slice(0,28), middle:ranked.slice(28,56), cold:ranked.slice(56).sort((a,b) => a.count-b.count || b.gap-a.gap || a.number-b.number) };
+export function kinoGroups(draws: KinoDraw[], allowedNumbers?: ReadonlySet<number>) {
+  const ranked = kinoStats(draws)
+    .filter(item => !allowedNumbers || allowedNumbers.has(item.number))
+    .sort((a,b) => b.count-a.count || a.number-b.number);
+  const hotSize = Math.ceil(ranked.length / 3);
+  const middleSize = Math.ceil((ranked.length - hotSize) / 2);
+  return {
+    hot: ranked.slice(0, hotSize),
+    middle: ranked.slice(hotSize, hotSize + middleSize),
+    cold: ranked.slice(hotSize + middleSize).sort((a,b) => a.count-b.count || b.gap-a.gap || a.number-b.number)
+  };
 }
 export const kinoProfiles = ["fuerte", "equilibrada", "exploratoria"] as const;
 export type KinoProfile = typeof kinoProfiles[number];
@@ -34,13 +42,16 @@ export const kinoPlaySchema = z.object({
   hot: z.number().int(), middle: z.number().int(), cold: z.number().int()
 }).refine(p => p.hot + p.middle + p.cold === 10);
 export type KinoPlay = z.infer<typeof kinoPlaySchema>;
-export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria") {
+export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria", allowedNumbers?: ReadonlySet<number>) {
   if (!draws.length) return [];
-  const groups = kinoGroups(draws);
+  const groups = kinoGroups(draws, allowedNumbers);
   const usage = new Map<number, number>();
   const seen = new Set<string>();
   return Array.from({length: 10}, (_, index): KinoPlay => {
     const mix = profile === "fuerte" ? [7, 2, 1] : profile === "equilibrada" ? [4, 4, 2] : [3, 3, 4];
+    if ([groups.hot, groups.middle, groups.cold].some((pool, group) => pool.length < mix[group])) {
+      throw new Error("Quedan muy pocos números elegibles para mantener los tres perfiles de jugadas.");
+    }
     let numbers: number[] = [];
     for (let attempt = 0; attempt < 84; attempt++) {
       numbers = [];
@@ -61,7 +72,12 @@ export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "explor
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.literal("kino-v2"),
+  algorithm: z.enum(["kino-v2", "kino-v3"]),
+  delayCutoff: z.iso.date().optional(),
+  excludedByDelay: z.array(z.object({
+    number: z.number().int().min(1).max(84),
+    lastDate: z.iso.date().nullable()
+  })).optional(),
   plays: kinoPlaySchema.array().length(30),
   prizes: z.array(z.object({hits: z.number().int().min(0).max(10), amount: z.number().nonnegative()})).length(7)
 }).superRefine((snapshot, ctx) => {
@@ -73,15 +89,47 @@ export const kinoSnapshotSchema = z.object({
     if (plays.length !== 10 || new Set(plays.map(p => p.id)).size !== 10) ctx.addIssue({code: "custom", message: "Cada perfil requiere 10 jugadas."});
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== 30) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
+  if (snapshot.algorithm === "kino-v3") {
+    if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
+    if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
+    const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
+    if (excluded.size !== (snapshot.excludedByDelay?.length ?? 0)) ctx.addIssue({code: "custom", message: "Hay números excluidos repetidos."});
+    if (snapshot.delayCutoff && snapshot.excludedByDelay?.some(item => item.lastDate !== null && item.lastDate >= snapshot.delayCutoff!)) ctx.addIssue({code: "custom", message: "Un número excluido no supera el mes de atraso."});
+    if (snapshot.plays.some(play => play.numbers.some(number => excluded.has(number)))) ctx.addIssue({code: "custom", message: "Una jugada contiene un número excluido por atraso."});
+  }
 });
 export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
+
+export function kinoOneMonthCutoff(targetDate: string) {
+  const value = new Date(`${targetDate}T12:00:00Z`);
+  const targetDay = value.getUTCDate();
+  value.setUTCDate(1);
+  value.setUTCMonth(value.getUTCMonth() - 1);
+  const lastDay = new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth() + 1, 0)).getUTCDate();
+  value.setUTCDate(Math.min(targetDay, lastDay));
+  return value.toISOString().slice(0, 10);
+}
+
+export function getKinoStaleNumbers(draws: KinoDraw[], targetDate: string) {
+  const cutoff = kinoOneMonthCutoff(targetDate);
+  const prior = draws.filter(draw => draw.date < targetDate).sort((a,b) => b.date.localeCompare(a.date));
+  return Array.from({length: 84}, (_, index) => {
+    const number = index + 1;
+    return {number, lastDate: prior.find(draw => draw.numbers.includes(number))?.date ?? null};
+  }).filter(item => item.lastDate === null || item.lastDate < cutoff);
+}
+
 export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = new Date()): KinoSnapshot {
   const sample = draws.filter(d => d.date >= KINO_ANALYSIS_START && d.date < targetDate).sort((a,b) => b.date.localeCompare(a.date)).slice(0, 30);
   if (!sample.length) throw new Error("No hay historial anterior suficiente para generar las jugadas.");
+  const delayCutoff = kinoOneMonthCutoff(targetDate);
+  const excludedByDelay = getKinoStaleNumbers(draws, targetDate);
+  const excluded = new Set(excludedByDelay.map(item => item.number));
+  const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm: "kino-v2", prizes: kinoPrizes,
-    plays: kinoProfiles.flatMap(profile => buildKinoPlays(sample, profile))
+    sampleSize: sample.length, algorithm: "kino-v3", delayCutoff, excludedByDelay, prizes: kinoPrizes,
+    plays: kinoProfiles.flatMap(profile => buildKinoPlays(sample, profile, allowedNumbers))
   });
 }
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {

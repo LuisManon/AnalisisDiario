@@ -18,8 +18,12 @@ test('full year includes every published date and documents no-draw days',async(
   assert.equal(kinoYearStart('2024-02-29'),'2023-02-28');
 });
 test('three profiles have unique plays and different compositions',async()=>{
-  const {buildKinoSnapshot,kinoProfiles}=await import('../lib/super-kino.ts');
+  const {buildKinoSnapshot,getKinoStaleNumbers,kinoProfiles}=await import('../lib/super-kino.ts');
   const snapshot=buildKinoSnapshot(draws,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
+  assert.equal(snapshot.algorithm,'kino-v3');
+  assert.equal(snapshot.delayCutoff,'2026-09-06');
+  assert.deepEqual(snapshot.excludedByDelay,[]);
+  assert.deepEqual(getKinoStaleNumbers(draws,'2026-10-06'),[]);
   assert.equal(snapshot.plays.length,30);
   assert.equal(new Set(snapshot.plays.map(p=>p.numbers.join(','))).size,30);
   for(const profile of kinoProfiles) {
@@ -28,6 +32,28 @@ test('three profiles have unique plays and different compositions',async()=>{
     const mix=profile==='fuerte'?[7,2,1]:profile==='equilibrada'?[4,4,2]:[3,3,4];
     for(const p of plays) assert.deepEqual([p.hot,p.middle,p.cold],mix);
   }
+});
+test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
+  const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
+  assert.equal(kinoOneMonthCutoff('2024-03-31'),'2024-02-29');
+  assert.equal(kinoOneMonthCutoff('2026-03-31'),'2026-02-28');
+  const boundaryDraw={...draws[0],date:'2026-09-06',numbers:Array.from({length:20},(_,index)=>index+1)};
+  const stale=getKinoStaleNumbers([boundaryDraw],'2026-10-06');
+  assert.equal(stale.some(item=>item.number===1),false);
+  assert.deepEqual(stale.find(item=>item.number===21),{number:21,lastDate:null});
+});
+test('numbers older than one month are excluded from every generated play',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const withoutRecent84=draws.map(draw=>{
+    if(draw.date<'2026-09-06'||draw.date>='2026-10-06'||!draw.numbers.includes(84)) return draw;
+    const replacement=Array.from({length:83},(_,index)=>index+1).find(number=>!draw.numbers.includes(number));
+    assert.ok(replacement);
+    return {...draw,numbers:draw.numbers.map(number=>number===84?replacement:number)};
+  });
+  const snapshot=buildKinoSnapshot(withoutRecent84,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
+  assert.deepEqual(snapshot.excludedByDelay,[{number:84,lastDate:null}]);
+  assert.equal(snapshot.plays.some(play=>play.numbers.includes(84)),false);
+  assert.equal(kinoSnapshotSchema.safeParse({...snapshot,plays:snapshot.plays.map((play,index)=>index?play:{...play,numbers:[...play.numbers.slice(0,9),84].sort((a,b)=>a-b)})}).success,false);
 });
 test('snapshot rejects late creation and excludes target and future outcomes',async()=>{
   const {buildKinoSnapshot}=await import('../lib/super-kino.ts');
