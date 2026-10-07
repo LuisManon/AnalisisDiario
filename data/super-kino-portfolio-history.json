@@ -1,5 +1,617 @@
 [
   {
+    "targetDate": "2026-10-07",
+    "generatedAt": "2026-10-07T01:01:22.687Z",
+    "analysisFrom": "2026-09-15",
+    "analysisTo": "2026-10-06",
+    "sampleSize": 22,
+    "algorithm": "kino-v3",
+    "delayCutoff": "2026-09-07",
+    "excludedByDelay": [],
+    "plays": [
+      {
+        "id": 1,
+        "profile": "fuerte",
+        "numbers": [
+          12,
+          21,
+          22,
+          23,
+          27,
+          43,
+          46,
+          48,
+          49,
+          69
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 2,
+        "profile": "fuerte",
+        "numbers": [
+          3,
+          6,
+          16,
+          19,
+          24,
+          51,
+          55,
+          58,
+          64,
+          74
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 3,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          5,
+          9,
+          11,
+          17,
+          30,
+          31,
+          32,
+          35,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 4,
+        "profile": "fuerte",
+        "numbers": [
+          4,
+          25,
+          38,
+          42,
+          47,
+          53,
+          54,
+          59,
+          61,
+          71
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 5,
+        "profile": "fuerte",
+        "numbers": [
+          31,
+          38,
+          42,
+          47,
+          59,
+          61,
+          63,
+          66,
+          68,
+          71
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 6,
+        "profile": "fuerte",
+        "numbers": [
+          4,
+          12,
+          15,
+          18,
+          22,
+          27,
+          43,
+          46,
+          50,
+          69
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 7,
+        "profile": "fuerte",
+        "numbers": [
+          16,
+          19,
+          24,
+          29,
+          36,
+          49,
+          55,
+          58,
+          64,
+          76
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 8,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          5,
+          7,
+          9,
+          11,
+          13,
+          17,
+          74,
+          77,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 9,
+        "profile": "fuerte",
+        "numbers": [
+          2,
+          5,
+          9,
+          11,
+          37,
+          40,
+          64,
+          72,
+          74,
+          84
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 10,
+        "profile": "fuerte",
+        "numbers": [
+          17,
+          31,
+          38,
+          42,
+          47,
+          56,
+          59,
+          60,
+          61,
+          73
+        ],
+        "hot": 7,
+        "middle": 2,
+        "cold": 1
+      },
+      {
+        "id": 1,
+        "profile": "equilibrada",
+        "numbers": [
+          12,
+          21,
+          22,
+          23,
+          29,
+          36,
+          43,
+          48,
+          69,
+          80
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 2,
+        "profile": "equilibrada",
+        "numbers": [
+          3,
+          6,
+          7,
+          13,
+          16,
+          19,
+          44,
+          46,
+          49,
+          51
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 3,
+        "profile": "equilibrada",
+        "numbers": [
+          20,
+          30,
+          32,
+          35,
+          37,
+          40,
+          55,
+          58,
+          64,
+          74
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 4,
+        "profile": "equilibrada",
+        "numbers": [
+          2,
+          5,
+          9,
+          11,
+          25,
+          53,
+          54,
+          56,
+          60,
+          70
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 5,
+        "profile": "equilibrada",
+        "numbers": [
+          31,
+          38,
+          42,
+          47,
+          62,
+          63,
+          66,
+          68,
+          75,
+          81
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 6,
+        "profile": "equilibrada",
+        "numbers": [
+          4,
+          15,
+          18,
+          27,
+          28,
+          41,
+          50,
+          57,
+          61,
+          71
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 7,
+        "profile": "equilibrada",
+        "numbers": [
+          1,
+          8,
+          14,
+          17,
+          24,
+          45,
+          59,
+          65,
+          76,
+          84
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 8,
+        "profile": "equilibrada",
+        "numbers": [
+          7,
+          13,
+          14,
+          16,
+          19,
+          24,
+          26,
+          30,
+          55,
+          77
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 9,
+        "profile": "equilibrada",
+        "numbers": [
+          2,
+          37,
+          40,
+          45,
+          53,
+          64,
+          72,
+          74,
+          79,
+          84
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 10,
+        "profile": "equilibrada",
+        "numbers": [
+          9,
+          11,
+          17,
+          31,
+          56,
+          60,
+          65,
+          66,
+          73,
+          78
+        ],
+        "hot": 4,
+        "middle": 4,
+        "cold": 2
+      },
+      {
+        "id": 1,
+        "profile": "exploratoria",
+        "numbers": [
+          8,
+          12,
+          21,
+          23,
+          29,
+          43,
+          48,
+          69,
+          76,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 2,
+        "profile": "exploratoria",
+        "numbers": [
+          3,
+          6,
+          7,
+          16,
+          26,
+          44,
+          46,
+          49,
+          51,
+          77
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 3,
+        "profile": "exploratoria",
+        "numbers": [
+          20,
+          30,
+          32,
+          35,
+          37,
+          55,
+          58,
+          64,
+          72,
+          79
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 4,
+        "profile": "exploratoria",
+        "numbers": [
+          2,
+          5,
+          9,
+          25,
+          53,
+          54,
+          56,
+          70,
+          73,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 5,
+        "profile": "exploratoria",
+        "numbers": [
+          31,
+          38,
+          42,
+          62,
+          63,
+          66,
+          67,
+          68,
+          75,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 6,
+        "profile": "exploratoria",
+        "numbers": [
+          4,
+          15,
+          18,
+          28,
+          50,
+          52,
+          57,
+          61,
+          71,
+          82
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 7,
+        "profile": "exploratoria",
+        "numbers": [
+          10,
+          13,
+          19,
+          22,
+          27,
+          33,
+          34,
+          36,
+          39,
+          41
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 8,
+        "profile": "exploratoria",
+        "numbers": [
+          14,
+          24,
+          26,
+          34,
+          35,
+          40,
+          45,
+          74,
+          77,
+          84
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 9,
+        "profile": "exploratoria",
+        "numbers": [
+          10,
+          11,
+          17,
+          25,
+          47,
+          60,
+          65,
+          72,
+          79,
+          81
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 10,
+        "profile": "exploratoria",
+        "numbers": [
+          1,
+          9,
+          11,
+          33,
+          56,
+          59,
+          60,
+          63,
+          73,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      }
+    ],
+    "prizes": [
+      {
+        "hits": 10,
+        "amount": 25000000
+      },
+      {
+        "hits": 9,
+        "amount": 200000
+      },
+      {
+        "hits": 8,
+        "amount": 10000
+      },
+      {
+        "hits": 7,
+        "amount": 1000
+      },
+      {
+        "hits": 6,
+        "amount": 300
+      },
+      {
+        "hits": 5,
+        "amount": 60
+      },
+      {
+        "hits": 0,
+        "amount": 80
+      }
+    ]
+  },
+  {
     "targetDate": "2026-10-06",
     "generatedAt": "2026-10-06T15:47:58.174Z",
     "analysisFrom": "2026-09-15",
