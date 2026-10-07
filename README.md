@@ -101,6 +101,8 @@ node --experimental-strip-types scripts/import-super-kino.ts
 
 Las 30 jugadas diarias se guardan en `data/super-kino-portfolio-history.json` como exploratorias: cada una combina 3 calientes, 3 intermedios y 4 fríos. El análisis mantiene el corte conservador del 15/09/2026 para no mezclar el antiguo universo de 80 números. Antes de cada nueva cartera, `kino-v4` excluye los números cuya última salida sea anterior a un mes calendario antes del sorteo objetivo; después reclasifica los números elegibles en tres grupos equilibrados. El corte y los excluidos quedan guardados en la cartera. Las jugadas usan los últimos 30 sorteos disponibles anteriores al objetivo y quedan fijas; los filtros solo cambian las estadísticas. Los premios se evalúan exclusivamente sobre jugadas guardadas antes del cierre, con su tabla de pagos guardada. No se crean evaluaciones retrospectivas. Las carteras antiguas conservan sus perfiles originales.
 
+Sobre las 30 jugadas se muestra un calendario de lunes a domingo. Cada día agrupa cuántas jugadas cobraron cada monto y el total ganado, sin repetir los números del sorteo ni las combinaciones. Los días pasados sin cartera guardada aparecen como `Sin registro`; los días sin resultado aparecen como `Pendiente`.
+
 Con la sección abierta, se consulta cada 60 segundos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
 
 ### Rotación inteligente de Quinielón 2.0

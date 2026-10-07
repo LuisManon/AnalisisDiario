@@ -150,6 +150,14 @@ export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
     return {profile, plays, total, cost, net: total - cost, winners: plays.filter(p => p.prize > 0).length};
   });
 }
+export function summarizeKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
+  const winningPlays = evaluateKinoSnapshot(snapshot, draw).flatMap(evaluation => evaluation.plays).filter(play => play.prize > 0);
+  const groups = [...new Set(winningPlays.map(play => play.prize))].sort((a,b) => b-a).map(amount => {
+    const count = winningPlays.filter(play => play.prize === amount).length;
+    return {amount, count, total: amount * count};
+  });
+  return {groups, winningPlays: winningPlays.length, total: groups.reduce((sum, group) => sum + group.total, 0)};
+}
 export function parseKinoArchive(html: string, source: string): KinoDraw[] {
   const draws: KinoDraw[] = [];
   for (const [,row] of html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {

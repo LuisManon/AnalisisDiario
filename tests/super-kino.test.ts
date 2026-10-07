@@ -17,6 +17,14 @@ test('saved portfolios accept legacy profiles and keep the current one fully exp
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,30);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });
+test('weekly prize summary groups winning plays by amount without exposing numbers',async()=>{
+  const {kinoSnapshotSchema,summarizeKinoPrizes}=await import('../lib/super-kino.ts');
+  const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
+  const snapshot=snapshots.find(item=>item.targetDate==='2026-10-06');
+  const draw=draws.find(item=>item.date==='2026-10-06');
+  assert.ok(snapshot&&draw);
+  assert.deepEqual(summarizeKinoPrizes(snapshot,draw),{groups:[{amount:80,count:3,total:240}],winningPlays:3,total:240});
+});
 
 test('full year includes every published date and documents no-draw days',async()=>{
   const {kinoDates,isKinoNoDraw,kinoYearStart}=await import('../lib/super-kino-clock.ts');

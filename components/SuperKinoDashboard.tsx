@@ -3,12 +3,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Ball } from "./Ball";
 import {
-  evaluateKinoSnapshot, getKinoStaleNumbers, kinoGroups, kinoStats, kinoPrizes, kinoProfiles, kinoProfileLabels,
+  evaluateKinoSnapshot, getKinoStaleNumbers, kinoGroups, kinoStats, kinoPrizes, kinoProfiles, kinoProfileLabels, summarizeKinoPrizes,
   KINO_OFFICIAL, KINO_ANALYSIS_START, type KinoDraw, type KinoSnapshot
 } from "../lib/super-kino";
-import { kinoNoDraws, isKinoNoDraw, kinoClock, kinoExpectedDate, kinoTargetDate, kinoYearStart, kinoDates } from "../lib/super-kino-clock";
+import { kinoNoDraws, isKinoNoDraw, kinoClock, kinoExpectedDate, kinoTargetDate, kinoYearStart, kinoDates, shiftKinoDate } from "../lib/super-kino-clock";
 
 const money = (n: number) => `RD$${n.toLocaleString("en-US")}`;
+const weekDayNames = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const shortDate = (date: string) => new Intl.DateTimeFormat("es-DO", {day: "2-digit", month: "short", timeZone: "UTC"}).format(new Date(`${date}T12:00:00Z`));
+function mondayOf(date: string) {
+  const day = new Date(`${date}T12:00:00Z`).getUTCDay();
+  return shiftKinoDate(date, day === 0 ? -6 : 1 - day);
+}
 const profileDescriptions = {
   fuerte: "7 calientes · 2 intermedios · 1 frío",
   equilibrada: "4 calientes · 4 intermedios · 2 fríos",
@@ -112,6 +118,15 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: profileDescriptions.exploratoria, plays: current.plays.slice(start, start + 10)}))
     : kinoProfiles.map(profile => ({key: profile, className: profile, title: `10 ${kinoProfileLabels[profile]}`, description: profileDescriptions[profile], plays: current.plays.filter(play => play.profile === profile)}))) : [];
   const awardColumns = awards?.flatMap(evaluation => Array.from({length: Math.ceil(evaluation.plays.length / 10)}, (_, index) => ({...evaluation, key: `${evaluation.profile}-${index}`, plays: evaluation.plays.slice(index * 10, index * 10 + 10)}))) ?? [];
+  const weeklyPrizes = useMemo(() => {
+    const monday = mondayOf(clock.date);
+    return weekDayNames.map((day, index) => {
+      const date = shiftKinoDate(monday, index);
+      const snapshot = portfolio?.snapshots.find(item => item.targetDate === date);
+      const draw = results.find(item => item.date === date);
+      return {day, date, summary: snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null, status: !snapshot && date < clock.date ? "missing" as const : "pending" as const};
+    });
+  }, [clock.date, portfolio?.snapshots, results]);
 
   function download() {
     if (!current) return;
@@ -143,6 +158,12 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         return <article className={`kinoAward ${profile}`} key={profile}><span>{playCount} {kinoProfileLabels[profile]}</span><strong>{evaluation ? money(evaluation.total) : "—"}</strong><small>{evaluation ? `${evaluation.winners} premiadas · costo ${money(evaluation.cost)} · balance ${money(evaluation.net)}` : savedAward ? "Pendiente de resultado" : "Sin evaluación"}</small></article>;
       })}</div>
       {awards ? <><p>Total premiado: <strong>{money(awards.reduce((sum,a) => sum+a.total,0))}</strong> · Costo total: {money(awards.reduce((sum,a) => sum+a.cost,0))} · Balance: <strong>{money(awards.reduce((sum,a) => sum+a.net,0))}</strong></p><button onClick={() => setShowAwardPlays(v => !v)}>{showAwardPlays ? "Ocultar detalle" : "Ver aciertos y premios por jugada"}</button>{showAwardPlays ? <div className="kinoPortfolioScroll"><div className="kinoPortfolioGrid">{awardColumns.map(a => <article key={a.key} className={`kinoPlayColumn ${a.profile}`}><h3>{kinoProfileLabels[a.profile]}</h3>{a.plays.map(p => <div className="kinoPlayRow" key={p.id}><small>#{String(p.id).padStart(2,"0")} · {p.hits} aciertos · {money(p.prize)}</small><Balls numbers={p.numbers} matches={p.matches} /></div>)}</article>)}</div></div> : null}</> : null}
+    </section>
+
+    <section className="card kinoWeekAwards">
+      <div className="kinoSectionHead"><div><p className="eyebrow">Lunes a domingo</p><h2>Premios de las 30 jugadas</h2></div><small>{shortDate(weeklyPrizes[0].date)} – {shortDate(weeklyPrizes[6].date)}</small></div>
+      <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal de premios; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{weeklyPrizes.map(item => <article className={item.date === clock.date ? "today" : ""} key={item.date}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.summary ? item.summary.groups.length ? <><div className="kinoWeekPrizeGroups">{item.summary.groups.map(group => <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}</strong><span>Premio {money(group.amount)} c/u</span></p>)}</div><footer>Total ganado <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">Sin premios</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
+      <p className="muted">El resumen cuenta las jugadas premiadas por monto. No muestra los números sorteados ni las combinaciones.</p>
     </section>
 
     <section className="card">

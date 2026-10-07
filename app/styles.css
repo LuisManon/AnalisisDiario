@@ -6748,6 +6748,19 @@ body:has(.appShell.lotoShell) {
 .kinoDelayFilter { display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin:14px 0; padding:12px 14px; border-radius:10px; background:#f3f6fa; color:#40546a; font-size:13px; }
 .kinoDelayFilter > div { display:flex; flex-wrap:wrap; gap:5px; }
 .kinoDelayFilter > div > span { min-width:28px; padding:5px 6px; border-radius:14px; background:#dce6f1; color:#244b75; text-align:center; font-weight:700; }
+.kinoWeekScroll { max-width:100%; overflow-x:auto; margin-top:18px; padding-bottom:6px; }
+.kinoWeekGrid { display:grid; grid-template-columns:repeat(7,minmax(128px,1fr)); gap:10px; min-width:950px; }
+.kinoWeekGrid > article { display:flex; min-height:190px; flex-direction:column; border:1px solid #d8e1eb; border-radius:12px; overflow:hidden; background:#f7f9fc; }
+.kinoWeekGrid > article.today { border-color:#cc8832; box-shadow:0 0 0 2px #f6dfb9 inset; }
+.kinoWeekGrid header { display:flex; flex-direction:column; gap:4px; padding:12px; background:#eaf0f7; color:#294d73; }
+.kinoWeekGrid header span { font-size:12px; color:#61758a; text-transform:capitalize; }
+.kinoWeekPrizeGroups { padding:10px 12px; }
+.kinoWeekPrizeGroups p { margin:0; padding:7px 0; border-bottom:1px solid #e1e7ee; }
+.kinoWeekPrizeGroups p:last-child { border-bottom:0; }
+.kinoWeekPrizeGroups strong,.kinoWeekPrizeGroups span { display:block; }
+.kinoWeekPrizeGroups span { margin-top:3px; font-size:12px; color:#596b7d; }
+.kinoWeekGrid footer { margin-top:auto; padding:11px 12px; background:#eef6ef; color:#326043; font-size:12px; }
+.kinoWeekStatus { margin:auto !important; padding:18px; color:#6a7785; text-align:center; }
 .kinoAwards .kinoPlayRow { display:block; }
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
 .kinoNote summary { cursor:pointer; color:#215c96; }
