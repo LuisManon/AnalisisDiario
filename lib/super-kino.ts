@@ -36,21 +36,21 @@ export const kinoProfiles = ["fuerte", "equilibrada", "exploratoria"] as const;
 export type KinoProfile = typeof kinoProfiles[number];
 export const kinoProfileLabels = { fuerte: "Fuertes", equilibrada: "Equilibradas", exploratoria: "Exploratorias" };
 export const kinoPlaySchema = z.object({
-  id: z.number().int().min(1).max(10),
+  id: z.number().int().min(1).max(30),
   profile: z.enum(kinoProfiles),
   numbers: z.array(z.number().int().min(1).max(84)).length(10).refine(n => new Set(n).size === 10),
   hot: z.number().int(), middle: z.number().int(), cold: z.number().int()
 }).refine(p => p.hot + p.middle + p.cold === 10);
 export type KinoPlay = z.infer<typeof kinoPlaySchema>;
-export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria", allowedNumbers?: ReadonlySet<number>) {
+export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria", allowedNumbers?: ReadonlySet<number>, count = 10) {
   if (!draws.length) return [];
   const groups = kinoGroups(draws, allowedNumbers);
   const usage = new Map<number, number>();
   const seen = new Set<string>();
-  return Array.from({length: 10}, (_, index): KinoPlay => {
+  return Array.from({length: count}, (_, index): KinoPlay => {
     const mix = profile === "fuerte" ? [7, 2, 1] : profile === "equilibrada" ? [4, 4, 2] : [3, 3, 4];
     if ([groups.hot, groups.middle, groups.cold].some((pool, group) => pool.length < mix[group])) {
-      throw new Error("Quedan muy pocos números elegibles para mantener los tres perfiles de jugadas.");
+      throw new Error("Quedan muy pocos números elegibles para mantener la composición de las jugadas.");
     }
     let numbers: number[] = [];
     for (let attempt = 0; attempt < 84; attempt++) {
@@ -72,7 +72,7 @@ export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "explor
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
@@ -84,12 +84,18 @@ export const kinoSnapshotSchema = z.object({
   if (snapshot.analysisFrom > snapshot.analysisTo || snapshot.analysisTo >= snapshot.targetDate) ctx.addIssue({code: "custom", message: "El análisis debe preceder al sorteo."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  for (const profile of kinoProfiles) {
-    const plays = snapshot.plays.filter(p => p.profile === profile);
-    if (plays.length !== 10 || new Set(plays.map(p => p.id)).size !== 10) ctx.addIssue({code: "custom", message: "Cada perfil requiere 10 jugadas."});
+  if (snapshot.algorithm === "kino-v4") {
+    const ids = new Set(snapshot.plays.map(play => play.id));
+    if (snapshot.plays.some(play => play.profile !== "exploratoria" || play.hot !== 3 || play.middle !== 3 || play.cold !== 4)) ctx.addIssue({code: "custom", message: "Kino v4 requiere 30 jugadas exploratorias 3/3/4."});
+    if (ids.size !== 30 || snapshot.plays.some(play => play.id < 1 || play.id > 30)) ctx.addIssue({code: "custom", message: "Kino v4 requiere identificadores del 1 al 30."});
+  } else {
+    for (const profile of kinoProfiles) {
+      const plays = snapshot.plays.filter(p => p.profile === profile);
+      if (plays.length !== 10 || new Set(plays.map(p => p.id)).size !== 10 || plays.some(play => play.id > 10)) ctx.addIssue({code: "custom", message: "Cada perfil requiere 10 jugadas."});
+    }
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== 30) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3") {
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
@@ -128,19 +134,20 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm: "kino-v3", delayCutoff, excludedByDelay, prizes: kinoPrizes,
-    plays: kinoProfiles.flatMap(profile => buildKinoPlays(sample, profile, allowedNumbers))
+    sampleSize: sample.length, algorithm: "kino-v4", delayCutoff, excludedByDelay, prizes: kinoPrizes,
+    plays: buildKinoPlays(sample, "exploratoria", allowedNumbers, 30)
   });
 }
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
   if (draw.date !== snapshot.targetDate) throw new Error("El resultado no corresponde a las jugadas guardadas.");
-  return kinoProfiles.map(profile => {
+  return kinoProfiles.filter(profile => snapshot.plays.some(play => play.profile === profile)).map(profile => {
     const plays = snapshot.plays.filter(p => p.profile === profile).map(play => {
       const matches = play.numbers.filter(n => draw.numbers.includes(n));
       return {...play, matches, hits: matches.length, prize: snapshot.prizes.find(p => p.hits === matches.length)?.amount ?? 0};
     });
     const total = plays.reduce((sum, p) => sum + p.prize, 0);
-    return {profile, plays, total, cost: 250, net: total - 250, winners: plays.filter(p => p.prize > 0).length};
+    const cost = plays.length * 25;
+    return {profile, plays, total, cost, net: total - cost, winners: plays.filter(p => p.prize > 0).length};
   });
 }
 export function parseKinoArchive(html: string, source: string): KinoDraw[] {
