@@ -1,5 +1,617 @@
 [
   {
+    "targetDate": "2026-10-08",
+    "generatedAt": "2026-10-08T01:02:00.255Z",
+    "analysisFrom": "2026-09-15",
+    "analysisTo": "2026-10-07",
+    "sampleSize": 23,
+    "algorithm": "kino-v4",
+    "delayCutoff": "2026-09-08",
+    "excludedByDelay": [],
+    "plays": [
+      {
+        "id": 1,
+        "profile": "exploratoria",
+        "numbers": [
+          4,
+          6,
+          8,
+          12,
+          21,
+          23,
+          43,
+          46,
+          52,
+          76
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 2,
+        "profile": "exploratoria",
+        "numbers": [
+          24,
+          26,
+          27,
+          41,
+          48,
+          49,
+          51,
+          54,
+          77,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 3,
+        "profile": "exploratoria",
+        "numbers": [
+          3,
+          7,
+          13,
+          16,
+          17,
+          19,
+          20,
+          70,
+          72,
+          73
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 4,
+        "profile": "exploratoria",
+        "numbers": [
+          18,
+          33,
+          37,
+          40,
+          45,
+          62,
+          63,
+          71,
+          74,
+          84
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 5,
+        "profile": "exploratoria",
+        "numbers": [
+          9,
+          28,
+          29,
+          31,
+          39,
+          56,
+          60,
+          66,
+          67,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 6,
+        "profile": "exploratoria",
+        "numbers": [
+          10,
+          25,
+          35,
+          44,
+          47,
+          59,
+          61,
+          79,
+          81,
+          82
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 7,
+        "profile": "exploratoria",
+        "numbers": [
+          15,
+          22,
+          32,
+          34,
+          36,
+          57,
+          64,
+          65,
+          69,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 8,
+        "profile": "exploratoria",
+        "numbers": [
+          1,
+          11,
+          14,
+          20,
+          30,
+          34,
+          48,
+          55,
+          58,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 9,
+        "profile": "exploratoria",
+        "numbers": [
+          2,
+          5,
+          33,
+          38,
+          50,
+          53,
+          68,
+          70,
+          73,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 10,
+        "profile": "exploratoria",
+        "numbers": [
+          2,
+          15,
+          42,
+          45,
+          50,
+          62,
+          63,
+          67,
+          75,
+          84
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 11,
+        "profile": "exploratoria",
+        "numbers": [
+          25,
+          31,
+          38,
+          39,
+          42,
+          57,
+          66,
+          68,
+          75,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 12,
+        "profile": "exploratoria",
+        "numbers": [
+          4,
+          8,
+          10,
+          12,
+          21,
+          43,
+          52,
+          61,
+          76,
+          79
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 13,
+        "profile": "exploratoria",
+        "numbers": [
+          22,
+          24,
+          26,
+          27,
+          36,
+          41,
+          44,
+          51,
+          72,
+          77
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 14,
+        "profile": "exploratoria",
+        "numbers": [
+          1,
+          3,
+          6,
+          7,
+          11,
+          16,
+          17,
+          18,
+          28,
+          35
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 15,
+        "profile": "exploratoria",
+        "numbers": [
+          18,
+          30,
+          33,
+          37,
+          40,
+          58,
+          63,
+          71,
+          74,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 16,
+        "profile": "exploratoria",
+        "numbers": [
+          5,
+          9,
+          15,
+          28,
+          29,
+          53,
+          56,
+          60,
+          67,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 17,
+        "profile": "exploratoria",
+        "numbers": [
+          23,
+          25,
+          35,
+          46,
+          47,
+          57,
+          59,
+          79,
+          81,
+          82
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 18,
+        "profile": "exploratoria",
+        "numbers": [
+          6,
+          8,
+          32,
+          44,
+          49,
+          52,
+          54,
+          64,
+          65,
+          69
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 19,
+        "profile": "exploratoria",
+        "numbers": [
+          13,
+          14,
+          19,
+          26,
+          27,
+          34,
+          48,
+          51,
+          55,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 20,
+        "profile": "exploratoria",
+        "numbers": [
+          7,
+          13,
+          14,
+          17,
+          19,
+          55,
+          62,
+          70,
+          72,
+          73
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 21,
+        "profile": "exploratoria",
+        "numbers": [
+          2,
+          20,
+          39,
+          40,
+          45,
+          50,
+          74,
+          76,
+          77,
+          84
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 22,
+        "profile": "exploratoria",
+        "numbers": [
+          28,
+          29,
+          31,
+          38,
+          39,
+          57,
+          60,
+          66,
+          68,
+          83
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 23,
+        "profile": "exploratoria",
+        "numbers": [
+          4,
+          8,
+          10,
+          12,
+          35,
+          59,
+          61,
+          76,
+          79,
+          82
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 24,
+        "profile": "exploratoria",
+        "numbers": [
+          6,
+          22,
+          24,
+          26,
+          32,
+          36,
+          41,
+          44,
+          69,
+          77
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 25,
+        "profile": "exploratoria",
+        "numbers": [
+          1,
+          3,
+          11,
+          16,
+          20,
+          34,
+          64,
+          65,
+          72,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 26,
+        "profile": "exploratoria",
+        "numbers": [
+          5,
+          18,
+          30,
+          33,
+          37,
+          53,
+          58,
+          71,
+          73,
+          78
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 27,
+        "profile": "exploratoria",
+        "numbers": [
+          9,
+          15,
+          25,
+          42,
+          47,
+          56,
+          62,
+          67,
+          75,
+          81
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 28,
+        "profile": "exploratoria",
+        "numbers": [
+          21,
+          23,
+          43,
+          46,
+          48,
+          49,
+          52,
+          54,
+          63,
+          70
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 29,
+        "profile": "exploratoria",
+        "numbers": [
+          6,
+          8,
+          21,
+          23,
+          32,
+          43,
+          44,
+          46,
+          52,
+          69
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      },
+      {
+        "id": 30,
+        "profile": "exploratoria",
+        "numbers": [
+          26,
+          27,
+          34,
+          48,
+          49,
+          51,
+          54,
+          64,
+          65,
+          80
+        ],
+        "hot": 3,
+        "middle": 3,
+        "cold": 4
+      }
+    ],
+    "prizes": [
+      {
+        "hits": 10,
+        "amount": 25000000
+      },
+      {
+        "hits": 9,
+        "amount": 200000
+      },
+      {
+        "hits": 8,
+        "amount": 10000
+      },
+      {
+        "hits": 7,
+        "amount": 1000
+      },
+      {
+        "hits": 6,
+        "amount": 300
+      },
+      {
+        "hits": 5,
+        "amount": 60
+      },
+      {
+        "hits": 0,
+        "amount": 80
+      }
+    ]
+  },
+  {
     "targetDate": "2026-10-07",
     "generatedAt": "2026-10-07T21:35:37.020Z",
     "analysisFrom": "2026-09-15",
