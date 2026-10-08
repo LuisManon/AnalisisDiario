@@ -112,7 +112,8 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const selectedAwardDate = awardDates.includes(awardDate) ? awardDate : awardDates[0];
   const savedAward = portfolio?.snapshots.find(s => s.targetDate === selectedAwardDate);
   const awardDraw = results.find(d => d.date === selectedAwardDate);
-  const awards = savedAward && awardDraw ? evaluateKinoSnapshot(savedAward, awardDraw) : null;
+  const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
+  const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
   const awardProfiles = savedAward ? kinoProfiles.filter(profile => savedAward.plays.some(play => play.profile === profile)) : kinoProfiles;
   const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5"
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: profileDescriptions.exploratoria, plays: current.plays.slice(start, start + 10)}))

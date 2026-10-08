@@ -28,7 +28,13 @@ test('weekly prize tracking stays frozen after it is recorded',async()=>{
   assert.deepEqual(summarizeKinoPrizes(snapshot,draw),tuesday);
   assert.deepEqual(snapshot.prizeSummary,tuesday);
   const wednesday=snapshots.find(item=>item.targetDate==='2026-10-07');
-  assert.deepEqual(wednesday?.prizeSummary,{groups:[{amount:80,count:3,total:240},{amount:60,count:2,total:120}],winningPlays:5,total:360});
+  const recordedWednesday={groups:[{amount:300,count:1,total:300},{amount:80,count:3,total:240},{amount:60,count:2,total:120}],winningPlays:6,total:660};
+  assert.deepEqual(wednesday?.prizeSummary,recordedWednesday);
+  assert.ok(wednesday?.prizeDrawNumbers?.includes(25));
+  assert.equal(wednesday?.prizeDrawNumbers?.includes(27),false);
+  const currentWednesdayDraw=draws.find(item=>item.date==='2026-10-07');
+  assert.ok(wednesday&&currentWednesdayDraw&&wednesday.prizeDrawNumbers);
+  assert.deepEqual(summarizeKinoPrizes(wednesday,{...currentWednesdayDraw,numbers:wednesday.prizeDrawNumbers}),recordedWednesday);
   const changedDraw={...draw,numbers:Array.from({length:20},(_,index)=>index+1)};
   assert.deepEqual(freezeKinoPrizeSummaries([snapshot],[changedDraw])[0].prizeSummary,tuesday);
 });

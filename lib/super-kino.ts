@@ -106,10 +106,12 @@ export const kinoSnapshotSchema = z.object({
   })).optional(),
   quickHotNumbers: kinoQuickHotSchema.array().optional(),
   prizeSummary: kinoPrizeSummarySchema.optional(),
+  prizeDrawNumbers: z.array(z.number().int().min(1).max(84)).length(20).refine(numbers => new Set(numbers).size === 20).optional(),
   plays: kinoPlaySchema.array(),
   prizes: z.array(z.object({hits: z.number().int().min(0).max(10), amount: z.number().nonnegative()})).length(7)
 }).superRefine((snapshot, ctx) => {
   if (snapshot.analysisFrom > snapshot.analysisTo || snapshot.analysisTo >= snapshot.targetDate) ctx.addIssue({code: "custom", message: "El análisis debe preceder al sorteo."});
+  if (Boolean(snapshot.prizeSummary) !== Boolean(snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio registrado requiere conservar también el resultado evaluado."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
   if (snapshot.algorithm === "kino-v5") {
@@ -213,9 +215,9 @@ export function summarizeKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
 }
 export function freezeKinoPrizeSummaries(snapshots: KinoSnapshot[], draws: KinoDraw[]) {
   return snapshots.map(snapshot => {
-    if (snapshot.prizeSummary) return snapshot;
+    if (snapshot.prizeSummary && snapshot.prizeDrawNumbers) return snapshot;
     const draw = draws.find(item => item.date === snapshot.targetDate);
-    return draw ? {...snapshot, prizeSummary: summarizeKinoPrizes(snapshot, draw)} : snapshot;
+    return draw ? {...snapshot, prizeSummary: summarizeKinoPrizes(snapshot, draw), prizeDrawNumbers: [...draw.numbers]} : snapshot;
   });
 }
 export function parseKinoArchive(html: string, source: string): KinoDraw[] {
