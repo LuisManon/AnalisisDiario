@@ -90,6 +90,11 @@ const kinoQuickHotSchema = z.object({
   averageInterval: z.number().min(1).max(2),
   recentIntervals: z.array(z.number().int().positive()).length(3)
 });
+const kinoPrizeSummarySchema = z.object({
+  groups: z.array(z.object({amount: z.number().nonnegative(), count: z.number().int().positive(), total: z.number().nonnegative()})),
+  winningPlays: z.number().int().nonnegative(),
+  total: z.number().nonnegative()
+});
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
@@ -100,6 +105,7 @@ export const kinoSnapshotSchema = z.object({
     lastDate: z.iso.date().nullable()
   })).optional(),
   quickHotNumbers: kinoQuickHotSchema.array().optional(),
+  prizeSummary: kinoPrizeSummarySchema.optional(),
   plays: kinoPlaySchema.array(),
   prizes: z.array(z.object({hits: z.number().int().min(0).max(10), amount: z.number().nonnegative()})).length(7)
 }).superRefine((snapshot, ctx) => {
@@ -204,6 +210,13 @@ export function summarizeKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
     return {amount, count, total: amount * count};
   });
   return {groups, winningPlays: winningPlays.length, total: groups.reduce((sum, group) => sum + group.total, 0)};
+}
+export function freezeKinoPrizeSummaries(snapshots: KinoSnapshot[], draws: KinoDraw[]) {
+  return snapshots.map(snapshot => {
+    if (snapshot.prizeSummary) return snapshot;
+    const draw = draws.find(item => item.date === snapshot.targetDate);
+    return draw ? {...snapshot, prizeSummary: summarizeKinoPrizes(snapshot, draw)} : snapshot;
+  });
 }
 export function parseKinoArchive(html: string, source: string): KinoDraw[] {
   const draws: KinoDraw[] = [];

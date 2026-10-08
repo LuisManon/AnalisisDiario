@@ -124,7 +124,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       const date = shiftKinoDate(monday, index);
       const snapshot = portfolio?.snapshots.find(item => item.targetDate === date);
       const draw = results.find(item => item.date === date);
-      return {day, date, summary: snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null, status: !snapshot && date < clock.date ? "missing" as const : "pending" as const};
+      return {day, date, summary: snapshot?.prizeSummary ?? (snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null), status: !snapshot && date < clock.date ? "missing" as const : "pending" as const};
     });
   }, [clock.date, portfolio?.snapshots, results]);
 

@@ -18,13 +18,19 @@ test('saved portfolios accept legacy profiles and keep the current one fully exp
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,30);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });
-test('weekly prize summary groups winning plays by amount without exposing numbers',async()=>{
-  const {kinoSnapshotSchema,summarizeKinoPrizes}=await import('../lib/super-kino.ts');
+test('weekly prize tracking stays frozen after it is recorded',async()=>{
+  const {freezeKinoPrizeSummaries,kinoSnapshotSchema,summarizeKinoPrizes}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
   const snapshot=snapshots.find(item=>item.targetDate==='2026-10-06');
   const draw=draws.find(item=>item.date==='2026-10-06');
   assert.ok(snapshot&&draw);
-  assert.deepEqual(summarizeKinoPrizes(snapshot,draw),{groups:[{amount:80,count:3,total:240}],winningPlays:3,total:240});
+  const tuesday={groups:[{amount:80,count:3,total:240}],winningPlays:3,total:240};
+  assert.deepEqual(summarizeKinoPrizes(snapshot,draw),tuesday);
+  assert.deepEqual(snapshot.prizeSummary,tuesday);
+  const wednesday=snapshots.find(item=>item.targetDate==='2026-10-07');
+  assert.deepEqual(wednesday?.prizeSummary,{groups:[{amount:80,count:3,total:240},{amount:60,count:2,total:120}],winningPlays:5,total:360});
+  const changedDraw={...draw,numbers:Array.from({length:20},(_,index)=>index+1)};
+  assert.deepEqual(freezeKinoPrizeSummaries([snapshot],[changedDraw])[0].prizeSummary,tuesday);
 });
 
 test('full year includes every published date and documents no-draw days',async()=>{

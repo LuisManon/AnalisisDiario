@@ -3053,7 +3053,23 @@
         "hits": 0,
         "amount": 80
       }
-    ]
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 80,
+          "count": 3,
+          "total": 240
+        },
+        {
+          "amount": 60,
+          "count": 2,
+          "total": 120
+        }
+      ],
+      "winningPlays": 5,
+      "total": 360
+    }
   },
   {
     "targetDate": "2026-10-06",
@@ -3663,6 +3679,17 @@
         "hits": 0,
         "amount": 80
       }
-    ]
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 80,
+          "count": 3,
+          "total": 240
+        }
+      ],
+      "winningPlays": 3,
+      "total": 240
+    }
   }
 ]
