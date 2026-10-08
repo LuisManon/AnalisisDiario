@@ -36,26 +36,42 @@ export const kinoProfiles = ["fuerte", "equilibrada", "exploratoria"] as const;
 export type KinoProfile = typeof kinoProfiles[number];
 export const kinoProfileLabels = { fuerte: "Fuertes", equilibrada: "Equilibradas", exploratoria: "Exploratorias" };
 export const kinoPlaySchema = z.object({
-  id: z.number().int().min(1).max(30),
+  id: z.number().int().min(1).max(120),
   profile: z.enum(kinoProfiles),
   numbers: z.array(z.number().int().min(1).max(84)).length(10).refine(n => new Set(n).size === 10),
-  hot: z.number().int(), middle: z.number().int(), cold: z.number().int()
+  hot: z.number().int(), middle: z.number().int(), cold: z.number().int(),
+  quickHot: z.boolean().optional()
 }).refine(p => p.hot + p.middle + p.cold === 10);
 export type KinoPlay = z.infer<typeof kinoPlaySchema>;
-export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria", allowedNumbers?: ReadonlySet<number>, count = 10) {
+export function kinoQuickHotStats(draws: KinoDraw[], allowedNumbers?: ReadonlySet<number>) {
+  const ordered = [...draws].sort((a,b) => a.date.localeCompare(b.date));
+  return kinoGroups(draws, allowedNumbers).hot.flatMap(item => {
+    const appearances: number[] = [];
+    ordered.forEach((draw, index) => { if (draw.numbers.includes(item.number)) appearances.push(index); });
+    const recentIntervals = appearances.slice(1).map((index, previous) => index - appearances[previous]).slice(-3);
+    if (recentIntervals.length < 3) return [];
+    const averageInterval = recentIntervals.reduce((sum, interval) => sum + interval, 0) / recentIntervals.length;
+    return averageInterval >= 1 && averageInterval <= 2 ? [{number: item.number, averageInterval: Number(averageInterval.toFixed(2)), recentIntervals}] : [];
+  }).sort((a,b) => a.averageInterval-b.averageInterval || a.number-b.number);
+}
+export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "exploratoria", allowedNumbers?: ReadonlySet<number>, count = 10, quickHotNumbers: readonly number[] = [], quickHotCount = 0) {
   if (!draws.length) return [];
   const groups = kinoGroups(draws, allowedNumbers);
+  const quickHotSet = new Set(quickHotNumbers);
+  const quickHotPool = groups.hot.filter(item => quickHotSet.has(item.number));
   const usage = new Map<number, number>();
   const seen = new Set<string>();
   return Array.from({length: count}, (_, index): KinoPlay => {
     const mix = profile === "fuerte" ? [7, 2, 1] : profile === "equilibrada" ? [4, 4, 2] : [3, 3, 4];
-    if ([groups.hot, groups.middle, groups.cold].some((pool, group) => pool.length < mix[group])) {
+    const reinforced = index < quickHotCount;
+    const pools = [reinforced ? quickHotPool : groups.hot, groups.middle, groups.cold];
+    if (pools.some((pool, group) => pool.length < mix[group])) {
       throw new Error("Quedan muy pocos números elegibles para mantener la composición de las jugadas.");
     }
     let numbers: number[] = [];
-    for (let attempt = 0; attempt < 84; attempt++) {
+    for (let attempt = 0; attempt < 240; attempt++) {
       numbers = [];
-      [groups.hot, groups.middle, groups.cold].forEach((pool, group) => {
+      pools.forEach((pool, group) => {
         const rotated = pool.map((_, i) => pool[(i + index * 5 + attempt) % pool.length]);
         rotated.sort((a, b) => (usage.get(a.number) ?? 0) - (usage.get(b.number) ?? 0));
         numbers.push(...rotated.slice(0, mix[group]).map(x => x.number));
@@ -66,26 +82,41 @@ export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "explor
     if (seen.has(numbers.join(","))) throw new Error("No se pudieron diversificar las jugadas.");
     seen.add(numbers.join(","));
     numbers.forEach(n => usage.set(n, (usage.get(n) ?? 0) + 1));
-    return { id: index + 1, profile, numbers, hot: mix[0], middle: mix[1], cold: mix[2] };
+    return { id: index + 1, profile, numbers, hot: mix[0], middle: mix[1], cold: mix[2], ...(reinforced ? {quickHot: true} : {}) };
   });
 }
+const kinoQuickHotSchema = z.object({
+  number: z.number().int().min(1).max(84),
+  averageInterval: z.number().min(1).max(2),
+  recentIntervals: z.array(z.number().int().positive()).length(3)
+});
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
     lastDate: z.iso.date().nullable()
   })).optional(),
-  plays: kinoPlaySchema.array().length(30),
+  quickHotNumbers: kinoQuickHotSchema.array().optional(),
+  plays: kinoPlaySchema.array(),
   prizes: z.array(z.object({hits: z.number().int().min(0).max(10), amount: z.number().nonnegative()})).length(7)
 }).superRefine((snapshot, ctx) => {
   if (snapshot.analysisFrom > snapshot.analysisTo || snapshot.analysisTo >= snapshot.targetDate) ctx.addIssue({code: "custom", message: "El análisis debe preceder al sorteo."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  if (snapshot.algorithm === "kino-v4") {
+  if (snapshot.algorithm === "kino-v5") {
     const ids = new Set(snapshot.plays.map(play => play.id));
+    const quickHotNumbers = new Set(snapshot.quickHotNumbers?.map(item => item.number) ?? []);
+    const reinforced = snapshot.plays.filter(play => play.quickHot);
+    if (snapshot.plays.length !== 120 || snapshot.plays.some(play => play.profile !== "exploratoria" || play.hot !== 3 || play.middle !== 3 || play.cold !== 4)) ctx.addIssue({code: "custom", message: "Kino v5 requiere 120 jugadas exploratorias 3/3/4."});
+    if (ids.size !== 120 || snapshot.plays.some(play => play.id < 1 || play.id > 120)) ctx.addIssue({code: "custom", message: "Kino v5 requiere identificadores del 1 al 120."});
+    if (quickHotNumbers.size < 3 || quickHotNumbers.size !== (snapshot.quickHotNumbers?.length ?? 0)) ctx.addIssue({code: "custom", message: "Kino v5 requiere al menos tres calientes rápidos distintos."});
+    if (reinforced.length < 30 || reinforced.some(play => play.numbers.filter(number => quickHotNumbers.has(number)).length !== 3)) ctx.addIssue({code: "custom", message: "Kino v5 requiere al menos 30 jugadas reforzadas con tres calientes rápidos."});
+  } else if (snapshot.algorithm === "kino-v4") {
+    const ids = new Set(snapshot.plays.map(play => play.id));
+    if (snapshot.plays.length !== 30) ctx.addIssue({code: "custom", message: "Kino v4 requiere 30 jugadas."});
     if (snapshot.plays.some(play => play.profile !== "exploratoria" || play.hot !== 3 || play.middle !== 3 || play.cold !== 4)) ctx.addIssue({code: "custom", message: "Kino v4 requiere 30 jugadas exploratorias 3/3/4."});
     if (ids.size !== 30 || snapshot.plays.some(play => play.id < 1 || play.id > 30)) ctx.addIssue({code: "custom", message: "Kino v4 requiere identificadores del 1 al 30."});
   } else {
@@ -94,8 +125,8 @@ export const kinoSnapshotSchema = z.object({
       if (plays.length !== 10 || new Set(plays.map(p => p.id)).size !== 10 || plays.some(play => play.id > 10)) ctx.addIssue({code: "custom", message: "Cada perfil requiere 10 jugadas."});
     }
   }
-  if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== 30) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4") {
+  if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== snapshot.plays.length) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
@@ -105,6 +136,20 @@ export const kinoSnapshotSchema = z.object({
   }
 });
 export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
+
+export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
+  const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
+  return [
+    `SUPER KINO TV · ${snapshot.plays.length} JUGADAS EXPLORATORIAS`,
+    `Sorteo: ${snapshot.targetDate}`,
+    `Base histórica: ${snapshot.analysisFrom} a ${snapshot.analysisTo} (${snapshot.sampleSize} sorteos)`,
+    "Composición: 3 calientes · 3 intermedios · 4 fríos",
+    `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`,
+    `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
+    "",
+    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${play.quickHot ? "[RÁPIDA 1–2]" : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
+  ].join("\n");
+}
 
 export function kinoOneMonthCutoff(targetDate: string) {
   const value = new Date(`${targetDate}T12:00:00Z`);
@@ -132,10 +177,12 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   const excludedByDelay = getKinoStaleNumbers(draws, targetDate);
   const excluded = new Set(excludedByDelay.map(item => item.number));
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
+  const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
+  if (quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm: "kino-v4", delayCutoff, excludedByDelay, prizes: kinoPrizes,
-    plays: buildKinoPlays(sample, "exploratoria", allowedNumbers, 30)
+    sampleSize: sample.length, algorithm: "kino-v5", delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
+    plays: buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickHotNumbers.map(item => item.number), 30)
   });
 }
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
