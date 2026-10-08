@@ -8,7 +8,7 @@ export type WinnerRotation = {
   sourceDate: string; session: LaPrimeraSession; winner: number; winnerTier: "hot" | "intermediate";
   changes: Array<{number: number; from: AssignmentTier; to: AssignmentTier}>;
 };
-export type WinnerRotationContext = {target: {date: string; session: LaPrimeraSession}; source: Assignment; draw: LaPrimeraDraw};
+export type WinnerRotationContext = {target: {date: string; session: LaPrimeraSession}; source: Assignment; draw: LaPrimeraDraw; winnerTier: "hot" | "intermediate"};
 export type Assignment = {winnerRotation?: WinnerRotation; date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"; badge?: DelayBadge}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
@@ -52,28 +52,38 @@ export function rotateBlocks(pool: AssignmentNumber[], slot: { date: string; ses
   return { investors: blockIndexes.map(block => pool.slice(block * 20, block * 20 + 20)), mixed: false,
     blockStarts: blockIndexes.map(block => block * 20 + 1), algorithmVersion: blockRotationVersion };
 }
-export const smartDistributionVersion = "tiers-v3";
+export const smartDistributionVersion = "tiers-v4";
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
+export function projectedAssignmentTier(pool: AssignmentNumber[], number: number): AssignmentTier | undefined {
+  if (!pool.some(item => item.number === number)) return undefined;
+  const hot = new Set(pool.filter(item => item.source === "casa").slice(0,16).map(item => item.number));
+  if (hot.has(number)) return "hot";
+  const intermediate = new Set(pool.filter(item => !hot.has(item.number)).slice(0,20).map(item => item.number));
+  return intermediate.has(number) ? "intermediate" : "remaining";
+}
 // Only a validated, saved tier from the immediately preceding draw of the SAME
-// session can trigger the rotation. A weekly winner flag is deliberately ignored.
-export function winnerRotationContext(target: {date: string; session: LaPrimeraSession}, source: Assignment | null, draw: LaPrimeraDraw | undefined): WinnerRotationContext | undefined {
+// session can trigger the rotation. If an ice badge kept the winner unassigned,
+// use the tier it would occupy when it becomes eligible again.
+export function winnerRotationContext(target: {date: string; session: LaPrimeraSession}, source: Assignment | null, draw: LaPrimeraDraw | undefined, projectedTier?: AssignmentTier): WinnerRotationContext | undefined {
   if (!source || !draw || !source.smart || source.session !== target.session || draw.session !== target.session ||
       source.date !== shiftDate(target.date, -1) || draw.date !== source.date) return undefined;
   const error = validateAssignment(source);
   if (error) throw new Error(`No se puede rotar un reparto anterior inválido: ${error}.`);
   const winner = source.investors.flat().find(n => n.number === draw.number);
-  if (winner?.tier !== "hot" && winner?.tier !== "intermediate") return undefined;
-  return {target, source, draw};
+  if (winner?.tier === "hot" || winner?.tier === "intermediate") return {target, source, draw, winnerTier:winner.tier};
+  const excludedWinner = source.roster?.find(item => item.number === draw.number && Boolean(item.badge));
+  if (!excludedWinner || (projectedTier !== "hot" && projectedTier !== "intermediate")) return undefined;
+  return {target, source, draw, winnerTier:projectedTier};
 }
 function rotationPlan(pool: AssignmentNumber[], context?: WinnerRotationContext): WinnerRotation | undefined {
   if (!context) return undefined;
-  const valid = winnerRotationContext(context.target, context.source, context.draw);
+  const valid = winnerRotationContext(context.target, context.source, context.draw, context.winnerTier);
   if (!valid) return undefined;
   const prior = context.source.investors.flat();
-  const winner = prior.find(n => n.number === context.draw.number)!;
-  if (!pool.some(n => n.number === winner.number)) throw new Error("El ganador anterior debe permanecer en la rotación como restante. No se pudo conservar entre los números elegibles.");
-  const changes: WinnerRotation["changes"] = [{number: winner.number, from: winner.tier!, to: "remaining"}];
-  if (winner.tier === "hot") {
+  const winner = pool.find(n => n.number === context.draw.number);
+  if (!winner) throw new Error("El ganador anterior debe permanecer en la rotación como restante. No se pudo conservar entre los números elegibles.");
+  const changes: WinnerRotation["changes"] = [{number: winner.number, from: context.winnerTier, to: "remaining"}];
+  if (context.winnerTier === "hot") {
     const promoted = pool.find(n => n.source === "casa" && prior.some(p => p.number === n.number && p.tier === "intermediate"));
     if (!promoted) throw new Error("No hay un intermedio de Casa disponible para reemplazar al caliente ganador.");
     changes.push({number: promoted.number, from: "intermediate", to: "hot"});
@@ -81,7 +91,7 @@ function rotationPlan(pool: AssignmentNumber[], context?: WinnerRotationContext)
   const promoted = pool.find(n => prior.some(p => p.number === n.number && p.tier === "remaining"));
   if (!promoted) throw new Error("No hay un restante disponible para subir a intermedio.");
   changes.push({number: promoted.number, from: "remaining", to: "intermediate"});
-  return {sourceDate: context.draw.date, session: context.draw.session, winner: winner.number, winnerTier: winner.tier as "hot" | "intermediate", changes};
+  return {sourceDate: context.draw.date, session: context.draw.session, winner: winner.number, winnerTier: context.winnerTier, changes};
 }
 // The caller supplies the eligible pool in global ranking order. Hashes only break
 // ownership ties; they never determine a number's category or strength.
@@ -173,7 +183,7 @@ export function validateAssignment(assignment: Assignment): string | null {
   if(new Set(items.map(item=>item.number)).size !== items.length) return "Número asignado más de una vez";
   const sizes=assignment.investors.map(items=>items.length);
   if(assignment.smart ? items.length>80 || Math.max(...sizes)-Math.min(...sizes)>1 || items.some(item=>Boolean(item.badge)) : sizes.some(size=>size!==20)) return "Cantidades o filtros inconsistentes";
-  if (["tiers-v2", smartDistributionVersion].includes(assignment.algorithmVersion ?? "")) {
+  if (["tiers-v2", "tiers-v3", smartDistributionVersion].includes(assignment.algorithmVersion ?? "")) {
     if (!assignment.smart || assignment.prizeMultiplier !== 80 || assignment.investors.some(numbers =>
       ![16,17].includes(numbers.length) ||
       numbers.filter(item => item.tier === "hot").length !== 4 ||
@@ -185,7 +195,7 @@ export function validateAssignment(assignment: Assignment): string | null {
   }
   if (assignment.winnerRotation) {
     const rotation = assignment.winnerRotation;
-    if (!assignment.smart || assignment.algorithmVersion !== smartDistributionVersion || rotation.session !== assignment.session || rotation.sourceDate !== shiftDate(assignment.date,-1) || !["hot","intermediate"].includes(rotation.winnerTier) || !Array.isArray(rotation.changes)) return "Rotación de ganador fuera de la tanda";
+    if (!assignment.smart || !["tiers-v3",smartDistributionVersion].includes(assignment.algorithmVersion ?? "") || rotation.session !== assignment.session || rotation.sourceDate !== shiftDate(assignment.date,-1) || !["hot","intermediate"].includes(rotation.winnerTier) || !Array.isArray(rotation.changes)) return "Rotación de ganador fuera de la tanda";
     const expected = rotation.winnerTier === "hot" ? ["hot:remaining", "intermediate:hot", "remaining:intermediate"] : ["intermediate:remaining", "remaining:intermediate"];
     if (rotation.changes.length !== expected.length || new Set(rotation.changes.map(c => c.number)).size !== expected.length || rotation.changes.some((c,i) => `${c.from}:${c.to}` !== expected[i]) || rotation.changes[0].number !== rotation.winner) return "Cadena de rotación de ganador inválida";
     if (rotation.changes.some(c => items.find(n => n.number === c.number)?.tier !== c.to)) return "La rotación no coincide con los niveles guardados";

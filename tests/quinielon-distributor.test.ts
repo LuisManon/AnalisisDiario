@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { numberDelayBadge, smartDistributionVersion, historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import fs from "node:fs";
+import { numberDelayBadge, projectedAssignmentTier, smartDistributionVersion, historicalWager, assignmentInvestment, validateAssignment, resolveInvestorWinner, rotateBlocks, distribute, selectedAssignmentSlot, followingSlot, nextAssignmentSlot, previousSlot, subtractMonths, winnerRotationContext, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor.ts";
+import type { LaPrimeraDraw } from "../lib/types.ts";
 const pool: AssignmentNumber[] = Array.from({length:80},(_,number)=>({number,source:number<40?"casa":"respaldo",badge:"",winner:false}));
 function snapshot(investors: AssignmentNumber[][]): Assignment {return {date:"2026-09-29",session:"dia",smart:false,investors,excluded:0,priorCount:0,mixed:false,createdAt:"2026-09-29T10:00:00Z"};}
 function verify(investors: AssignmentNumber[][], selected: AssignmentNumber[], previous: Assignment[]) {
@@ -314,6 +316,29 @@ test('hot winner rotates down only in the next same session with two promotions'
     assert.equal(JSON.stringify(f.source),before);
     assert.deepEqual(result,distribute(f.eligible,[f.source],true,'rotation-next',context));
   }
+});
+test('an ice-filtered winner that reenters hot rotates to remaining without having had an owner',()=>{
+  const source=JSON.parse(fs.readFileSync(new URL('../data/quinielon-assignments/2026-10-07-dia.json',import.meta.url),'utf8')) as Assignment;
+  const generatedTarget=JSON.parse(fs.readFileSync(new URL('../data/quinielon-assignments/2026-10-08-dia.json',import.meta.url),'utf8')) as Assignment;
+  const results=JSON.parse(fs.readFileSync(new URL('../data/la-primera-results.json',import.meta.url),'utf8')) as LaPrimeraDraw[];
+  const target={date:'2026-10-08',session:'dia' as const};
+  assert.equal(validateAssignment(generatedTarget),null);
+  assert.equal(generatedTarget.investors.flat().find(item=>item.number===95)?.tier,'remaining');
+  const scoped=results.filter(draw=>draw.date<target.date);
+  const dayResults=scoped.filter(draw=>draw.session==='dia');
+  const frequency=new Map(Array.from({length:100},(_,number)=>[number,dayResults.filter(draw=>draw.number===number).length]));
+  const eligible=generatedTarget.investors.flat().map(({number,source,badge,winner})=>({number,source,badge,winner})).sort((a,b)=>frequency.get(b.number)!-frequency.get(a.number)!||a.number-b.number);
+  const draw=scoped.find(item=>item.date==='2026-10-07'&&item.session==='dia')!;
+  assert.equal(draw.number,95);
+  assert.equal(source.investors.flat().some(item=>item.number===95),false);
+  assert.ok(source.roster?.find(item=>item.number===95)?.badge);
+  assert.equal(projectedAssignmentTier(eligible,95),'hot');
+  const context=winnerRotationContext(target,source,draw,projectedAssignmentTier(eligible,95));
+  const result=distribute(eligible,[source],true,'ice-winner-rotation',context);
+  const winner=result.investors.flat().find(item=>item.number===95);
+  assert.equal(winner?.tier,'remaining');
+  assert.equal(winner?.betAmount,500);
+  assert.deepEqual(result.winnerRotation?.changes[0],{number:95,from:'hot',to:'remaining'});
 });
 test('intermediate winner swaps with a remaining number and keeps minimum stake',async()=>{
   const {winnerRotationContext}=await import('../lib/quinielon-distributor.ts');

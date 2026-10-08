@@ -4,7 +4,7 @@ import path from "node:path";
 import { readLaPrimeraResults } from "../../../../lib/data";
 import { buildLaPrimeraFrequencyRanking } from "../../../../lib/la-primera";
 import { buildQuinielonV2Rankings } from "../../../../lib/quinielon-rankings";
-import { assignmentDeadline, winnerRotationContext, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, numberDelayBadge, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
+import { assignmentDeadline, projectedAssignmentTier, winnerRotationContext, validateAssignment, investorWinnerStartDate, resolveInvestorWinner, rotateBlocks, blockRotationVersion, smartDistributionVersion, distribute, selectedAssignmentSlot, followingSlot, previousSlot, numberDelayBadge, shiftDate, type Assignment, type AssignmentNumber } from "../../../../lib/quinielon-distributor";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "../../../../lib/github-data-store";
 export const runtime = "nodejs";
 const file = (slot: { date: string; session: string }) => `data/quinielon-assignments/${slot.date}-${slot.session}.json`;
@@ -28,17 +28,9 @@ export async function POST(request: Request) {
     const history = (await Promise.all([read(p1), read(p2)])).filter((a): a is Assignment => Boolean(a));
     const smart = body?.smart ?? existing?.smart ?? history[0]?.smart ?? false;
     const results = (await readLaPrimeraResults()).filter(d => d.date < slot.date || (d.date === slot.date && slot.session === "noche" && d.session === "dia"));
+    if (!results.length) throw new Error("No hay resultados disponibles para construir el reparto.");
     const source = history.find(a => a.date === p2.date && a.session === slot.session) ?? null;
     const sourceDraw = results.find(d => d.date === p2.date && d.session === slot.session);
-    const rotation = smart ? winnerRotationContext(slot, source, sourceDraw) : undefined;
-    const rotationKey = rotation ? `${rotation.draw.date}:${rotation.draw.session}:${rotation.draw.number}` : "";
-    const savedRotationKey = existing?.winnerRotation ? `${existing.winnerRotation.sourceDate}:${existing.winnerRotation.session}:${existing.winnerRotation.winner}` : "";
-    if (existing && existing.smart === smart && existing.algorithmVersion === (smart ? smartDistributionVersion : blockRotationVersion) && rotationKey === savedRotationKey) {
-      const error = validateAssignment(existing);
-      if(error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
-      return NextResponse.json(existing);
-    }
-    if (!results.length) throw new Error("No hay resultados disponibles para construir el reparto.");
     const rankings = buildQuinielonV2Rankings(results)[slot.session];
     const d = new Date(`${slot.date}T00:00:00Z`); const monday = shiftDate(slot.date,-((d.getUTCDay()+6)%7));
     const pool: AssignmentNumber[] = (["casa","respaldo"] as const).flatMap(source => (source === "casa" ? rankings.nosotros : rankings.inversionistas).map(item => {
@@ -46,6 +38,14 @@ export async function POST(request: Request) {
     }));
     const strength = new Map(buildLaPrimeraFrequencyRanking(results.filter(draw => draw.session === slot.session)).map((item, index) => [item.number, index]));
     const eligible = smart ? pool.filter(n => !n.badge).sort((a,b) => strength.get(a.number)! - strength.get(b.number)!) : pool;
+    const rotation = smart ? winnerRotationContext(slot, source, sourceDraw, sourceDraw ? projectedAssignmentTier(eligible,sourceDraw.number) : undefined) : undefined;
+    const rotationKey = rotation ? `${rotation.draw.date}:${rotation.draw.session}:${rotation.draw.number}` : "";
+    const savedRotationKey = existing?.winnerRotation ? `${existing.winnerRotation.sourceDate}:${existing.winnerRotation.session}:${existing.winnerRotation.winner}` : "";
+    if (existing && existing.smart === smart && existing.algorithmVersion === (smart ? smartDistributionVersion : blockRotationVersion) && rotationKey === savedRotationKey) {
+      const error = validateAssignment(existing);
+      if(error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
+      return NextResponse.json(existing);
+    }
     // A later draw may already have been prepared from the selector. Protect it too.
     const n1 = followingSlot(slot), n2 = followingSlot(n1);
     const future = smart ? (await Promise.all([read(n1), read(n2)])).filter((a): a is Assignment => Boolean(a)) : [];
