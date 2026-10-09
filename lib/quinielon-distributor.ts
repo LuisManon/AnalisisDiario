@@ -9,7 +9,8 @@ export type WinnerRotation = {
   changes: Array<{number: number; from: AssignmentTier; to: AssignmentTier}>;
 };
 export type WinnerRotationContext = {target: {date: string; session: LaPrimeraSession}; source: Assignment; draw: LaPrimeraDraw; winnerTier: "hot" | "intermediate"};
-export type Assignment = {winnerRotation?: WinnerRotation; date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"; badge?: DelayBadge}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
+export type AssignmentSimulation = { kind: "retrospective"; requestedWinningNumber: number; sourceResultsThrough: string; reason: string };
+export type Assignment = {winnerRotation?: WinnerRotation; simulation?: AssignmentSimulation; date: string; session: LaPrimeraSession; smart: boolean; investors: AssignmentNumber[][]; excluded: number; priorCount: number; mixed: boolean; createdAt: string; roster?: Array<{number:number; group: "nosotros" | "inversionistas" | "banca"; badge?: DelayBadge}>; blockStarts?: number[]; algorithmVersion?: string; prizeMultiplier?: number; allocationWarning?: string };
 export function subtractMonths(date: string, months: number) {
   const value = new Date(`${date}T00:00:00Z`);
   const day = value.getUTCDate();
@@ -174,9 +175,18 @@ export function assignmentDeadline(slot: {date:string; session:LaPrimeraSession}
 }
 export function validateAssignment(assignment: Assignment): string | null {
   if (!assignment || !Array.isArray(assignment.investors) || assignment.investors.length !== 4 || assignment.investors.some(items => !Array.isArray(items))) return "Reparto incompleto";
-  if (!["dia","noche"].includes(assignment.session) || !Number.isFinite(assignmentDeadline(assignment)) || !Number.isFinite(Date.parse(assignment.createdAt)) || Date.parse(assignment.createdAt) >= assignmentDeadline(assignment)) return "Reparto fuera de la tanda";
+  const deadline = assignmentDeadline(assignment);
+  const createdAt = Date.parse(assignment.createdAt);
+  if (!["dia","noche"].includes(assignment.session) || !Number.isFinite(deadline) || !Number.isFinite(createdAt)) return "Reparto fuera de la tanda";
+  if (assignment.simulation) {
+    const simulation = assignment.simulation;
+    const sourceDate = Date.parse(`${simulation.sourceResultsThrough}T00:00:00Z`);
+    if (simulation.kind !== "retrospective" || createdAt < deadline || !Number.isInteger(simulation.requestedWinningNumber) || simulation.requestedWinningNumber < 0 || simulation.requestedWinningNumber > 99 ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(simulation.sourceResultsThrough) || !Number.isFinite(sourceDate) || new Date(sourceDate).toISOString().slice(0,10) !== simulation.sourceResultsThrough || simulation.sourceResultsThrough >= assignment.date || !simulation.reason.trim()) return "Simulación retrospectiva inválida";
+  } else if (createdAt >= deadline) return "Reparto fuera de la tanda";
   const items=assignment.investors.flat();
   if(items.some(item => !item || !Number.isInteger(item.number) || item.number<0 || item.number>99 || !["casa","respaldo"].includes(item.source))) return "Número o grupo inválido";
+  if (assignment.simulation && !items.some(item => item.number === assignment.simulation!.requestedWinningNumber)) return "El ganador solicitado no quedó dentro del reparto simulado";
   if (assignment.prizeMultiplier !== undefined && (!Number.isFinite(assignment.prizeMultiplier) || assignment.prizeMultiplier <= 0)) return "Multiplicador inválido";
   if (items.some(item => (item.tier !== undefined && !["hot","intermediate","remaining"].includes(item.tier)) || (item.betAmount !== undefined && (!Number.isFinite(item.betAmount) || item.betAmount <= 0 || !item.tier || assignment.prizeMultiplier === undefined)))) return "Apuesta histórica inválida";
   if (assignment.algorithmVersion === "tiers-v1" && (!assignment.smart || assignment.prizeMultiplier === undefined || items.some(item => !item.tier) || assignment.investors.some(numbers => (numbers.length === 16 || numbers.length === 17) && numbers.some(item => item.betAmount === undefined)))) return "Inversión incompleta";
@@ -220,16 +230,17 @@ export const investorWinnerStartDate = "2026-09-29";
 // Fixed rollout date: earlier winners never receive retroactive wager/prize details.
 export const investorPrizeStartDate = "2026-10-02";
 export const calendarDelayBadgeStartDate = "2026-10-02";
-export type InvestorWinner = { delayBadge?: DelayBadge; tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
+export type InvestorWinner = { delayBadge?: DelayBadge; tier?: AssignmentTier; betAmount?: number; potentialPrize?: number; simulated?: boolean; number: number; name: string | null; recorded: boolean; validationError?: string; group: "nosotros" | "inversionistas" | "banca" | null };
 export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignment | null, results?: LaPrimeraDraw[]): InvestorWinner | null {
   if (draw.date < investorWinnerStartDate) return null;
   const recorded = Boolean(assignment && assignment.date === draw.date && assignment.session === draw.session);
   const validationError = recorded ? validateAssignment(assignment!) : null;
-  if(validationError) return {number:draw.number,name:null,recorded:true,group:null,validationError};
+  const simulated = Boolean(recorded && assignment!.simulation);
+  if(validationError) return {number:draw.number,name:null,recorded:true,group:null,validationError,...(simulated ? {simulated:true} : {})};
   const index = recorded ? assignment!.investors.findIndex(numbers => numbers.some(item => item.number === draw.number)) : -1;
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
   const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
   const savedBadge = recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.badge ?? item?.badge : undefined;
   const delayBadge = savedBadge !== undefined && ["", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
-  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(results || delayBadge ? {delayBadge} : {}), ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
+  return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(simulated ? {simulated:true} : {}), ...(results || delayBadge ? {delayBadge} : {}), ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
 }

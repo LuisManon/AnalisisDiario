@@ -92,6 +92,30 @@ test("later rotation cannot change a closed session's owner or group",()=>{
   assert.equal(resolveInvestorWinner(draw,first)?.name,"Jose Luis");
   assert.equal(validateAssignment({...first,createdAt:"2026-09-29T16:00:00Z"}),"Reparto fuera de la tanda");
 });
+test("a late assignment is accepted only as an explicit, traceable retrospective simulation",()=>{
+  const allocation=distribute(pool.slice(0,64),[],true,"retrospective-validation");
+  const requestedWinningNumber=allocation.investors[0][0].number;
+  const simulation={kind:"retrospective" as const,requestedWinningNumber,sourceResultsThrough:"2026-10-08",reason:"Reconstrucción solicitada para trazabilidad."};
+  const assignment:Assignment={...snapshot(allocation.investors),...allocation,date:"2026-10-09",smart:true,createdAt:"2026-10-09T20:00:00Z",simulation};
+  assert.equal(validateAssignment(assignment),null);
+  assert.equal(resolveInvestorWinner({date:assignment.date,session:assignment.session,number:requestedWinningNumber},assignment)?.simulated,true);
+  assert.equal(validateAssignment({...assignment,simulation:{...simulation,requestedWinningNumber:99}}),"El ganador solicitado no quedó dentro del reparto simulado");
+  assert.equal(validateAssignment({...assignment,simulation:{...simulation,sourceResultsThrough:"2026-10-09"}}),"Simulación retrospectiva inválida");
+  assert.equal(validateAssignment({...assignment,createdAt:"2026-10-09T10:00:00Z"}),"Simulación retrospectiva inválida");
+});
+test("the October 9 day simulation assigns winner 87 once and exposes its historical prize",()=>{
+  const assignment=JSON.parse(fs.readFileSync(new URL("../data/quinielon-assignments/2026-10-09-dia.json",import.meta.url),"utf8")) as Assignment;
+  assert.equal(validateAssignment(assignment),null);
+  assert.equal(assignment.simulation?.sourceResultsThrough,"2026-10-08");
+  assert.equal(assignment.investors.flat().filter(item=>item.number===87).length,1);
+  const winner=resolveInvestorWinner({date:"2026-10-09",session:"dia",number:87},assignment)!;
+  assert.equal(winner.name,"Lenin");
+  assert.equal(winner.group,"inversionistas");
+  assert.equal(winner.simulated,true);
+  assert.equal(winner.tier,"remaining");
+  assert.equal(winner.betAmount,500);
+  assert.equal(winner.potentialPrize,40000);
+});
 test("smart-filtered numbers keep their saved group even without an investor",()=>{
   const assignment={...snapshot([[],[],[],[]]),smart:true,roster:Array.from({length:100},(_,number)=>({number,group:(number<40?"nosotros":number<80?"inversionistas":"banca") as "nosotros"|"inversionistas"|"banca"}))};
   assert.deepEqual(resolveInvestorWinner({date:"2026-09-29",session:"dia",number:61},assignment),{number:61,name:null,recorded:true,group:"inversionistas"});
