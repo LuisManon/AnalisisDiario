@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SuperKinoDashboard } from "./SuperKinoDashboard";
 import type { KinoDraw } from "../lib/super-kino";
 import { DashboardClient } from "./DashboardClient";
@@ -23,6 +23,24 @@ type ActiveTab = "kino" | "loto" | "quiniela" | "primera" | "loteka";
 
 export function AppShell({ kinoResults, lotoResults, laPrimeraResults, laPrimeraQuinielaResults, laPrimeraLoto5Results, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("kino");
+
+  useEffect(() => {
+    let running = false;
+    const ensureNextQuinielonAssignment = async () => {
+      if (running) return;
+      running = true;
+      try {
+        await fetch("/api/quinielon/distributor", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({session: "auto"})});
+      } catch {
+        // The Quinielón screen exposes retry details if preparation fails.
+      } finally {
+        running = false;
+      }
+    };
+    void ensureNextQuinielonAssignment();
+    const timer = window.setInterval(() => void ensureNextQuinielonAssignment(), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   function changeTab(tab: ActiveTab) {
     setActiveTab(tab);
