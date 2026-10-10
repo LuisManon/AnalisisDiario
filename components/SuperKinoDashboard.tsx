@@ -125,7 +125,13 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       const date = shiftKinoDate(monday, index);
       const snapshot = portfolio?.snapshots.find(item => item.targetDate === date);
       const draw = results.find(item => item.date === date);
-      return {day, date, summary: snapshot?.prizeSummary ?? (snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null), status: !snapshot && date < clock.date ? "missing" as const : "pending" as const};
+      return {
+        day,
+        date,
+        prizes: snapshot?.prizes ?? kinoPrizes,
+        summary: snapshot?.prizeSummary ?? (snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null),
+        status: !snapshot && date < clock.date ? "missing" as const : "pending" as const
+      };
     });
   }, [clock.date, portfolio?.snapshots, results]);
 
@@ -166,8 +172,11 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
 
     <section className="card kinoWeekAwards">
       <div className="kinoSectionHead"><div><p className="eyebrow">Lunes a domingo</p><h2>Premios de las jugadas guardadas</h2></div><small>{shortDate(weeklyPrizes[0].date)} – {shortDate(weeklyPrizes[6].date)}</small></div>
-      <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal de premios; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{weeklyPrizes.map(item => <article className={item.date === clock.date ? "today" : ""} key={item.date}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.summary ? item.summary.groups.length ? <><div className="kinoWeekPrizeGroups">{item.summary.groups.map(group => <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}</strong><span>Premio {money(group.amount)} c/u</span></p>)}</div><footer>Total ganado <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">Sin premios</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
-      <p className="muted">El resumen cuenta las jugadas premiadas por monto. No muestra los números sorteados ni las combinaciones.</p>
+      <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal de premios; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{weeklyPrizes.map(item => <article className={item.date === clock.date ? "today" : ""} key={item.date}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.summary ? item.summary.groups.length ? <><div className="kinoWeekPrizeGroups">{item.summary.groups.map(group => {
+        const hits = item.prizes.find(prize => prize.amount === group.amount)?.hits;
+        return <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}{hits === undefined ? "" : ` · ${hits} ${hits === 1 ? "acierto" : "aciertos"}`}</strong><span>Premio {money(group.amount)} c/u</span></p>;
+      })}</div><footer>Total ganado <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">Sin premios</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
+      <p className="muted">El resumen cuenta las jugadas premiadas por monto e indica sus aciertos. No muestra los números sorteados ni las combinaciones.</p>
     </section>
 
     <section className="card">
