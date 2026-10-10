@@ -1603,6 +1603,88 @@ body:has(.appShell.primeraShell) {
   padding: 24px;
 }
 
+.lotoExploratoryCard {
+  background:
+    radial-gradient(circle at 90% 15%, rgba(199, 119, 0, 0.13), transparent 17rem),
+    rgba(255, 255, 255, 0.82);
+  padding: 22px;
+}
+
+.lotoExploratoryHeader,
+.lotoExploratoryCurrent,
+.lotoExploratoryResult > header {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.lotoExploratoryHeader h2 {
+  margin: 0;
+}
+
+.lotoExploratoryPrivacy {
+  background: rgba(199, 119, 0, 0.11);
+  border: 1px solid rgba(199, 119, 0, 0.24);
+  border-radius: 999px;
+  color: #885400;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 7px 11px;
+}
+
+.lotoExploratoryContent {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.lotoExploratoryCurrent,
+.lotoExploratoryResult {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.lotoExploratoryCurrent {
+  padding: 14px 15px;
+}
+
+.lotoExploratoryCurrent > div,
+.lotoExploratoryResult > header {
+  display: grid;
+  gap: 3px;
+}
+
+.lotoExploratoryCurrent span,
+.lotoExploratoryResult header span {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.lotoExploratoryCurrent > b {
+  color: #885400;
+  font-size: 0.8rem;
+}
+
+.lotoExploratoryResult > header {
+  background: rgba(33, 73, 154, 0.08);
+  padding: 12px 15px;
+}
+
+.lotoExploratoryResult footer {
+  background: rgba(0, 132, 61, 0.08);
+  color: var(--green-dark);
+  padding: 12px 15px;
+}
+
+.lotoExploratoryPending {
+  color: var(--muted);
+  margin: 0;
+  padding: 14px 15px;
+}
+
 .portfolioPlusTop {
   display: grid;
   gap: 7px;
@@ -6458,6 +6540,12 @@ body:has(.appShell.lotoShell) {
 
   .lotoPortfolioCalendarGrid {
     grid-template-columns: 1fr;
+  }
+
+  .lotoExploratoryHeader,
+  .lotoExploratoryCurrent {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .lotoTheme .historyRow {

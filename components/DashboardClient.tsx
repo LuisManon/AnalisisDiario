@@ -6,7 +6,7 @@ import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
 import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable } from "../lib/game";
-import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
+import type { DayFilter, DrawResult, HundredPlayExploratoryResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
 
 type ApiState = {
   results: DrawResult[];
@@ -23,6 +23,10 @@ type PortfolioCalendarEntry = {
   day: "miercoles" | "sabado";
   summary: ThirtyPlayPrizeSummary | null;
   status: "missing" | "pending";
+};
+type ExploratoryPortfolioState = {
+  current: HundredPlayExploratoryResult;
+  evaluated: HundredPlayExploratoryResult[];
 };
 const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
 const plusColor = "#ee1f2d";
@@ -134,6 +138,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [thirtyPlayPortfolio, setThirtyPlayPortfolio] = useState<ThirtyPlayPortfolio | null>(null);
   const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
   const [portfolioCalendar, setPortfolioCalendar] = useState<PortfolioCalendarEntry[]>([]);
+  const [exploratoryPortfolio, setExploratoryPortfolio] = useState<ExploratoryPortfolioState | null>(null);
   const [portfolioMessage, setPortfolioMessage] = useState("Cargando las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
 
@@ -171,19 +176,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
   useEffect(() => {
     if (!portfolioRequested) return;
-    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
-    fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`)
-      .then((response) => {
-        if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
-        return response.json();
-      })
-      .then((payload) => {
-        setThirtyPlayPortfolio(payload.current ?? null);
-        setPreviousPortfolio(payload.previous ?? null);
-        setPortfolioCalendar(payload.calendar ?? []);
-        setPortfolioMessage("");
-      })
-      .catch(() => setPortfolioMessage("No se pudieron cargar las 30 jugadas guardadas."));
+    void loadPortfolioData();
   }, [portfolioRequested, portfolioTargetDate]);
 
   useEffect(() => {
@@ -214,6 +207,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       await minimumLoading;
       if (!response.ok) throw new Error(payload.message);
       if (Array.isArray(payload.results)) setData({ results: payload.results });
+      await loadPortfolioData();
       setStatus(`${payload.message} Total: ${payload.total}. Ultimo sorteo: ${payload.latest?.date ?? "N/D"}.`);
     } catch {
       await minimumLoading;
@@ -221,6 +215,22 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     } finally {
       setIsUpdating(false);
       setIsPageLoading(false);
+    }
+  }
+
+  async function loadPortfolioData() {
+    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
+    try {
+      const response = await fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`);
+      if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
+      const payload = await response.json();
+      setThirtyPlayPortfolio(payload.current ?? null);
+      setPreviousPortfolio(payload.previous ?? null);
+      setPortfolioCalendar(payload.calendar ?? []);
+      setExploratoryPortfolio(payload.exploratory ?? null);
+      setPortfolioMessage("");
+    } catch {
+      setPortfolioMessage("No se pudieron cargar las jugadas guardadas.");
     }
   }
 
@@ -423,6 +433,35 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         ) : <p className="muted">{portfolioMessage}</p>}
       </section>
 
+      <section className="card lotoExploratoryCard">
+        <div className="lotoExploratoryHeader">
+          <div>
+            <span className="panelLabel">Prueba independiente</span>
+            <h2>100 jugadas exploratorias</h2>
+          </div>
+          <span className="lotoExploratoryPrivacy">Combinaciones ocultas</span>
+        </div>
+        {exploratoryPortfolio ? (
+          <div className="lotoExploratoryContent">
+            <article className="lotoExploratoryCurrent">
+              <div>
+                <strong>{formatDay(exploratoryPortfolio.current.targetDay)} {formatShortDate(exploratoryPortfolio.current.targetDate)}</strong>
+                <span>{exploratoryPortfolio.current.playCount} jugadas guardadas antes del sorteo</span>
+              </div>
+              <b>{exploratoryPortfolio.current.summary ? "Evaluado" : "Resultado pendiente"}</b>
+            </article>
+            {exploratoryPortfolio.current.summary ? (
+              <ExploratoryPrizeSummary result={exploratoryPortfolio.current} />
+            ) : (
+              <p className="lotoExploratoryPending">Al cargar el resultado solo aparecerán las jugadas premiadas y el total ganado.</p>
+            )}
+            {exploratoryPortfolio.evaluated
+              .filter((result) => result.targetDate !== exploratoryPortfolio.current.targetDate)
+              .map((result) => <ExploratoryPrizeSummary result={result} key={result.targetDate} />)}
+          </div>
+        ) : <p className="lotoExploratoryPending">{portfolioMessage}</p>}
+      </section>
+
       <details
         className="topPositionsAccordion thirtyPortfolioAccordion"
         onToggle={(event) => {
@@ -551,6 +590,31 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </nav>
       </section>
     </main>
+  );
+}
+
+function ExploratoryPrizeSummary({ result }: { result: HundredPlayExploratoryResult }) {
+  const summary = result.summary;
+  return (
+    <article className="lotoExploratoryResult">
+      <header>
+        <strong>{formatDay(result.targetDay)} {formatShortDate(result.targetDate)}</strong>
+        <span>{result.playCount} jugadas evaluadas</span>
+      </header>
+      {summary?.groups.length ? (
+        <>
+          <div className="lotoPortfolioPrizeGroups">
+            {summary.groups.map((group) => (
+              <p key={`${group.matches}-${group.plusMatched}-${group.amount}`}>
+                <strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"} · {group.label}</strong>
+                <span>{formatMoney(group.amount)} c/u</span>
+              </p>
+            ))}
+          </div>
+          <footer>{summary.winningPlays} jugadas con premio · <strong>{formatMoney(summary.total)}</strong></footer>
+        </>
+      ) : <p className="lotoExploratoryPending">Ninguna de las 100 jugadas obtuvo premio.</p>}
+    </article>
   );
 }
 

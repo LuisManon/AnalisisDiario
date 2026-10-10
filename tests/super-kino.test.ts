@@ -13,7 +13,7 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current one fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v5');
+  assert.equal(snapshots[0].algorithm,'kino-v6');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,30);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));

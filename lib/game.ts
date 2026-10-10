@@ -1,5 +1,5 @@
 import { simulate } from "./stats.ts";
-import type { DayFilter, DrawDay, DrawResult, Play, PortfolioPlay, PortfolioScope, RecommendedPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "./types.ts";
+import type { DayFilter, DrawDay, DrawResult, HundredPlayExploratoryPortfolio, Play, PortfolioPlay, PortfolioScope, RecommendedPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "./types.ts";
 
 export type VirtualTicket = {
   drawDate: string;
@@ -20,6 +20,7 @@ export const virtualPrizeTable = [
 ];
 
 export const thirtyPlayAlgorithmVersion = "v4-top5-plus";
+export const hundredPlayExploratoryAlgorithmVersion = "v1-100-exploratory";
 
 export function formatMoney(amount: number) {
   return new Intl.NumberFormat("es-DO", {
@@ -680,9 +681,58 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
   };
 }
 
-export function summarizeThirtyPlayPrizes(portfolio: ThirtyPlayPortfolio, draw: DrawResult): ThirtyPlayPrizeSummary {
-  if (portfolio.targetDate !== draw.date) throw new Error("El resultado no corresponde a la cartera de 30 jugadas.");
-  const winners = portfolio.plays.flatMap((play) => {
+export function buildHundredPlayExploratoryPortfolio(results: DrawResult[], targetDate: string): HundredPlayExploratoryPortfolio {
+  const targetDay = getDrawDay(targetDate);
+  const prior = [...results]
+    .filter((draw) => draw.date < targetDate)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const profiles = Array.from({ length: 100 }, () => "exploratoria" as const);
+  const sameDay = buildRecommendedPlays(prior, targetDay, 100, recommendationWeights, {
+    profiles,
+    seedSuffix: `${targetDate}-100-exploratory-same-day-v1`,
+    iterations: 12_000
+  });
+  const completeHistory = buildRecommendedPlays(prior, "todos", 100, recommendationWeights, {
+    profiles,
+    seedSuffix: `${targetDate}-100-exploratory-complete-v1`,
+    iterations: 12_000
+  });
+  const selected: RecommendedPlay[] = [];
+  const used = new Set<string>();
+
+  for (let index = 0; selected.length < 100 && index < 100; index += 1) {
+    for (const candidate of [sameDay[index], completeHistory[index]]) {
+      if (!candidate) continue;
+      const key = combinationKey(candidate.numbers);
+      if (used.has(key)) continue;
+      used.add(key);
+      selected.push(candidate);
+      if (selected.length === 100) break;
+    }
+  }
+
+  if (selected.length !== 100) {
+    throw new Error(`Solo se pudieron construir ${selected.length} de las 100 jugadas exploratorias de Loto Más.`);
+  }
+
+  const plusOrder = buildPlusOrder(prior);
+  const plays: Play[] = selected.map((play, index) => ({
+    id: index + 1,
+    numbers: play.numbers,
+    plus: plusOrder[index % plusOrder.length]
+  }));
+
+  return {
+    targetDate,
+    targetDay,
+    generatedAt: new Date().toISOString(),
+    algorithmVersion: hundredPlayExploratoryAlgorithmVersion,
+    plays
+  };
+}
+
+function summarizePortfolioPrizes(plays: Play[], draw: DrawResult): ThirtyPlayPrizeSummary {
+  const winners = plays.flatMap((play) => {
     const matches = play.numbers.filter((number) => draw.numbers.includes(number)).length;
     const plusMatched = play.plus === draw.plus;
     const prize = getVirtualPrize(matches, plusMatched);
@@ -695,6 +745,16 @@ export function summarizeThirtyPlayPrizes(portfolio: ThirtyPlayPortfolio, draw: 
     return { ...winner, count, total: winner.amount * count };
   }).sort((a, b) => b.amount - a.amount || b.matches - a.matches || Number(b.plusMatched) - Number(a.plusMatched));
   return { groups, winningPlays: winners.length, total: groups.reduce((sum, group) => sum + group.total, 0) };
+}
+
+export function summarizeThirtyPlayPrizes(portfolio: ThirtyPlayPortfolio, draw: DrawResult): ThirtyPlayPrizeSummary {
+  if (portfolio.targetDate !== draw.date) throw new Error("El resultado no corresponde a la cartera de 30 jugadas.");
+  return summarizePortfolioPrizes(portfolio.plays, draw);
+}
+
+export function summarizeHundredPlayExploratoryPrizes(portfolio: HundredPlayExploratoryPortfolio, draw: DrawResult): ThirtyPlayPrizeSummary {
+  if (portfolio.targetDate !== draw.date) throw new Error("El resultado no corresponde a las 100 jugadas exploratorias.");
+  return summarizePortfolioPrizes(portfolio.plays, draw);
 }
 
 export function evaluateVirtualTicket(ticket: VirtualTicket, draw: DrawResult | undefined) {
