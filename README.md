@@ -80,6 +80,18 @@ Permissions: Contents read and write
 
 Despues de guardar las variables, redeploya el proyecto en Vercel.
 
+## Generación automática
+
+El flujo `.github/workflows/prepare-portfolios.yml` consulta la aplicación de producción cada 30 minutos, aunque nadie tenga una pantalla abierta. Primero actualiza los resultados publicados y después prepara de forma idempotente:
+
+- los repartos Día y Noche de Quinielón 2.0;
+- las 120 jugadas de Super Kino TV;
+- las 30 jugadas de Loto Más;
+- las 60 jugadas de La Primera Loto 5;
+- las 30 jugadas de Quiniela Palé.
+
+GitHub ejecuta los horarios en UTC. El flujo usa los minutos `07` y `37` para evitar la congestión habitual de la hora en punto. También puede ejecutarse manualmente desde **Actions → Prepare lottery portfolios → Run workflow**. Las rutas devuelven la cartera ya guardada cuando existe, por lo que las ejecuciones repetidas no modifican sorteos cerrados.
+
 ## Funciones incluidas
 
 - Dashboard con ultimo sorteo.

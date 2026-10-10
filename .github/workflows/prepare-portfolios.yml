@@ -1,0 +1,83 @@
+name: Prepare lottery portfolios
+
+on:
+  schedule:
+    # GitHub schedules use UTC. Running at :07 and :37 avoids the busiest
+    # top-of-hour window and prepares both daily Quinielon sessions well ahead.
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prepare-lottery-portfolios
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Update results and prepare every portfolio
+        env:
+          APP_URL: https://analisis-diario.vercel.app
+        shell: bash
+        run: |
+          set -u
+          failures=0
+
+          call_get() {
+            local label="$1"
+            local path="$2"
+            echo "::group::${label}"
+            if ! curl --fail-with-body --silent --show-error --retry 2 --retry-delay 5 --max-time 120 \
+              -H "Cache-Control: no-cache" \
+              -H "User-Agent: AnalisisDiario-Scheduler/1.0" \
+              "${APP_URL}${path}" > /tmp/automation-response.json; then
+              failures=$((failures + 1))
+            else
+              node -e 'const fs=require("fs");const value=JSON.parse(fs.readFileSync("/tmp/automation-response.json","utf8"));console.log(JSON.stringify({ok:value.ok??true,message:value.message??null,targetDate:value.current?.targetDate??null,waitingForResult:value.waitingForResult??false}))'
+            fi
+            echo "::endgroup::"
+          }
+
+          call_post() {
+            local label="$1"
+            local path="$2"
+            local body="$3"
+            echo "::group::${label}"
+            if ! curl --fail-with-body --silent --show-error --retry 2 --retry-delay 5 --max-time 120 \
+              -X POST \
+              -H "Cache-Control: no-cache" \
+              -H "Content-Type: application/json" \
+              -H "User-Agent: AnalisisDiario-Scheduler/1.0" \
+              --data "$body" \
+              "${APP_URL}${path}" > /tmp/automation-response.json; then
+              failures=$((failures + 1))
+            else
+              node -e 'const fs=require("fs");const value=JSON.parse(fs.readFileSync("/tmp/automation-response.json","utf8"));console.log(JSON.stringify({date:value.date??null,session:value.session??null,error:value.error??null}))'
+            fi
+            echo "::endgroup::"
+          }
+
+          # Refresh published results first. A failure in one product must not
+          # prevent the remaining portfolios from being prepared.
+          call_get "Update Loto Mas" "/api/update"
+          call_get "Update Super Kino TV" "/api/super-kino/update"
+          call_get "Update Quinielon" "/api/la-primera/update?product=quinielon"
+          call_get "Update La Primera Loto 5" "/api/la-primera/update?product=loto5"
+          call_get "Update Quiniela Pale" "/api/quiniela-pale/update"
+
+          # Every generator returns its immutable saved snapshot when it already
+          # exists, so repeated scheduled calls never rewrite closed portfolios.
+          call_post "Prepare Quinielon 2.0 assignment" "/api/quinielon/distributor" '{"session":"auto"}'
+          call_get "Prepare Super Kino TV plays" "/api/super-kino/portfolio"
+          call_get "Prepare Loto Mas plays" "/api/portfolio"
+          call_get "Prepare La Primera Loto 5 plays" "/api/la-primera/loto5-portfolio"
+          call_get "Prepare Quiniela Pale plays" "/api/quiniela-pale/portfolio"
+
+          if (( failures > 0 )); then
+            echo "${failures} automatic operations failed. Successful products were still prepared."
+            exit 1
+          fi
