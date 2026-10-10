@@ -2441,6 +2441,49 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 10,
+          "total": 800
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 18,
+      "total": 1760
+    },
+    "prizeDrawNumbers": [
+      4,
+      6,
+      7,
+      15,
+      23,
+      27,
+      30,
+      31,
+      32,
+      33,
+      45,
+      46,
+      52,
+      59,
+      68,
+      71,
+      72,
+      74,
+      79,
+      80
     ]
   },
   {
@@ -2543,6 +2586,49 @@
           1
         ]
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 4,
+          "total": 320
+        },
+        {
+          "amount": 60,
+          "count": 3,
+          "total": 180
+        }
+      ],
+      "winningPlays": 9,
+      "total": 1100
+    },
+    "prizeDrawNumbers": [
+      5,
+      6,
+      14,
+      27,
+      28,
+      30,
+      35,
+      39,
+      41,
+      44,
+      46,
+      60,
+      63,
+      64,
+      65,
+      69,
+      73,
+      75,
+      77,
+      82
     ],
     "plays": [
       {
@@ -4885,49 +4971,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 300,
-          "count": 2,
-          "total": 600
-        },
-        {
-          "amount": 80,
-          "count": 4,
-          "total": 320
-        },
-        {
-          "amount": 60,
-          "count": 3,
-          "total": 180
-        }
-      ],
-      "winningPlays": 9,
-      "total": 1100
-    },
-    "prizeDrawNumbers": [
-      5,
-      6,
-      14,
-      27,
-      28,
-      30,
-      35,
-      39,
-      41,
-      44,
-      46,
-      60,
-      63,
-      64,
-      65,
-      69,
-      73,
-      75,
-      77,
-      82
     ]
   },
   {
