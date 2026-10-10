@@ -131,11 +131,12 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const automaticUpdateStarted = useRef(false);
 
   useEffect(() => {
-    if (automaticUpdateStarted.current) return;
-    automaticUpdateStarted.current = true;
     const expectedDate = getLatestExpectedDrawDate();
     if (expectedDate && (!initialData.results[0]?.date || initialData.results[0].date < expectedDate)) {
-      void checkUpdate();
+      if (!automaticUpdateStarted.current) {
+        automaticUpdateStarted.current = true;
+        void checkUpdate();
+      }
       return;
     }
     const timeout = window.setTimeout(() => setIsPageLoading(false), 500);
