@@ -5,8 +5,8 @@ import { Ball } from "./Ball";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { buildRecommendedPlays, formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable, type VirtualTicket } from "../lib/game";
-import type { DayFilter, DrawResult, Play, PortfolioPlay, RecommendedPlay, SimulationResult, ThirtyPlayPortfolio } from "../lib/types";
+import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable } from "../lib/game";
+import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio } from "../lib/types";
 
 type ApiState = {
   results: DrawResult[];
@@ -18,19 +18,6 @@ type DashboardClientProps = {
 
 const defaultHistoryPageSize = 5;
 type HistoryPageSize = 5 | 10 | 25 | 50 | "todos";
-type VirtualEvaluation = {
-  draw: DrawResult;
-  results: Array<SimulationResult & { prize: { amount: number; label: string } }>;
-  total: number;
-} | null;
-type RecommendationSnapshot = {
-  drawDate: string;
-  day: "miercoles" | "sabado";
-  generatedAt: string;
-  plays: RecommendedPlay[];
-};
-type PreviousRecommendations = RecommendationSnapshot & { draw: DrawResult };
-
 const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
 const plusColor = "#ee1f2d";
 
@@ -120,16 +107,6 @@ function formatShortDate(date: string) {
   return `${day}-${month}-${year}`;
 }
 
-function getProfileExplanation(profile: RecommendedPlay["profile"], day: string) {
-  if (profile === "fuerte") {
-    return `Prioriza números con alta afinidad para el ${formatDay(day)}, frecuencia por posición, retraso y combinaciones históricas frecuentes. Evita números con apoyo bajo para ese día.`;
-  }
-  if (profile === "equilibrada") {
-    return `Combina la afinidad del ${formatDay(day)} con el historial general, equilibrando frecuencia, posiciones, pares, rangos, suma típica y diversidad frente a las demás jugadas.`;
-  }
-  return `Incluye de forma controlada uno o dos números con baja afinidad para el ${formatDay(day)}, sin abandonar los rangos, posiciones y combinaciones respaldados por el historial.`;
-}
-
 export function DashboardClient({ initialData }: DashboardClientProps) {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [day, setDay] = useState<DayFilter>("todos");
@@ -145,19 +122,8 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [rangeYear, setRangeYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
   const [rangeDay, setRangeDay] = useState<DayFilter>("todos");
   const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6"]);
-  const [ticket, setTicket] = useState<VirtualTicket>({
-    drawDate: getNextGameDate(),
-    day: getDrawDay(getNextGameDate()),
-    plays: buildRecommendedPlays(initialData.results, getDrawDay(getNextGameDate()), 5),
-    submittedAt: null
-  });
-  const [ticketMessage, setTicketMessage] = useState("Cargando juego virtual...");
-  const [ticketEditable, setTicketEditable] = useState(true);
-  const [ticketEvaluation, setTicketEvaluation] = useState<VirtualEvaluation>(null);
-  const [recommendations, setRecommendations] = useState<RecommendedPlay[]>(() =>
-    buildRecommendedPlays(initialData.results.filter((result) => result.date < getNextGameDate()), getDrawDay(getNextGameDate()), 5)
-  );
-  const [previousRecommendations, setPreviousRecommendations] = useState<PreviousRecommendations | null>(null);
+  const [portfolioTargetDate] = useState(() => getNextGameDate());
+  const portfolioTargetDay = getDrawDay(portfolioTargetDate);
   const [portfolioRequested, setPortfolioRequested] = useState(false);
   const [thirtyPlayPortfolio, setThirtyPlayPortfolio] = useState<ThirtyPlayPortfolio | null>(null);
   const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
@@ -196,27 +162,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
   useEffect(() => {
-    fetch(`/api/virtual-ticket?drawDate=${ticket.drawDate}`)
-      .then((response) => response.json())
-      .then((payload) => {
-        setTicket(payload.ticket);
-        setTicketEditable(payload.window.isEditable);
-        setTicketEvaluation(payload.evaluation);
-        setRecommendations(payload.recommendations?.plays ?? []);
-        setPreviousRecommendations(payload.previousRecommendations ?? null);
-        setTicketMessage(
-          payload.window.isEditable
-            ? "Puedes editar y reenviar hasta las 5:00 PM del dia del sorteo."
-            : "Jugadas bloqueadas. El cierre de edicion fue a las 5:00 PM."
-        );
-      })
-      .catch(() => setTicketMessage("No se pudo cargar el juego virtual."));
-  }, [ticket.drawDate]);
-
-  useEffect(() => {
     if (!portfolioRequested) return;
     setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
-    fetch(`/api/portfolio?drawDate=${ticket.drawDate}`)
+    fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`)
       .then((response) => {
         if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
         return response.json();
@@ -227,7 +175,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         setPortfolioMessage("");
       })
       .catch(() => setPortfolioMessage("No se pudieron cargar las 30 jugadas guardadas."));
-  }, [portfolioRequested, ticket.drawDate]);
+  }, [portfolioRequested, portfolioTargetDate]);
 
   useEffect(() => {
     if (!isUpdating) return;
@@ -278,50 +226,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     setStatus(`Historial JSON preparado: ${data.results.length} sorteos.`);
   }
 
-  function updateTicketPlay(playId: number, key: "numbers" | "plus", value: string) {
-    if (!ticketEditable) return;
-    setTicket((current) => ({
-      ...current,
-      plays: current.plays.map((play) => {
-        if (play.id !== playId) return play;
-        if (key === "plus") return { ...play, plus: Number(value) };
-        return {
-          ...play,
-          numbers: value
-            .split(",")
-            .map((item) => Number(item.trim()))
-            .filter(Boolean)
-            .slice(0, 6)
-        };
-      })
-    }));
-  }
-
-  function useRecommendedPlay(play: Play) {
-    updateTicketPlay(play.id, "numbers", play.numbers.join(", "));
-    updateTicketPlay(play.id, "plus", String(play.plus));
-  }
-
-  async function submitTicket() {
-    const response = await fetch("/api/virtual-ticket", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ drawDate: ticket.drawDate, plays: ticket.plays })
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setTicketMessage(payload.error ?? "No se pudieron enviar las jugadas.");
-      return;
-    }
-    setTicket(payload.ticket);
-    setTicketEditable(payload.window.isEditable);
-    setTicketMessage(
-      payload.window.isEditable
-        ? "Jugadas enviadas. Puedes editarlas y reenviarlas hasta las 5:00 PM."
-        : "Jugadas enviadas. Quedan bloqueadas para este sorteo virtual."
-    );
-  }
-
   if (isPageLoading) {
     return <DashboardSkeleton message={isUpdating ? `Revisando data disponible... ${updateSeconds}s` : "Cargando resultados locales..."} />;
   }
@@ -331,9 +235,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       <section className="hero">
         <div>
           <p className="eyebrow">Loto Mas Lab local</p>
-          <h1>Analisis, frecuencia y simulacion de jugadas</h1>
+          <h1>Analisis, frecuencia y generacion de jugadas</h1>
           <p className="subcopy">
-            Dashboard privado para revisar resultados, comparar miercoles contra sabado y probar 5 jugadas contra el ultimo sorteo cargado.
+            Dashboard privado para revisar resultados, comparar miercoles contra sabado y consultar el generador de 30 jugadas.
           </p>
         </div>
         <div className="heroPanel latestDrawPanel">
@@ -354,7 +258,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
                     ))}
                   </tbody>
                 </table>
-                <small>Premios mínimos usados para la evaluación virtual.</small>
+                <small>Tabla de premios de referencia para Loto Más.</small>
               </details>
             </>
           ) : (
@@ -476,35 +380,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </section>
       </details>
 
-      <details className="topPositionsAccordion simulatorAccordion">
-        <summary>
-          <span>Simulador de 5 jugadas</span>
-          <small>5 jugadas para el proximo sorteo. Se bloquean al enviarlas o despues de las 5:00 PM.</small>
-        </summary>
-        <section className="ticketPanel">
-          <article className="card">
-          <div className="gameHeader">
-            <div>
-              <span className="panelLabel">Sorteo virtual</span>
-              <h3>{ticket.drawDate} · {formatDay(ticket.day)}</h3>
-              <p className="muted">{ticketMessage}</p>
-            </div>
-            <strong className={ticketEditable ? "openBadge" : "lockedBadge"}>{ticketEditable ? "Editable" : "Bloqueado"}</strong>
-          </div>
-          <div className="plays">
-            {ticket.plays.map((play) => (
-              <div className="playRow ticketRow" key={play.id}>
-                <span>#{play.id}</span>
-                <input disabled={!ticketEditable} value={play.numbers.join(", ")} onChange={(event) => updateTicketPlay(play.id, "numbers", event.target.value)} />
-                <input disabled={!ticketEditable} className="plusInput" type="number" min="1" max="12" value={play.plus} onChange={(event) => updateTicketPlay(play.id, "plus", event.target.value)} />
-              </div>
-            ))}
-          </div>
-          <button className="primaryButton" onClick={submitTicket} disabled={!ticketEditable}>Enviar jugadas virtuales</button>
-          </article>
-        </section>
-      </details>
-
       <details
         className="topPositionsAccordion thirtyPortfolioAccordion"
         onToggle={(event) => {
@@ -513,7 +388,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       >
         <summary>
           <span>Generador de 30 Jugadas</span>
-          <small>Inclinado al {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+          <small>Inclinado al {formatDay(portfolioTargetDay)} {formatShortDate(portfolioTargetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
         </summary>
         {thirtyPlayPortfolio ? (
           <div className="portfolioSnapshots">
@@ -532,104 +407,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <div className="thirtyPortfolioLoading">{portfolioMessage}</div>
         )}
       </details>
-
-      <section className="recommendationComparison">
-        <RecommendationSnapshotCard
-          snapshot={previousRecommendations}
-          results={data.results}
-          title="Recomendaciones del sorteo anterior"
-        />
-        <article className="card">
-          <div className="recommendationTitleRow">
-            <h2>Recomendaciones del próximo sorteo</h2>
-            <details className="recommendationPrizeInfo">
-              <summary aria-label="Consultar tabla de premios">i</summary>
-              <div className="recommendationPrizePanel">
-                <strong>Tabla de premios Loto Más</strong>
-                <small>Premios mínimos informados para cada combinación.</small>
-                <table>
-                  <tbody>
-                    {virtualPrizeTable.map((prize) => (
-                      <tr key={`${prize.matches}-${prize.plus}`}>
-                        <td>{prize.label}</td>
-                        <th>{formatMoney(prize.amount)}</th>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <small>Los premios de 6 aciertos y 6 + Más se muestran como montos garantizados.</small>
-              </div>
-            </details>
-          </div>
-          <p className="muted">Analisis inclinado al proximo sorteo del {formatDay(ticket.day)} {formatShortDate(ticket.drawDate)}: afinidad por dia, rangos por posicion, frecuencia, retraso y diversidad.</p>
-          <div className="recommendationList">
-            {recommendations.map((play) => {
-              const currentDraw = data.results.find((result) => result.date === ticket.drawDate);
-              const matches = currentDraw ? play.numbers.filter((number) => currentDraw.numbers.includes(number)).length : 0;
-              const plusMatched = Boolean(currentDraw && play.plus === currentDraw.plus);
-              const prize = getVirtualPrize(matches, plusMatched);
-              return (
-                <div className="recommendationItem" key={play.id}>
-                  <span>#{play.id}</span>
-                  <div className="recommendationNumbers">
-                    <div className="recommendationProfileRow">
-                      <span
-                        className={`recommendationProfile ${play.profile}`}
-                        tabIndex={0}
-                        title={getProfileExplanation(play.profile, ticket.day)}
-                        aria-label={getProfileExplanation(play.profile, ticket.day)}
-                      >
-                        {play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}
-                      </span>
-                      <small>{play.profile === "fuerte" ? `${play.daySupportCount}/6 con respaldo del ${formatDay(ticket.day)}` : play.profile === "equilibrada" ? `Balance ${formatDay(ticket.day)} + historial general` : `${6 - play.daySupportCount} de baja afinidad del ${formatDay(ticket.day)}`}</small>
-                    </div>
-                    <RecommendationBalls play={play} results={data.results} winningDraw={currentDraw} />
-                    <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
-                      {!currentDraw ? "Pendiente de resultado" : prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
-                    </span>
-                  </div>
-                  <div className="recommendationActions">
-                    <span className="scoreBadge" title="Puntaje relativo dentro de los candidatos analizados">{play.score} pts</span>
-                    <button className="miniButton" disabled={!ticketEditable} onClick={() => useRecommendedPlay(play)}>Usar</button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <p className="recommendationDisclaimer">
-            Recomendaciones basadas en patrones historicos. No predicen ni garantizan resultados.
-          </p>
-        </article>
-      </section>
-
-      <section className="card virtualResults">
-        <h2>Resultado del juego virtual</h2>
-        {ticketEvaluation ? (
-          <>
-            <div className="drawSummary">
-              <span>{ticketEvaluation.draw.date}</span>
-              <DrawBalls numbers={ticketEvaluation.draw.numbers} plus={ticketEvaluation.draw.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
-            </div>
-            <strong className="totalPrize">Premio virtual total: {formatMoney(ticketEvaluation.total)}</strong>
-            <div className="simulation">
-              {ticketEvaluation.results.map((result) => (
-                <div className="simRow" key={result.play.id}>
-                  <strong>Jugada {result.play.id}</strong>
-                  <span>{result.matchedNumbers.length} aciertos {result.plusMatched ? "+ Mas" : ""} · {result.prize.label} · {formatMoney(result.prize.amount)}</span>
-                  <div className="ballsRow small">
-                    {result.play.numbers.map((number) => (
-                      <Ball key={number} value={number} muted={!result.matchedNumbers.includes(number)} winner={result.matchedNumbers.includes(number)} />
-                    ))}
-                    <Ball value={result.play.plus} plus muted={!result.plusMatched} winner={result.plusMatched} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <p className="muted">Cuando el resultado del sorteo este cargado, aqui se calcula el premio virtual. La tabla de premios es configurable y no representa una apuesta real.</p>
-        )}
-      </section>
 
       <NumberSearch results={data.results} />
 
@@ -683,49 +460,53 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
       </section>
 
-      <section className="sectionHeader">
-        <h2>Historial cargado</h2>
-        <p>{filteredHistory.length} sorteos en el filtro actual. Mostrando {paginatedHistory.length} por pagina.</p>
-      </section>
-      <section className="historyControls">
-        <label htmlFor="historyPageSize">Mostrar</label>
-        <select id="historyPageSize" value={historyPageSize} onChange={(event) => changeHistoryPageSize(event.target.value)}>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="todos">Todos</option>
-        </select>
-        <span>resultados del historial</span>
-      </section>
-      <section className="history">
-        {paginatedHistory.map((result) => (
-          <article className="historyRow" key={result.date}>
-            <div className="historyDate">
-              <strong>{result.date}</strong>
-              <span>{formatLongDate(result.date)}</span>
+      <section className="card historyCard">
+        <header className="historyCardHeader">
+          <div>
+            <h2>Historial cargado</h2>
+            <p>{filteredHistory.length} sorteos en el filtro actual. Mostrando {paginatedHistory.length} por pagina.</p>
+          </div>
+          <div className="historyControls">
+            <label htmlFor="historyPageSize">Mostrar</label>
+            <select id="historyPageSize" value={historyPageSize} onChange={(event) => changeHistoryPageSize(event.target.value)}>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="todos">Todos</option>
+            </select>
+            <span>resultados</span>
+          </div>
+        </header>
+        <div className="history historyList">
+          {paginatedHistory.map((result) => (
+            <div className="historyRow" key={result.date}>
+              <div className="historyDate">
+                <strong>{result.date}</strong>
+                <span>{formatLongDate(result.date)}</span>
+              </div>
+              <DrawBalls numbers={result.numbers} plus={result.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
             </div>
-            <DrawBalls numbers={result.numbers} plus={result.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
-          </article>
-        ))}
+          ))}
+        </div>
+        <nav className="pagination" aria-label="Paginacion del historial">
+          <button
+            className="secondaryButton"
+            disabled={historyPage === 1 || historyPageSize === "todos"}
+            onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}
+          >
+            Anterior
+          </button>
+          <span>{historyPageSize === "todos" ? "Todos visibles" : `Pagina ${historyPage} de ${historyPageCount}`}</span>
+          <button
+            className="secondaryButton"
+            disabled={historyPage === historyPageCount || historyPageSize === "todos"}
+            onClick={() => setHistoryPage((page) => Math.min(historyPageCount, page + 1))}
+          >
+            Siguiente
+          </button>
+        </nav>
       </section>
-      <nav className="pagination" aria-label="Paginacion del historial">
-        <button
-          className="secondaryButton"
-          disabled={historyPage === 1 || historyPageSize === "todos"}
-          onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}
-        >
-          Anterior
-        </button>
-        <span>{historyPageSize === "todos" ? "Todos visibles" : `Pagina ${historyPage} de ${historyPageCount}`}</span>
-        <button
-          className="secondaryButton"
-          disabled={historyPage === historyPageCount || historyPageSize === "todos"}
-          onClick={() => setHistoryPage((page) => Math.min(historyPageCount, page + 1))}
-        >
-          Siguiente
-        </button>
-      </nav>
     </main>
   );
 }
@@ -833,142 +614,6 @@ function ThirtyPlayPortfolioView({
         Estas combinaciones son reproducibles para este sorteo y se basan en patrones históricos; no predicen ni garantizan resultados.
       </p>
     </section>
-  );
-}
-
-function RecommendationSnapshotCard({
-  snapshot,
-  results,
-  title
-}: {
-  snapshot: PreviousRecommendations | null;
-  results: DrawResult[];
-  title: string;
-}) {
-  if (!snapshot) {
-    return (
-      <article className="card recommendationHistoryCard">
-        <h2>{title}</h2>
-        <p className="muted">Todavía no hay un sorteo anterior disponible para comparar.</p>
-      </article>
-    );
-  }
-
-  const analysisResults = results.filter((result) => result.date < snapshot.drawDate);
-  return (
-    <article className="card recommendationHistoryCard">
-      <div className="recommendationTitleRow">
-        <div>
-          <span className="panelLabel">Sorteo anterior evaluado</span>
-          <h2>{title}</h2>
-        </div>
-        <strong className="reviewedBadge">Revisado</strong>
-      </div>
-      <p className="muted">{formatDay(snapshot.day)} {formatShortDate(snapshot.drawDate)} · recomendaciones congeladas antes del sorteo.</p>
-      <div className="recommendationList">
-        {snapshot.plays.map((play) => {
-          const matches = play.numbers.filter((number) => snapshot.draw.numbers.includes(number)).length;
-          const plusMatched = play.plus === snapshot.draw.plus;
-          const prize = getVirtualPrize(matches, plusMatched);
-          return (
-            <div className="recommendationItem" key={play.id}>
-              <span>#{play.id}</span>
-              <div className="recommendationNumbers">
-                <div className="recommendationProfileRow">
-                  <span
-                    className={`recommendationProfile ${play.profile}`}
-                    tabIndex={0}
-                    title={getProfileExplanation(play.profile, snapshot.day)}
-                    aria-label={getProfileExplanation(play.profile, snapshot.day)}
-                  >
-                    {play.profile === "fuerte" ? "Inclinacion fuerte" : play.profile === "equilibrada" ? "Jugada equilibrada" : "Jugada exploratoria"}
-                  </span>
-                </div>
-                <RecommendationBalls play={play} results={analysisResults} winningDraw={snapshot.draw} />
-                <span className={prize.amount ? "recommendationPrize won" : "recommendationPrize"}>
-                  {prize.amount ? `Ganó ${formatMoney(prize.amount)} · ${prize.label}` : `Sin premio · ${matches} ${matches === 1 ? "acierto" : "aciertos"}${plusMatched ? " + Más" : ""}`}
-                </span>
-              </div>
-              <div className="recommendationActions">
-                <span className="scoreBadge">{play.score} pts</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <p className="recommendationDisclaimer">Este registro no cambia cuando se agregan resultados posteriores.</p>
-    </article>
-  );
-}
-
-function RecommendationBalls({
-  play,
-  results,
-  winningDraw
-}: {
-  play: RecommendedPlay;
-  results: DrawResult[];
-  winningDraw?: DrawResult;
-}) {
-  const [tooltip, setTooltip] = useState<null | {
-    x: number;
-    y: number;
-    number: number;
-    isPlus: boolean;
-    requestedPosition: number | null;
-    exact: { date: string; day: DrawResult["day"] } | null;
-    alternate: { date: string; day: DrawResult["day"]; position: number } | null;
-  }>(null);
-
-  function showTooltip(event: ReactMouseEvent<HTMLElement>, number: number, position: number | "plus") {
-    const width = 230;
-    const height = position === "plus" ? 104 : 148;
-    const gap = 12;
-    const edge = 8;
-    const exactResult = results.find((result) => position === "plus" ? result.plus === number : result.numbers[position] === number) ?? null;
-    const alternateResult = position === "plus" ? null : results.find((result) => result.numbers.some((candidate, candidatePosition) => candidate === number && candidatePosition !== position)) ?? null;
-    const alternatePosition = alternateResult && position !== "plus" ? alternateResult.numbers.findIndex((candidate) => candidate === number) : -1;
-    const preferredX = event.clientX + gap + width > window.innerWidth ? event.clientX - width - gap : event.clientX + gap;
-    const preferredY = event.clientY + gap + height > window.innerHeight ? event.clientY - height - gap : event.clientY + gap;
-
-    setTooltip({
-      x: Math.min(Math.max(preferredX, edge), window.innerWidth - width - edge),
-      y: Math.min(Math.max(preferredY, edge), window.innerHeight - height - edge),
-      number,
-      isPlus: position === "plus",
-      requestedPosition: position === "plus" ? null : position,
-      exact: exactResult ? { date: exactResult.date, day: exactResult.day } : null,
-      alternate: alternateResult && alternatePosition >= 0 ? { date: alternateResult.date, day: alternateResult.day, position: alternatePosition } : null
-    });
-  }
-
-  return (
-    <div className="ballsRow recommendationBalls" onMouseLeave={() => setTooltip(null)}>
-      {play.numbers.map((number, position) => (
-        <span
-          className="recommendationBallTarget"
-          key={`${position}-${number}`}
-          onMouseEnter={(event) => showTooltip(event, number, position)}
-          onMouseMove={(event) => showTooltip(event, number, position)}
-        >
-          <Ball value={number} winner={winningDraw?.numbers.includes(number)} />
-        </span>
-      ))}
-      <span
-        className="recommendationBallTarget"
-        onMouseEnter={(event) => showTooltip(event, play.plus, "plus")}
-        onMouseMove={(event) => showTooltip(event, play.plus, "plus")}
-      >
-        <Ball value={play.plus} plus winner={play.plus === winningDraw?.plus} />
-      </span>
-      {tooltip ? (
-        <div className="recommendationTooltip" style={{ left: tooltip.x, top: tooltip.y }}>
-          <strong>{tooltip.isPlus ? `Más ${tooltip.number}` : `Número ${tooltip.number} · P${(tooltip.requestedPosition ?? 0) + 1}`}</strong>
-          {tooltip.exact ? <span>Última vez {tooltip.isPlus ? "como Más" : "en esta posición"}: <b>{formatShortDate(tooltip.exact.date)}</b> · {formatDay(tooltip.exact.day)}</span> : <span>Nunca ha salido {tooltip.isPlus ? "como Más" : "en esta posición"} en el histórico cargado.</span>}
-          {!tooltip.isPlus && (tooltip.alternate ? <span>Última vez en otra posición: <b>P{tooltip.alternate.position + 1}</b> · {formatShortDate(tooltip.alternate.date)} · {formatDay(tooltip.alternate.day)}</span> : <span>No registra salidas en otra posición.</span>)}
-        </div>
-      ) : null}
-    </div>
   );
 }
 

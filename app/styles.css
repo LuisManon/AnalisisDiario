@@ -5635,6 +5635,61 @@ body:has(.appShell.lotoShell) {
   transform: translateX(3px);
 }
 
+.lotoTheme .historyCard {
+  padding: 24px;
+}
+
+.lotoTheme .historyCardHeader {
+  align-items: center;
+  border-bottom: 1px solid rgba(33, 73, 154, 0.16);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding-bottom: 18px;
+}
+
+.lotoTheme .historyCardHeader h2,
+.lotoTheme .historyCardHeader p {
+  margin-bottom: 0;
+}
+
+.lotoTheme .historyCardHeader p {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.lotoTheme .historyCard .historyControls {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.lotoTheme .historyList {
+  gap: 0;
+}
+
+.lotoTheme .historyCard .historyRow {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(33, 73, 154, 0.14);
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 18px 4px;
+}
+
+.lotoTheme .historyCard .historyRow:hover {
+  background: rgba(255, 255, 255, 0.38);
+  transform: none;
+}
+
+.lotoTheme .historyCard .pagination {
+  margin-top: 18px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lotoTheme *,
   .lotoShell .appTabs button {
@@ -6271,6 +6326,19 @@ body:has(.appShell.lotoShell) {
 
   .lotoTheme .history {
     gap: 0;
+  }
+
+  .lotoTheme .historyCard {
+    padding: 18px;
+  }
+
+  .lotoTheme .historyCardHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lotoTheme .historyCard .historyControls {
+    justify-content: flex-start;
   }
 
   .lotoTheme .historyRow {
