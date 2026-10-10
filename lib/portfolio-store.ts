@@ -18,6 +18,10 @@ async function readPortfolios(): Promise<ThirtyPlayPortfolio[]> {
   }
 }
 
+export async function readSavedPortfolios() {
+  return readPortfolios();
+}
+
 async function writePortfolios(portfolios: ThirtyPlayPortfolio[]) {
   const content = `${JSON.stringify(portfolios.sort((a, b) => b.targetDate.localeCompare(a.targetDate)), null, 2)}\n`;
   if (isGitHubDataStoreEnabled()) {

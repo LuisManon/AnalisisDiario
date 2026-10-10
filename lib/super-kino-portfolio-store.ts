@@ -48,7 +48,7 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
       return {current: snapshots.find(s => s.targetDate === pendingDate) ?? null, snapshots, waitingForResult: true};
     }
     const existing = snapshots.find(s => s.targetDate === targetDate);
-    if (existing?.algorithm === "kino-v5") return {current: existing, snapshots};
+    if (existing?.algorithm === "kino-v6") return {current: existing, snapshots};
     const current = buildKinoSnapshot(results, targetDate, now);
     const next = (existing ? snapshots.map(snapshot => snapshot.targetDate === targetDate ? current : snapshot) : [...snapshots, current]).sort((a,b) => b.targetDate.localeCompare(a.targetDate));
     if (isGitHubDataStoreEnabled()) {
@@ -56,7 +56,7 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
       catch (error) {
         // A concurrent request may have created the same date; use its immutable snapshot.
         const fresh = await readKinoSnapshots();
-        const saved = fresh.find(s => s.targetDate === targetDate && s.algorithm === "kino-v5");
+        const saved = fresh.find(s => s.targetDate === targetDate && s.algorithm === "kino-v6");
         if (saved) return {current: saved, snapshots: fresh};
         throw error;
       }

@@ -37,8 +37,24 @@ export type ThirtyPlayPortfolio = {
   targetDay: DrawDay;
   generatedAt: string;
   algorithmVersion?: string;
+  plusTopFive?: number[];
   plays: PortfolioPlay[];
   exposure: Array<{ number: number; count: number }>;
+};
+
+export type ThirtyPlayPrizeGroup = {
+  matches: number;
+  plusMatched: boolean;
+  amount: number;
+  label: string;
+  count: number;
+  total: number;
+};
+
+export type ThirtyPlayPrizeSummary = {
+  groups: ThirtyPlayPrizeGroup[];
+  winningPlays: number;
+  total: number;
 };
 
 export type DayFilter = DrawDay | "todos";

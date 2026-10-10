@@ -114,8 +114,10 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const awardDraw = results.find(d => d.date === selectedAwardDate);
   const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
   const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
+  const reverseSnapshot = portfolio?.snapshots.find(snapshot => snapshot.reversePlays?.length) ?? (current?.reversePlays?.length ? current : null);
+  const reverseDraw = reverseSnapshot ? results.find(draw => draw.date === reverseSnapshot.targetDate) : null;
   const awardProfiles = savedAward ? kinoProfiles.filter(profile => savedAward.plays.some(play => play.profile === profile)) : kinoProfiles;
-  const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5"
+  const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5" || current.algorithm === "kino-v6"
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: profileDescriptions.exploratoria, plays: current.plays.slice(start, start + 10)}))
     : kinoProfiles.map(profile => ({key: profile, className: profile, title: `10 ${kinoProfileLabels[profile]}`, description: profileDescriptions[profile], plays: current.plays.filter(play => play.profile === profile)}))) : [];
   const awardColumns = awards?.flatMap(evaluation => Array.from({length: Math.ceil(evaluation.plays.length / 10)}, (_, index) => ({...evaluation, key: `${evaluation.profile}-${index}`, plays: evaluation.plays.slice(index * 10, index * 10 + 10)}))) ?? [];
@@ -168,6 +170,22 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         return <article className={`kinoAward ${profile}`} key={profile}><span>{playCount} {kinoProfileLabels[profile]}</span><strong>{evaluation ? money(evaluation.total) : "—"}</strong><small>{evaluation ? `${evaluation.winners} premiadas · costo ${money(evaluation.cost)} · balance ${money(evaluation.net)}` : savedAward ? "Pendiente de resultado" : "Sin evaluación"}</small></article>;
       })}</div>
       {awards ? <><p>Total premiado: <strong>{money(awards.reduce((sum,a) => sum+a.total,0))}</strong> · Costo total: {money(awards.reduce((sum,a) => sum+a.cost,0))} · Balance: <strong>{money(awards.reduce((sum,a) => sum+a.net,0))}</strong></p><button onClick={() => setShowAwardPlays(v => !v)}>{showAwardPlays ? "Ocultar detalle" : "Ver aciertos y premios por jugada"}</button>{showAwardPlays ? <div className="kinoPortfolioScroll"><div className="kinoPortfolioGrid">{awardColumns.map(a => <article key={a.key} className={`kinoPlayColumn ${a.profile}`}><h3>{kinoProfileLabels[a.profile]}</h3>{a.plays.map(p => <div className="kinoPlayRow" key={p.id}><small>#{String(p.id).padStart(2,"0")} · {p.hits} aciertos · {money(p.prize)}</small><Balls numbers={p.numbers} matches={p.matches} /></div>)}</article>)}</div></div> : null}</> : null}
+    </section>
+
+    <section className="card kinoReverseEngineering">
+      <div className="kinoSectionHead"><div><p className="eyebrow">Cartera experimental separada</p><h2>Ingeniería en reversa</h2></div><small>{reverseSnapshot?.targetDate ?? "Próximo sorteo"}</small></div>
+      {!reverseSnapshot ? <p className="kinoReverseStatus">La ingeniería en reversa comenzará con la próxima cartera generada antes del sorteo.</p> : !reverseDraw ? <p className="kinoReverseStatus">120 jugadas inversas guardadas. Resumen pendiente del resultado.</p> : reverseSnapshot.reversePrizeSummary ? <>
+        <div className="kinoReverseMetrics">
+          <article><span>Jugadas evaluadas</span><strong>{reverseSnapshot.reversePlays?.length ?? 0}</strong></article>
+          <article><span>Jugadas premiadas</span><strong>{reverseSnapshot.reversePrizeSummary.winningPlays}</strong></article>
+          <article><span>Total ganado</span><strong>{money(reverseSnapshot.reversePrizeSummary.total)}</strong></article>
+        </div>
+        {reverseSnapshot.reversePrizeSummary.groups.length ? <div className="kinoReversePrizeGroups">{reverseSnapshot.reversePrizeSummary.groups.map(group => {
+          const hits = reverseSnapshot.prizes.find(prize => prize.amount === group.amount)?.hits;
+          return <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}{hits === undefined ? "" : ` · ${hits} ${hits === 1 ? "acierto" : "aciertos"}`}</strong><span>{money(group.amount)} c/u · {money(group.total)}</span></p>;
+        })}</div> : <p className="kinoReverseStatus">Ninguna jugada obtuvo premio.</p>}
+      </> : <p className="kinoReverseStatus">El resumen se guardará al cargar el resultado.</p>}
+      <p className="muted">Modelo 6 calientes · 3 intermedios · 1 frío. Reduce el peso de los números que dominaron las jugadas de cero aciertos del ensayo anterior. Es experimental y no garantiza siete o más aciertos.</p>
     </section>
 
     <section className="card kinoWeekAwards">

@@ -6,7 +6,7 @@ import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
 import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable } from "../lib/game";
-import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio } from "../lib/types";
+import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
 
 type ApiState = {
   results: DrawResult[];
@@ -18,6 +18,12 @@ type DashboardClientProps = {
 
 const defaultHistoryPageSize = 5;
 type HistoryPageSize = 5 | 10 | 25 | 50 | "todos";
+type PortfolioCalendarEntry = {
+  date: string;
+  day: "miercoles" | "sabado";
+  summary: ThirtyPlayPrizeSummary | null;
+  status: "missing" | "pending";
+};
 const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
 const plusColor = "#ee1f2d";
 
@@ -124,10 +130,11 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6"]);
   const [portfolioTargetDate] = useState(() => getNextGameDate());
   const portfolioTargetDay = getDrawDay(portfolioTargetDate);
-  const [portfolioRequested, setPortfolioRequested] = useState(false);
+  const [portfolioRequested, setPortfolioRequested] = useState(true);
   const [thirtyPlayPortfolio, setThirtyPlayPortfolio] = useState<ThirtyPlayPortfolio | null>(null);
   const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
-  const [portfolioMessage, setPortfolioMessage] = useState("Abre la sección para cargar las jugadas guardadas.");
+  const [portfolioCalendar, setPortfolioCalendar] = useState<PortfolioCalendarEntry[]>([]);
+  const [portfolioMessage, setPortfolioMessage] = useState("Cargando las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
 
   useEffect(() => {
@@ -173,6 +180,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       .then((payload) => {
         setThirtyPlayPortfolio(payload.current ?? null);
         setPreviousPortfolio(payload.previous ?? null);
+        setPortfolioCalendar(payload.calendar ?? []);
         setPortfolioMessage("");
       })
       .catch(() => setPortfolioMessage("No se pudieron cargar las 30 jugadas guardadas."));
@@ -381,6 +389,40 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </section>
       </details>
 
+      <section className="card lotoPortfolioCalendar">
+        <div className="lotoPortfolioCalendarHeader">
+          <div>
+            <span className="panelLabel">Miércoles y sábados</span>
+            <h2>Ganancias de las 30 jugadas</h2>
+          </div>
+          <small>Solo evalúa carteras guardadas antes del sorteo.</small>
+        </div>
+        {portfolioCalendar.length ? (
+          <div className="lotoPortfolioCalendarGrid">
+            {portfolioCalendar.map((entry) => (
+              <article key={entry.date}>
+                <header><strong>{formatDay(entry.day)}</strong><span>{formatShortDate(entry.date)}</span></header>
+                {entry.summary ? entry.summary.groups.length ? (
+                  <>
+                    <div className="lotoPortfolioPrizeGroups">
+                      {entry.summary.groups.map((group) => (
+                        <p key={`${group.matches}-${group.plusMatched}-${group.amount}`}>
+                          <strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"} · {group.label}</strong>
+                          <span>{formatMoney(group.amount)} c/u</span>
+                        </p>
+                      ))}
+                    </div>
+                    <footer>Total ganado <strong>{formatMoney(entry.summary.total)}</strong></footer>
+                  </>
+                ) : <p className="lotoPortfolioCalendarStatus">Sin premios</p> : (
+                  <p className="lotoPortfolioCalendarStatus">{entry.status === "missing" ? "Sin cartera guardada" : "Pendiente"}</p>
+                )}
+              </article>
+            ))}
+          </div>
+        ) : <p className="muted">{portfolioMessage}</p>}
+      </section>
+
       <details
         className="topPositionsAccordion thirtyPortfolioAccordion"
         onToggle={(event) => {
@@ -560,6 +602,7 @@ function ThirtyPlayPortfolioView({
         <div>
           <span className="panelLabel">{historical ? "Sorteo evaluado" : "Sorteo objetivo"}</span>
           <h2>{formatLongDate(portfolio.targetDate)}</h2>
+          {portfolio.plusTopFive?.length ? <div className="portfolioPlusTop"><span>Top 5 Más · 6 jugadas cada uno</span><div>{portfolio.plusTopFive.map((number) => <Ball key={number} value={number} plus />)}</div></div> : null}
         </div>
         <div className="portfolioTargetActions">
         {winningDraw ? <div className="portfolioPrizeSummary">

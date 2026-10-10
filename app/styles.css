@@ -1520,6 +1520,112 @@ body:has(.appShell.primeraShell) {
   padding: 24px 16px;
 }
 
+.lotoPortfolioCalendar {
+  padding: 22px;
+}
+
+.lotoPortfolioCalendarHeader {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.lotoPortfolioCalendarHeader h2,
+.lotoPortfolioCalendarHeader small {
+  margin: 0;
+}
+
+.lotoPortfolioCalendarHeader small {
+  color: var(--muted);
+  text-align: right;
+}
+
+.lotoPortfolioCalendarGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.lotoPortfolioCalendarGrid > article {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 170px;
+  overflow: hidden;
+}
+
+.lotoPortfolioCalendarGrid > article > header {
+  align-items: center;
+  background: rgba(33, 73, 154, 0.08);
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 15px;
+}
+
+.lotoPortfolioCalendarGrid header span,
+.lotoPortfolioPrizeGroups span {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.lotoPortfolioPrizeGroups {
+  display: grid;
+  gap: 0;
+  padding: 8px 15px;
+}
+
+.lotoPortfolioPrizeGroups p {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.lotoPortfolioPrizeGroups p:last-child {
+  border-bottom: 0;
+}
+
+.lotoPortfolioCalendarGrid footer {
+  background: rgba(0, 132, 61, 0.08);
+  color: var(--green-dark);
+  margin-top: auto;
+  padding: 12px 15px;
+}
+
+.lotoPortfolioCalendarStatus {
+  color: var(--muted);
+  margin: auto;
+  padding: 24px;
+}
+
+.portfolioPlusTop {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.portfolioPlusTop > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.portfolioPlusTop > div {
+  display: flex;
+  gap: 5px;
+}
+
+.portfolioPlusTop .ball {
+  font-size: 0.7rem;
+  height: 30px;
+  width: 30px;
+}
+
 .portfolioTarget {
   align-items: center;
   background: #ffffff;
@@ -6341,6 +6447,19 @@ body:has(.appShell.lotoShell) {
     justify-content: flex-start;
   }
 
+  .lotoPortfolioCalendarHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lotoPortfolioCalendarHeader small {
+    text-align: left;
+  }
+
+  .lotoPortfolioCalendarGrid {
+    grid-template-columns: 1fr;
+  }
+
   .lotoTheme .historyRow {
     background: transparent;
     border: 0;
@@ -6831,8 +6950,17 @@ body:has(.appShell.lotoShell) {
 .kinoWeekStatus { margin:auto !important; padding:18px; color:#6a7785; text-align:center; }
 .kinoAwards .kinoPlayRow { display:block; }
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
+.kinoReverseEngineering { border-color:#ccb7db !important; background:linear-gradient(145deg,#fff,#f8f1fc) !important; }
+.kinoReverseMetrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:18px 0; }
+.kinoReverseMetrics article { display:grid; gap:7px; padding:16px; border:1px solid #ddcfe6; border-radius:12px; background:#fff; }
+.kinoReverseMetrics span { color:#75627f; font-size:12px; }
+.kinoReverseMetrics strong { color:#5b2872; font-size:22px; }
+.kinoReversePrizeGroups { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:16px; }
+.kinoReversePrizeGroups p { display:grid; gap:5px; margin:0; padding:13px; border:1px solid #dfd0e7; border-radius:10px; background:#fff; }
+.kinoReversePrizeGroups span { color:#75627f; font-size:12px; }
+.kinoReverseStatus { margin:18px 0; padding:22px; border:1px dashed #d5c0df; border-radius:12px; color:#75627f; text-align:center; }
 .kinoNote summary { cursor:pointer; color:#215c96; }
-@media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
+@media(max-width:600px) { .kinoAwardsGrid,.kinoReverseMetrics,.kinoReversePrizeGroups {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
 .kinoHistory { text-align:center; }
 .kinoHistory .kinoBalls { justify-content:center; }
 .kinoTheme .kinoHistory ~ .toolbar { justify-content:center; }

@@ -1,5 +1,5 @@
-import { simulate } from "./stats";
-import type { DayFilter, DrawDay, DrawResult, Play, PortfolioPlay, PortfolioScope, RecommendedPlay, ThirtyPlayPortfolio } from "./types";
+import { simulate } from "./stats.ts";
+import type { DayFilter, DrawDay, DrawResult, Play, PortfolioPlay, PortfolioScope, RecommendedPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "./types.ts";
 
 export type VirtualTicket = {
   drawDate: string;
@@ -19,7 +19,7 @@ export const virtualPrizeTable = [
   { matches: 3, plus: false, amount: 100, label: "3 aciertos" }
 ];
 
-export const thirtyPlayAlgorithmVersion = "v3-balanced-diversity";
+export const thirtyPlayAlgorithmVersion = "v4-top5-plus";
 
 export function formatMoney(amount: number) {
   return new Intl.NumberFormat("es-DO", {
@@ -566,15 +566,12 @@ function positionalDelayAlert(numbers: number[], results: DrawResult[], targetDa
   return alerts.length ? alerts.join(" · ") : null;
 }
 
-function buildPlusOrder(draws: DrawResult[]) {
+export function buildPlusOrder(draws: DrawResult[]) {
   const counts = countNumbers(draws, (draw) => [draw.plus]);
-  const maxCount = Math.max(...counts, 1);
   return Array.from({ length: 12 }, (_, index) => index + 1).sort((a, b) => {
     const delayA = draws.findIndex((draw) => draw.plus === a);
     const delayB = draws.findIndex((draw) => draw.plus === b);
-    const scoreA = counts[a] / maxCount + (delayA < 0 ? 1 : delayA / Math.max(draws.length, 1)) * 0.4;
-    const scoreB = counts[b] / maxCount + (delayB < 0 ? 1 : delayB / Math.max(draws.length, 1)) * 0.4;
-    return scoreB - scoreA || a - b;
+    return counts[b] - counts[a] || (delayA < 0 ? draws.length : delayA) - (delayB < 0 ? draws.length : delayB) || a - b;
   });
 }
 
@@ -652,17 +649,11 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     }
   }
 
-  const plusOrder = buildPlusOrder(prior);
+  const plusTopFive = buildPlusOrder(prior).slice(0, 5);
   const plays: PortfolioPlay[] = [];
   const totalPlayCount = groups.reduce((sum, group) => sum + group.selected.length, 0);
-  const previousPlus = previousDraw?.plus;
-  const rotatingPlus = plusOrder.filter((number) => number !== previousPlus);
-  const previousPlusIndex = Math.floor(totalPlayCount / 2);
-  const plusAssignments = Array.from({ length: totalPlayCount }, (_, index) =>
-    previousPlus !== undefined && index === previousPlusIndex
-      ? previousPlus
-      : rotatingPlus[(index - (index > previousPlusIndex ? 1 : 0)) % rotatingPlus.length]
-  );
+  if (totalPlayCount !== 30) throw new Error(`Solo se pudieron construir ${totalPlayCount} de las 30 jugadas de Loto Más.`);
+  const plusAssignments = Array.from({ length: totalPlayCount }, (_, index) => plusTopFive[index % plusTopFive.length]);
   for (const profile of profiles) {
     const profileGroups = groups.filter((group) => group.profile === profile);
     const profilePlays = profileGroups.flatMap((group) => group.selected);
@@ -682,10 +673,28 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     targetDay,
     generatedAt: new Date().toISOString(),
     algorithmVersion: thirtyPlayAlgorithmVersion,
+    plusTopFive,
     plays,
     exposure: Array.from({ length: 40 }, (_, index) => ({ number: index + 1, count: numberExposure[index + 1] }))
       .sort((a, b) => b.count - a.count || a.number - b.number)
   };
+}
+
+export function summarizeThirtyPlayPrizes(portfolio: ThirtyPlayPortfolio, draw: DrawResult): ThirtyPlayPrizeSummary {
+  if (portfolio.targetDate !== draw.date) throw new Error("El resultado no corresponde a la cartera de 30 jugadas.");
+  const winners = portfolio.plays.flatMap((play) => {
+    const matches = play.numbers.filter((number) => draw.numbers.includes(number)).length;
+    const plusMatched = play.plus === draw.plus;
+    const prize = getVirtualPrize(matches, plusMatched);
+    return prize.amount ? [{ matches, plusMatched, amount: prize.amount, label: prize.label }] : [];
+  });
+  const groupKeys = [...new Set(winners.map((winner) => `${winner.matches}-${winner.plusMatched}-${winner.amount}`))];
+  const groups = groupKeys.map((key) => {
+    const winner = winners.find((item) => `${item.matches}-${item.plusMatched}-${item.amount}` === key)!;
+    const count = winners.filter((item) => `${item.matches}-${item.plusMatched}-${item.amount}` === key).length;
+    return { ...winner, count, total: winner.amount * count };
+  }).sort((a, b) => b.amount - a.amount || b.matches - a.matches || Number(b.plusMatched) - Number(a.plusMatched));
+  return { groups, winningPlays: winners.length, total: groups.reduce((sum, group) => sum + group.total, 0) };
 }
 
 export function evaluateVirtualTicket(ticket: VirtualTicket, draw: DrawResult | undefined) {

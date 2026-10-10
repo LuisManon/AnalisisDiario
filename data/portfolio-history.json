@@ -2,8 +2,15 @@
   {
     "targetDate": "2026-10-14",
     "targetDay": "miercoles",
-    "generatedAt": "2026-10-10T21:34:24.648Z",
-    "algorithmVersion": "v3-balanced-diversity",
+    "generatedAt": "2026-10-10T23:10:30.740Z",
+    "algorithmVersion": "v4-top5-plus",
+    "plusTopFive": [
+      1,
+      12,
+      10,
+      5,
+      4
+    ],
     "plays": [
       {
         "id": 1,
@@ -15,7 +22,7 @@
           29,
           35
         ],
-        "plus": 12,
+        "plus": 1,
         "score": 100,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -37,7 +44,7 @@
           34,
           38
         ],
-        "plus": 1,
+        "plus": 12,
         "score": 98,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -103,7 +110,7 @@
           34,
           38
         ],
-        "plus": 7,
+        "plus": 4,
         "score": 98,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -125,7 +132,7 @@
           24,
           32
         ],
-        "plus": 6,
+        "plus": 1,
         "score": 97,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -147,7 +154,7 @@
           30,
           36
         ],
-        "plus": 3,
+        "plus": 12,
         "score": 90,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -169,7 +176,7 @@
           32,
           35
         ],
-        "plus": 8,
+        "plus": 10,
         "score": 100,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -191,7 +198,7 @@
           22,
           29
         ],
-        "plus": 9,
+        "plus": 5,
         "score": 88,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -213,7 +220,7 @@
           27,
           28
         ],
-        "plus": 11,
+        "plus": 4,
         "score": 91,
         "profile": "fuerte",
         "daySupportCount": 6,
@@ -235,7 +242,7 @@
           31,
           38
         ],
-        "plus": 2,
+        "plus": 1,
         "score": 96,
         "profile": "equilibrada",
         "daySupportCount": 6,
@@ -279,7 +286,7 @@
           28,
           35
         ],
-        "plus": 1,
+        "plus": 10,
         "score": 91,
         "profile": "equilibrada",
         "daySupportCount": 5,
@@ -301,7 +308,7 @@
           35,
           36
         ],
-        "plus": 10,
+        "plus": 5,
         "score": 100,
         "profile": "equilibrada",
         "daySupportCount": 6,
@@ -323,7 +330,7 @@
           26,
           40
         ],
-        "plus": 5,
+        "plus": 4,
         "score": 79,
         "profile": "equilibrada",
         "daySupportCount": 4,
@@ -345,7 +352,7 @@
           26,
           39
         ],
-        "plus": 4,
+        "plus": 1,
         "score": 89,
         "profile": "equilibrada",
         "daySupportCount": 6,
@@ -367,7 +374,7 @@
           35,
           36
         ],
-        "plus": 7,
+        "plus": 12,
         "score": 96,
         "profile": "equilibrada",
         "daySupportCount": 6,
@@ -389,7 +396,7 @@
           27,
           40
         ],
-        "plus": 6,
+        "plus": 10,
         "score": 86,
         "profile": "equilibrada",
         "daySupportCount": 6,
@@ -411,7 +418,7 @@
           28,
           31
         ],
-        "plus": 3,
+        "plus": 5,
         "score": 84,
         "profile": "equilibrada",
         "daySupportCount": 5,
@@ -433,7 +440,7 @@
           22,
           29
         ],
-        "plus": 8,
+        "plus": 4,
         "score": 81,
         "profile": "equilibrada",
         "daySupportCount": 5,
@@ -455,7 +462,7 @@
           32,
           34
         ],
-        "plus": 9,
+        "plus": 1,
         "score": 91,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -477,7 +484,7 @@
           31,
           40
         ],
-        "plus": 11,
+        "plus": 12,
         "score": 98,
         "profile": "exploratoria",
         "daySupportCount": 4,
@@ -499,7 +506,7 @@
           23,
           34
         ],
-        "plus": 2,
+        "plus": 10,
         "score": 83,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -521,7 +528,7 @@
           30,
           33
         ],
-        "plus": 12,
+        "plus": 5,
         "score": 85,
         "profile": "exploratoria",
         "daySupportCount": 4,
@@ -543,7 +550,7 @@
           35,
           37
         ],
-        "plus": 1,
+        "plus": 4,
         "score": 89,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -565,7 +572,7 @@
           23,
           30
         ],
-        "plus": 10,
+        "plus": 1,
         "score": 94,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -587,7 +594,7 @@
           38,
           39
         ],
-        "plus": 5,
+        "plus": 12,
         "score": 83,
         "profile": "exploratoria",
         "daySupportCount": 5,
@@ -609,7 +616,7 @@
           36,
           38
         ],
-        "plus": 7,
+        "plus": 10,
         "score": 86,
         "profile": "exploratoria",
         "daySupportCount": 4,
@@ -631,7 +638,7 @@
           25,
           32
         ],
-        "plus": 6,
+        "plus": 5,
         "score": 85,
         "profile": "exploratoria",
         "daySupportCount": 4,
@@ -653,7 +660,7 @@
           37,
           39
         ],
-        "plus": 3,
+        "plus": 4,
         "score": 87,
         "profile": "exploratoria",
         "daySupportCount": 4,
