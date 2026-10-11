@@ -7038,17 +7038,8 @@ body:has(.appShell.lotoShell) {
 .kinoWeekStatus { margin:auto !important; padding:18px; color:#6a7785; text-align:center; }
 .kinoAwards .kinoPlayRow { display:block; }
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
-.kinoReverseEngineering { border-color:#ccb7db !important; background:linear-gradient(145deg,#fff,#f8f1fc) !important; }
-.kinoReverseMetrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:18px 0; }
-.kinoReverseMetrics article { display:grid; gap:7px; padding:16px; border:1px solid #ddcfe6; border-radius:12px; background:#fff; }
-.kinoReverseMetrics span { color:#75627f; font-size:12px; }
-.kinoReverseMetrics strong { color:#5b2872; font-size:22px; }
-.kinoReversePrizeGroups { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:16px; }
-.kinoReversePrizeGroups p { display:grid; gap:5px; margin:0; padding:13px; border:1px solid #dfd0e7; border-radius:10px; background:#fff; }
-.kinoReversePrizeGroups span { color:#75627f; font-size:12px; }
-.kinoReverseStatus { margin:18px 0; padding:22px; border:1px dashed #d5c0df; border-radius:12px; color:#75627f; text-align:center; }
 .kinoNote summary { cursor:pointer; color:#215c96; }
-@media(max-width:600px) { .kinoAwardsGrid,.kinoReverseMetrics,.kinoReversePrizeGroups {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
+@media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
 .kinoHistory { text-align:center; }
 .kinoHistory .kinoBalls { justify-content:center; }
 .kinoTheme .kinoHistory ~ .toolbar { justify-content:center; }

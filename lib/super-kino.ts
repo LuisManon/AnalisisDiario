@@ -86,61 +86,6 @@ export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "explor
   });
 }
 
-export function buildReverseKinoPlays(draws: KinoDraw[], allowedNumbers?: ReadonlySet<number>, count = 120) {
-  if (draws.length < 2) return [];
-  const ordered = [...draws].sort((a,b) => b.date.localeCompare(a.date));
-  const referenceDraw = ordered[0];
-  const backtestHistory = ordered.slice(1);
-  const backtestPlays = buildKinoPlays(backtestHistory, "exploratoria", allowedNumbers, 120);
-  const zeroHitPlays = backtestPlays.filter(play => play.numbers.every(number => !referenceDraw.numbers.includes(number)));
-  const missExposure = new Map<number, number>();
-  zeroHitPlays.forEach(play => play.numbers.forEach(number => missExposure.set(number, (missExposure.get(number) ?? 0) + 1)));
-  const groups = kinoGroups(ordered, allowedNumbers);
-  const quickHot = new Set(kinoQuickHotStats(ordered, allowedNumbers).map(item => item.number));
-  const rankPool = (pool: typeof groups.hot) => [...pool].sort((a,b) =>
-    (missExposure.get(a.number) ?? 0) - (missExposure.get(b.number) ?? 0) ||
-    Number(quickHot.has(b.number)) - Number(quickHot.has(a.number)) ||
-    b.count - a.count || a.gap - b.gap || a.number - b.number
-  );
-  const pools = [rankPool(groups.hot), rankPool(groups.middle), rankPool(groups.cold)];
-  const mix = [6, 3, 1] as const;
-  const usage = new Map<number, number>();
-  const seen = new Set<string>();
-  let seed = [...referenceDraw.date].reduce((value, character) => Math.imul(value ^ character.charCodeAt(0), 16777619), 2166136261);
-  const random = () => {
-    seed += 0x6d2b79f5;
-    let value = seed;
-    value = Math.imul(value ^ value >>> 15, value | 1);
-    value ^= value + Math.imul(value ^ value >>> 7, value | 61);
-    return ((value ^ value >>> 14) >>> 0) / 4294967296;
-  };
-  const choose = (pool: typeof groups.hot, size: number) => {
-    const available = [...pool];
-    const selected: number[] = [];
-    while (selected.length < size) {
-      const weights = available.map((item, rank) =>
-        (1.25 + (pool.length - rank) / pool.length + (quickHot.has(item.number) ? 0.35 : 0)) /
-        (1 + (missExposure.get(item.number) ?? 0) * 0.8 + (usage.get(item.number) ?? 0) * 0.07)
-      );
-      let target = random() * weights.reduce((sum, weight) => sum + weight, 0);
-      let selectedIndex = weights.findIndex(weight => (target -= weight) <= 0);
-      if (selectedIndex < 0) selectedIndex = available.length - 1;
-      selected.push(available.splice(selectedIndex, 1)[0].number);
-    }
-    return selected;
-  };
-  return Array.from({length: count}, (_, index): KinoPlay => {
-    let numbers: number[] = [];
-    for (let attempt = 0; attempt < 500; attempt += 1) {
-      numbers = pools.flatMap((pool, group) => choose(pool, mix[group])).sort((a,b) => a-b);
-      if (!seen.has(numbers.join(","))) break;
-    }
-    if (seen.has(numbers.join(","))) throw new Error("No se pudieron diversificar las jugadas de ingeniería en reversa.");
-    seen.add(numbers.join(","));
-    numbers.forEach(number => usage.set(number, (usage.get(number) ?? 0) + 1));
-    return {id:index+1, profile:"fuerte", numbers, hot:mix[0], middle:mix[1], cold:mix[2]};
-  });
-}
 const kinoQuickHotSchema = z.object({
   number: z.number().int().min(1).max(84),
   averageInterval: z.number().min(1).max(2),
@@ -154,20 +99,13 @@ const kinoPrizeSummarySchema = z.object({
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v6"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
     lastDate: z.iso.date().nullable()
   })).optional(),
   quickHotNumbers: kinoQuickHotSchema.array().optional(),
-  reverseEngineering: z.object({
-    referenceDrawDate: z.iso.date(),
-    zeroHitPlays: z.number().int().nonnegative(),
-    composition: z.literal("6/3/1")
-  }).optional(),
-  reversePlays: kinoPlaySchema.array().optional(),
-  reversePrizeSummary: kinoPrizeSummarySchema.optional(),
   prizeSummary: kinoPrizeSummarySchema.optional(),
   prizeDrawNumbers: z.array(z.number().int().min(1).max(84)).length(20).refine(numbers => new Set(numbers).size === 20).optional(),
   plays: kinoPlaySchema.array(),
@@ -175,10 +113,9 @@ export const kinoSnapshotSchema = z.object({
 }).superRefine((snapshot, ctx) => {
   if (snapshot.analysisFrom > snapshot.analysisTo || snapshot.analysisTo >= snapshot.targetDate) ctx.addIssue({code: "custom", message: "El análisis debe preceder al sorteo."});
   if (Boolean(snapshot.prizeSummary) !== Boolean(snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio registrado requiere conservar también el resultado evaluado."});
-  if (snapshot.reversePrizeSummary && (!snapshot.reversePlays || !snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio inverso requiere sus jugadas y el resultado evaluado."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  if (snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v6") {
+  if (snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     const quickHotNumbers = new Set(snapshot.quickHotNumbers?.map(item => item.number) ?? []);
     const reinforced = snapshot.plays.filter(play => play.quickHot);
@@ -186,12 +123,6 @@ export const kinoSnapshotSchema = z.object({
     if (ids.size !== 120 || snapshot.plays.some(play => play.id < 1 || play.id > 120)) ctx.addIssue({code: "custom", message: "Kino v5 requiere identificadores del 1 al 120."});
     if (quickHotNumbers.size < 3 || quickHotNumbers.size !== (snapshot.quickHotNumbers?.length ?? 0)) ctx.addIssue({code: "custom", message: "Kino v5 requiere al menos tres calientes rápidos distintos."});
     if (reinforced.length < 30 || reinforced.some(play => play.numbers.filter(number => quickHotNumbers.has(number)).length !== 3)) ctx.addIssue({code: "custom", message: "Kino v5 requiere al menos 30 jugadas reforzadas con tres calientes rápidos."});
-    if (snapshot.algorithm === "kino-v6") {
-      const reverseIds = new Set(snapshot.reversePlays?.map(play => play.id) ?? []);
-      if (!snapshot.reverseEngineering || snapshot.reverseEngineering.referenceDrawDate >= snapshot.targetDate) ctx.addIssue({code: "custom", message: "Kino v6 requiere una referencia histórica para la ingeniería en reversa."});
-      if (snapshot.reversePlays?.length !== 120 || reverseIds.size !== 120 || snapshot.reversePlays.some(play => play.profile !== "fuerte" || play.hot !== 6 || play.middle !== 3 || play.cold !== 1)) ctx.addIssue({code: "custom", message: "Kino v6 requiere 120 jugadas inversas 6/3/1."});
-      if (new Set(snapshot.reversePlays?.map(play => play.numbers.join(",")) ?? []).size !== 120) ctx.addIssue({code: "custom", message: "Hay jugadas inversas duplicadas."});
-    }
   } else if (snapshot.algorithm === "kino-v4") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     if (snapshot.plays.length !== 30) ctx.addIssue({code: "custom", message: "Kino v4 requiere 30 jugadas."});
@@ -204,14 +135,13 @@ export const kinoSnapshotSchema = z.object({
     }
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== snapshot.plays.length) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v6") {
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
     if (excluded.size !== (snapshot.excludedByDelay?.length ?? 0)) ctx.addIssue({code: "custom", message: "Hay números excluidos repetidos."});
     if (snapshot.delayCutoff && snapshot.excludedByDelay?.some(item => item.lastDate !== null && item.lastDate >= snapshot.delayCutoff!)) ctx.addIssue({code: "custom", message: "Un número excluido no supera el mes de atraso."});
     if (snapshot.plays.some(play => play.numbers.some(number => excluded.has(number)))) ctx.addIssue({code: "custom", message: "Una jugada contiene un número excluido por atraso."});
-    if (snapshot.reversePlays?.some(play => play.numbers.some(number => excluded.has(number)))) ctx.addIssue({code: "custom", message: "Una jugada inversa contiene un número excluido por atraso."});
   }
 });
 export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
@@ -258,14 +188,9 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
   const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
   if (quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
-  const reversePlays = buildReverseKinoPlays(sample, allowedNumbers, 120);
-  const referenceDraw = sample[0];
-  const backtestPlays = buildKinoPlays(sample.slice(1), "exploratoria", allowedNumbers, 120);
-  const zeroHitPlays = backtestPlays.filter(play => play.numbers.every(number => !referenceDraw.numbers.includes(number))).length;
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm: "kino-v6", delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
-    reverseEngineering: {referenceDrawDate: referenceDraw.date, zeroHitPlays, composition:"6/3/1"}, reversePlays,
+    sampleSize: sample.length, algorithm: "kino-v7", delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
     plays: buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickHotNumbers.map(item => item.number), 30)
   });
 }
@@ -289,29 +214,15 @@ export function summarizeKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
   });
   return {groups, winningPlays: winningPlays.length, total: groups.reduce((sum, group) => sum + group.total, 0)};
 }
-export function summarizeReverseKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
-  if (draw.date !== snapshot.targetDate) throw new Error("El resultado no corresponde a las jugadas inversas guardadas.");
-  const winningPlays = (snapshot.reversePlays ?? []).map(play => {
-    const hits = play.numbers.filter(number => draw.numbers.includes(number)).length;
-    return {hits, prize:snapshot.prizes.find(prize => prize.hits === hits)?.amount ?? 0};
-  }).filter(play => play.prize > 0);
-  const groups = [...new Set(winningPlays.map(play => play.prize))].sort((a,b) => b-a).map(amount => {
-    const count = winningPlays.filter(play => play.prize === amount).length;
-    return {amount, count, total:amount*count};
-  });
-  return {groups, winningPlays:winningPlays.length, total:groups.reduce((sum, group) => sum+group.total, 0)};
-}
 export function freezeKinoPrizeSummaries(snapshots: KinoSnapshot[], draws: KinoDraw[]) {
   return snapshots.map(snapshot => {
     const draw = draws.find(item => item.date === snapshot.targetDate);
     if (!draw) return snapshot;
     const needsMain = !snapshot.prizeSummary || !snapshot.prizeDrawNumbers;
-    const needsReverse = Boolean(snapshot.reversePlays?.length) && !snapshot.reversePrizeSummary;
-    if (!needsMain && !needsReverse) return snapshot;
+    if (!needsMain) return snapshot;
     return {
       ...snapshot,
-      ...(needsMain ? {prizeSummary:summarizeKinoPrizes(snapshot, draw), prizeDrawNumbers:[...draw.numbers]} : {}),
-      ...(needsReverse ? {reversePrizeSummary:summarizeReverseKinoPrizes(snapshot, draw)} : {})
+      prizeSummary:summarizeKinoPrizes(snapshot, draw), prizeDrawNumbers:[...draw.numbers]
     };
   });
 }

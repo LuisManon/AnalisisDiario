@@ -13,7 +13,7 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current one fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v6');
+  assert.equal(snapshots[0].algorithm,'kino-v7');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,30);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
@@ -49,7 +49,7 @@ test('full year includes every published date and documents no-draw days',async(
 test('new portfolio contains 120 unique exploratory plays with at least 25 percent quick-hot',async()=>{
   const {buildKinoSnapshot,formatKinoPortfolioText,getKinoStaleNumbers}=await import('../lib/super-kino.ts');
   const snapshot=buildKinoSnapshot(draws,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
-  assert.equal(snapshot.algorithm,'kino-v6');
+  assert.equal(snapshot.algorithm,'kino-v7');
   assert.equal(snapshot.delayCutoff,'2026-09-06');
   assert.deepEqual(snapshot.excludedByDelay,[]);
   assert.deepEqual(getKinoStaleNumbers(draws,'2026-10-06'),[]);
@@ -69,10 +69,6 @@ test('new portfolio contains 120 unique exploratory plays with at least 25 perce
   assert.equal(playLines.length,120);
   assert.equal(playLines.filter(line=>line.includes('[RÁPIDA 1–2]')).length,30);
   assert.match(text,/120 JUGADAS EXPLORATORIAS/);
-  assert.equal(snapshot.reversePlays?.length,120);
-  assert.equal(new Set(snapshot.reversePlays?.map(play=>play.numbers.join(','))).size,120);
-  assert.ok(snapshot.reversePlays?.every(play=>play.profile==='fuerte'&&play.hot===6&&play.middle===3&&play.cold===1));
-  assert.equal(snapshot.reverseEngineering?.composition,'6/3/1');
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
@@ -94,7 +90,6 @@ test('numbers older than one month are excluded from every generated play',async
   const snapshot=buildKinoSnapshot(withoutRecent84,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
   assert.deepEqual(snapshot.excludedByDelay,[{number:84,lastDate:null}]);
   assert.equal(snapshot.plays.some(play=>play.numbers.includes(84)),false);
-  assert.equal(snapshot.reversePlays?.some(play=>play.numbers.includes(84)),false);
   assert.equal(kinoSnapshotSchema.safeParse({...snapshot,plays:snapshot.plays.map((play,index)=>index?play:{...play,numbers:[...play.numbers.slice(0,9),84].sort((a,b)=>a-b)})}).success,false);
 });
 test('snapshot rejects late creation and excludes target and future outcomes',async()=>{
@@ -119,17 +114,6 @@ test('award totals use saved plays and saved prizes, including zero hits',async(
   assert.equal(evaluateKinoSnapshot(snapshot,{...draw,numbers:other.slice(0,20)})[0].plays[0].prize,80);
   assert.equal(JSON.stringify(snapshot),before);
   assert.throws(()=>evaluateKinoSnapshot(snapshot,{...draw,date:'2026-10-07'}));
-});
-test('reverse engineering freezes only its summary and stays outside the main prize summary',async()=>{
-  const {buildKinoSnapshot,freezeKinoPrizeSummaries,summarizeReverseKinoPrizes}=await import('../lib/super-kino.ts');
-  const snapshot=buildKinoSnapshot(draws,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
-  const draw={...draws[0],date:'2026-10-06'};
-  const reverse=summarizeReverseKinoPrizes(snapshot,draw);
-  const frozen=freezeKinoPrizeSummaries([snapshot],[draw])[0];
-  assert.deepEqual(frozen.reversePrizeSummary,reverse);
-  assert.ok(frozen.prizeSummary);
-  assert.equal(frozen.reversePlays?.length,120);
-  assert.notDeepEqual(frozen.reversePrizeSummary,frozen.prizeSummary);
 });
 test('Dominican polling and closure boundaries work across midnight and Sundays',async()=>{
   const {kinoExpectedDate,kinoTargetDate}=await import('../lib/super-kino-clock.ts');
