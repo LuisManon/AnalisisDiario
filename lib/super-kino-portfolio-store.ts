@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoSnapshotSchema, type KinoDraw, type KinoSnapshot } from "./super-kino";
+import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, type KinoDraw, type KinoSnapshot } from "./super-kino";
 import { kinoClock, kinoDrawMinutes, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "./super-kino-clock";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "./github-data-store";
 const file = "data/super-kino-portfolio-history.json";
@@ -48,7 +48,8 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
       return {current: snapshots.find(s => s.targetDate === pendingDate) ?? null, snapshots, waitingForResult: true};
     }
     const existing = snapshots.find(s => s.targetDate === targetDate);
-    if (existing?.algorithm === "kino-v7") return {current: existing, snapshots};
+    const expectedAlgorithm = kinoAlgorithmForDate(targetDate);
+    if (existing?.algorithm === expectedAlgorithm) return {current: existing, snapshots};
     const current = buildKinoSnapshot(results, targetDate, now);
     const next = (existing ? snapshots.map(snapshot => snapshot.targetDate === targetDate ? current : snapshot) : [...snapshots, current]).sort((a,b) => b.targetDate.localeCompare(a.targetDate));
     if (isGitHubDataStoreEnabled()) {
@@ -56,7 +57,7 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
       catch (error) {
         // A concurrent request may have created the same date; use its immutable snapshot.
         const fresh = await readKinoSnapshots();
-        const saved = fresh.find(s => s.targetDate === targetDate && s.algorithm === "kino-v7");
+        const saved = fresh.find(s => s.targetDate === targetDate && s.algorithm === expectedAlgorithm);
         if (saved) return {current: saved, snapshots: fresh};
         throw error;
       }

@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -13,7 +14,7 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current one fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v7');
+  assert.equal(snapshots[0].algorithm,'kino-v8');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,30);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
@@ -69,6 +70,25 @@ test('new portfolio contains 120 unique exploratory plays with at least 25 perce
   assert.equal(playLines.length,120);
   assert.equal(playLines.filter(line=>line.includes('[RÁPIDA 1–2]')).length,30);
   assert.match(text,/120 JUGADAS EXPLORATORIAS/);
+});
+test('candidate starts on October 11 without changing earlier portfolios',async()=>{
+  const {buildKinoSnapshot,formatKinoPortfolioText}=await import('../lib/super-kino.ts');
+  assert.equal(KINO_CANDIDATE_START,'2026-10-11');
+  assert.equal(kinoAlgorithmForDate('2026-10-10'),'kino-v7');
+  assert.equal(kinoAlgorithmForDate('2026-10-11'),'kino-v8');
+  const snapshot=buildKinoSnapshot(draws,'2026-10-11',new Date('2026-10-11T13:15:00Z'));
+  assert.equal(snapshot.algorithm,'kino-v8');
+  assert.equal(snapshot.plays.length,120);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
+  assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
+  assert.ok(snapshot.plays.every(play=>play.profile==='exploratoria'));
+  assert.deepEqual(new Set(snapshot.plays.map(play=>`${play.hot}/${play.middle}/${play.cold}`)),new Set(['3/4/3','4/3/3','3/3/4']));
+  const quickSet=new Set(snapshot.quickHotNumbers?.map(item=>item.number));
+  const reinforced=snapshot.plays.filter(play=>play.quickHot);
+  assert.equal(reinforced.length,30);
+  assert.ok(reinforced.every(play=>play.numbers.filter(number=>quickSet.has(number)).length>=2));
+  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'4878c9abcac958ff71ff19a9397e0e1a90fb306476d05b98a81a0ef1123ad960');
+  assert.match(formatKinoPortfolioText(snapshot),/cobertura inversa protegida/);
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');

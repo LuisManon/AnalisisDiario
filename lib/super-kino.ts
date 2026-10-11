@@ -3,6 +3,10 @@ import { z } from "zod";
 export const KINO_OFFICIAL = "https://www.leidsa.com/play/draw/leidsa-kinotv";
 // First observed draw containing 81–84 in the imported archive; not an official rule-change date.
 export const KINO_ANALYSIS_START = "2026-09-15";
+export const KINO_CANDIDATE_START = "2026-10-11";
+export function kinoAlgorithmForDate(targetDate: string) {
+  return targetDate >= KINO_CANDIDATE_START ? "kino-v8" as const : "kino-v7" as const;
+}
 export const kinoDrawSchema = z.object({
   date: z.iso.date(),
   numbers: z.array(z.number().int().min(1).max(84)).length(20).refine(n => new Set(n).size === 20, "Números repetidos"),
@@ -86,6 +90,154 @@ export function buildKinoPlays(draws: KinoDraw[], profile: KinoProfile = "explor
   });
 }
 
+type KinoCandidateMode = "none" | "recent" | "blend";
+const kinoCandidateMixes = [[3,4,3],[3,4,3],[4,3,3],[3,3,4]] as const;
+const kinoOriginalMix = [[3,3,4]] as const;
+function kinoPairKey(a: number, b: number) { return a < b ? `${a}-${b}` : `${b}-${a}`; }
+function kinoPairStats(draws: KinoDraw[]) {
+  const counts = new Map<string, number>();
+  const frequency = Array(85).fill(0) as number[];
+  for (const draw of draws) {
+    for (const number of draw.numbers) frequency[number]++;
+    for (let first = 0; first < draw.numbers.length; first++) for (let second = first + 1; second < draw.numbers.length; second++) {
+      const key = kinoPairKey(draw.numbers[first], draw.numbers[second]);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+  return {counts, frequency, size: draws.length};
+}
+function buildKinoCandidateSource(draws: KinoDraw[], targetDate: string, sample: KinoDraw[], allowedNumbers: ReadonlySet<number>, quickHotNumbers: readonly number[], mode: KinoCandidateMode, mixes: readonly (readonly [number,number,number])[] = kinoCandidateMixes, quickHotCount = 2) {
+  const groups = kinoGroups(sample, allowedNumbers);
+  const groupPools = [groups.hot, groups.middle, groups.cold];
+  const quickHotSet = new Set(quickHotNumbers);
+  const recentPairs = kinoPairStats(sample);
+  const history = draws.filter(draw => draw.date < targetDate).sort((a,b) => a.date.localeCompare(b.date));
+  const longPairs = kinoPairStats(history.slice(-180));
+  const cohortPairs = kinoPairStats(history.filter(draw => draw.date >= KINO_ANALYSIS_START));
+  const usage = new Map<number, number>();
+  const seen = new Set<string>();
+  const plays: KinoPlay[] = [];
+  const affinity = (candidate: number, selected: number[]) => selected.reduce((sum, number) => {
+    const key = kinoPairKey(candidate, number);
+    const recent = recentPairs.counts.get(key) ?? 0;
+    if (mode === "none") return sum;
+    if (mode === "recent") return sum + recent;
+    const basis = candidate > 80 || number > 80 ? cohortPairs : longPairs;
+    const expected = basis.size ? basis.frequency[candidate] * basis.frequency[number] / basis.size : 0;
+    const observed = basis.counts.get(key) ?? 0;
+    const shrunkenLift = expected > 0 ? (observed + 2 * expected) / (3 * expected) - 1 : 0;
+    return sum + recent + 1.5 * shrunkenLift;
+  }, 0);
+  for (let index = 0; index < 120; index++) {
+    const mix = mixes[index % mixes.length];
+    let numbers: number[] = [];
+    for (let attempt = 0; attempt < 400; attempt++) {
+      numbers = [];
+      for (let group = 0; group < groupPools.length; group++) {
+        let required = mix[group];
+        const choose = (pool: typeof groups.hot, size: number) => {
+          const rotated = pool.map((_, poolIndex) => pool[(poolIndex + index * 5 + attempt) % pool.length]);
+          const noise = (number: number) => attempt ? (((number * 37 + index * 13 + attempt * 17) % 101) / 100 - 0.5) * Math.min(5, attempt / 2) : 0;
+          rotated.sort((a,b) => (usage.get(a.number) ?? 0) - (usage.get(b.number) ?? 0) || affinity(b.number, numbers) + noise(b.number) - affinity(a.number, numbers) - noise(a.number));
+          return rotated.filter(item => !numbers.includes(item.number)).slice(0, size).map(item => item.number);
+        };
+        if (group === 0 && index < 30) {
+          const quickPool = groupPools[0].filter(item => quickHotSet.has(item.number));
+          const take = Math.min(required, quickHotCount, quickPool.length);
+          numbers.push(...choose(quickPool, take));
+          required -= take;
+        }
+        numbers.push(...choose(groupPools[group], required));
+      }
+      numbers.sort((a,b) => a-b);
+      if (!seen.has(numbers.join(","))) break;
+    }
+    if (seen.has(numbers.join(","))) throw new Error("No se pudieron diversificar las jugadas del candidato Kino.");
+    seen.add(numbers.join(","));
+    numbers.forEach(number => usage.set(number, (usage.get(number) ?? 0) + 1));
+    plays.push({id:index+1, profile:"exploratoria", numbers, hot:mix[0], middle:mix[1], cold:mix[2], ...(index < 30 ? {quickHot:true} : {})});
+  }
+  return plays;
+}
+function uniqueKinoPlays(preferred: KinoPlay[], fallbacks: KinoPlay[] = []) {
+  const seen = new Set<string>();
+  const result: KinoPlay[] = [];
+  for (const play of [...preferred, ...fallbacks]) {
+    const key = play.numbers.join(",");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push({...play, numbers:[...play.numbers]});
+    if (result.length === 120) break;
+  }
+  if (result.length !== 120) throw new Error("No se pudieron completar 120 jugadas únicas del candidato Kino.");
+  return result.map((play,index) => ({...play,id:index+1}));
+}
+function kinoInverseScores(draws: KinoDraw[], targetDate: string) {
+  const previous = draws.filter(draw => draw.date < targetDate).sort((a,b) => b.date.localeCompare(a.date))[0];
+  if (!previous) return new Map<number, number>();
+  const previousSample = draws.filter(draw => draw.date >= KINO_ANALYSIS_START && draw.date < previous.date).sort((a,b) => b.date.localeCompare(a.date)).slice(0,30);
+  if (!previousSample.length) return new Map<number, number>();
+  const previousExcluded = new Set(getKinoStaleNumbers(draws, previous.date).map(item => item.number));
+  const previousAllowed = new Set(Array.from({length:84},(_,index)=>index+1).filter(number => !previousExcluded.has(number)));
+  const previousQuick = kinoQuickHotStats(previousSample, previousAllowed);
+  const shadow = buildKinoCandidateSource(draws, previous.date, previousSample, previousAllowed, previousQuick.map(item => item.number), "none", kinoOriginalMix, 3);
+  const result = new Set(previous.numbers);
+  const totalExposure = new Map<number, number>();
+  const zeroExposure = new Map<number, number>();
+  for (const play of shadow) {
+    const zero = play.numbers.every(number => !result.has(number));
+    for (const number of play.numbers) {
+      totalExposure.set(number, (totalExposure.get(number) ?? 0) + 1);
+      if (zero) zeroExposure.set(number, (zeroExposure.get(number) ?? 0) + 1);
+    }
+  }
+  return new Map(Array.from({length:84},(_,index) => {
+    const number = index + 1;
+    const total = totalExposure.get(number) ?? 0;
+    const zero = zeroExposure.get(number) ?? 0;
+    return [number, (total - zero + 1) / (total + 2)];
+  }));
+}
+function buildKinoCandidatePlays(draws: KinoDraw[], targetDate: string, sample: KinoDraw[], allowedNumbers: ReadonlySet<number>, quickHotNumbers: readonly number[]) {
+  const recent = buildKinoCandidateSource(draws, targetDate, sample, allowedNumbers, quickHotNumbers, "recent");
+  const blend = buildKinoCandidateSource(draws, targetDate, sample, allowedNumbers, quickHotNumbers, "blend");
+  const base = uniqueKinoPlays([...blend.slice(0,75), ...recent.slice(75)], [...recent, ...blend]);
+  const inverseScores = kinoInverseScores(draws, targetDate);
+  const groups = kinoGroups(sample, allowedNumbers);
+  const pools = [groups.hot, groups.middle, groups.cold];
+  const membership = new Map<number, number>();
+  pools.forEach((pool, group) => pool.forEach(item => membership.set(item.number, group)));
+  const replacementUsage = new Map<number, number>();
+  const inverse = base.map(play => ({...play,numbers:[...play.numbers]}));
+  for (let index = 30; index < 60; index++) {
+    const play = inverse[index];
+    const removed = [...play.numbers].sort((a,b) => (inverseScores.get(a) ?? 0) - (inverseScores.get(b) ?? 0) || a-b)[0];
+    const group = membership.get(removed);
+    if (group === undefined) continue;
+    const replacement = pools[group].map(item => item.number).filter(number => !play.numbers.includes(number)).sort((a,b) =>
+      ((inverseScores.get(b) ?? 0) - 0.035 * (replacementUsage.get(b) ?? 0)) - ((inverseScores.get(a) ?? 0) - 0.035 * (replacementUsage.get(a) ?? 0)) || a-b
+    )[0];
+    if (replacement !== undefined && (inverseScores.get(replacement) ?? 0) > (inverseScores.get(removed) ?? 0)) {
+      play.numbers.splice(play.numbers.indexOf(removed),1,replacement);
+      play.numbers.sort((a,b) => a-b);
+      replacementUsage.set(replacement,(replacementUsage.get(replacement) ?? 0)+1);
+    }
+  }
+  const inverseSeen = new Set<string>();
+  const inverseUnique = inverse.map((play,index) => {
+    const key = play.numbers.join(",");
+    if (!inverseSeen.has(key)) {
+      inverseSeen.add(key);
+      return play;
+    }
+    const fallback = base[index];
+    inverseSeen.add(fallback.numbers.join(","));
+    return fallback;
+  });
+  const evenTail = base.slice(60).filter((_,index) => index % 2 === 0);
+  return uniqueKinoPlays([...base.slice(0,60), ...inverseUnique.slice(30,60), ...evenTail], base);
+}
+
 const kinoQuickHotSchema = z.object({
   number: z.number().int().min(1).max(84),
   averageInterval: z.number().min(1).max(2),
@@ -99,7 +251,7 @@ const kinoPrizeSummarySchema = z.object({
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
@@ -115,7 +267,16 @@ export const kinoSnapshotSchema = z.object({
   if (Boolean(snapshot.prizeSummary) !== Boolean(snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio registrado requiere conservar también el resultado evaluado."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  if (snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7") {
+  if (snapshot.algorithm === "kino-v8") {
+    const ids = new Set(snapshot.plays.map(play => play.id));
+    const quickHotNumbers = new Set(snapshot.quickHotNumbers?.map(item => item.number) ?? []);
+    const reinforced = snapshot.plays.filter(play => play.quickHot);
+    const mixes = new Set(["3/4/3", "4/3/3", "3/3/4"]);
+    if (snapshot.plays.length !== 120 || snapshot.plays.some(play => play.profile !== "exploratoria" || !mixes.has(`${play.hot}/${play.middle}/${play.cold}`))) ctx.addIssue({code: "custom", message: "Kino v8 requiere 120 jugadas exploratorias con la mezcla candidata."});
+    if (ids.size !== 120 || snapshot.plays.some(play => play.id < 1 || play.id > 120)) ctx.addIssue({code: "custom", message: "Kino v8 requiere identificadores del 1 al 120."});
+    if (quickHotNumbers.size < 3 || quickHotNumbers.size !== (snapshot.quickHotNumbers?.length ?? 0)) ctx.addIssue({code: "custom", message: "Kino v8 requiere al menos tres calientes rápidos distintos."});
+    if (reinforced.length !== 30 || reinforced.some(play => play.numbers.filter(number => quickHotNumbers.has(number)).length < 2)) ctx.addIssue({code: "custom", message: "Kino v8 requiere 30 jugadas reforzadas con al menos dos calientes rápidos."});
+  } else if (snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     const quickHotNumbers = new Set(snapshot.quickHotNumbers?.map(item => item.number) ?? []);
     const reinforced = snapshot.plays.filter(play => play.quickHot);
@@ -135,7 +296,7 @@ export const kinoSnapshotSchema = z.object({
     }
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== snapshot.plays.length) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7") {
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7" || snapshot.algorithm === "kino-v8") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
@@ -148,11 +309,14 @@ export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
 
 export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
+  const composition = snapshot.algorithm === "kino-v8"
+    ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
+    : "Composición: 3 calientes · 3 intermedios · 4 fríos";
   return [
     `SUPER KINO TV · ${snapshot.plays.length} JUGADAS EXPLORATORIAS`,
     `Sorteo: ${snapshot.targetDate}`,
     `Base histórica: ${snapshot.analysisFrom} a ${snapshot.analysisTo} (${snapshot.sampleSize} sorteos)`,
-    "Composición: 3 calientes · 3 intermedios · 4 fríos",
+    composition,
     `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`,
     `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
     "",
@@ -188,10 +352,14 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
   const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
   if (quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
+  const algorithm = kinoAlgorithmForDate(targetDate);
+  const quickNumbers = quickHotNumbers.map(item => item.number);
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm: "kino-v7", delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
-    plays: buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickHotNumbers.map(item => item.number), 30)
+    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
+    plays: algorithm === "kino-v8"
+      ? buildKinoCandidatePlays(draws, targetDate, sample, allowedNumbers, quickNumbers)
+      : buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
 }
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {

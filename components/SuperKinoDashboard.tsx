@@ -115,7 +115,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
   const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
   const awardProfiles = savedAward ? kinoProfiles.filter(profile => savedAward.plays.some(play => play.profile === profile)) : kinoProfiles;
-  const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5" || current.algorithm === "kino-v7"
+  const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5" || current.algorithm === "kino-v7" || current.algorithm === "kino-v8"
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: profileDescriptions.exploratoria, plays: current.plays.slice(start, start + 10)}))
     : kinoProfiles.map(profile => ({key: profile, className: profile, title: `10 ${kinoProfileLabels[profile]}`, description: profileDescriptions[profile], plays: current.plays.filter(play => play.profile === profile)}))) : [];
   const awardColumns = awards?.flatMap(evaluation => Array.from({length: Math.ceil(evaluation.plays.length / 10)}, (_, index) => ({...evaluation, key: `${evaluation.profile}-${index}`, plays: evaluation.plays.slice(index * 10, index * 10 + 10)}))) ?? [];
