@@ -4719,7 +4719,71 @@
         "hits": 0,
         "amount": 80
       }
-    ]
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 1,
+          "total": 300
+        },
+        {
+          "amount": 80,
+          "count": 17,
+          "total": 1360
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 24,
+      "total": 2020
+    },
+    "prizeDrawNumbers": [
+      9,
+      10,
+      11,
+      12,
+      23,
+      28,
+      31,
+      33,
+      35,
+      39,
+      40,
+      41,
+      44,
+      49,
+      59,
+      68,
+      75,
+      76,
+      82,
+      84
+    ],
+    "reversePrizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 1,
+          "total": 300
+        },
+        {
+          "amount": 80,
+          "count": 4,
+          "total": 320
+        },
+        {
+          "amount": 60,
+          "count": 9,
+          "total": 540
+        }
+      ],
+      "winningPlays": 14,
+      "total": 1160
+    }
   },
   {
     "targetDate": "2026-10-09",
