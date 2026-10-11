@@ -14,9 +14,10 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current one fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v8');
+  assert.equal(snapshots[0].algorithm,'kino-v9');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
-  assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,30);
+  assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
+  assert.equal(snapshots[0].persistentTopNumbers?.length,20);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });
 test('weekly prize tracking stays frozen after it is recorded',async()=>{
@@ -72,23 +73,25 @@ test('new portfolio contains 120 unique exploratory plays with at least 25 perce
   assert.match(text,/120 JUGADAS EXPLORATORIAS/);
 });
 test('candidate starts on October 11 without changing earlier portfolios',async()=>{
-  const {buildKinoSnapshot,formatKinoPortfolioText}=await import('../lib/super-kino.ts');
+  const {buildKinoSnapshot,formatKinoPortfolioText,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   assert.equal(KINO_CANDIDATE_START,'2026-10-11');
   assert.equal(kinoAlgorithmForDate('2026-10-10'),'kino-v7');
-  assert.equal(kinoAlgorithmForDate('2026-10-11'),'kino-v8');
+  assert.equal(kinoAlgorithmForDate('2026-10-11'),'kino-v9');
   const snapshot=buildKinoSnapshot(draws,'2026-10-11',new Date('2026-10-11T13:15:00Z'));
-  assert.equal(snapshot.algorithm,'kino-v8');
+  assert.equal(snapshot.algorithm,'kino-v9');
   assert.equal(snapshot.plays.length,120);
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
   assert.ok(snapshot.plays.every(play=>play.profile==='exploratoria'));
-  assert.deepEqual(new Set(snapshot.plays.map(play=>`${play.hot}/${play.middle}/${play.cold}`)),new Set(['3/4/3','4/3/3','3/3/4']));
-  const quickSet=new Set(snapshot.quickHotNumbers?.map(item=>item.number));
-  const reinforced=snapshot.plays.filter(play=>play.quickHot);
-  assert.equal(reinforced.length,30);
-  assert.ok(reinforced.every(play=>play.numbers.filter(number=>quickSet.has(number)).length>=2));
-  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'4878c9abcac958ff71ff19a9397e0e1a90fb306476d05b98a81a0ef1123ad960');
-  assert.match(formatKinoPortfolioText(snapshot),/cobertura inversa protegida/);
+  assert.ok(snapshot.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
+  assert.deepEqual(snapshot.persistentTopNumbers,[27,46,12,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
+  const persistent=new Set(snapshot.persistentTopNumbers);
+  assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>persistent.has(number)).length>=3));
+  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'092432ee593440b9df5463a4caacbc5e4a2fd8288443d3b9c4d87fe014f21fd3');
+  assert.match(formatKinoPortfolioText(snapshot),/top 20 persistente/i);
+  assert.equal(kinoSnapshotSchema.safeParse({...snapshot,persistentTopNumbers:snapshot.persistentTopNumbers.slice(0,19)}).success,false);
+  const changed=buildKinoSnapshot([...draws,{...draws[0],date:'2026-10-11'},{...draws[0],date:'2026-10-12'}],'2026-10-11',new Date('2026-10-11T13:15:00Z'));
+  assert.deepEqual(changed,snapshot);
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');

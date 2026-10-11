@@ -5,7 +5,7 @@ export const KINO_OFFICIAL = "https://www.leidsa.com/play/draw/leidsa-kinotv";
 export const KINO_ANALYSIS_START = "2026-09-15";
 export const KINO_CANDIDATE_START = "2026-10-11";
 export function kinoAlgorithmForDate(targetDate: string) {
-  return targetDate >= KINO_CANDIDATE_START ? "kino-v8" as const : "kino-v7" as const;
+  return targetDate >= KINO_CANDIDATE_START ? "kino-v9" as const : "kino-v7" as const;
 }
 export const kinoDrawSchema = z.object({
   date: z.iso.date(),
@@ -238,6 +238,81 @@ function buildKinoCandidatePlays(draws: KinoDraw[], targetDate: string, sample: 
   return uniqueKinoPlays([...base.slice(0,60), ...inverseUnique.slice(30,60), ...evenTail], base);
 }
 
+function kinoTransitionStats(draws: KinoDraw[]) {
+  const seen = Array(85).fill(0) as number[];
+  const repeated = Array(85).fill(0) as number[];
+  for (let index = 0; index < draws.length - 1; index++) {
+    const next = new Set(draws[index + 1].numbers);
+    for (const number of draws[index].numbers) {
+      seen[number]++;
+      if (next.has(number)) repeated[number]++;
+    }
+  }
+  return {seen, repeated};
+}
+
+function buildKinoPersistentPlays(draws: KinoDraw[], targetDate: string, sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
+  const groups = kinoGroups(sample, allowedNumbers);
+  const pools = [groups.hot, groups.middle, groups.cold];
+  if (groups.hot.length < 20 || groups.middle.length < 3 || groups.cold.length < 2) throw new Error("Quedan muy pocos números elegibles para el candidato persistente Kino.");
+  const persistentTopNumbers = groups.hot.slice(0,20).map(item => item.number);
+  const persistent = new Set(persistentTopNumbers);
+  const pairs = kinoPairStats(sample);
+  const history = draws.filter(draw => draw.date >= KINO_ANALYSIS_START && draw.date < targetDate).sort((a,b) => a.date.localeCompare(b.date));
+  const transitions = kinoTransitionStats(history);
+  const previous = new Set(history.at(-1)?.numbers ?? []);
+  const baseRate = 20 / 84;
+  const usage = new Map<number,number>();
+  const seen = new Set<string>();
+  const plays: KinoPlay[] = [];
+  const affinity = (candidate: number, selected: number[]) => selected.reduce((sum, number) => sum + (pairs.counts.get(kinoPairKey(candidate, number)) ?? 0), 0);
+  const continuation = (candidate: number) => previous.has(candidate)
+    ? 3 * ((transitions.repeated[candidate] + 12 * baseRate) / (transitions.seen[candidate] + 12) - baseRate)
+    : 0;
+  for (let index = 0; index < 120; index++) {
+    let numbers: number[] = [];
+    for (let attempt = 0; attempt < 80; attempt++) {
+      numbers = [];
+      for (let group = 0; group < pools.length; group++) {
+        let required = [5,3,2][group];
+        const choose = (pool: typeof groups.hot, size: number) => {
+          const rotated = pool.map((_, poolIndex) => pool[(poolIndex + index * 5 + attempt) % pool.length]);
+          const noise = (number: number) => attempt ? (((number * 37 + index * 13 + attempt * 17) % 101) / 100 - 0.5) * Math.min(5, attempt / 2) : 0;
+          rotated.sort((a,b) => (usage.get(a.number) ?? 0) - (usage.get(b.number) ?? 0)
+            || affinity(b.number, numbers) + continuation(b.number) + noise(b.number) - affinity(a.number, numbers) - continuation(a.number) - noise(a.number));
+          return rotated.filter(item => !numbers.includes(item.number)).slice(0,size).map(item => item.number);
+        };
+        if (group === 0 && attempt < 40) {
+          const elitePool = groups.hot.filter(item => persistent.has(item.number));
+          const take = Math.min(required, 3, elitePool.length);
+          numbers.push(...choose(elitePool, take));
+          required -= take;
+        }
+        numbers.push(...choose(pools[group], required));
+      }
+      numbers.sort((a,b) => a-b);
+      if (!seen.has(numbers.join(",")) && numbers.filter(number => persistent.has(number)).length >= 3) break;
+    }
+    if (seen.has(numbers.join(",")) || numbers.filter(number => persistent.has(number)).length < 3) {
+      let diversified: number[] | null = null;
+      outer: for (const pool of pools) for (const old of numbers.filter(number => pool.some(item => item.number === number))) for (const item of pool) {
+        if (numbers.includes(item.number)) continue;
+        const candidate = numbers.map(number => number === old ? item.number : number).sort((a,b) => a-b);
+        if (!seen.has(candidate.join(",")) && candidate.filter(number => persistent.has(number)).length >= 3) {
+          diversified = candidate;
+          break outer;
+        }
+      }
+      if (!diversified) throw new Error("No se pudieron diversificar las jugadas persistentes Kino.");
+      numbers = diversified;
+    }
+    seen.add(numbers.join(","));
+    numbers.forEach(number => usage.set(number, (usage.get(number) ?? 0) + 1));
+    plays.push({id:index+1, profile:"exploratoria", numbers, hot:5, middle:3, cold:2});
+  }
+  return {plays, persistentTopNumbers};
+}
+
 const kinoQuickHotSchema = z.object({
   number: z.number().int().min(1).max(84),
   averageInterval: z.number().min(1).max(2),
@@ -251,13 +326,14 @@ const kinoPrizeSummarySchema = z.object({
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
     lastDate: z.iso.date().nullable()
   })).optional(),
   quickHotNumbers: kinoQuickHotSchema.array().optional(),
+  persistentTopNumbers: z.array(z.number().int().min(1).max(84)).max(20).optional(),
   prizeSummary: kinoPrizeSummarySchema.optional(),
   prizeDrawNumbers: z.array(z.number().int().min(1).max(84)).length(20).refine(numbers => new Set(numbers).size === 20).optional(),
   plays: kinoPlaySchema.array(),
@@ -267,7 +343,14 @@ export const kinoSnapshotSchema = z.object({
   if (Boolean(snapshot.prizeSummary) !== Boolean(snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio registrado requiere conservar también el resultado evaluado."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  if (snapshot.algorithm === "kino-v8") {
+  if (snapshot.algorithm === "kino-v9") {
+    const ids = new Set(snapshot.plays.map(play => play.id));
+    const persistent = new Set(snapshot.persistentTopNumbers ?? []);
+    if (snapshot.plays.length !== 120 || snapshot.plays.some(play => play.profile !== "exploratoria" || play.hot !== 5 || play.middle !== 3 || play.cold !== 2)) ctx.addIssue({code: "custom", message: "Kino v9 requiere 120 jugadas exploratorias 5/3/2."});
+    if (ids.size !== 120 || snapshot.plays.some(play => play.id < 1 || play.id > 120)) ctx.addIssue({code: "custom", message: "Kino v9 requiere identificadores del 1 al 120."});
+    if (persistent.size !== 20 || persistent.size !== (snapshot.persistentTopNumbers?.length ?? 0)) ctx.addIssue({code: "custom", message: "Kino v9 requiere un top 20 persistente sin duplicados."});
+    if (snapshot.plays.some(play => play.numbers.filter(number => persistent.has(number)).length < 3)) ctx.addIssue({code: "custom", message: "Kino v9 requiere al menos tres números del top 20 en cada jugada."});
+  } else if (snapshot.algorithm === "kino-v8") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     const quickHotNumbers = new Set(snapshot.quickHotNumbers?.map(item => item.number) ?? []);
     const reinforced = snapshot.plays.filter(play => play.quickHot);
@@ -296,7 +379,7 @@ export const kinoSnapshotSchema = z.object({
     }
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== snapshot.plays.length) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7" || snapshot.algorithm === "kino-v8") {
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7" || snapshot.algorithm === "kino-v8" || snapshot.algorithm === "kino-v9") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
@@ -309,18 +392,24 @@ export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
 
 export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
-  const composition = snapshot.algorithm === "kino-v8"
+  const composition = snapshot.algorithm === "kino-v9"
+    ? "Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes"
+    : snapshot.algorithm === "kino-v8"
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
+  const reinforcement = snapshot.algorithm === "kino-v9"
+    ? `Top 20 persistente: ${snapshot.persistentTopNumbers?.map(number => String(number).padStart(2,"0")).join(", ") ?? "No aplica"}`
+    : `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`;
+  const label = snapshot.algorithm === "kino-v9" ? "[TOP 20]" : "[RÁPIDA 1–2]";
   return [
     `SUPER KINO TV · ${snapshot.plays.length} JUGADAS EXPLORATORIAS`,
     `Sorteo: ${snapshot.targetDate}`,
     `Base histórica: ${snapshot.analysisFrom} a ${snapshot.analysisTo} (${snapshot.sampleSize} sorteos)`,
     composition,
-    `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`,
-    `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
+    reinforcement,
+    snapshot.algorithm === "kino-v9" ? "Cada jugada contiene entre 3 y 5 números del top 20." : `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
     "",
-    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${play.quickHot ? "[RÁPIDA 1–2]" : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
+    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${snapshot.algorithm === "kino-v9" ? label : play.quickHot ? label : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
   ].join("\n");
 }
 
@@ -350,16 +439,15 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   const excludedByDelay = getKinoStaleNumbers(draws, targetDate);
   const excluded = new Set(excludedByDelay.map(item => item.number));
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
-  const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
-  if (quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
   const algorithm = kinoAlgorithmForDate(targetDate);
+  const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
+  if (algorithm !== "kino-v9" && quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
   const quickNumbers = quickHotNumbers.map(item => item.number);
+  const persistent = algorithm === "kino-v9" ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers) : null;
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, quickHotNumbers, prizes: kinoPrizes,
-    plays: algorithm === "kino-v8"
-      ? buildKinoCandidatePlays(draws, targetDate, sample, allowedNumbers, quickNumbers)
-      : buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
+    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, ...(algorithm === "kino-v9" ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
+    plays: persistent?.plays ?? buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
 }
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
