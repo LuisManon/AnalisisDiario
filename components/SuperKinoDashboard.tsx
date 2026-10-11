@@ -114,7 +114,12 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const awardDraw = results.find(d => d.date === selectedAwardDate);
   const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
   const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
-  const reverseSnapshot = portfolio?.snapshots.find(snapshot => snapshot.reversePlays?.length) ?? (current?.reversePlays?.length ? current : null);
+  const reverseSnapshot = portfolio?.snapshots.find(snapshot => snapshot.reversePrizeSummary)
+    ?? portfolio?.snapshots.find(snapshot => snapshot.reversePlays?.length)
+    ?? (current?.reversePlays?.length ? current : null);
+  const pendingReverseSnapshot = portfolio?.snapshots.find(snapshot =>
+    snapshot.reversePlays?.length && !results.some(draw => draw.date === snapshot.targetDate)
+  ) ?? (current?.reversePlays?.length && !results.some(draw => draw.date === current.targetDate) ? current : null);
   const reverseDraw = reverseSnapshot ? results.find(draw => draw.date === reverseSnapshot.targetDate) : null;
   const awardProfiles = savedAward ? kinoProfiles.filter(profile => savedAward.plays.some(play => play.profile === profile)) : kinoProfiles;
   const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5" || current.algorithm === "kino-v6"
@@ -174,6 +179,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
 
     <section className="card kinoReverseEngineering">
       <div className="kinoSectionHead"><div><p className="eyebrow">Cartera experimental separada</p><h2>Ingeniería en reversa</h2></div><small>{reverseSnapshot?.targetDate ?? "Próximo sorteo"}</small></div>
+      {pendingReverseSnapshot && pendingReverseSnapshot.targetDate !== reverseSnapshot?.targetDate ? <p className="kinoReverseStatus">Próxima cartera: {pendingReverseSnapshot.targetDate} · 120 jugadas inversas guardadas, pendiente del resultado.</p> : null}
       {!reverseSnapshot ? <p className="kinoReverseStatus">La ingeniería en reversa comenzará con la próxima cartera generada antes del sorteo.</p> : !reverseDraw ? <p className="kinoReverseStatus">120 jugadas inversas guardadas. Resumen pendiente del resultado.</p> : reverseSnapshot.reversePrizeSummary ? <>
         <div className="kinoReverseMetrics">
           <article><span>Jugadas evaluadas</span><strong>{reverseSnapshot.reversePlays?.length ?? 0}</strong></article>
