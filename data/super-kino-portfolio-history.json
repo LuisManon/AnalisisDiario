@@ -2341,6 +2341,49 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 4,
+          "total": 320
+        },
+        {
+          "amount": 60,
+          "count": 3,
+          "total": 180
+        }
+      ],
+      "winningPlays": 9,
+      "total": 1100
+    },
+    "prizeDrawNumbers": [
+      2,
+      5,
+      12,
+      13,
+      16,
+      26,
+      28,
+      35,
+      44,
+      46,
+      48,
+      52,
+      53,
+      54,
+      60,
+      62,
+      67,
+      81,
+      82,
+      84
     ]
   },
   {
@@ -2434,6 +2477,49 @@
           2
         ]
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 1,
+          "total": 300
+        },
+        {
+          "amount": 80,
+          "count": 17,
+          "total": 1360
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 24,
+      "total": 2020
+    },
+    "prizeDrawNumbers": [
+      9,
+      10,
+      11,
+      12,
+      23,
+      28,
+      31,
+      33,
+      35,
+      39,
+      40,
+      41,
+      44,
+      49,
+      59,
+      68,
+      75,
+      76,
+      82,
+      84
     ],
     "plays": [
       {
@@ -4776,49 +4862,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 300,
-          "count": 1,
-          "total": 300
-        },
-        {
-          "amount": 80,
-          "count": 17,
-          "total": 1360
-        },
-        {
-          "amount": 60,
-          "count": 6,
-          "total": 360
-        }
-      ],
-      "winningPlays": 24,
-      "total": 2020
-    },
-    "prizeDrawNumbers": [
-      9,
-      10,
-      11,
-      12,
-      23,
-      28,
-      31,
-      33,
-      35,
-      39,
-      40,
-      41,
-      44,
-      49,
-      59,
-      68,
-      75,
-      76,
-      82,
-      84
     ]
   },
   {
