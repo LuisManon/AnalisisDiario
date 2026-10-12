@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Ball } from "./Ball";
 import {
-  evaluateKinoSnapshot, formatKinoPortfolioText, getKinoStaleNumbers, kinoGroups, kinoStats, kinoPrizes, kinoProfiles, kinoProfileLabels, summarizeKinoPrizes,
+  evaluateKinoSnapshot, formatKinoPortfolioText, getKinoStaleNumbers, kinoAlgorithmForDate, kinoGroups, kinoStats, kinoPrizes, kinoProfiles, kinoProfileLabels, summarizeKinoPrizes,
   KINO_OFFICIAL, KINO_ANALYSIS_START, type KinoDraw, type KinoSnapshot
 } from "../lib/super-kino";
 import { kinoNoDraws, isKinoNoDraw, kinoClock, kinoExpectedDate, kinoTargetDate, kinoYearStart, kinoDates, shiftKinoDate } from "../lib/super-kino-clock";
@@ -107,6 +107,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const activePage = Math.min(page, pages);
   const waiting = !results.some(d => d.date === expectedDate);
   const current = portfolio?.current;
+  const currentAlgorithmLabel = (current?.algorithm ?? kinoAlgorithmForDate(kinoTargetDate())).replace("kino-", "").toUpperCase();
   const currentIsV9 = current?.algorithm === "kino-v9" || current?.algorithm === "kino-v9.1";
   const currentComposition = currentIsV9 ? "5 calientes, 3 intermedios y 2 fríos" : "3 calientes, 3 intermedios y 4 fríos";
   const currentStaleNumbers = current ? (current.excludedByDelay ?? getKinoStaleNumbers(results, current.targetDate)) : [];
@@ -149,7 +150,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
 
   return <main className="lotoTheme kinoTheme">
     <section className="hero">
-      <div><p className="eyebrow">LEIDSA · Sorteo diario</p><h1>Super Kino TV</h1><p>84 números · 20 extraídos · 10 por jugada</p><p>120 jugadas exploratorias por sorteo.</p></div>
+      <div><p className="eyebrow">LEIDSA · Sorteo diario</p><h1>Super Kino TV</h1><span className="kinoAlgorithmLabel">Algoritmo activo · {currentAlgorithmLabel}</span><p>84 números · 20 extraídos · 10 por jugada</p><p>120 jugadas exploratorias por sorteo.</p></div>
       <div className="heroPanel kinoLatest"><span className="panelLabel">Último sorteo cargado · {latest?.date ?? "Sin datos"}</span>{latest ? <Balls numbers={latest.numbers} /> : <p>No hay resultados disponibles.</p>}</div>
     </section>
     <section className="toolbar"><button disabled={busy} onClick={() => void update()}>{busy ? "Actualizando…" : "Actualizar historial"}</button><span className="status" role="status">{status}</span></section>
