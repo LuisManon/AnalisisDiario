@@ -5,7 +5,7 @@
     "analysisFrom": "2026-09-15",
     "analysisTo": "2026-10-11",
     "sampleSize": 27,
-    "algorithm": "kino-v9",
+    "algorithm": "kino-v9.1",
     "delayCutoff": "2026-09-12",
     "excludedByDelay": [],
     "persistentTopNumbers": [
@@ -455,11 +455,11 @@
         "numbers": [
           5,
           6,
+          15,
           16,
-          26,
           28,
+          35,
           42,
-          53,
           55,
           60,
           84
@@ -985,16 +985,16 @@
         "id": 51,
         "profile": "exploratoria",
         "numbers": [
-          5,
-          16,
-          26,
-          28,
-          48,
-          53,
-          55,
+          11,
+          13,
+          27,
+          38,
+          43,
+          59,
           60,
-          81,
-          84
+          69,
+          70,
+          78
         ],
         "hot": 5,
         "middle": 3,
@@ -1840,16 +1840,16 @@
         "id": 96,
         "profile": "exploratoria",
         "numbers": [
-          5,
-          16,
-          20,
-          26,
-          28,
-          42,
+          11,
+          13,
+          18,
+          27,
+          38,
+          43,
           53,
-          55,
-          60,
-          84
+          59,
+          69,
+          70
         ],
         "hot": 5,
         "middle": 3,
@@ -2049,16 +2049,16 @@
         "id": 107,
         "profile": "exploratoria",
         "numbers": [
-          5,
           12,
-          16,
-          26,
-          28,
+          17,
           35,
-          48,
-          53,
-          55,
-          60
+          41,
+          46,
+          54,
+          60,
+          63,
+          67,
+          82
         ],
         "hot": 5,
         "middle": 3,
@@ -2239,14 +2239,14 @@
         "id": 117,
         "profile": "exploratoria",
         "numbers": [
-          5,
           12,
-          19,
-          40,
+          17,
+          35,
+          41,
           46,
+          48,
+          53,
           54,
-          60,
-          62,
           67,
           82
         ],
@@ -2373,6 +2373,49 @@
       16,
       17,
       19
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 4,
+          "total": 320
+        },
+        {
+          "amount": 60,
+          "count": 3,
+          "total": 180
+        }
+      ],
+      "winningPlays": 9,
+      "total": 1100
+    },
+    "prizeDrawNumbers": [
+      2,
+      5,
+      12,
+      13,
+      16,
+      26,
+      28,
+      35,
+      44,
+      46,
+      48,
+      52,
+      53,
+      54,
+      60,
+      62,
+      67,
+      81,
+      82,
+      84
     ],
     "plays": [
       {
@@ -4685,49 +4728,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 300,
-          "count": 2,
-          "total": 600
-        },
-        {
-          "amount": 80,
-          "count": 4,
-          "total": 320
-        },
-        {
-          "amount": 60,
-          "count": 3,
-          "total": 180
-        }
-      ],
-      "winningPlays": 9,
-      "total": 1100
-    },
-    "prizeDrawNumbers": [
-      2,
-      5,
-      12,
-      13,
-      16,
-      26,
-      28,
-      35,
-      44,
-      46,
-      48,
-      52,
-      53,
-      54,
-      60,
-      62,
-      67,
-      81,
-      82,
-      84
     ]
   },
   {

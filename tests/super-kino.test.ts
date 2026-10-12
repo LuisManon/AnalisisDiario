@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -14,7 +14,7 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current one fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v9');
+  assert.equal(snapshots[0].algorithm,'kino-v9.1');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
   assert.equal(snapshots[0].persistentTopNumbers?.length,20);
@@ -72,11 +72,13 @@ test('new portfolio contains 120 unique exploratory plays with at least 25 perce
   assert.equal(playLines.filter(line=>line.includes('[RÁPIDA 1–2]')).length,30);
   assert.match(text,/120 JUGADAS EXPLORATORIAS/);
 });
-test('candidate starts on October 11 without changing earlier portfolios',async()=>{
+test('v9 starts on October 11 and v9.1 starts on October 12 without changing earlier portfolios',async()=>{
   const {buildKinoSnapshot,formatKinoPortfolioText,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   assert.equal(KINO_CANDIDATE_START,'2026-10-11');
+  assert.equal(KINO_V91_START,'2026-10-12');
   assert.equal(kinoAlgorithmForDate('2026-10-10'),'kino-v7');
   assert.equal(kinoAlgorithmForDate('2026-10-11'),'kino-v9');
+  assert.equal(kinoAlgorithmForDate('2026-10-12'),'kino-v9.1');
   const snapshot=buildKinoSnapshot(draws,'2026-10-11',new Date('2026-10-11T13:15:00Z'));
   assert.equal(snapshot.algorithm,'kino-v9');
   assert.equal(snapshot.plays.length,120);
@@ -90,6 +92,13 @@ test('candidate starts on October 11 without changing earlier portfolios',async(
   assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'092432ee593440b9df5463a4caacbc5e4a2fd8288443d3b9c4d87fe014f21fd3');
   assert.match(formatKinoPortfolioText(snapshot),/top 20 persistente/i);
   assert.equal(kinoSnapshotSchema.safeParse({...snapshot,persistentTopNumbers:snapshot.persistentTopNumbers.slice(0,19)}).success,false);
+  const v91=buildKinoSnapshot(draws,'2026-10-12',new Date('2026-10-11T20:18:01.242Z'));
+  assert.equal(v91.algorithm,'kino-v9.1');
+  assert.equal(v91.plays.length,120);
+  assert.equal(new Set(v91.plays.map(play=>play.numbers.join(','))).size,120);
+  assert.ok(v91.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
+  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'b497c5071e3f17d09b58652b8a8de79a22ed7b86b965466794bf54d2d68103e0');
+  assert.match(formatKinoPortfolioText(v91),/5 rotaciones intermedias antirredundancia/i);
   const changed=buildKinoSnapshot([...draws,{...draws[0],date:'2026-10-11'},{...draws[0],date:'2026-10-12'}],'2026-10-11',new Date('2026-10-11T13:15:00Z'));
   assert.deepEqual(changed,snapshot);
 });
