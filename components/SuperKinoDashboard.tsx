@@ -37,6 +37,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const [portfolioError, setPortfolioError] = useState("");
   const [awardDate, setAwardDate] = useState("");
   const [showAwardPlays, setShowAwardPlays] = useState(false);
+  const [weekOffset, setWeekOffset] = useState(0);
   const resultsRef = useRef(results);
   const portfolioRef = useRef<PortfolioData | null>(null);
   const mounted = useRef(false);
@@ -122,10 +123,15 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: currentComposition, plays: current.plays.slice(start, start + 10)}))
     : kinoProfiles.map(profile => ({key: profile, className: profile, title: `10 ${kinoProfileLabels[profile]}`, description: profileDescriptions[profile], plays: current.plays.filter(play => play.profile === profile)}))) : [];
   const awardColumns = awards?.flatMap(evaluation => Array.from({length: Math.ceil(evaluation.plays.length / 10)}, (_, index) => ({...evaluation, key: `${evaluation.profile}-${index}`, plays: evaluation.plays.slice(index * 10, index * 10 + 10)}))) ?? [];
+  const currentWeekMonday = mondayOf(clock.date);
+  const calendarMonday = shiftKinoDate(currentWeekMonday, weekOffset * 7);
+  const earliestCalendarMonday = useMemo(() => {
+    const earliest = portfolio?.snapshots.map(snapshot => snapshot.targetDate).sort()[0];
+    return earliest ? mondayOf(earliest) : currentWeekMonday;
+  }, [currentWeekMonday, portfolio?.snapshots]);
   const weeklyPrizes = useMemo(() => {
-    const monday = mondayOf(clock.date);
     return weekDayNames.map((day, index) => {
-      const date = shiftKinoDate(monday, index);
+      const date = shiftKinoDate(calendarMonday, index);
       const snapshot = portfolio?.snapshots.find(item => item.targetDate === date);
       const draw = results.find(item => item.date === date);
       return {
@@ -136,7 +142,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         status: !snapshot && date < clock.date ? "missing" as const : "pending" as const
       };
     });
-  }, [clock.date, portfolio?.snapshots, results]);
+  }, [calendarMonday, clock.date, portfolio?.snapshots, results]);
 
   function download() {
     if (!current) return;
@@ -174,7 +180,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
     </section>
 
     <section className="card kinoWeekAwards">
-      <div className="kinoSectionHead"><div><p className="eyebrow">Lunes a domingo</p><h2>Premios de las jugadas guardadas</h2></div><small>{shortDate(weeklyPrizes[0].date)} – {shortDate(weeklyPrizes[6].date)}</small></div>
+      <div className="kinoSectionHead"><div><p className="eyebrow">Lunes a domingo</p><h2>Premios de las jugadas guardadas</h2></div><div className="kinoWeekNavigation"><button disabled={calendarMonday <= earliestCalendarMonday} onClick={() => setWeekOffset(offset => offset - 1)}>← Anterior</button><button disabled={weekOffset === 0} onClick={() => setWeekOffset(0)}>Actual</button><small>{shortDate(weeklyPrizes[0].date)} – {shortDate(weeklyPrizes[6].date)}</small><button disabled={weekOffset === 0} onClick={() => setWeekOffset(offset => Math.min(0, offset + 1))}>Siguiente →</button></div></div>
       <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal de premios; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{weeklyPrizes.map(item => <article className={item.date === clock.date ? "today" : ""} key={item.date}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.summary ? item.summary.groups.length ? <><div className="kinoWeekPrizeGroups">{item.summary.groups.map(group => {
         const hits = item.prizes.find(prize => prize.amount === group.amount)?.hits;
         return <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}{hits === undefined ? "" : ` · ${hits} ${hits === 1 ? "acierto" : "aciertos"}`}</strong><span>Premio {money(group.amount)} c/u</span></p>;
