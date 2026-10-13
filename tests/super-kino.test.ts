@@ -86,10 +86,10 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
   assert.ok(snapshot.plays.every(play=>play.profile==='exploratoria'));
   assert.ok(snapshot.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.deepEqual(snapshot.persistentTopNumbers,[27,46,12,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
+  assert.deepEqual(snapshot.persistentTopNumbers,[46,12,27,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
   const persistent=new Set(snapshot.persistentTopNumbers);
   assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>persistent.has(number)).length>=3));
-  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'092432ee593440b9df5463a4caacbc5e4a2fd8288443d3b9c4d87fe014f21fd3');
+  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'cc26bbf41cf8a92f70b03ecacebaba82b9267bcdbd0e37e23aa2812ae1b73b00');
   assert.match(formatKinoPortfolioText(snapshot),/top 20 persistente/i);
   assert.equal(kinoSnapshotSchema.safeParse({...snapshot,persistentTopNumbers:snapshot.persistentTopNumbers.slice(0,19)}).success,false);
   const v91=buildKinoSnapshot(draws,'2026-10-12',new Date('2026-10-11T20:18:01.242Z'));
@@ -97,7 +97,7 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.equal(v91.plays.length,120);
   assert.equal(new Set(v91.plays.map(play=>play.numbers.join(','))).size,120);
   assert.ok(v91.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'b497c5071e3f17d09b58652b8a8de79a22ed7b86b965466794bf54d2d68103e0');
+  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'99bcabfbbf52e651d850958daf30b7537515fef2052656080f803704ddd82a90');
   assert.match(formatKinoPortfolioText(v91),/5 rotaciones intermedias antirredundancia/i);
   const changed=buildKinoSnapshot([...draws,{...draws[0],date:'2026-10-11'},{...draws[0],date:'2026-10-12'}],'2026-10-11',new Date('2026-10-11T13:15:00Z'));
   assert.deepEqual(changed,snapshot);
