@@ -23,7 +23,7 @@ const profileDescriptions = {
 function Balls({numbers, matches = []}: {numbers: number[]; matches?: number[]}) {
   return <div className="kinoBalls">{numbers.map(n => <Ball key={n} value={n} winner={matches.includes(n)} />)}</div>;
 }
-type PortfolioData = {current: KinoSnapshot | null; snapshots: KinoSnapshot[]; waitingForResult?: boolean};
+type PortfolioData = {current: KinoSnapshot | null; snapshots: KinoSnapshot[]; waitingForResult?: boolean; candidateCurrent?: KinoSnapshot | null; candidateSnapshots?: KinoSnapshot[]; candidateWaitingForResult?: boolean};
 
 export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]}) {
   const [results, setResults] = useState(initialResults);
@@ -118,6 +118,10 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const awardDraw = results.find(d => d.date === selectedAwardDate);
   const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
   const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
+  const candidateCurrent = portfolio?.candidateCurrent ?? null;
+  const candidateSavedAward = portfolio?.candidateSnapshots?.find(snapshot=>snapshot.targetDate===selectedAwardDate);
+  const candidateRecordedDraw = awardDraw && candidateSavedAward?.prizeDrawNumbers ? {...awardDraw,numbers:candidateSavedAward.prizeDrawNumbers} : awardDraw;
+  const candidateAwards = candidateSavedAward && candidateRecordedDraw ? evaluateKinoSnapshot(candidateSavedAward,candidateRecordedDraw) : null;
   const awardProfiles = savedAward ? kinoProfiles.filter(profile => savedAward.plays.some(play => play.profile === profile)) : kinoProfiles;
   const currentColumns = current ? (current.algorithm === "kino-v4" || current.algorithm === "kino-v5" || current.algorithm === "kino-v7" || current.algorithm === "kino-v8" || current.algorithm === "kino-v9" || current.algorithm === "kino-v9.1"
     ? [0, 10, 20].map((start, index) => ({key: `exploratoria-${index}`, className: "exploratoria", title: `Exploratorias ${start + 1}–${start + 10}`, description: currentComposition, plays: current.plays.slice(start, start + 10)}))
@@ -150,6 +154,12 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
     const url = URL.createObjectURL(new Blob([`\ufeff${text}`], {type: "text/plain;charset=utf-8"}));
     const a = document.createElement("a"); a.href = url; a.download = `super-kino-120-jugadas-${current.targetDate}.txt`; a.click(); URL.revokeObjectURL(url);
   }
+  function downloadCandidate() {
+    if (!candidateCurrent) return;
+    const text=formatKinoPortfolioText(candidateCurrent);
+    const url=URL.createObjectURL(new Blob([`\ufeff${text}`],{type:"text/plain;charset=utf-8"}));
+    const a=document.createElement("a");a.href=url;a.download=`super-kino-v9.2-candidata-${candidateCurrent.targetDate}.txt`;a.click();URL.revokeObjectURL(url);
+  }
 
   const totalPlayCount = current?.plays.length ?? 120;
   const reinforcedCount = current?.plays.filter(play => play.quickHot).length ?? 30;
@@ -177,6 +187,13 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         return <article className={`kinoAward ${profile}`} key={profile}><span>{playCount} {kinoProfileLabels[profile]}</span><strong>{evaluation ? money(evaluation.total) : "—"}</strong><small>{evaluation ? `${evaluation.winners} premiadas · costo ${money(evaluation.cost)} · balance ${money(evaluation.net)}` : savedAward ? "Pendiente de resultado" : "Sin evaluación"}</small></article>;
       })}</div>
       {awards ? <><p>Total premiado: <strong>{money(awards.reduce((sum,a) => sum+a.total,0))}</strong> · Costo total: {money(awards.reduce((sum,a) => sum+a.cost,0))} · Balance: <strong>{money(awards.reduce((sum,a) => sum+a.net,0))}</strong></p><button onClick={() => setShowAwardPlays(v => !v)}>{showAwardPlays ? "Ocultar detalle" : "Ver aciertos y premios por jugada"}</button>{showAwardPlays ? <div className="kinoPortfolioScroll"><div className="kinoPortfolioGrid">{awardColumns.map(a => <article key={a.key} className={`kinoPlayColumn ${a.profile}`}><h3>{kinoProfileLabels[a.profile]}</h3>{a.plays.map(p => <div className="kinoPlayRow" key={p.id}><small>#{String(p.id).padStart(2,"0")} · {p.hits} aciertos · {money(p.prize)}</small><Balls numbers={p.numbers} matches={p.matches} /></div>)}</article>)}</div></div> : null}</> : null}
+    </section>
+
+    <section className="card kinoCandidateComparison">
+      <div className="kinoSectionHead"><div><p className="eyebrow">Prueba paralela · no reemplaza V9.1</p><h2>Candidata V9.2</h2></div><button disabled={!candidateCurrent} onClick={downloadCandidate}>Descargar 120 candidatas</button></div>
+      <p>V9.2 distribuye las 120 jugadas en 30 de 5/3/2, 30 de 4/3/3, 40 de 3/3/4 y 20 de 4/2/4. Limita la coincidencia entre dos jugadas a seis números y reduce progresivamente la obligación del top 20.</p>
+      {candidateSavedAward && candidateAwards ? <p>Comparación del {selectedAwardDate}: premio <strong>{money(candidateAwards.reduce((sum,evaluation)=>sum+evaluation.total,0))}</strong> · costo {money(candidateAwards.reduce((sum,evaluation)=>sum+evaluation.cost,0))} · balance <strong>{money(candidateAwards.reduce((sum,evaluation)=>sum+evaluation.net,0))}</strong>.</p> : <p>{candidateSavedAward ? `Las 120 candidatas del ${selectedAwardDate} están guardadas; esperando el resultado.` : "La comparación comenzará con el primer sorteo que tenga una cartera V9.2 guardada antes del cierre."}</p>}
+      {candidateCurrent ? <><p className="kinoSaved">Guardada antes del sorteo del {candidateCurrent.targetDate} · base {candidateCurrent.analysisFrom} a {candidateCurrent.analysisTo} ({candidateCurrent.sampleSize} sorteos).</p><div className="kinoPortfolioScroll"><div className="kinoPortfolioGrid">{[{start:0,title:"30 fuertes",description:"5 calientes · 3 intermedios · 2 fríos"},{start:30,title:"30 equilibradas",description:"4 calientes · 3 intermedios · 3 fríos"},{start:60,title:"40 cobertura fría",description:"3 calientes · 3 intermedios · 4 fríos"},{start:100,title:"20 mixtas",description:"4 calientes · 2 intermedios · 4 fríos"}].map(column=><article className="kinoPlayColumn exploratoria" key={column.start}><header><h3>{column.title}</h3><small>{column.description}</small></header>{candidateCurrent.plays.slice(column.start,column.start+10).map(play=><div className="kinoPlayRow" key={play.id}><span className="kinoPlayNumber">{String(play.id).padStart(3,"0")}</span><Balls numbers={play.numbers}/></div>)}</article>)}</div></div></> : <p>Preparando la primera cartera candidata antes del próximo cierre.</p>}
     </section>
 
     <section className="card kinoWeekAwards">

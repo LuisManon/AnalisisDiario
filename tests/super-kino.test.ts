@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, buildKinoV92Snapshot, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -86,10 +86,10 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
   assert.ok(snapshot.plays.every(play=>play.profile==='exploratoria'));
   assert.ok(snapshot.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.deepEqual(snapshot.persistentTopNumbers,[46,12,27,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
+  assert.deepEqual(snapshot.persistentTopNumbers,[27,46,12,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
   const persistent=new Set(snapshot.persistentTopNumbers);
   assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>persistent.has(number)).length>=3));
-  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'cc26bbf41cf8a92f70b03ecacebaba82b9267bcdbd0e37e23aa2812ae1b73b00');
+  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'092432ee593440b9df5463a4caacbc5e4a2fd8288443d3b9c4d87fe014f21fd3');
   assert.match(formatKinoPortfolioText(snapshot),/top 20 persistente/i);
   assert.equal(kinoSnapshotSchema.safeParse({...snapshot,persistentTopNumbers:snapshot.persistentTopNumbers.slice(0,19)}).success,false);
   const v91=buildKinoSnapshot(draws,'2026-10-12',new Date('2026-10-11T20:18:01.242Z'));
@@ -97,10 +97,34 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.equal(v91.plays.length,120);
   assert.equal(new Set(v91.plays.map(play=>play.numbers.join(','))).size,120);
   assert.ok(v91.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'99bcabfbbf52e651d850958daf30b7537515fef2052656080f803704ddd82a90');
+  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'b497c5071e3f17d09b58652b8a8de79a22ed7b86b965466794bf54d2d68103e0');
   assert.match(formatKinoPortfolioText(v91),/5 rotaciones intermedias antirredundancia/i);
   const changed=buildKinoSnapshot([...draws,{...draws[0],date:'2026-10-11'},{...draws[0],date:'2026-10-12'}],'2026-10-11',new Date('2026-10-11T13:15:00Z'));
   assert.deepEqual(changed,snapshot);
+});
+test('v9.2 runs in parallel with diversified mixes and bounded overlap',async()=>{
+  const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoV92Snapshot(draws,'2026-10-14',new Date('2026-10-14T01:17:09.272Z'));
+  assert.equal(snapshot.algorithm,'kino-v9.2');
+  assert.equal(snapshot.plays.length,120);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
+  assert.deepEqual(snapshot.plays,buildKinoV92Snapshot([...draws].reverse(),'2026-10-14',new Date('2026-10-14T01:17:09.272Z')).plays);
+  const mixes=new Map<string,number>();
+  for(const play of snapshot.plays){
+    const key=`${play.hot}/${play.middle}/${play.cold}`;
+    mixes.set(key,(mixes.get(key)??0)+1);
+  }
+  assert.deepEqual(Object.fromEntries(mixes),{'5/3/2':30,'4/3/3':30,'3/3/4':40,'4/2/4':20});
+  const persistent=new Set(snapshot.persistentTopNumbers);
+  assert.equal(persistent.size,20);
+  snapshot.plays.forEach((play,index)=>assert.ok(play.numbers.filter(number=>persistent.has(number)).length>=(index<30?3:index<60?2:1)));
+  let maximumOverlap=0;
+  for(let left=0;left<snapshot.plays.length;left++) for(let right=left+1;right<snapshot.plays.length;right++) maximumOverlap=Math.max(maximumOverlap,snapshot.plays[left].numbers.filter(number=>snapshot.plays[right].numbers.includes(number)).length);
+  assert.ok(maximumOverlap<=6);
+  const usage=Array.from({length:84},(_,index)=>snapshot.plays.filter(play=>play.numbers.includes(index+1)).length);
+  assert.ok(Math.max(...usage)-Math.min(...usage)<=6);
+  assert.equal(kinoSnapshotSchema.safeParse({...snapshot,plays:snapshot.plays.map((play,index)=>index===30?{...play,hot:5,middle:3,cold:2}:play)}).success,false);
+  assert.equal(kinoAlgorithmForDate('2026-10-14'),'kino-v9.1');
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
