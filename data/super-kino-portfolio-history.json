@@ -4765,22 +4765,22 @@
       "groups": [
         {
           "amount": 300,
-          "count": 1,
-          "total": 300
+          "count": 2,
+          "total": 600
         },
         {
           "amount": 80,
-          "count": 8,
-          "total": 640
+          "count": 10,
+          "total": 800
         },
         {
           "amount": 60,
-          "count": 5,
-          "total": 300
+          "count": 6,
+          "total": 360
         }
       ],
-      "winningPlays": 14,
-      "total": 1240
+      "winningPlays": 18,
+      "total": 1760
     },
     "prizeDrawNumbers": [
       4,
@@ -4792,7 +4792,7 @@
       24,
       34,
       36,
-      37,
+      73,
       41,
       48,
       49,
