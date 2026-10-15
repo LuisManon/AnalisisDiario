@@ -385,17 +385,17 @@ function buildKinoPersistentPlays(draws: KinoDraw[], targetDate: string, sample:
   return {plays: antiRedundancy ? applyKinoAntiredundancy(plays,groups,pairs,previous,persistentTopNumbers) : plays, persistentTopNumbers};
 }
 
-const kinoV92Mixes = [
+const kinoDiversifiedMixes = [
   ...Array.from({length:30}, () => [5,3,2] as const),
   ...Array.from({length:30}, () => [4,3,3] as const),
   ...Array.from({length:40}, () => [3,3,4] as const),
   ...Array.from({length:20}, () => [4,2,4] as const)
 ];
 
-function buildKinoV92Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
+function buildKinoDiversifiedPlays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
   const groups = kinoGroups(sample, allowedNumbers);
   const pools = [groups.hot, groups.middle, groups.cold];
-  if (groups.hot.length < 20 || groups.middle.length < 3 || groups.cold.length < 4) throw new Error("Quedan muy pocos números elegibles para la cartera Kino v9.2.");
+  if (groups.hot.length < 20 || groups.middle.length < 3 || groups.cold.length < 4) throw new Error("Quedan muy pocos números elegibles para la cobertura diversificada Kino.");
   const persistentTopNumbers = groups.hot.slice(0,20).map(item => item.number);
   const persistent = new Set(persistentTopNumbers);
   const recentPairs = kinoPairStats(sample);
@@ -404,8 +404,8 @@ function buildKinoV92Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   const seen = new Set<string>();
   const plays: KinoPlay[] = [];
   const overlap = (numbers: number[], play: KinoPlay) => numbers.filter(number => play.numbers.includes(number)).length;
-  for (let index=0; index<kinoV92Mixes.length; index++) {
-    const mix = kinoV92Mixes[index];
+  for (let index=0; index<kinoDiversifiedMixes.length; index++) {
+    const mix = kinoDiversifiedMixes[index];
     const persistentMinimum = index < 30 ? 3 : index < 60 ? 2 : 1;
     let accepted: number[] | null = null;
     for (let attempt=0; attempt<500 && !accepted; attempt++) {
@@ -421,7 +421,7 @@ function buildKinoV92Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
             };
             return score(a)-score(b) || a.number-b.number;
           });
-          if (!candidates.length) throw new Error("No se pudo completar una jugada Kino v9.2.");
+          if (!candidates.length) throw new Error("No se pudo completar una jugada diversificada Kino.");
           numbers.push(candidates[0].number);
         }
       };
@@ -434,7 +434,7 @@ function buildKinoV92Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
       if (seen.has(key) || plays.some(play => overlap(numbers,play)>6)) continue;
       accepted = numbers;
     }
-    if (!accepted) throw new Error("No se pudieron diversificar las 120 jugadas Kino v9.2.");
+    if (!accepted) throw new Error("No se pudieron diversificar las 120 jugadas Kino.");
     seen.add(accepted.join(","));
     accepted.forEach(number => usage.set(number,(usage.get(number) ?? 0)+1));
     for (let first=0; first<accepted.length; first++) for (let second=first+1; second<accepted.length; second++) {
@@ -448,7 +448,7 @@ function buildKinoV92Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
 
 function buildKinoV93Plays(draws: KinoDraw[], targetDate: string, sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
   const base = buildKinoPersistentPlays(draws,targetDate,sample,allowedNumbers,true);
-  const diversified = buildKinoV92Plays(sample,allowedNumbers);
+  const diversified = buildKinoDiversifiedPlays(sample,allowedNumbers);
   const selected: KinoPlay[] = [];
   const overlap = (left: KinoPlay, right: KinoPlay) => left.numbers.filter(number=>right.numbers.includes(number)).length;
   for (const play of base.plays) {
@@ -482,7 +482,7 @@ const kinoPrizeSummarySchema = z.object({
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9", "kino-v9.1", "kino-v9.2", "kino-v9.3"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9", "kino-v9.1", "kino-v9.3"]),
   delayCutoff: z.iso.date().optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
@@ -508,15 +508,6 @@ export const kinoSnapshotSchema = z.object({
     if (mixCounts.get("5/3/2") !== 50 || mixCounts.get("4/3/3") !== 30 || mixCounts.get("3/3/4") !== 30 || mixCounts.get("4/2/4") !== 10) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere la mezcla híbrida 50/30/30/10."});
     if (snapshot.plays.some((play,index) => play.numbers.filter(number=>persistent.has(number)).length < (index<50?3:index<80?2:1))) ctx.addIssue({code:"custom",message:"Kino v9.3 no cumple la cobertura persistente escalonada."});
     if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>6))) ctx.addIssue({code:"custom",message:"Kino v9.3 contiene jugadas demasiado redundantes."});
-  } else if (snapshot.algorithm === "kino-v9.2") {
-    const persistent = new Set(snapshot.persistentTopNumbers ?? []);
-    const mixCounts = new Map<string,number>();
-    snapshot.plays.forEach(play => mixCounts.set(`${play.hot}/${play.middle}/${play.cold}`,(mixCounts.get(`${play.hot}/${play.middle}/${play.cold}`) ?? 0)+1));
-    if (snapshot.plays.length !== 120 || new Set(snapshot.plays.map(play=>play.id)).size !== 120) ctx.addIssue({code:"custom",message:"Kino v9.2 requiere 120 jugadas únicas."});
-    if (persistent.size !== 20 || persistent.size !== (snapshot.persistentTopNumbers?.length ?? 0)) ctx.addIssue({code:"custom",message:"Kino v9.2 requiere un top 20 persistente."});
-    if (mixCounts.get("5/3/2") !== 30 || mixCounts.get("4/3/3") !== 30 || mixCounts.get("3/3/4") !== 40 || mixCounts.get("4/2/4") !== 20) ctx.addIssue({code:"custom",message:"Kino v9.2 requiere la mezcla diversificada 30/30/40/20."});
-    if (snapshot.plays.some((play,index) => play.numbers.filter(number=>persistent.has(number)).length < (index<30?3:index<60?2:1))) ctx.addIssue({code:"custom",message:"Kino v9.2 no cumple la cobertura persistente escalonada."});
-    if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>6))) ctx.addIssue({code:"custom",message:"Kino v9.2 contiene jugadas demasiado redundantes."});
   } else if (snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     const persistent = new Set(snapshot.persistentTopNumbers ?? []);
@@ -553,7 +544,7 @@ export const kinoSnapshotSchema = z.object({
     }
   }
   if (new Set(snapshot.plays.map(p => p.numbers.join(","))).size !== snapshot.plays.length) ctx.addIssue({code: "custom", message: "Hay jugadas duplicadas."});
-  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7" || snapshot.algorithm === "kino-v8" || snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.2" || snapshot.algorithm === "kino-v9.3") {
+  if (snapshot.algorithm === "kino-v3" || snapshot.algorithm === "kino-v4" || snapshot.algorithm === "kino-v5" || snapshot.algorithm === "kino-v7" || snapshot.algorithm === "kino-v8" || snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.3") {
     if (!snapshot.delayCutoff || !snapshot.excludedByDelay) ctx.addIssue({code: "custom", message: "Falta el filtro de atraso de un mes."});
     if (snapshot.delayCutoff && snapshot.delayCutoff !== kinoOneMonthCutoff(snapshot.targetDate)) ctx.addIssue({code: "custom", message: "El corte de atraso no corresponde al sorteo."});
     const excluded = new Set(snapshot.excludedByDelay?.map(item => item.number) ?? []);
@@ -566,9 +557,9 @@ export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
 
 export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
-  const persistentAlgorithm = snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.2" || snapshot.algorithm === "kino-v9.3";
+  const persistentAlgorithm = snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.3";
   const composition = persistentAlgorithm
-    ? snapshot.algorithm === "kino-v9.3" ? "Composición principal híbrida: 50×5/3/2 · 30×4/3/3 · 30×3/3/4 · 10×4/2/4; top 20 escalonado + antirredundancia global" : snapshot.algorithm === "kino-v9.2" ? "Composición candidata diversificada: 30×5/3/2 · 30×4/3/3 · 40×3/3/4 · 20×4/2/4; top 20 escalonado + antirredundancia global" : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
+    ? snapshot.algorithm === "kino-v9.3" ? "Composición principal híbrida: 50×5/3/2 · 30×4/3/3 · 30×3/3/4 · 10×4/2/4; top 20 escalonado + antirredundancia global" : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
     : snapshot.algorithm === "kino-v8"
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
@@ -627,19 +618,6 @@ export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = n
   });
 }
 
-export function buildKinoV92Snapshot(draws: KinoDraw[], targetDate: string, now = new Date()): KinoSnapshot {
-  const sample = draws.filter(d => d.date >= KINO_ANALYSIS_START && d.date < targetDate).sort((a,b) => b.date.localeCompare(a.date)).slice(0,30);
-  if (!sample.length) throw new Error("No hay historial anterior suficiente para generar la candidata Kino v9.2.");
-  const delayCutoff = kinoOneMonthCutoff(targetDate);
-  const excludedByDelay = getKinoStaleNumbers(draws,targetDate);
-  const excluded = new Set(excludedByDelay.map(item=>item.number));
-  const allowedNumbers = new Set(Array.from({length:84},(_,index)=>index+1).filter(number=>!excluded.has(number)));
-  const candidate = buildKinoV92Plays(sample,allowedNumbers);
-  return kinoSnapshotSchema.parse({
-    targetDate,generatedAt:now.toISOString(),analysisFrom:sample.at(-1)!.date,analysisTo:sample[0].date,sampleSize:sample.length,
-    algorithm:"kino-v9.2",delayCutoff,excludedByDelay,persistentTopNumbers:candidate.persistentTopNumbers,plays:candidate.plays,prizes:kinoPrizes
-  });
-}
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
   if (draw.date !== snapshot.targetDate) throw new Error("El resultado no corresponde a las jugadas guardadas.");
   return kinoProfiles.filter(profile => snapshot.plays.some(play => play.profile === profile)).map(profile => {
