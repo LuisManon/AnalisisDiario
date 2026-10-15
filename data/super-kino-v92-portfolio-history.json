@@ -2341,6 +2341,49 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 1,
+          "total": 300
+        },
+        {
+          "amount": 80,
+          "count": 8,
+          "total": 640
+        },
+        {
+          "amount": 60,
+          "count": 3,
+          "total": 180
+        }
+      ],
+      "winningPlays": 12,
+      "total": 1120
+    },
+    "prizeDrawNumbers": [
+      6,
+      7,
+      13,
+      14,
+      21,
+      28,
+      31,
+      36,
+      42,
+      46,
+      51,
+      52,
+      63,
+      68,
+      70,
+      72,
+      76,
+      78,
+      80,
+      81
     ]
   }
 ]
