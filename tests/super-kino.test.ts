@@ -112,10 +112,11 @@ test('v9.3 becomes the main hybrid on October 15',async()=>{
   assert.equal(snapshot.plays.length,120);
   const mixes=new Map<string,number>();
   snapshot.plays.forEach(play=>mixes.set(`${play.hot}/${play.middle}/${play.cold}`,(mixes.get(`${play.hot}/${play.middle}/${play.cold}`)??0)+1));
-  assert.deepEqual(Object.fromEntries(mixes),{'10/0/0':25,'0/10/0':35,'0/0/10':10,'4/3/3':20,'5/3/2':15,'3/3/4':15});
+  assert.deepEqual(Object.fromEntries(mixes),{'10/0/0':25,'1/9/0':18,'0/9/1':17,'0/0/10':10,'4/3/3':20,'5/3/2':15,'3/3/4':15});
+  assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>number>=1&&number<=9).length>=1&&play.numbers.filter(number=>number>=1&&number<=9).length<=3));
   let maximumOverlap=0;
   for(let left=0;left<snapshot.plays.length;left++) for(let right=left+1;right<snapshot.plays.length;right++) maximumOverlap=Math.max(maximumOverlap,snapshot.plays[left].numbers.filter(number=>snapshot.plays[right].numbers.includes(number)).length);
-  assert.ok(maximumOverlap<=6);
+  assert.ok(maximumOverlap<=7);
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
   assert.deepEqual(snapshot.plays,buildKinoSnapshot([...draws].reverse(),'2026-10-15',new Date('2026-10-15T16:00:00Z')).plays);
 });

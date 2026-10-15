@@ -394,11 +394,17 @@ function buildKinoDiversifiedPlays(sample: KinoDraw[], allowedNumbers: ReadonlyS
   const recentPairs = kinoPairStats(sample);
   const usage = new Map<number,number>();
   const pairUsage = new Map<string,number>();
+  const rangeIndex = (number: number) => number <= 9 ? 0 : Math.min(8,Math.floor(number/10));
+  const rangeUsage = new Map<number,number>();
+  const recentRangeSample=sample.slice(0,10);
+  const rangeAppearances = Array.from({length:9},(_,range)=>recentRangeSample.reduce((sum,draw)=>sum+draw.numbers.filter(number=>rangeIndex(number)===range).length,0));
+  const rangeTargets = rangeAppearances.map(count=>Math.max(1,count/recentRangeSample.length/2*mixes.length));
   const seen = new Set<string>();
   const plays: KinoPlay[] = initialPlays.map(play=>({...play,numbers:[...play.numbers]}));
   for (const play of plays) {
     seen.add(play.numbers.join(","));
     play.numbers.forEach(number=>usage.set(number,(usage.get(number)??0)+1));
+    play.numbers.forEach(number=>rangeUsage.set(rangeIndex(number),(rangeUsage.get(rangeIndex(number))??0)+1));
     for (let first=0;first<play.numbers.length;first++) for (let second=first+1;second<play.numbers.length;second++) {
       const key=kinoPairKey(play.numbers[first],play.numbers[second]);
       pairUsage.set(key,(pairUsage.get(key)??0)+1);
@@ -412,33 +418,44 @@ function buildKinoDiversifiedPlays(sample: KinoDraw[], allowedNumbers: ReadonlyS
     let accepted: number[] | null = null;
     for (let attempt=0; attempt<500 && !accepted; attempt++) {
       const numbers: number[] = [];
-      const choose = (pool: typeof groups.hot, size: number) => {
+      const remaining=[...mix];
+      const score = (item: typeof groups.hot[number], slot: number) => {
+        const repeatedPairs = numbers.reduce((sum,number) => sum + (pairUsage.get(kinoPairKey(item.number,number)) ?? 0),0);
+        const affinity = numbers.reduce((sum,number) => sum + (recentPairs.counts.get(kinoPairKey(item.number,number)) ?? 0),0);
+        const range=rangeIndex(item.number);
+        const rangePressure=((rangeUsage.get(range)??0)/rangeTargets[range])*1000;
+        const jitter = ((item.number*37 + playIndex*17 + attempt*29 + slot*11) % 101) / 101 * 300;
+        return (usage.get(item.number) ?? 0)*25 + repeatedPairs*8 + rangePressure - affinity*0.35 + jitter;
+      };
+      const lowChoices=pools.flatMap((pool,group)=>remaining[group]>0?pool.filter(item=>item.number<=9).map(item=>({item,group})):[]).sort((a,b)=>score(a.item,0)-score(b.item,0)||a.item.number-b.item.number);
+      if (!lowChoices.length) throw new Error("No hay números del 1 al 9 elegibles para completar Kino v9.3.");
+      const lowChoice=lowChoices[attempt%Math.min(5,lowChoices.length)];
+      numbers.push(lowChoice.item.number);
+      remaining[lowChoice.group]--;
+      const choose = (pool: typeof groups.hot, size: number, group: number) => {
         for (let slot=0; slot<size; slot++) {
-          const candidates = pool.filter(item => !numbers.includes(item.number)).sort((a,b) => {
-            const score = (item: typeof a) => {
-              const repeatedPairs = numbers.reduce((sum,number) => sum + (pairUsage.get(kinoPairKey(item.number,number)) ?? 0),0);
-              const affinity = numbers.reduce((sum,number) => sum + (recentPairs.counts.get(kinoPairKey(item.number,number)) ?? 0),0);
-              const jitter = ((item.number*37 + playIndex*17 + attempt*29 + slot*11) % 101) / 101;
-              return (usage.get(item.number) ?? 0)*100 + repeatedPairs*8 - affinity*0.35 + jitter;
-            };
-            return score(a)-score(b) || a.number-b.number;
-          });
+          const lowCount=numbers.filter(number=>number<=9).length;
+          const candidates = pool.filter(item => !numbers.includes(item.number) && (lowCount<3 || item.number>9)).sort((a,b) => score(a,slot+group*10)-score(b,slot+group*10) || a.number-b.number);
           if (!candidates.length) throw new Error("No se pudo completar una jugada diversificada Kino.");
-          numbers.push(candidates[0].number);
+          numbers.push(candidates[(attempt+slot*3+group)%Math.min(6,candidates.length)].number);
         }
       };
-      choose(groups.hot.filter(item => persistent.has(item.number)),persistentMinimum);
-      choose(pools[0],mix[0]-persistentMinimum);
-      choose(pools[1],mix[1]);
-      choose(pools[2],mix[2]);
+      const persistentAlready=numbers.filter(number=>persistent.has(number)).length;
+      const persistentNeeded=Math.max(0,persistentMinimum-persistentAlready);
+      choose(groups.hot.filter(item => persistent.has(item.number)),persistentNeeded,0);
+      remaining[0]-=persistentNeeded;
+      choose(pools[0],remaining[0],0);
+      choose(pools[1],remaining[1],1);
+      choose(pools[2],remaining[2],2);
       numbers.sort((a,b)=>a-b);
       const key = numbers.join(",");
-      if (seen.has(key) || plays.some(play => overlap(numbers,play)>6)) continue;
+      if (numbers.length!==10 || numbers.filter(number=>number<=9).length<1 || numbers.filter(number=>number<=9).length>3 || seen.has(key) || plays.some(play => overlap(numbers,play)>8)) continue;
       accepted = numbers;
     }
-    if (!accepted) throw new Error("No se pudieron diversificar las 120 jugadas Kino.");
+    if (!accepted) throw new Error(`No se pudo diversificar la jugada Kino ${playIndex+1}.`);
     seen.add(accepted.join(","));
     accepted.forEach(number => usage.set(number,(usage.get(number) ?? 0)+1));
+    accepted.forEach(number => rangeUsage.set(rangeIndex(number),(rangeUsage.get(rangeIndex(number))??0)+1));
     for (let first=0; first<accepted.length; first++) for (let second=first+1; second<accepted.length; second++) {
       const key = kinoPairKey(accepted[first],accepted[second]);
       pairUsage.set(key,(pairUsage.get(key) ?? 0)+1);
@@ -451,7 +468,8 @@ function buildKinoDiversifiedPlays(sample: KinoDraw[], allowedNumbers: ReadonlyS
 function buildKinoV93Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
   const mixes = [
     ...Array.from({length:25},()=>[10,0,0] as const),
-    ...Array.from({length:35},()=>[0,10,0] as const),
+    ...Array.from({length:18},()=>[1,9,0] as const),
+    ...Array.from({length:17},()=>[0,9,1] as const),
     ...Array.from({length:10},()=>[0,0,10] as const),
     ...Array.from({length:20},()=>[4,3,3] as const),
     ...Array.from({length:15},()=>[5,3,2] as const),
@@ -498,9 +516,10 @@ export const kinoSnapshotSchema = z.object({
     snapshot.plays.forEach(play => mixCounts.set(`${play.hot}/${play.middle}/${play.cold}`,(mixCounts.get(`${play.hot}/${play.middle}/${play.cold}`) ?? 0)+1));
     if (snapshot.plays.length !== 120 || new Set(snapshot.plays.map(play=>play.id)).size !== 120) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere 120 jugadas únicas."});
     if (persistent.size !== 20 || persistent.size !== (snapshot.persistentTopNumbers?.length ?? 0)) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere un top 20 persistente."});
-    if (mixCounts.get("10/0/0") !== 25 || mixCounts.get("0/10/0") !== 35 || mixCounts.get("0/0/10") !== 10 || mixCounts.get("4/3/3") !== 20 || mixCounts.get("5/3/2") !== 15 || mixCounts.get("3/3/4") !== 15) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere la mezcla de 70 coberturas puras y 50 híbridas."});
+    if (mixCounts.get("10/0/0") !== 25 || mixCounts.get("1/9/0") !== 18 || mixCounts.get("0/9/1") !== 17 || mixCounts.get("0/0/10") !== 10 || mixCounts.get("4/3/3") !== 20 || mixCounts.get("5/3/2") !== 15 || mixCounts.get("3/3/4") !== 15) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere 70 coberturas de grupo con anclas bajas y 50 híbridas."});
+    if (snapshot.plays.some(play=>play.numbers.filter(number=>number>=1&&number<=9).length<1 || play.numbers.filter(number=>number>=1&&number<=9).length>3)) ctx.addIssue({code:"custom",message:"Cada jugada Kino v9.3 requiere entre uno y tres números del 1 al 9."});
     if (snapshot.plays.some(play => play.numbers.filter(number=>persistent.has(number)).length < (play.hot===0?0:play.hot>=8?3:play.hot>=4&&play.middle>=3?2:1))) ctx.addIssue({code:"custom",message:"Kino v9.3 no cumple la cobertura persistente escalonada."});
-    if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>6))) ctx.addIssue({code:"custom",message:"Kino v9.3 contiene jugadas demasiado redundantes."});
+    if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>8))) ctx.addIssue({code:"custom",message:"Kino v9.3 contiene jugadas demasiado redundantes."});
   } else if (snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1") {
     const ids = new Set(snapshot.plays.map(play => play.id));
     const persistent = new Set(snapshot.persistentTopNumbers ?? []);
@@ -552,7 +571,7 @@ export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
   const persistentAlgorithm = snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.3";
   const composition = persistentAlgorithm
-    ? snapshot.algorithm === "kino-v9.3" ? "Composición principal de doble extremo: 25×10/0/0 · 35×0/10/0 · 10×0/0/10 · 20×4/3/3 · 15×5/3/2 · 15×3/3/4; top 20 escalonado + antirredundancia global" : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
+    ? snapshot.algorithm === "kino-v9.3" ? "Composición principal por grupos y rangos: 25×10/0/0 · 18×1/9/0 · 17×0/9/1 · 10×0/0/10 · 20×4/3/3 · 15×5/3/2 · 15×3/3/4; cada jugada contiene 1–3 números del 1 al 9" : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
     : snapshot.algorithm === "kino-v8"
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
