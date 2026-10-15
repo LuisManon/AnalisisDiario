@@ -2341,6 +2341,39 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 80,
+          "count": 9,
+          "total": 720
+        }
+      ],
+      "winningPlays": 9,
+      "total": 720
+    },
+    "prizeDrawNumbers": [
+      6,
+      7,
+      13,
+      14,
+      21,
+      28,
+      31,
+      36,
+      42,
+      46,
+      51,
+      52,
+      63,
+      68,
+      70,
+      72,
+      76,
+      78,
+      80,
+      81
     ]
   },
   {
@@ -2373,6 +2406,49 @@
       31,
       41,
       59
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 1,
+          "total": 300
+        },
+        {
+          "amount": 80,
+          "count": 5,
+          "total": 400
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 12,
+      "total": 1060
+    },
+    "prizeDrawNumbers": [
+      2,
+      4,
+      5,
+      10,
+      20,
+      23,
+      27,
+      34,
+      37,
+      40,
+      44,
+      46,
+      47,
+      51,
+      59,
+      72,
+      74,
+      80,
+      81,
+      82
     ],
     "plays": [
       {
@@ -4685,49 +4761,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 300,
-          "count": 1,
-          "total": 300
-        },
-        {
-          "amount": 80,
-          "count": 5,
-          "total": 400
-        },
-        {
-          "amount": 60,
-          "count": 6,
-          "total": 360
-        }
-      ],
-      "winningPlays": 12,
-      "total": 1060
-    },
-    "prizeDrawNumbers": [
-      2,
-      4,
-      5,
-      10,
-      20,
-      23,
-      27,
-      34,
-      37,
-      40,
-      44,
-      46,
-      47,
-      51,
-      59,
-      72,
-      74,
-      80,
-      81,
-      82
     ]
   },
   {
