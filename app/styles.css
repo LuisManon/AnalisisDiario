@@ -7009,7 +7009,6 @@ body:has(.appShell.lotoShell) {
 .kinoAward small { line-height:1.6; color:#536577; }
 .kinoPortfolioScroll { max-width:100%; overflow-x:auto; margin:18px 0; padding-bottom:6px; }
 .kinoPortfolioGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; min-width:860px; }
-.kinoCandidateComparison .kinoPortfolioGrid { grid-template-columns:repeat(4,minmax(0,1fr)); min-width:1120px; }
 .kinoPlayColumn { border:1px solid #d4e1ed; border-radius:12px; overflow:hidden; background:#f6f9fc; }
 .kinoPlayColumn header { padding:16px 12px; background:#e9f2ed; border-top:4px solid #319164; }
 .kinoPlayColumn.equilibrada header { background:#eaf0f9; border-color:#3e659b; }
