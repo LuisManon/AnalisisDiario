@@ -112,7 +112,7 @@ test('v9.3 becomes the main hybrid on October 15',async()=>{
   assert.equal(snapshot.plays.length,120);
   const mixes=new Map<string,number>();
   snapshot.plays.forEach(play=>mixes.set(`${play.hot}/${play.middle}/${play.cold}`,(mixes.get(`${play.hot}/${play.middle}/${play.cold}`)??0)+1));
-  assert.deepEqual(Object.fromEntries(mixes),{'5/3/2':50,'4/3/3':30,'3/3/4':30,'4/2/4':10});
+  assert.deepEqual(Object.fromEntries(mixes),{'5/3/2':40,'4/3/3':20,'3/3/4':20,'4/2/4':10,'8/1/1':10,'1/8/1':10,'1/1/8':10});
   let maximumOverlap=0;
   for(let left=0;left<snapshot.plays.length;left++) for(let right=left+1;right<snapshot.plays.length;right++) maximumOverlap=Math.max(maximumOverlap,snapshot.plays[left].numbers.filter(number=>snapshot.plays[right].numbers.includes(number)).length);
   assert.ok(maximumOverlap<=6);
