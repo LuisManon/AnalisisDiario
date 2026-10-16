@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -14,7 +14,7 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current hybrid fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v9.3');
+  assert.equal(snapshots[0].algorithm,'kino-v9.4');
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
   assert.equal(snapshots[0].persistentTopNumbers?.length,20);
@@ -119,6 +119,28 @@ test('v9.3 becomes the main hybrid on October 15',async()=>{
   assert.ok(maximumOverlap<=7);
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
   assert.deepEqual(snapshot.plays,buildKinoSnapshot([...draws].reverse(),'2026-10-15',new Date('2026-10-15T16:00:00Z')).plays);
+});
+test('v9.4 applies freshness, global frequency and average range allocation from October 16',async()=>{
+  const {buildKinoSnapshot,kinoNineDayCutoff,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  assert.equal(KINO_V94_START,'2026-10-16');
+  assert.equal(kinoAlgorithmForDate('2026-10-15'),'kino-v9.3');
+  assert.equal(kinoAlgorithmForDate('2026-10-16'),'kino-v9.4');
+  assert.equal(kinoNineDayCutoff('2026-10-16'),'2026-10-07');
+  const snapshot=buildKinoSnapshot(draws,'2026-10-16',new Date('2026-10-16T13:00:00Z'));
+  assert.equal(snapshot.algorithm,'kino-v9.4');
+  assert.equal(snapshot.maximumDaysWithoutAppearance,9);
+  assert.equal(snapshot.minimumGlobalAppearances,4);
+  assert.equal(snapshot.delayCutoff,'2026-10-07');
+  assert.equal(snapshot.plays.length,120);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
+  const prior=draws.filter(draw=>draw.date>=KINO_ANALYSIS_START&&draw.date<'2026-10-16');
+  const frequency=new Map<number,number>();
+  prior.forEach(draw=>draw.numbers.forEach(number=>frequency.set(number,(frequency.get(number)??0)+1)));
+  assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>(frequency.get(number)??0)>3)));
+  assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>prior.some(draw=>draw.date>='2026-10-07'&&draw.numbers.includes(number)))));
+  assert.ok(snapshot.plays.every(play=>Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length).every(count=>count>=1&&count<=2)));
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+  assert.deepEqual(snapshot.plays,buildKinoSnapshot([...draws].reverse(),'2026-10-16',new Date('2026-10-16T13:00:00Z')).plays);
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
