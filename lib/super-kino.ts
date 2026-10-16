@@ -681,7 +681,7 @@ export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
   const reinforcement = persistentAlgorithm
-    ? `Top 20 persistente: ${snapshot.persistentTopNumbers?.map(number => String(number).padStart(2,"0")).join(", ") ?? "No aplica"}`
+    ? `Top 20 persistente: ${snapshot.persistentTopNumbers ? [...snapshot.persistentTopNumbers].sort((a,b)=>a-b).map(number => String(number).padStart(2,"0")).join(", ") : "No aplica"}`
     : `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`;
   const label = persistentAlgorithm ? "[TOP 20]" : "[RÁPIDA 1–2]";
   return [
