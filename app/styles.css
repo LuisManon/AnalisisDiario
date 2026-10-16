@@ -7044,9 +7044,30 @@ body:has(.appShell.lotoShell) {
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
 .kinoNote summary { cursor:pointer; color:#215c96; }
 @media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} }
-.kinoHistory { text-align:center; }
-.kinoHistory .kinoBalls { justify-content:center; }
-.kinoTheme .kinoHistory ~ .toolbar { justify-content:center; }
-.kinoNoDraws { display:flex; flex-wrap:wrap; justify-content:center; gap:10px 20px; margin:16px 0; font-size:13px; }
+.kinoHistoryCard { text-align:left; }
+.kinoHistoryKey { display:flex; flex-wrap:wrap; gap:8px; }
+.kinoHistoryKey span { display:flex; align-items:center; gap:6px; padding:6px 9px; border:1px solid #dce4ed; border-radius:999px; color:#526477; font-size:12px; font-weight:700; }
+.kinoHistoryKey i { width:9px; height:9px; border-radius:50%; background:#65a3d7; }
+.kinoHistoryKey i.middle { background:#d89949; }
+.kinoHistoryKey i.high { background:#7a75b7; }
+.kinoHistory { display:grid; gap:10px; margin-top:18px; text-align:left; }
+.kinoHistory > article { display:grid; grid-template-columns:170px minmax(0,1fr); gap:18px; align-items:start; padding:14px; border:1px solid #dfe7ef; border-radius:12px; background:#fbfcfe; }
+.kinoHistory > article:hover { border-color:#a9c4de; background:#f7fafe; }
+.kinoHistory > article > header { display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding-top:4px; }
+.kinoHistory > article > header a { color:#194f82; font-weight:800; text-transform:capitalize; text-decoration:none; }
+.kinoHistory > article > header a:hover { text-decoration:underline; }
+.kinoHistory > article > header small { color:#718195; }
+.kinoHistoryRanges { display:grid; grid-template-columns:repeat(9,minmax(62px,1fr)); gap:6px; min-width:0; }
+.kinoHistoryRanges > section { min-width:0; padding:7px 5px; border-top:3px solid #65a3d7; border-radius:7px; background:#edf5fb; }
+.kinoHistoryRanges > section.middle { border-color:#d89949; background:#fbf4e9; }
+.kinoHistoryRanges > section.high { border-color:#7a75b7; background:#f0eff9; }
+.kinoHistoryRanges > section > span { display:block; margin-bottom:6px; color:#5d6e80; font-size:10px; font-weight:800; text-align:left; }
+.kinoHistoryRanges > section > div { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-start; gap:4px; }
+.kinoTheme .kinoHistoryRanges .ball { width:27px; height:27px; flex:0 0 27px; font-size:10px; }
+.kinoHistoryRanges > section > div > small { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; margin-left:auto; border-radius:999px; background:#ffffffb8; color:#66788a; font-size:10px; font-weight:800; }
+.kinoHistoryPagination { justify-content:flex-start; }
+.kinoNoDraws { display:flex; flex-wrap:wrap; justify-content:flex-start; gap:10px 20px; margin:16px 0; font-size:13px; }
+@media(max-width:1100px) { .kinoHistoryRanges { grid-template-columns:repeat(5,minmax(70px,1fr)); } }
+@media(max-width:700px) { .kinoHistory > article { grid-template-columns:1fr; gap:10px; } .kinoHistoryRanges { grid-template-columns:repeat(3,minmax(72px,1fr)); } .kinoHistoryPagination { align-items:flex-start; } }
 .kinoPortfolioGrid { min-width:720px; gap:10px; }
 .kinoTheme .kinoPlayRow .ball { font-size:10px; }
