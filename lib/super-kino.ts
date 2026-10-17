@@ -482,7 +482,7 @@ function buildKinoV93Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   return {plays:hybrid.plays.map((play,index)=>({...play,id:index+1})),persistentTopNumbers:hybrid.persistentTopNumbers};
 }
 
-function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>) {
+function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>, freshNumbers: ReadonlySet<number>) {
   const mixes = [
     ...Array.from({length:25},()=>[10,0,0] as const),
     ...Array.from({length:18},()=>[1,9,0] as const),
@@ -492,14 +492,33 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
     ...Array.from({length:15},()=>[5,3,2] as const),
     ...Array.from({length:15},()=>[3,3,4] as const)
   ];
-  const groups = kinoGroups(sample,allowedNumbers);
-  const pools = [groups.hot,groups.middle,groups.cold];
+  const groups = kinoGroups(sample,freshNumbers);
+  const recoveryNumbers=new Set([...allowedNumbers].filter(number=>!freshNumbers.has(number)));
+  const hotThreshold=groups.hot.at(-1)?.count??Infinity;
+  const middleThreshold=groups.middle.at(-1)?.count??Infinity;
+  const recoveryItems=kinoStats(sample).filter(item=>recoveryNumbers.has(item.number));
+  const pools = [
+    [...groups.hot,...recoveryItems.filter(item=>item.count>=hotThreshold)],
+    [...groups.middle,...recoveryItems.filter(item=>item.count<hotThreshold&&item.count>=middleThreshold)],
+    [...groups.cold,...recoveryItems.filter(item=>item.count<middleThreshold)]
+  ];
   if (groups.hot.length<20 || pools.some(pool=>pool.length<10)) throw new Error("Quedan muy pocos números elegibles para Kino v9.4.");
   const persistentTopNumbers=groups.hot.slice(0,20).map(item=>item.number);
   const persistent=new Set(persistentTopNumbers);
   const rangeIndex=(number:number)=>number<=9?0:Math.min(8,Math.floor(number/10));
   const recent=sample.slice(0,10);
-  const rangeAverages=Array.from({length:9},(_,range)=>recent.reduce((sum,draw)=>sum+draw.numbers.filter(number=>rangeIndex(number)===range).length,0)/recent.length/2);
+  const previous=sample.slice(10,20);
+  const rangeAverage=(draws:KinoDraw[],range:number)=>draws.length?draws.reduce((sum,draw)=>sum+draw.numbers.filter(number=>rangeIndex(number)===range).length,0)/draws.length:0;
+  const rangeModel=Array.from({length:9},(_,range)=>{
+    const recentAverage=rangeAverage(recent,range);
+    const previousAverage=rangeAverage(previous,range);
+    const historicalAverage=rangeAverage(sample,range);
+    const concentrationRate=sample.filter(draw=>draw.numbers.filter(number=>rangeIndex(number)===range).length>=4).length/sample.length;
+    const momentum=recentAverage-previousAverage;
+    const score=recentAverage*.55+previousAverage*.20+historicalAverage*.25+concentrationRate*.6+Math.max(0,momentum)*.25;
+    return {range,from:range===0?1:range*10,to:range===8?84:range*10+9,recentAverage,previousAverage,historicalAverage,concentrationRate,momentum,score};
+  });
+  const dominantRanges=[...rangeModel].sort((a,b)=>b.score-a.score||a.range-b.range).slice(0,3);
   const usage=new Map<number,number>();
   const rangeUsage=new Map<number,number>();
   const pairUsage=new Map<string,number>();
@@ -509,19 +528,46 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   const overlap=(numbers:number[],play:KinoPlay)=>numbers.filter(number=>play.numbers.includes(number)).length;
   const groupByNumber=new Map<number,number>();
   pools.forEach((pool,group)=>pool.forEach(item=>groupByNumber.set(item.number,group)));
-  const averageTotal=rangeAverages.reduce((sum,average)=>sum+average,0);
-  const targetExtraTotals=rangeAverages.map(average=>average/averageTotal*120);
+  const mandatoryMinimums=[1,0,1,0,0,0,0,0,1];
+  const adaptiveWeights=rangeModel.map((item,range)=>Math.max(.08,item.score/2-mandatoryMinimums[range]));
+  const adaptiveTotal=adaptiveWeights.reduce((sum,weight)=>sum+weight,0);
+  const targetTotals=adaptiveWeights.map((weight,range)=>mandatoryMinimums[range]*120+weight/adaptiveTotal*840);
+  const rangeCaps=[3,4,2,4,4,4,4,4,2];
 
   for(let index=0;index<mixes.length;index++) {
     const mix=mixes[index];
+    const recoveryPlay=index>=105;
+    const candidateNumbers=recoveryPlay?allowedNumbers:freshNumbers;
     const persistentMinimum=mix[0]===0?0:mix[0]>=8?3:mix[0]>=4&&mix[1]>=3?2:1;
-    const completedPlays=plays.length;
-    const extraRanges=Array.from({length:9},(_,range)=>range).sort((a,b)=>(targetExtraTotals[b]-((rangeUsage.get(b)??0)-completedPlays))-(targetExtraTotals[a]-((rangeUsage.get(a)??0)-completedPlays))||((a+index)%9)-((b+index)%9));
     let accepted:number[]|null=null;
-    for(let attempt=0;attempt<600&&!accepted;attempt++) {
-      const extraRange=extraRanges[attempt%extraRanges.length];
-      const remainingRanges=Array(9).fill(1) as number[];
-      remainingRanges[extraRange]=2;
+    for(let attempt=0;attempt<1800&&!accepted;attempt++) {
+      const remainingRanges=[...mandatoryMinimums];
+      const concentrationScenario=index%4===0;
+      if(concentrationScenario) {
+        const desired=attempt<600?(index%12===0?4:3):attempt<1200?3:2;
+        const preferred=Math.floor(index/4)%dominantRanges.length;
+        const candidates=dominantRanges.map((item,position)=>({
+          range:item.range, position,
+          available:pools.reduce((sum,pool,group)=>sum+Math.min(mix[group],pool.filter(entry=>candidateNumbers.has(entry.number)&&rangeIndex(entry.number)===item.range).length),0)
+        }));
+        const selected=candidates.find(item=>item.position===preferred&&item.available>=Math.min(desired,rangeCaps[item.range]))
+          ??candidates.filter(item=>item.available>=Math.min(desired,rangeCaps[item.range])).sort((a,b)=>b.available-a.available||a.position-b.position)[0]
+          ??candidates.sort((a,b)=>b.available-a.available||a.position-b.position)[0];
+        const dominant=selected.range;
+        const availableForMix=selected.available;
+        remainingRanges[dominant]=Math.max(remainingRanges[dominant],Math.min(desired,rangeCaps[dominant],availableForMix));
+      }
+      for(let slot=remainingRanges.reduce((sum,count)=>sum+count,0);slot<10;slot++) {
+        const choices=Array.from({length:9},(_,range)=>range).filter(range=>{
+          const available=pools.reduce((sum,pool,group)=>sum+(mix[group]>0?pool.filter(item=>candidateNumbers.has(item.number)&&rangeIndex(item.number)===range).length:0),0);
+          return remainingRanges[range]<Math.min(rangeCaps[range],available);
+        }).sort((a,b)=>
+          (targetTotals[b]-((rangeUsage.get(b)??0)+remainingRanges[b]))-(targetTotals[a]-((rangeUsage.get(a)??0)+remainingRanges[a]))
+          || ((a+attempt+slot+index)%9)-((b+attempt+slot+index)%9)
+        );
+        const choice=choices[(attempt+slot)%Math.min(3,choices.length)];
+        remainingRanges[choice]++;
+      }
       const remainingGroups=[...mix];
       const selected:number[]=[];
       const score=(number:number,depth:number)=>{
@@ -533,25 +579,29 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
       const feasible=()=>{
         for(let group=0;group<3;group++) {
           let capacity=0;
-          for(let range=0;range<9;range++) if(remainingRanges[range]>0&&pools[group].some(item=>rangeIndex(item.number)===range&&!selected.includes(item.number))) capacity+=remainingRanges[range];
+          for(let range=0;range<9;range++) if(remainingRanges[range]>0&&pools[group].some(item=>candidateNumbers.has(item.number)&&rangeIndex(item.number)===range&&!selected.includes(item.number))) capacity+=remainingRanges[range];
           if(capacity<remainingGroups[group]) return false;
         }
         for(let range=0;range<9;range++) {
-          const available=pools.reduce((sum,pool,group)=>sum+(remainingGroups[group]>0?pool.filter(item=>rangeIndex(item.number)===range&&!selected.includes(item.number)).length:0),0);
+          const available=pools.reduce((sum,pool,group)=>sum+(remainingGroups[group]>0?pool.filter(item=>candidateNumbers.has(item.number)&&rangeIndex(item.number)===range&&!selected.includes(item.number)).length:0),0);
           if(available<remainingRanges[range]) return false;
         }
         return true;
       };
       const search=(depth:number):boolean=>{
-        if(depth===10) return remainingGroups.every(value=>value===0)&&remainingRanges.every(value=>value===0)&&selected.filter(number=>persistent.has(number)).length>=persistentMinimum;
+        if(depth===10) return remainingGroups.every(value=>value===0)&&remainingRanges.every(value=>value===0)&&selected.filter(number=>persistent.has(number)).length>=persistentMinimum&&(!recoveryPlay||selected.some(number=>recoveryNumbers.has(number)));
         if(!feasible()) return false;
         const persistentNeeded=Math.max(0,persistentMinimum-selected.filter(number=>persistent.has(number)).length);
         if(remainingGroups[0]<persistentNeeded) return false;
+        const nextRange=Array.from({length:9},(_,range)=>range).filter(range=>remainingRanges[range]>0).sort((a,b)=>{
+          const available=(range:number)=>pools.reduce((sum,pool,group)=>sum+(remainingGroups[group]>0?pool.filter(item=>candidateNumbers.has(item.number)&&rangeIndex(item.number)===range&&!selected.includes(item.number)).length:0),0);
+          return available(a)/remainingRanges[a]-available(b)/remainingRanges[b]||a-b;
+        })[0];
         const options:{number:number;group:number;range:number;score:number}[]=[];
-        for(let range=0;range<9;range++) if(remainingRanges[range]>0) for(let group=0;group<3;group++) if(remainingGroups[group]>0) for(const item of pools[group]) {
-          if(rangeIndex(item.number)!==range||selected.includes(item.number)) continue;
+        for(let group=0;group<3;group++) if(remainingGroups[group]>0) for(const item of pools[group]) {
+          if(!candidateNumbers.has(item.number)||rangeIndex(item.number)!==nextRange||selected.includes(item.number)) continue;
           if(group===0&&remainingGroups[0]===persistentNeeded&&!persistent.has(item.number)) continue;
-          options.push({number:item.number,group,range,score:score(item.number,depth)});
+          options.push({number:item.number,group,range:nextRange,score:score(item.number,depth)});
         }
         options.sort((a,b)=>a.score-b.score||a.number-b.number);
         for(const option of options.slice(0,Math.min(30,options.length))) {
@@ -575,7 +625,11 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
     }
     plays.push({id:index+1,profile:"exploratoria",numbers:accepted,hot:mix[0],middle:mix[1],cold:mix[2]});
   }
-  return {plays,persistentTopNumbers};
+  return {
+    plays,persistentTopNumbers,recoveryNumbers:[...recoveryNumbers].sort((a,b)=>a-b),
+    rangeModel:rangeModel.map(item=>({...item,dominant:dominantRanges.some(candidate=>candidate.range===item.range)})),
+    concentrationPlayCount:plays.filter((_,index)=>index%4===0).length
+  };
 }
 
 const kinoQuickHotSchema = z.object({
@@ -595,6 +649,14 @@ export const kinoSnapshotSchema = z.object({
   delayCutoff: z.iso.date().optional(),
   maximumDaysWithoutAppearance: z.number().int().positive().optional(),
   minimumGlobalAppearances: z.number().int().positive().optional(),
+  recoveryPlayCount: z.number().int().nonnegative().optional(),
+  recoveryNumbers: z.array(z.number().int().min(1).max(84)).optional(),
+  concentrationPlayCount: z.number().int().nonnegative().optional(),
+  rangeModel: z.array(z.object({
+    range:z.number().int().min(0).max(8), from:z.number().int().min(1).max(84), to:z.number().int().min(1).max(84),
+    recentAverage:z.number().nonnegative(), previousAverage:z.number().nonnegative(), historicalAverage:z.number().nonnegative(),
+    concentrationRate:z.number().min(0).max(1), momentum:z.number(), score:z.number().nonnegative(), dominant:z.boolean()
+  })).length(9).optional(),
   excludedByDelay: z.array(z.object({
     number: z.number().int().min(1).max(84),
     lastDate: z.iso.date().nullable()
@@ -622,7 +684,13 @@ export const kinoSnapshotSchema = z.object({
     if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>8))) ctx.addIssue({code:"custom",message:"Kino v9.3 contiene jugadas demasiado redundantes."});
     if(snapshot.algorithm==="kino-v9.4") {
       if(snapshot.maximumDaysWithoutAppearance!==9||snapshot.minimumGlobalAppearances!==4) ctx.addIssue({code:"custom",message:"Kino v9.4 requiere atraso máximo de 9 días y al menos 4 salidas globales."});
-      if(snapshot.plays.some(play=>Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length).some(count=>count<1||count>2))) ctx.addIssue({code:"custom",message:"Cada jugada Kino v9.4 requiere uno o dos números por rango."});
+      if(snapshot.recoveryPlayCount!==undefined||snapshot.recoveryNumbers!==undefined) {
+        const recovery=new Set(snapshot.recoveryNumbers??[]);
+        if(snapshot.recoveryPlayCount!==15||recovery.size!==(snapshot.recoveryNumbers?.length??0)) ctx.addIssue({code:"custom",message:"Kino v9.4 requiere 15 jugadas de recuperación y números únicos."});
+        if(snapshot.rangeModel&&(snapshot.concentrationPlayCount!==30||snapshot.rangeModel.filter(item=>item.dominant).length!==3)) ctx.addIssue({code:"custom",message:"Kino v9.4 requiere tres rangos dominantes y 30 jugadas de concentración."});
+        if(snapshot.plays.some(play=>{const counts=Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length);return counts[0]<1||counts[0]>3||counts[2]<1||counts[2]>2||counts[8]<1||counts[8]>2||counts.some(count=>count>4)})) ctx.addIssue({code:"custom",message:"Kino v9.4 requiere 1–9, 20–29 y 80–84 en cada jugada y permite concentración máxima de cuatro por rango."});
+        if(snapshot.plays.slice(0,105).some(play=>play.numbers.some(number=>recovery.has(number)))||snapshot.plays.slice(105).some(play=>!play.numbers.some(number=>recovery.has(number)))) ctx.addIssue({code:"custom",message:"Las 15 jugadas finales de Kino v9.4 deben cubrir los números de recuperación."});
+      }
     }
   } else if (snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1") {
     const ids = new Set(snapshot.plays.map(play => play.id));
@@ -676,7 +744,7 @@ export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
   const persistentAlgorithm = snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4";
   const composition = persistentAlgorithm
-    ? snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4" ? `Composición principal por grupos y rangos: 25×10/0/0 · 18×1/9/0 · 17×0/9/1 · 10×0/0/10 · 20×4/3/3 · 15×5/3/2 · 15×3/3/4; ${snapshot.algorithm==="kino-v9.4"?"cada rango contiene 1–2 números; máximo 9 días sin salir y mínimo 4 salidas globales":"cada jugada contiene 1–3 números del 1 al 9"}` : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
+    ? snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4" ? `Composición principal por grupos y rangos: 25×10/0/0 · 18×1/9/0 · 17×0/9/1 · 10×0/0/10 · 20×4/3/3 · 15×5/3/2 · 15×3/3/4; ${snapshot.algorithm==="kino-v9.4"?"modelo adaptativo de rangos: 90 jugadas ponderadas + 30 escenarios de concentración; 105 recientes + 15 de recuperación":"cada jugada contiene 1–3 números del 1 al 9"}` : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
     : snapshot.algorithm === "kino-v8"
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
@@ -690,9 +758,10 @@ export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
     `Base histórica: ${snapshot.analysisFrom} a ${snapshot.analysisTo} (${snapshot.sampleSize} sorteos)`,
     composition,
     reinforcement,
+    ...(snapshot.algorithm==="kino-v9.4"?[`Números de recuperación (>9 días): ${snapshot.recoveryNumbers?.map(number=>String(number).padStart(2,"0")).join(", ")||"Ninguno"}`]:[]),
     persistentAlgorithm ? snapshot.algorithm==="kino-v9.3"||snapshot.algorithm==="kino-v9.4" ? "La cobertura del top 20 es escalonada según la composición caliente de cada jugada." : "Cada jugada contiene entre 3 y 5 números del top 20." : `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
     "",
-    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${persistentAlgorithm ? label : play.quickHot ? label : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
+    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${snapshot.algorithm==="kino-v9.4"&&play.id>105?"[RECUPERACIÓN]":persistentAlgorithm ? label : play.quickHot ? label : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
   ].join("\n");
 }
 
@@ -721,31 +790,44 @@ export function getKinoStaleNumbers(draws: KinoDraw[], targetDate: string) {
   }).filter(item => item.lastDate === null || item.lastDate < cutoff);
 }
 
-export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = new Date()): KinoSnapshot {
+function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, now:Date, forcedAlgorithm?:"kino-v9.4"): KinoSnapshot {
   const sample = draws.filter(d => d.date >= KINO_ANALYSIS_START && d.date < targetDate).sort((a,b) => b.date.localeCompare(a.date)).slice(0, 30);
   if (!sample.length) throw new Error("No hay historial anterior suficiente para generar las jugadas.");
-  const algorithm = kinoAlgorithmForDate(targetDate);
+  const algorithm = forcedAlgorithm??kinoAlgorithmForDate(targetDate);
   const v94=algorithm==="kino-v9.4";
   const priorFormatDraws=draws.filter(draw=>draw.date>=KINO_ANALYSIS_START&&draw.date<targetDate).sort((a,b)=>b.date.localeCompare(a.date));
   const delayCutoff = v94?kinoNineDayCutoff(targetDate):kinoOneMonthCutoff(targetDate);
   const globalFrequency=new Map<number,number>();
   priorFormatDraws.forEach(draw=>draw.numbers.forEach(number=>globalFrequency.set(number,(globalFrequency.get(number)??0)+1)));
-  const excludedByDelay = v94?Array.from({length:84},(_,index)=>{
+  const eligibility=Array.from({length:84},(_,index)=>{
     const number=index+1;
     return {number,lastDate:priorFormatDraws.find(draw=>draw.numbers.includes(number))?.date??null};
-  }).filter(item=>item.lastDate===null||item.lastDate<delayCutoff||(globalFrequency.get(item.number)??0)<4):getKinoStaleNumbers(draws, targetDate);
+  });
+  const excludedByDelay = v94?eligibility.filter(item=>(globalFrequency.get(item.number)??0)<4):getKinoStaleNumbers(draws, targetDate);
   const excluded = new Set(excludedByDelay.map(item => item.number));
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
+  const freshNumbers=new Set([...allowedNumbers].filter(number=>{
+    const lastDate=eligibility.find(item=>item.number===number)?.lastDate;
+    return lastDate!==null&&lastDate!==undefined&&lastDate>=delayCutoff;
+  }));
   const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
   const persistentAlgorithm = algorithm === "kino-v9" || algorithm === "kino-v9.1" || algorithm === "kino-v9.3" || algorithm === "kino-v9.4";
   if (!persistentAlgorithm && quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
   const quickNumbers = quickHotNumbers.map(item => item.number);
-  const persistent = algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null;
+  const persistent = algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null;
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
+    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:15,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
     plays: persistent?.plays ?? buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
+}
+
+export function buildKinoSnapshot(draws: KinoDraw[], targetDate: string, now = new Date()): KinoSnapshot {
+  return buildKinoSnapshotForAlgorithm(draws,targetDate,now);
+}
+
+export function buildKinoV94RetrospectiveSnapshot(draws:KinoDraw[],targetDate:string,now=new Date(`${targetDate}T13:00:00Z`)):KinoSnapshot {
+  return buildKinoSnapshotForAlgorithm(draws,targetDate,now,"kino-v9.4");
 }
 
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {

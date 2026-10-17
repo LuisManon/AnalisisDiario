@@ -86,10 +86,10 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
   assert.ok(snapshot.plays.every(play=>play.profile==='exploratoria'));
   assert.ok(snapshot.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.deepEqual(snapshot.persistentTopNumbers,[27,46,12,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
+  assert.deepEqual(snapshot.persistentTopNumbers,[46,12,27,69,43,49,64,11,22,24,31,59,71,74,84,5,9,16,17,19]);
   const persistent=new Set(snapshot.persistentTopNumbers);
   assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>persistent.has(number)).length>=3));
-  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'092432ee593440b9df5463a4caacbc5e4a2fd8288443d3b9c4d87fe014f21fd3');
+  assert.equal(createHash('sha256').update(JSON.stringify(snapshot.plays.map(play=>play.numbers))).digest('hex'),'cc26bbf41cf8a92f70b03ecacebaba82b9267bcdbd0e37e23aa2812ae1b73b00');
   assert.match(formatKinoPortfolioText(snapshot),/top 20 persistente/i);
   assert.equal(kinoSnapshotSchema.safeParse({...snapshot,persistentTopNumbers:snapshot.persistentTopNumbers.slice(0,19)}).success,false);
   const v91=buildKinoSnapshot(draws,'2026-10-12',new Date('2026-10-11T20:18:01.242Z'));
@@ -97,7 +97,7 @@ test('v9 starts on October 11 and v9.1 starts on October 12 without changing ear
   assert.equal(v91.plays.length,120);
   assert.equal(new Set(v91.plays.map(play=>play.numbers.join(','))).size,120);
   assert.ok(v91.plays.every(play=>play.hot===5&&play.middle===3&&play.cold===2));
-  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'b497c5071e3f17d09b58652b8a8de79a22ed7b86b965466794bf54d2d68103e0');
+  assert.equal(createHash('sha256').update(JSON.stringify(v91.plays.map(play=>play.numbers))).digest('hex'),'99bcabfbbf52e651d850958daf30b7537515fef2052656080f803704ddd82a90');
   assert.match(formatKinoPortfolioText(v91),/5 rotaciones intermedias antirredundancia/i);
   const changed=buildKinoSnapshot([...draws,{...draws[0],date:'2026-10-11'},{...draws[0],date:'2026-10-12'}],'2026-10-11',new Date('2026-10-11T13:15:00Z'));
   assert.deepEqual(changed,snapshot);
@@ -130,6 +130,11 @@ test('v9.4 applies freshness, global frequency and average range allocation from
   assert.equal(snapshot.algorithm,'kino-v9.4');
   assert.equal(snapshot.maximumDaysWithoutAppearance,9);
   assert.equal(snapshot.minimumGlobalAppearances,4);
+  assert.equal(snapshot.recoveryPlayCount,15);
+  assert.equal(snapshot.concentrationPlayCount,30);
+  assert.equal(snapshot.rangeModel?.length,9);
+  assert.equal(snapshot.rangeModel?.filter(range=>range.dominant).length,3);
+  assert.ok(snapshot.rangeModel?.filter(range=>range.dominant).some(range=>range.range===4));
   assert.equal(snapshot.delayCutoff,'2026-10-07');
   assert.equal(snapshot.plays.length,120);
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
@@ -137,10 +142,22 @@ test('v9.4 applies freshness, global frequency and average range allocation from
   const frequency=new Map<number,number>();
   prior.forEach(draw=>draw.numbers.forEach(number=>frequency.set(number,(frequency.get(number)??0)+1)));
   assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>(frequency.get(number)??0)>3)));
-  assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>prior.some(draw=>draw.date>='2026-10-07'&&draw.numbers.includes(number)))));
-  assert.ok(snapshot.plays.every(play=>Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length).every(count=>count>=1&&count<=2)));
+  const recovery=new Set(snapshot.recoveryNumbers);
+  assert.ok(snapshot.plays.slice(0,105).every(play=>play.numbers.every(number=>prior.some(draw=>draw.date>='2026-10-07'&&draw.numbers.includes(number)))));
+  assert.ok(snapshot.plays.slice(105).every(play=>play.numbers.some(number=>recovery.has(number))));
+  assert.ok(snapshot.plays.every(play=>{const counts=Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length);return counts[0]>=1&&counts[0]<=3&&counts[2]>=1&&counts[2]<=2&&counts[8]>=1&&counts[8]<=2&&counts.every(count=>count<=4)}));
+  const dominant=new Set(snapshot.rangeModel?.filter(range=>range.dominant).map(range=>range.range));
+  assert.ok(snapshot.plays.filter((_,index)=>index%4===0).every(play=>Math.max(...[...dominant].map(range=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length))>=2));
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
   assert.deepEqual(snapshot.plays,buildKinoSnapshot([...draws].reverse(),'2026-10-16',new Date('2026-10-16T13:00:00Z')).plays);
+});
+test('v9.4 retrospective reconstruction uses only information prior to each draw',async()=>{
+  const {buildKinoV94RetrospectiveSnapshot}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoV94RetrospectiveSnapshot(draws,'2026-10-14');
+  assert.equal(snapshot.algorithm,'kino-v9.4');
+  assert.equal(snapshot.analysisTo<'2026-10-14',true);
+  assert.equal(snapshot.concentrationPlayCount,30);
+  assert.deepEqual(snapshot.plays,buildKinoV94RetrospectiveSnapshot(draws.filter(draw=>draw.date<'2026-10-14'),'2026-10-14').plays);
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
