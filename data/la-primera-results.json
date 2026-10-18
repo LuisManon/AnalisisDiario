@@ -4,21 +4,27 @@
     "session": "dia",
     "number": 58,
     "drawId": 880,
-    "source": "https://laprimera.do/resultados/"
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-10-18/"
   },
   {
     "date": "2026-10-17",
     "session": "dia",
     "number": 32,
     "drawId": 879,
-    "source": "https://laprimera.do/resultados/"
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-10-17/"
   },
   {
     "date": "2026-10-17",
     "session": "noche",
     "number": 60,
     "drawId": 874,
-    "source": "https://laprimera.do/resultados/"
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-noche/2026-10-17/"
   },
   {
     "date": "2026-10-16",
