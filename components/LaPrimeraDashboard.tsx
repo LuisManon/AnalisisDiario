@@ -809,7 +809,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
           <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
-            {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>Quinielón</small></div> : <small>Esperando resultado</small>}
+            {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>{tanda.draw.verification==="provisional"?"Provisional · La Banca":"Quinielón confirmado"}</small></div> : <small>Esperando resultado</small>}
             {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "❄️" ? "Antes del sorteo: 4 o 5 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "❄️" ? "Era cristal de hielo" : "Era hielo"}</span> : null}
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
@@ -877,7 +877,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
     <ProductSwitch product={variant} onChange={onProductChange} />
     <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "El Quinielón 2.0"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
       const latest = latestBySession[session];
-      return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
+      return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{latest.verification==="provisional"?"Provisional · esperando La Primera":getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
     <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
     <QuinielonV2WeeklyChallenge results={results} variant={variant} />

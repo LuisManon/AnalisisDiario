@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
+import { mergeLaPrimeraResults } from "./la-primera-result-sources";
 import { drawSchema, laPrimeraDrawSchema, laPrimeraLoto5DrawSchema, laPrimeraQuinielaDrawSchema, lotekaRepartideraDrawSchema, quinielaPaleDrawSchema } from "./validation";
 import type { DrawResult, LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "./types";
 
@@ -58,9 +59,7 @@ export async function readLaPrimeraResults(): Promise<LaPrimeraDraw[]> {
 }
 
 export async function writeLaPrimeraResults(results: LaPrimeraDraw[]) {
-  const unique = new Map<string, LaPrimeraDraw>();
-  for (const result of results) unique.set(`${result.date}-${result.session}`, result);
-  const sorted = [...unique.values()].sort((a, b) => b.date.localeCompare(a.date) || a.session.localeCompare(b.session));
+  const sorted = mergeLaPrimeraResults(results);
   await writeJsonFile(laPrimeraDataPath, laPrimeraRepoPath, `${JSON.stringify(sorted, null, 2)}\n`, "Update La Primera results");
   return sorted;
 }

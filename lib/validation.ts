@@ -25,7 +25,9 @@ export const laPrimeraDrawSchema = z.object({
   session: z.enum(["dia", "noche"]),
   number: z.number().int().min(0).max(99),
   drawId: z.number().int().positive().optional(),
-  source: z.string().optional()
+  source: z.string().optional(),
+  verification: z.enum(["provisional", "confirmed"]).optional(),
+  provisionalSource: z.string().optional()
 });
 
 export const laPrimeraQuinielaDrawSchema = z.object({

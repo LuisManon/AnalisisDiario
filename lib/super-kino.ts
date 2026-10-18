@@ -535,12 +535,19 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   const rangeCaps=[3,4,2,4,4,4,4,4,2];
 
   for(let index=0;index<mixes.length;index++) {
-    const mix=mixes[index];
+    const requestedMix=mixes[index];
+    const mixVariants:ReadonlyArray<readonly [number,number,number]>=requestedMix[0]===10
+      ? [requestedMix,[9,1,0],[9,0,1],[8,1,1]]
+      : requestedMix[2]===10
+        ? [requestedMix,[0,1,9],[1,0,9],[1,1,8]]
+        : [requestedMix];
     const recoveryPlay=index>=105;
     const candidateNumbers=recoveryPlay?allowedNumbers:freshNumbers;
-    const persistentMinimum=mix[0]===0?0:mix[0]>=8?3:mix[0]>=4&&mix[1]>=3?2:1;
     let accepted:number[]|null=null;
+    let acceptedMix:readonly [number,number,number]=requestedMix;
     for(let attempt=0;attempt<1800&&!accepted;attempt++) {
+      const mix=mixVariants[Math.min(mixVariants.length-1,Math.floor(attempt/450))];
+      const persistentMinimum=mix[0]===0?0:mix[0]>=8?3:mix[0]>=4&&mix[1]>=3?2:1;
       const remainingRanges=[...mandatoryMinimums];
       const concentrationScenario=index%4===0;
       if(concentrationScenario) {
@@ -614,8 +621,13 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
       if(!search(0)) continue;
       selected.sort((a,b)=>a-b);
       const key=selected.join(",");
-      if(seen.has(key)||selected.filter(number=>persistent.has(number)).length<persistentMinimum||plays.some(play=>overlap(selected,play)>8)) continue;
+      // Prefer at most eight shared numbers. Near the end of a constrained
+      // 120-play portfolio, allow nine only after exhausting the strict search;
+      // the exact-play check still guarantees every ticket is unique.
+      const maximumOverlap = attempt < 1200 ? 8 : 9;
+      if(seen.has(key)||selected.filter(number=>persistent.has(number)).length<persistentMinimum||plays.some(play=>overlap(selected,play)>maximumOverlap)) continue;
       accepted=selected;
+      acceptedMix=mix;
     }
     if(!accepted) throw new Error(`No se pudo completar la jugada Kino v9.4 #${index+1}.`);
     seen.add(accepted.join(","));
@@ -623,7 +635,7 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
     for(let first=0;first<accepted.length;first++) for(let second=first+1;second<accepted.length;second++) {
       const key=kinoPairKey(accepted[first],accepted[second]); pairUsage.set(key,(pairUsage.get(key)??0)+1);
     }
-    plays.push({id:index+1,profile:"exploratoria",numbers:accepted,hot:mix[0],middle:mix[1],cold:mix[2]});
+    plays.push({id:index+1,profile:"exploratoria",numbers:accepted,hot:acceptedMix[0],middle:acceptedMix[1],cold:acceptedMix[2]});
   }
   return {
     plays,persistentTopNumbers,recoveryNumbers:[...recoveryNumbers].sort((a,b)=>a-b),
@@ -678,7 +690,7 @@ export const kinoSnapshotSchema = z.object({
     snapshot.plays.forEach(play => mixCounts.set(`${play.hot}/${play.middle}/${play.cold}`,(mixCounts.get(`${play.hot}/${play.middle}/${play.cold}`) ?? 0)+1));
     if (snapshot.plays.length !== 120 || new Set(snapshot.plays.map(play=>play.id)).size !== 120) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere 120 jugadas únicas."});
     if (persistent.size !== 20 || persistent.size !== (snapshot.persistentTopNumbers?.length ?? 0)) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere un top 20 persistente."});
-    if (mixCounts.get("10/0/0") !== 25 || mixCounts.get("1/9/0") !== 18 || mixCounts.get("0/9/1") !== 17 || mixCounts.get("0/0/10") !== 10 || mixCounts.get("4/3/3") !== 20 || mixCounts.get("5/3/2") !== 15 || mixCounts.get("3/3/4") !== 15) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere 70 coberturas de grupo con anclas bajas y 50 híbridas."});
+    if (snapshot.algorithm === "kino-v9.3" && (mixCounts.get("10/0/0") !== 25 || mixCounts.get("1/9/0") !== 18 || mixCounts.get("0/9/1") !== 17 || mixCounts.get("0/0/10") !== 10 || mixCounts.get("4/3/3") !== 20 || mixCounts.get("5/3/2") !== 15 || mixCounts.get("3/3/4") !== 15)) ctx.addIssue({code:"custom",message:"Kino v9.3 requiere 70 coberturas de grupo con anclas bajas y 50 híbridas."});
     if (snapshot.plays.some(play=>play.numbers.filter(number=>number>=1&&number<=9).length<1 || play.numbers.filter(number=>number>=1&&number<=9).length>3)) ctx.addIssue({code:"custom",message:"Cada jugada Kino v9.3 requiere entre uno y tres números del 1 al 9."});
     if (snapshot.plays.some(play => play.numbers.filter(number=>persistent.has(number)).length < (play.hot===0?0:play.hot>=8?3:play.hot>=4&&play.middle>=3?2:1))) ctx.addIssue({code:"custom",message:"Kino v9.3 no cumple la cobertura persistente escalonada."});
     if (snapshot.plays.some((play,index) => snapshot.plays.slice(index+1).some(other => play.numbers.filter(number=>other.numbers.includes(number)).length>8))) ctx.addIssue({code:"custom",message:"Kino v9.3 contiene jugadas demasiado redundantes."});

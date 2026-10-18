@@ -159,6 +159,14 @@ test('v9.4 retrospective reconstruction uses only information prior to each draw
   assert.equal(snapshot.concentrationPlayCount,30);
   assert.deepEqual(snapshot.plays,buildKinoV94RetrospectiveSnapshot(draws.filter(draw=>draw.date<'2026-10-14'),'2026-10-14').plays);
 });
+test('v9.4 completes the next production portfolio after the October 17 draw',async()=>{
+  const {buildKinoSnapshot}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoSnapshot(draws,'2026-10-19',new Date('2026-10-18T16:49:00Z'));
+  assert.equal(snapshot.plays.length,120);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
+  assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
+  assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
+});
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
   assert.equal(kinoOneMonthCutoff('2024-03-31'),'2024-02-29');

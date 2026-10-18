@@ -40,8 +40,25 @@ export async function GET(request: NextRequest) {
     const beforeKeys = new Set(existing.map((result) => `${result.date}-${result.session}`));
     const remote = await fetchLaPrimeraResultsSince(targetDate ?? subtractDays(latestDate, 1), targetDate ?? undefined);
     const added = remote.results.filter((result) => !beforeKeys.has(`${result.date}-${result.session}`)).length;
+    const existingByKey = new Map(existing.map((result) => [`${result.date}-${result.session}`, result]));
+    const confirmationConflicts = remote.officialResults.flatMap((official) => {
+      const saved = existingByKey.get(`${official.date}-${official.session}`);
+      return saved?.verification === "provisional" && saved.number !== official.number
+        ? [{ date: official.date, session: official.session, provisional: saved.number, official: official.number }]
+        : [];
+    });
     const results = await writeLaPrimeraResults([...existing, ...remote.results]);
-    return NextResponse.json({ ok: true, product: "quinielon", added, total: results.length, latest: results[0] ?? null, results, source: remote.sourceUrl, checkedDates: remote.checkedDates, message: added ? `Se agregaron ${added} resultados nuevos del Quinielón.` : "El Quinielón está actualizado." });
+    const conflicts = [...remote.conflicts, ...confirmationConflicts];
+    const provisional = remote.results.filter((result) => result.verification === "provisional").length;
+    const confirmed = remote.results.filter((result) => result.verification === "confirmed").length;
+    const message = conflicts.length
+      ? `La Primera corrigió ${conflicts.length} resultado provisional.`
+      : provisional
+        ? `Se agregaron ${provisional} resultados provisionales; esperando confirmación de La Primera.`
+        : added
+          ? `Se agregaron ${added} resultados nuevos del Quinielón.`
+          : "El Quinielón está actualizado y confirmado.";
+    return NextResponse.json({ ok: true, product: "quinielon", added, confirmed, provisional, conflicts, total: results.length, latest: results[0] ?? null, results, source: remote.sourceUrl, checkedDates: remote.checkedDates, message });
   } catch (error) {
     return NextResponse.json(
       {

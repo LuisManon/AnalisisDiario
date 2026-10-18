@@ -92,6 +92,8 @@ export type LaPrimeraDraw = {
   number: number;
   drawId?: number;
   source?: string;
+  verification?: "provisional" | "confirmed";
+  provisionalSource?: string;
 };
 
 export type LaPrimeraQuinielaDraw = {

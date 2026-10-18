@@ -1,9 +1,13 @@
 import { laPrimeraDrawSchema, laPrimeraLoto5DrawSchema, laPrimeraQuinielaDrawSchema } from "./validation";
 import type { LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw } from "./types";
 import { cleanLoto5Results } from "./la-primera-loto5";
+import { parseLaBancaQuinielon } from "./la-primera-result-sources";
+
+export { parseLaBancaQuinielon } from "./la-primera-result-sources";
 
 const resultsUrl = "https://laprimera.do/resultados/";
 const ajaxUrl = "https://laprimera.do/wp-admin/admin-ajax.php";
+const laBancaBaseUrl = "https://labanca.do/loterias/la-primera";
 
 type OfficialLottery = {
   fecha?: string;
@@ -42,10 +46,23 @@ function parseOfficialDraw(date: string, item: OfficialLottery): LaPrimeraDraw |
     session,
     number,
     drawId: item.sorteo_numero,
-    source: resultsUrl
+    source: resultsUrl,
+    verification: "confirmed"
   });
 
   return parsed.success ? parsed.data : null;
+}
+
+async function fetchLaBancaQuinielonForDate(date: string, session: "dia" | "noche") {
+  const url = `${laBancaBaseUrl}/quinielon-${session}/${date}/`;
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: { Accept: "text/html,application/xhtml+xml", "Accept-Language": "es-DO,es;q=0.9", "User-Agent": "AnalisisDiario/1.0 Mozilla/5.0" },
+    signal: AbortSignal.timeout(20_000)
+  });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`La Banca respondió HTTP ${response.status}.`);
+  return parseLaBancaQuinielon(await response.text(), date, session, url);
 }
 
 function parseOfficialQuinielaDraw(date: string, item: OfficialLottery): LaPrimeraQuinielaDraw | null {
@@ -170,17 +187,38 @@ export async function fetchLaPrimeraQuinielaResultsSince(startDate: string, endD
 }
 
 export async function fetchLaPrimeraResultsSince(startDate: string, endDate?: string) {
-  const nonce = await fetchNonce();
   const dates = getDateRange(startDate, endDate);
-  const results: LaPrimeraDraw[] = [];
-
-  for (const date of dates) {
-    results.push(...(await fetchLaPrimeraResultsForDate(date, nonce)));
+  const [officialAttempt, provisionalAttempt] = await Promise.allSettled([
+    (async () => {
+      const nonce = await fetchNonce();
+      const draws: LaPrimeraDraw[] = [];
+      for (const date of dates) draws.push(...await fetchLaPrimeraResultsForDate(date, nonce));
+      return draws;
+    })(),
+    (async () => {
+      const attempts = await Promise.allSettled(
+        dates.flatMap((date) => (["dia", "noche"] as const).map((session) => fetchLaBancaQuinielonForDate(date, session)))
+      );
+      return attempts.flatMap((attempt) => attempt.status === "fulfilled" && attempt.value ? [attempt.value] : []);
+    })()
+  ]);
+  const official = officialAttempt.status === "fulfilled" ? officialAttempt.value : [];
+  const provisional = provisionalAttempt.status === "fulfilled" ? provisionalAttempt.value : [];
+  if (!official.length && !provisional.length && officialAttempt.status === "rejected" && provisionalAttempt.status === "rejected") {
+    throw new AggregateError([officialAttempt.reason, provisionalAttempt.reason], "No se pudo consultar La Primera ni La Banca.");
   }
 
-  return {
-    results,
-    sourceUrl: resultsUrl,
-    checkedDates: dates
-  };
+  const officialByKey = new Map(official.map((draw) => [`${draw.date}-${draw.session}`, draw]));
+  const provisionalByKey = new Map(provisional.map((draw) => [`${draw.date}-${draw.session}`, draw]));
+  const conflicts: Array<{ date: string; session: "dia" | "noche"; official: number; provisional: number }> = [];
+  const results: LaPrimeraDraw[] = [];
+  for (const key of new Set([...officialByKey.keys(), ...provisionalByKey.keys()])) {
+    const confirmed = officialByKey.get(key);
+    const early = provisionalByKey.get(key);
+    if (confirmed) {
+      if (early && early.number !== confirmed.number) conflicts.push({ date: confirmed.date, session: confirmed.session, official: confirmed.number, provisional: early.number });
+      results.push({ ...confirmed, ...(early?.source ? { provisionalSource: early.source } : {}) });
+    } else if (early) results.push(early);
+  }
+  return { results, officialResults: official, provisionalResults: provisional, conflicts, sourceUrl: official.length ? resultsUrl : laBancaBaseUrl, checkedDates: dates };
 }
