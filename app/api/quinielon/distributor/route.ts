@@ -37,7 +37,16 @@ export async function POST(request: Request) {
       return { number:item.number, source, badge: numberDelayBadge(results,item.number,slot), winner: results.some(draw => draw.session === slot.session && draw.number === item.number && draw.date >= monday) };
     }));
     const strength = new Map(buildLaPrimeraFrequencyRanking(results.filter(draw => draw.session === slot.session)).map((item, index) => [item.number, index]));
-    const eligible = smart ? pool.filter(n => !n.badge).sort((a,b) => strength.get(a.number)! - strength.get(b.number)!) : pool;
+    const eligibleCandidates = smart ? pool.filter(n => !n.badge).sort((a,b) => strength.get(a.number)! - strength.get(b.number)!) : pool;
+    const priorWinner = sourceDraw && source?.investors.flat().find(item => item.number === sourceDraw.number);
+    const protectedWinner = smart && (priorWinner?.tier === "hot" || priorWinner?.tier === "intermediate")
+      ? eligibleCandidates.find(item => item.number === sourceDraw!.number)
+      : undefined;
+    const eligible = smart
+      ? protectedWinner && !eligibleCandidates.slice(0,48).some(item => item.number === protectedWinner.number)
+        ? [...eligibleCandidates.slice(0,47),protectedWinner]
+        : eligibleCandidates.slice(0,48)
+      : eligibleCandidates;
     const rotation = smart ? winnerRotationContext(slot, source, sourceDraw, sourceDraw ? projectedAssignmentTier(eligible,sourceDraw.number) : undefined) : undefined;
     const rotationKey = rotation ? `${rotation.draw.date}:${rotation.draw.session}:${rotation.draw.number}` : "";
     const savedRotationKey = existing?.winnerRotation ? `${existing.winnerRotation.sourceDate}:${existing.winnerRotation.session}:${existing.winnerRotation.winner}` : "";

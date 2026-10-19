@@ -1,5 +1,5 @@
 import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
-export type DelayBadge = "" | "❄️" | "🧊";
+export type DelayBadge = "" | "🌬️" | "❄️" | "🧊";
 export type AssignmentTier = "hot" | "intermediate" | "remaining";
 export const tierLabels: Record<AssignmentTier, string> = { hot: "🔥 Caliente", intermediate: "🟡 Intermedio", remaining: "🔵 Restante" };
 export const formatInvestment = (amount: number) => `RD$${amount.toLocaleString("en-US")}`;
@@ -23,7 +23,7 @@ export function subtractMonths(date: string, months: number) {
 // itself (or later results) cannot erase its historical delay classification.
 export function numberDelayBadge(results: LaPrimeraDraw[], number: number, slot: {date: string; session: LaPrimeraSession}): DelayBadge {
   const last = results.reduce((latest, draw) => draw.session === slot.session && draw.number === number && draw.date < slot.date && draw.date > latest ? draw.date : latest, "");
-  return !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : "";
+  return !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : last < subtractMonths(slot.date,3) ? "🌬️" : "";
 }
 export function shiftDate(date: string, days: number) { const d = new Date(`${date}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); }
 export function nextAssignmentSlot(now = new Date()) {
@@ -53,13 +53,13 @@ export function rotateBlocks(pool: AssignmentNumber[], slot: { date: string; ses
   return { investors: blockIndexes.map(block => pool.slice(block * 20, block * 20 + 20)), mixed: false,
     blockStarts: blockIndexes.map(block => block * 20 + 1), algorithmVersion: blockRotationVersion };
 }
-export const smartDistributionVersion = "tiers-v4";
+export const smartDistributionVersion = "tiers-v6";
 function hash(value: string) { let h = 2166136261; for (const char of value) h = Math.imul(h ^ char.charCodeAt(0), 16777619); return h >>> 0; }
 export function projectedAssignmentTier(pool: AssignmentNumber[], number: number): AssignmentTier | undefined {
   if (!pool.some(item => item.number === number)) return undefined;
   const hot = new Set(pool.filter(item => item.source === "casa").slice(0,16).map(item => item.number));
   if (hot.has(number)) return "hot";
-  const intermediate = new Set(pool.filter(item => !hot.has(item.number)).slice(0,20).map(item => item.number));
+  const intermediate = new Set(pool.filter(item => !hot.has(item.number)).slice(0,pool.length === 48 ? 16 : 20).map(item => item.number));
   return intermediate.has(number) ? "intermediate" : "remaining";
 }
 // Only a validated, saved tier from the immediately preceding draw of the SAME
@@ -98,7 +98,7 @@ function rotationPlan(pool: AssignmentNumber[], context?: WinnerRotationContext)
 // ownership ties; they never determine a number's category or strength.
 export function distribute(pool: AssignmentNumber[], previous: Assignment[], smart: boolean, seed: string, context?: WinnerRotationContext): Pick<Assignment, "investors" | "mixed" | "algorithmVersion" | "prizeMultiplier" | "allocationWarning" | "winnerRotation"> {
   if (new Set(pool.map(item => item.number)).size !== pool.length) throw new Error("El pool contiene números duplicados.");
-  if (smart && (pool.length < 64 || pool.length > 68)) throw new Error("Se necesitan entre 64 y 68 números elegibles para mantener 16/17 jugadas y la inversión de RD$10,250/RD$10,150 por inversionista.");
+  if (smart && (pool.length < 48 || pool.length > 68)) throw new Error("Se necesitan entre 48 y 68 números elegibles para construir el reparto inteligente.");
   const winnerRotation = smart ? rotationPlan(pool, context) : undefined;
   const required = new Map(winnerRotation?.changes.map(change => [change.number, change.to]) ?? []);
   const priorTiers = new Map(context?.source.investors.flat().map(n => [n.number, n.tier]) ?? []);
@@ -109,11 +109,12 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
   const hot = new Set([...forcedHot, ...categoryPool.filter(item => item.source === "casa" && !required.has(item.number))].slice(0,16).map(item => item.number));
   if (smart && hot.size < 16) throw new Error("No hay 16 números elegibles de Casa (top 40) para entregar 4 calientes a cada inversionista.");
   const forcedIntermediate = pool.filter(n => required.get(n.number) === "intermediate");
-  const intermediate = new Set([...forcedIntermediate, ...categoryPool.filter(item => !hot.has(item.number) && !required.has(item.number))].slice(0,20).map(item => item.number));
+  const intermediate = new Set([...forcedIntermediate, ...categoryPool.filter(item => !hot.has(item.number) && !required.has(item.number))].slice(0,pool.length === 48 ? 16 : 20).map(item => item.number));
   const ranked = pool.map(item => smart ? {...item, tier: (hot.has(item.number) ? "hot" : intermediate.has(item.number) ? "intermediate" : "remaining") as AssignmentTier} : {...item});
   const blocked = Array.from({ length: 4 }, (_, i) => new Set(previous.flatMap(p => p.investors[i].map(n => n.number))));
   function match(capacities: number[], strictTiers: boolean) {
-    const slots = capacities.flatMap((count, investor) => Array.from({length: count}, (_, index) => ({investor, tier: index < 4 ? "hot" : index < 9 ? "intermediate" : "remaining"})));
+    const intermediateEnd = pool.length === 48 ? 8 : 9;
+    const slots = capacities.flatMap((count, investor) => Array.from({length: count}, (_, index) => ({investor, tier: index < 4 ? "hot" : index < intermediateEnd ? "intermediate" : "remaining"})));
     const owners = slots.map(() => -1);
     const candidates = ranked.map(item => slots.map((slot, index) => ({...slot, index}))
       .filter(slot => !blocked[slot.investor].has(item.number) && (!required.has(item.number) || required.get(item.number) === slot.tier) && (strictTiers ? item.tier === slot.tier : !smart || slot.tier !== "hot" || item.source === "casa"))
@@ -135,7 +136,7 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
       // actual rank within that feasible allocation, never by hash or source alone.
       return output.map(items => {
         const selectedHot = new Set([...items.filter(item => required.get(item.number) === "hot"), ...items.filter(item => item.source === "casa" && !required.has(item.number))].slice(0,4).map(item => item.number));
-        const selectedIntermediate = new Set([...items.filter(item => required.get(item.number) === "intermediate"), ...items.filter(item => !selectedHot.has(item.number) && !required.has(item.number))].slice(0,5).map(item => item.number));
+        const selectedIntermediate = new Set([...items.filter(item => required.get(item.number) === "intermediate"), ...items.filter(item => !selectedHot.has(item.number) && !required.has(item.number))].slice(0,pool.length === 48 ? 4 : 5).map(item => item.number));
         return items.map(item => ({...item, tier: (selectedHot.has(item.number) ? "hot" : selectedIntermediate.has(item.number) ? "intermediate" : "remaining") as AssignmentTier}));
       });
     }
@@ -153,7 +154,7 @@ export function distribute(pool: AssignmentNumber[], previous: Assignment[], sma
       if (!investors) continue;
       if (!smart) return {investors, mixed: true};
       const priced = investors.map(items => items.map(item => ({...item,
-        betAmount: item.tier === "hot" ? (items.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500
+        betAmount: pool.length === 48 ? 850 : item.tier === "hot" ? (items.length === 17 ? 850 : 1000) : item.tier === "intermediate" ? 550 : 500
       })));
       return {investors: priced, mixed: true, algorithmVersion: smartDistributionVersion, prizeMultiplier: 80, ...(winnerRotation ? {winnerRotation} : {})};
     }
@@ -193,7 +194,7 @@ export function validateAssignment(assignment: Assignment): string | null {
   if(new Set(items.map(item=>item.number)).size !== items.length) return "Número asignado más de una vez";
   const sizes=assignment.investors.map(items=>items.length);
   if(assignment.smart ? items.length>80 || Math.max(...sizes)-Math.min(...sizes)>1 || items.some(item=>Boolean(item.badge)) : sizes.some(size=>size!==20)) return "Cantidades o filtros inconsistentes";
-  if (["tiers-v2", "tiers-v3", smartDistributionVersion].includes(assignment.algorithmVersion ?? "")) {
+  if (["tiers-v2", "tiers-v3", "tiers-v4"].includes(assignment.algorithmVersion ?? "")) {
     if (!assignment.smart || assignment.prizeMultiplier !== 80 || assignment.investors.some(numbers =>
       ![16,17].includes(numbers.length) ||
       numbers.filter(item => item.tier === "hot").length !== 4 ||
@@ -203,18 +204,35 @@ export function validateAssignment(assignment: Assignment): string | null {
       numbers.some(item => item.betAmount !== (item.tier === "hot" ? (numbers.length === 16 ? 1000 : 850) : item.tier === "intermediate" ? 550 : 500))
     )) return "El reparto debe tener 4 calientes de Casa, 5 intermedios, 7/8 restantes y la inversión aprobada";
   }
+  if (assignment.algorithmVersion === smartDistributionVersion) {
+    const concentrated = items.length === 48;
+    if (!assignment.smart || assignment.prizeMultiplier !== 80 || assignment.investors.some(numbers => concentrated
+      ? numbers.length !== 12 ||
+        numbers.filter(item => item.tier === "hot").length !== 4 ||
+        numbers.filter(item => item.tier === "intermediate").length !== 4 ||
+        numbers.filter(item => item.tier === "remaining").length !== 4 ||
+        numbers.some(item => item.tier === "hot" && item.source !== "casa") ||
+        numbers.some(item => item.betAmount !== 850)
+      : numbers.length < 13 || numbers.length > 17 ||
+        numbers.filter(item => item.tier === "hot").length !== 4 ||
+        numbers.filter(item => item.tier === "intermediate").length !== 5 ||
+        numbers.filter(item => item.tier === "remaining").length !== numbers.length - 9 ||
+        numbers.some(item => item.tier === "hot" && item.source !== "casa") ||
+        numbers.some(item => item.betAmount !== (item.tier === "hot" ? (numbers.length === 17 ? 850 : 1000) : item.tier === "intermediate" ? 550 : 500))
+    )) return concentrated ? "El reparto concentrado debe tener 4 calientes, 4 intermedios y 4 restantes a RD$850" : "El reparto debe conservar las cuotas y la inversión aprobadas";
+  }
   if (assignment.winnerRotation) {
     const rotation = assignment.winnerRotation;
-    if (!assignment.smart || !["tiers-v3",smartDistributionVersion].includes(assignment.algorithmVersion ?? "") || rotation.session !== assignment.session || rotation.sourceDate !== shiftDate(assignment.date,-1) || !["hot","intermediate"].includes(rotation.winnerTier) || !Array.isArray(rotation.changes)) return "Rotación de ganador fuera de la tanda";
+    if (!assignment.smart || !["tiers-v3","tiers-v4",smartDistributionVersion].includes(assignment.algorithmVersion ?? "") || rotation.session !== assignment.session || rotation.sourceDate !== shiftDate(assignment.date,-1) || !["hot","intermediate"].includes(rotation.winnerTier) || !Array.isArray(rotation.changes)) return "Rotación de ganador fuera de la tanda";
     const expected = rotation.winnerTier === "hot" ? ["hot:remaining", "intermediate:hot", "remaining:intermediate"] : ["intermediate:remaining", "remaining:intermediate"];
     if (rotation.changes.length !== expected.length || new Set(rotation.changes.map(c => c.number)).size !== expected.length || rotation.changes.some((c,i) => `${c.from}:${c.to}` !== expected[i]) || rotation.changes[0].number !== rotation.winner) return "Cadena de rotación de ganador inválida";
     if (rotation.changes.some(c => items.find(n => n.number === c.number)?.tier !== c.to)) return "La rotación no coincide con los niveles guardados";
-    if (items.find(n => n.number === rotation.winner)?.betAmount !== 500) return "El ganador anterior debe recibir la inversión mínima";
+    if (items.find(n => n.number === rotation.winner)?.betAmount !== (assignment.algorithmVersion === smartDistributionVersion && items.length === 48 ? 850 : 500)) return "El ganador anterior debe recibir la inversión mínima aprobada";
   }
   if(assignment.roster) {
     const roster=assignment.roster;
     if(roster.length!==100 || new Set(roster.map(item=>item.number)).size!==100 || roster.some(item=>!Number.isInteger(item.number)||item.number<0||item.number>99||!["nosotros","inversionistas","banca"].includes(item.group))) return "Clasificación incompleta";
-    if(roster.some(item=>item.badge !== undefined && !["", "❄️", "🧊"].includes(item.badge))) return "Indicador de atraso inválido";
+    if(roster.some(item=>item.badge !== undefined && !["", "🌬️", "❄️", "🧊"].includes(item.badge))) return "Indicador de atraso inválido";
     if(roster.filter(item=>item.group!=="banca").length!==80) return "Clasificación fuera del top 80";
     if(items.some(item=>roster.find(entry=>entry.number===item.number)?.group !== (item.source==="casa"?"nosotros":"inversionistas"))) return "El grupo no coincide con la clasificación guardada";
   }
@@ -241,6 +259,6 @@ export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignmen
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
   const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
   const savedBadge = recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.badge ?? item?.badge : undefined;
-  const delayBadge = savedBadge !== undefined && ["", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
+  const delayBadge = savedBadge !== undefined && ["", "🌬️", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
   return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(simulated ? {simulated:true} : {}), ...(results || delayBadge ? {delayBadge} : {}), ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
 }

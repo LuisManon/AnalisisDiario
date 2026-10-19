@@ -153,6 +153,38 @@ test("64–68 eligible numbers retain exact tiers, wagers and full coverage acro
   }
 });
 
+test("52–63 eligible numbers reduce coverage while retaining tier quotas and wager prices", () => {
+  for (const size of [52,53,56,57,58,59,60,61,62,63]) {
+    const selected=pool.slice(0,size);
+    const result=distribute(selected,[],true,`reduced-${size}`);
+    verify(result.investors,selected,[]);
+    result.investors.forEach(items => {
+      assert.ok(items.length >= 13 && items.length <= 16);
+      assert.equal(items.filter(item=>item.tier==="hot").length,4);
+      assert.equal(items.filter(item=>item.tier==="intermediate").length,5);
+      assert.equal(items.filter(item=>item.tier==="remaining").length,items.length-9);
+      assert.equal(assignmentInvestment(items),4000+2750+(items.length-9)*500);
+    });
+    assert.equal(validateAssignment({...snapshot(result.investors),...result,smart:true}),null);
+  }
+});
+
+test("48 eligible numbers produce the concentrated 4/4/4 portfolio at RD$850 each", () => {
+  const selected=pool.slice(0,48);
+  const result=distribute(selected,[],true,"concentrated-48");
+  verify(result.investors,selected,[]);
+  result.investors.forEach(items => {
+    assert.equal(items.length,12);
+    assert.equal(items.filter(item=>item.tier==="hot").length,4);
+    assert.equal(items.filter(item=>item.tier==="intermediate").length,4);
+    assert.equal(items.filter(item=>item.tier==="remaining").length,4);
+    assert.ok(items.every(item=>item.betAmount===850));
+    assert.equal(assignmentInvestment(items),10200);
+  });
+  assert.equal(assignmentInvestment(result.investors.flat()),40800);
+  assert.equal(validateAssignment({...snapshot(result.investors),...result,smart:true}),null);
+});
+
 test("blocked top 16 expand within Casa while retaining all quotas and investment", () => {
   const selected = pool.slice(0,64);
   const previous=[snapshot([selected.slice(0,16),[],[],[]])];
@@ -200,7 +232,7 @@ test("calendar prizes survive serialization and use historical amounts and multi
 });
 
 test("unsupported quantities are rejected instead of changing quotas or inventing wagers", () => {
-  for (const size of [0,17,53,63,69,80]) assert.throws(()=>distribute(pool.slice(0,size),[],true,"unpriced"),/64 y 68/);
+  for (const size of [0,17,47,69,80]) assert.throws(()=>distribute(pool.slice(0,size),[],true,"unpriced"),/48 y 68/);
 });
 
 
@@ -266,7 +298,7 @@ test("historical ice badges use only earlier results from the same session", () 
   const target={date:"2026-10-02",session:"dia" as const,number:25};
   const irrelevant=[target,{...target,date:"2026-10-03"},{...target,date:"2026-10-01",session:"noche" as const}];
   assert.equal(numberDelayBadge(irrelevant,25,target),"🧊");
-  for (const [date,badge] of [["2026-04-02","🧊"],["2026-04-03","❄️"],["2026-06-02","❄️"],["2026-06-03",""]]) {
+  for (const [date,badge] of [["2026-04-02","🧊"],["2026-04-03","❄️"],["2026-06-02","❄️"],["2026-06-03","🌬️"],["2026-07-01","🌬️"],["2026-07-02",""]]) {
     assert.equal(numberDelayBadge([{...target,date},...irrelevant],25,target),badge);
   }
   // The first win ends the delay for a later draw, never for itself.

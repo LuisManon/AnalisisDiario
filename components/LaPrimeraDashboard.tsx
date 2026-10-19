@@ -810,7 +810,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
             {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>{tanda.draw.verification==="provisional"?"Provisional · La Banca":"Quinielón confirmado"}</small></div> : <small>Esperando resultado</small>}
-            {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "❄️" ? "Antes del sorteo: 4 o 5 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "❄️" ? "Era cristal de hielo" : "Era hielo"}</span> : null}
+            {tanda.delayBadge ? <span className="weeklyDelayBadge" title={tanda.delayBadge === "🌬️" ? "Antes del sorteo: más de 3 y menos de 4 meses sin salir en esta tanda" : tanda.delayBadge === "❄️" ? "Antes del sorteo: de 4 a menos de 6 meses sin salir en esta tanda" : "Antes del sorteo: 6 meses o más sin salir, o sin registro previo en esta tanda"}>{tanda.delayBadge} {tanda.delayBadge === "🌬️" ? "Estaba enfriándose" : tanda.delayBadge === "❄️" ? "Era cristal de hielo" : "Era bloque de hielo"}</span> : null}
             {!investors && tanda.draw && day.date >= investorWinnerStartDate ? <span className="weeklyInvestorWinner">{(() => {
               const winner = investorWinners.week === monday ? investorWinners.data[`${day.date}-${tanda.session}`] : undefined;
               if (!winner || winner.number !== tanda.draw.number) return investorWinners.week === monday && investorWinners.error ? "Ganador no disponible" : "Consultando inversionista…";
@@ -881,7 +881,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
     })}</div></div></section>
     <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
     <QuinielonV2WeeklyChallenge results={results} variant={variant} />
-    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, hielo, cristales y flechas de rotación</label><small>❄️ 4 y 5 meses sin salir · 🧊 6 meses o más</small></div> : null}
+    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, enfriamiento, hielo y flechas de rotación</label><small>🌬️ más de 3 y menos de 4 meses · ❄️ de 4 a menos de 6 meses · 🧊 6 meses o más</small></div> : null}
     {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
       <header><span>Clasificación {investors ? "Inversionistas" : "El Quinielón 2.0"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
       <div className="twoColumn">{(["dia", "noche"] as const).map((session) => {
@@ -894,7 +894,7 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
         </div>;
       })}</div>
     </section>)}
-    {!investors ? <NumberDistributor renderNumber={(number, source, badge, winner, session) => <NumberDetails results={results} number={number} session={session}><QuinielonBall number={number} tone={source === "casa" ? "red" : "gold"} winner={winner} />{badge ? <span className="frozenBallBadge" role="img" aria-label={badge === "🧊" ? "6 meses o más sin salir" : "4 y 5 meses sin salir"}>{badge}</span> : null}</NumberDetails>} /> : null}
+    {!investors ? <NumberDistributor renderNumber={(number, source, badge, winner, session) => <NumberDetails results={results} number={number} session={session}><QuinielonBall number={number} tone={source === "casa" ? "red" : "gold"} winner={winner} />{badge ? <span className="frozenBallBadge" role="img" aria-label={badge === "🌬️" ? "Más de 3 y menos de 4 meses sin salir" : badge === "❄️" ? "De 4 a menos de 6 meses sin salir" : "6 meses o más sin salir"}>{badge}</span> : null}</NumberDetails>} /> : null}
     <p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
   </main>;
 }
@@ -1550,16 +1550,16 @@ function NumberGridCard({
   const [hideDelayed, setHideDelayed] = useState(false);
   const grid = useRef<HTMLDivElement>(null);
   const previousPositions = useRef(new Map<string, DOMRect>());
-  const hasCrystalFor = (number: number) => {
+  const delayBadgeFor = (number: number) => {
     const lastDate = crystalReferenceDate && delaySession
       ? results.find((draw) => draw.session === delaySession && draw.number === number)?.date
       : undefined;
-    return Boolean(crystalReferenceDate && lastDate
-      && lastDate <= subtractMonths(crystalReferenceDate, 4)
-      && lastDate > subtractMonths(crystalReferenceDate, 6));
+    if (!crystalReferenceDate || !lastDate || lastDate <= subtractMonths(crystalReferenceDate, 6)) return "";
+    if (lastDate <= subtractMonths(crystalReferenceDate, 4)) return "❄️";
+    return lastDate < subtractMonths(crystalReferenceDate, 3) ? "🌬️" : "";
   };
   const visibleRanking = hideDelayed && crystalReferenceDate
-    ? ranking.filter((item) => !frozenByNumber.get(item.number)?.length && !hasCrystalFor(item.number))
+    ? ranking.filter((item) => !frozenByNumber.get(item.number)?.length && !delayBadgeFor(item.number))
     : ranking;
   function toggleDelayed(checked: boolean) {
     previousPositions.current.clear();
@@ -1585,13 +1585,13 @@ function NumberGridCard({
     <article className={`card primeraCard numberGridCard ${session ? `v2SelectionCard v2SelectionCard-${session}` : ""} ${tone === "gold" ? "investorCard" : tone === "dark" ? "bankCard" : ""}`}>
       <h3>{title}</h3>
       {session && selectionDate ? <div className="v2SelectionStamp"><span>{formatSession(session)} · {laPrimeraSchedules[session].time}</span><time dateTime={selectionDate}>{new Intl.DateTimeFormat("es-DO", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Santo_Domingo" }).format(new Date(`${selectionDate}T12:00:00-04:00`))}</time></div> : null}
-      {crystalReferenceDate ? <div className="v2SymbolControls rosterFilterControls"><label><input type="checkbox" role="switch" checked={hideDelayed} onChange={(event) => toggleDelayed(event.target.checked)} /> Ocultar números con ❄️ y 🧊</label><small aria-live="polite">{visibleRanking.length} de {ranking.length} números</small></div> : null}
+      {crystalReferenceDate ? <div className="v2SymbolControls rosterFilterControls"><label><input type="checkbox" role="switch" checked={hideDelayed} onChange={(event) => toggleDelayed(event.target.checked)} /> Ocultar números con 🌬️, ❄️ y 🧊</label><small aria-live="polite">{visibleRanking.length} de {ranking.length} números</small></div> : null}
       {visibleRanking.length === 0 ? <p className="muted" role="status">Todos los números de esta tarjeta tienen cristal o hielo.</p> : null}
       <div className="bankNumberGrid" ref={grid}>
         {visibleRanking.map((item, index) => {
           const movement = movementByNumber.get(item.number);
           const frozenSessions = frozenByNumber.get(item.number) ?? [];
-          const hasCrystal = hasCrystalFor(item.number);
+          const delayBadge = delayBadgeFor(item.number);
           const frozenLabel = frozenSessions.length
             ? `${frozenMonths} meses o más sin salir en ${frozenSessions.map(formatSession).join(" y ")}`
             : "";
@@ -1599,7 +1599,7 @@ function NumberGridCard({
             <Fragment key={item.number}>
               {separateRows && index > 0 && index % 10 === 0 ? <span className={`numberGridDivider${index % 20 !== 0 ? " numberGridDividerMobile" : ""}`} aria-hidden="true" /> : null}
             <NumberDetails results={results} number={item.number} session={delaySession}>
-              {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : hasCrystal ? <span className="frozenBallBadge" role="img" aria-label="4 y 5 meses sin salir">❄️</span> : null}
+              {frozenSessions.length ? <span className="frozenBallBadge" aria-label={frozenLabel}>🧊</span> : delayBadge ? <span className="frozenBallBadge" role="img" aria-label={delayBadge === "🌬️" ? "Más de 3 y menos de 4 meses sin salir" : "De 4 a menos de 6 meses sin salir"}>{delayBadge}</span> : null}
               <QuinielonBall number={item.number} tone={tone} winner={winningNumbers.includes(item.number)} />
               {movement ? <span className="rosterMovementBadge" role="img" aria-label={movement.label}>{movement.direction === "up" ? "↑" : "↓"}</span> : null}
             </NumberDetails>
