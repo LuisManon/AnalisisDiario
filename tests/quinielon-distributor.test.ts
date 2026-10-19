@@ -298,7 +298,7 @@ test("historical ice badges use only earlier results from the same session", () 
   const target={date:"2026-10-02",session:"dia" as const,number:25};
   const irrelevant=[target,{...target,date:"2026-10-03"},{...target,date:"2026-10-01",session:"noche" as const}];
   assert.equal(numberDelayBadge(irrelevant,25,target),"🧊");
-  for (const [date,badge] of [["2026-04-02","🧊"],["2026-04-03","❄️"],["2026-06-02","❄️"],["2026-06-03","🌬️"],["2026-07-01","🌬️"],["2026-07-02",""]]) {
+  for (const [date,badge] of [["2026-04-02","🧊"],["2026-04-03","❄️"],["2026-06-02","❄️"],["2026-06-03","🥶"],["2026-07-01","🥶"],["2026-07-02",""]]) {
     assert.equal(numberDelayBadge([{...target,date},...irrelevant],25,target),badge);
   }
   // The first win ends the delay for a later draw, never for itself.

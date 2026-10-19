@@ -1,5 +1,5 @@
 import type { LaPrimeraDraw, LaPrimeraSession } from "./types";
-export type DelayBadge = "" | "🌬️" | "❄️" | "🧊";
+export type DelayBadge = "" | "🥶" | "❄️" | "🧊";
 export type AssignmentTier = "hot" | "intermediate" | "remaining";
 export const tierLabels: Record<AssignmentTier, string> = { hot: "🔥 Caliente", intermediate: "🟡 Intermedio", remaining: "🔵 Restante" };
 export const formatInvestment = (amount: number) => `RD$${amount.toLocaleString("en-US")}`;
@@ -23,7 +23,7 @@ export function subtractMonths(date: string, months: number) {
 // itself (or later results) cannot erase its historical delay classification.
 export function numberDelayBadge(results: LaPrimeraDraw[], number: number, slot: {date: string; session: LaPrimeraSession}): DelayBadge {
   const last = results.reduce((latest, draw) => draw.session === slot.session && draw.number === number && draw.date < slot.date && draw.date > latest ? draw.date : latest, "");
-  return !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : last < subtractMonths(slot.date,3) ? "🌬️" : "";
+  return !last || last <= subtractMonths(slot.date,6) ? "🧊" : last <= subtractMonths(slot.date,4) ? "❄️" : last < subtractMonths(slot.date,3) ? "🥶" : "";
 }
 export function shiftDate(date: string, days: number) { const d = new Date(`${date}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); }
 export function nextAssignmentSlot(now = new Date()) {
@@ -232,7 +232,7 @@ export function validateAssignment(assignment: Assignment): string | null {
   if(assignment.roster) {
     const roster=assignment.roster;
     if(roster.length!==100 || new Set(roster.map(item=>item.number)).size!==100 || roster.some(item=>!Number.isInteger(item.number)||item.number<0||item.number>99||!["nosotros","inversionistas","banca"].includes(item.group))) return "Clasificación incompleta";
-    if(roster.some(item=>item.badge !== undefined && !["", "🌬️", "❄️", "🧊"].includes(item.badge))) return "Indicador de atraso inválido";
+    if(roster.some(item=>item.badge !== undefined && !["", "🥶", "❄️", "🧊"].includes(item.badge))) return "Indicador de atraso inválido";
     if(roster.filter(item=>item.group!=="banca").length!==80) return "Clasificación fuera del top 80";
     if(items.some(item=>roster.find(entry=>entry.number===item.number)?.group !== (item.source==="casa"?"nosotros":"inversionistas"))) return "El grupo no coincide con la clasificación guardada";
   }
@@ -259,6 +259,6 @@ export function resolveInvestorWinner(draw: LaPrimeraDraw, assignment: Assignmen
   const item = index >= 0 ? assignment!.investors[index].find(item => item.number === draw.number) : undefined;
   const group = item ? (item.source === "casa" ? "nosotros" : "inversionistas") : recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.group ?? (!assignment!.smart ? "banca" : null) : null;
   const savedBadge = recorded ? assignment!.roster?.find(entry=>entry.number===draw.number)?.badge ?? item?.badge : undefined;
-  const delayBadge = savedBadge !== undefined && ["", "🌬️", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
+  const delayBadge = savedBadge !== undefined && ["", "🥶", "❄️", "🧊"].includes(savedBadge) ? savedBadge as DelayBadge : results ? numberDelayBadge(results,draw.number,draw) : undefined;
   return {number:draw.number, name:index >= 0 ? investorNames[index] : null, recorded, group, ...(simulated ? {simulated:true} : {}), ...(results || delayBadge ? {delayBadge} : {}), ...(item && draw.date >= investorPrizeStartDate ? historicalWager(item, assignment!) ?? {} : {})};
 }
