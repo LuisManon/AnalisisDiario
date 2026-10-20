@@ -2477,6 +2477,44 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 80,
+          "count": 13,
+          "total": 1040
+        },
+        {
+          "amount": 60,
+          "count": 5,
+          "total": 300
+        }
+      ],
+      "winningPlays": 18,
+      "total": 1340
+    },
+    "prizeDrawNumbers": [
+      4,
+      7,
+      8,
+      14,
+      15,
+      21,
+      33,
+      37,
+      42,
+      43,
+      48,
+      52,
+      53,
+      55,
+      58,
+      62,
+      68,
+      73,
+      76,
+      79
     ]
   },
   {
@@ -2646,6 +2684,49 @@
       7,
       16,
       17
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 6,
+          "total": 480
+        },
+        {
+          "amount": 60,
+          "count": 8,
+          "total": 480
+        }
+      ],
+      "winningPlays": 16,
+      "total": 1560
+    },
+    "prizeDrawNumbers": [
+      1,
+      5,
+      6,
+      12,
+      21,
+      25,
+      28,
+      29,
+      32,
+      35,
+      38,
+      41,
+      44,
+      47,
+      49,
+      60,
+      67,
+      69,
+      72,
+      80
     ],
     "plays": [
       {
@@ -4958,49 +5039,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 300,
-          "count": 2,
-          "total": 600
-        },
-        {
-          "amount": 80,
-          "count": 6,
-          "total": 480
-        },
-        {
-          "amount": 60,
-          "count": 8,
-          "total": 480
-        }
-      ],
-      "winningPlays": 16,
-      "total": 1560
-    },
-    "prizeDrawNumbers": [
-      1,
-      5,
-      6,
-      12,
-      21,
-      25,
-      28,
-      29,
-      32,
-      35,
-      38,
-      41,
-      44,
-      47,
-      49,
-      60,
-      67,
-      69,
-      72,
-      80
     ]
   },
   {
