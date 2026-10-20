@@ -1,5 +1,27 @@
 [
   {
+    "date": "2026-10-19",
+    "session": "dia",
+    "numbers": [
+      22,
+      68,
+      12
+    ],
+    "drawId": 2511,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
+    "date": "2026-10-19",
+    "session": "noche",
+    "numbers": [
+      39,
+      4,
+      55
+    ],
+    "drawId": 1673,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
     "date": "2026-10-18",
     "session": "dia",
     "numbers": [
