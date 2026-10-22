@@ -167,6 +167,14 @@ test('v9.4 completes the next production portfolio after the October 17 draw',as
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
   assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
 });
+test('v9.4 completes the October 22 portfolio when the middle group has no 80-range number',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoSnapshot(draws,'2026-10-22',new Date('2026-10-22T17:00:00Z'));
+  assert.equal(snapshot.plays.length,120);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
+  assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+});
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
   assert.equal(kinoOneMonthCutoff('2024-03-31'),'2024-02-29');

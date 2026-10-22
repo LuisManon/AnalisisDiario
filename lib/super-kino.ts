@@ -540,6 +540,10 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
       ? [requestedMix,[9,1,0],[9,0,1],[8,1,1]]
       : requestedMix[2]===10
         ? [requestedMix,[0,1,9],[1,0,9],[1,1,8]]
+        : requestedMix[0]===1&&requestedMix[1]===9
+          ? [requestedMix,[2,8,0],[2,7,1],[3,7,0]]
+          : requestedMix[0]===0&&requestedMix[1]===9
+            ? [requestedMix,[1,8,1],[1,7,2],[2,7,1]]
         : [requestedMix];
     const recoveryPlay=index>=105;
     const candidateNumbers=recoveryPlay?allowedNumbers:freshNumbers;
