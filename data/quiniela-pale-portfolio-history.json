@@ -1,5 +1,311 @@
 [
   {
+    "targetDate": "2026-10-22",
+    "generatedAt": "2026-10-22T06:02:22.769Z",
+    "plays": [
+      {
+        "id": 1,
+        "numbers": [
+          45,
+          79,
+          68
+        ],
+        "profile": "fuerte",
+        "score": 100
+      },
+      {
+        "id": 2,
+        "numbers": [
+          12,
+          86,
+          68
+        ],
+        "profile": "fuerte",
+        "score": 94
+      },
+      {
+        "id": 3,
+        "numbers": [
+          42,
+          40,
+          45
+        ],
+        "profile": "fuerte",
+        "score": 92
+      },
+      {
+        "id": 4,
+        "numbers": [
+          83,
+          33,
+          92
+        ],
+        "profile": "fuerte",
+        "score": 84
+      },
+      {
+        "id": 5,
+        "numbers": [
+          53,
+          86,
+          92
+        ],
+        "profile": "fuerte",
+        "score": 83
+      },
+      {
+        "id": 6,
+        "numbers": [
+          83,
+          16,
+          63
+        ],
+        "profile": "fuerte",
+        "score": 77
+      },
+      {
+        "id": 7,
+        "numbers": [
+          77,
+          15,
+          20
+        ],
+        "profile": "fuerte",
+        "score": 73
+      },
+      {
+        "id": 8,
+        "numbers": [
+          94,
+          30,
+          75
+        ],
+        "profile": "fuerte",
+        "score": 70
+      },
+      {
+        "id": 9,
+        "numbers": [
+          43,
+          88,
+          97
+        ],
+        "profile": "fuerte",
+        "score": 70
+      },
+      {
+        "id": 10,
+        "numbers": [
+          44,
+          32,
+          2
+        ],
+        "profile": "fuerte",
+        "score": 69
+      },
+      {
+        "id": 11,
+        "numbers": [
+          5,
+          88,
+          68
+        ],
+        "profile": "equilibrada",
+        "score": 83
+      },
+      {
+        "id": 12,
+        "numbers": [
+          39,
+          9,
+          79
+        ],
+        "profile": "equilibrada",
+        "score": 73
+      },
+      {
+        "id": 13,
+        "numbers": [
+          85,
+          40,
+          67
+        ],
+        "profile": "equilibrada",
+        "score": 68
+      },
+      {
+        "id": 14,
+        "numbers": [
+          66,
+          59,
+          45
+        ],
+        "profile": "equilibrada",
+        "score": 68
+      },
+      {
+        "id": 15,
+        "numbers": [
+          6,
+          23,
+          20
+        ],
+        "profile": "equilibrada",
+        "score": 68
+      },
+      {
+        "id": 16,
+        "numbers": [
+          85,
+          15,
+          7
+        ],
+        "profile": "equilibrada",
+        "score": 66
+      },
+      {
+        "id": 17,
+        "numbers": [
+          34,
+          9,
+          44
+        ],
+        "profile": "equilibrada",
+        "score": 65
+      },
+      {
+        "id": 18,
+        "numbers": [
+          62,
+          97,
+          73
+        ],
+        "profile": "equilibrada",
+        "score": 59
+      },
+      {
+        "id": 19,
+        "numbers": [
+          42,
+          8,
+          82
+        ],
+        "profile": "equilibrada",
+        "score": 58
+      },
+      {
+        "id": 20,
+        "numbers": [
+          35,
+          14,
+          50
+        ],
+        "profile": "equilibrada",
+        "score": 56
+      },
+      {
+        "id": 21,
+        "numbers": [
+          35,
+          22,
+          68
+        ],
+        "profile": "exploratoria",
+        "score": 72
+      },
+      {
+        "id": 22,
+        "numbers": [
+          77,
+          28,
+          92
+        ],
+        "profile": "exploratoria",
+        "score": 71
+      },
+      {
+        "id": 23,
+        "numbers": [
+          6,
+          74,
+          92
+        ],
+        "profile": "exploratoria",
+        "score": 70
+      },
+      {
+        "id": 24,
+        "numbers": [
+          10,
+          40,
+          63
+        ],
+        "profile": "exploratoria",
+        "score": 62
+      },
+      {
+        "id": 25,
+        "numbers": [
+          83,
+          56,
+          12
+        ],
+        "profile": "exploratoria",
+        "score": 59
+      },
+      {
+        "id": 26,
+        "numbers": [
+          41,
+          57,
+          79
+        ],
+        "profile": "exploratoria",
+        "score": 59
+      },
+      {
+        "id": 27,
+        "numbers": [
+          51,
+          15,
+          2
+        ],
+        "profile": "exploratoria",
+        "score": 57
+      },
+      {
+        "id": 28,
+        "numbers": [
+          87,
+          86,
+          62
+        ],
+        "profile": "exploratoria",
+        "score": 56
+      },
+      {
+        "id": 29,
+        "numbers": [
+          39,
+          27,
+          75
+        ],
+        "profile": "exploratoria",
+        "score": 56
+      },
+      {
+        "id": 30,
+        "numbers": [
+          24,
+          49,
+          97
+        ],
+        "profile": "exploratoria",
+        "score": 55
+      }
+    ]
+  },
+  {
     "targetDate": "2026-10-21",
     "generatedAt": "2026-10-21T01:58:04.684Z",
     "plays": [
