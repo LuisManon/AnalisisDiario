@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -174,6 +174,23 @@ test('v9.4 completes the October 22 portfolio when the middle group has no 80-ra
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
   assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+});
+test('v9.4 derives nearby group mixes instead of relying on dated exceptions',()=>{
+  const mixes=kinoAdaptiveMixes([1,9,0]);
+  assert.deepEqual(mixes[0],[1,9,0]);
+  assert.deepEqual(mixes[1],[2,8,0]);
+  assert.ok(mixes.every(mix=>mix.reduce((sum,count)=>sum+count,0)===10));
+  assert.ok(mixes.every(mix=>mix.reduce((sum,count,index)=>sum+Math.abs(count-[1,9,0][index]),0)<=6));
+});
+test('v9.4 builds every historical production cutoff and the next portfolio',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const targets=[...new Set([...draws.filter(draw=>draw.date>=KINO_V94_START).map(draw=>draw.date),'2026-10-22'])].sort();
+  for(const target of targets) {
+    const snapshot=buildKinoSnapshot(draws,target,new Date(`${target}T13:00:00Z`));
+    assert.equal(snapshot.plays.length,120,target);
+    assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120,target);
+    assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true,target);
+  }
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');

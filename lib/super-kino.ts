@@ -482,6 +482,27 @@ function buildKinoV93Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   return {plays:hybrid.plays.map((play,index)=>({...play,id:index+1})),persistentTopNumbers:hybrid.persistentTopNumbers};
 }
 
+type KinoMix = readonly [number,number,number];
+
+export function kinoAdaptiveMixes(requested:KinoMix):KinoMix[] {
+  const supportChanges=(candidate:KinoMix)=>candidate.reduce((total,value,index)=>
+    total+Number((requested[index]===0)!==(value===0)),0);
+  return Array.from({length:11},(_,hot)=>Array.from({length:11-hot},(_,middle)=>
+    [hot,middle,10-hot-middle] as KinoMix
+  )).flat()
+    // Moving at most three positions keeps the requested strategy recognizable
+    // while covering every nearby group distribution automatically.
+    .filter(candidate=>candidate.reduce((total,value,index)=>total+Math.abs(value-requested[index]),0)<=6)
+    .sort((left,right)=>{
+      const distance=(candidate:KinoMix)=>candidate.reduce((total,value,index)=>total+Math.abs(value-requested[index]),0);
+      return distance(left)-distance(right)
+        || supportChanges(left)-supportChanges(right)
+        || right[0]-left[0]
+        || right[1]-left[1]
+        || right[2]-left[2];
+    });
+}
+
 function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<number>, freshNumbers: ReadonlySet<number>) {
   const mixes = [
     ...Array.from({length:25},()=>[10,0,0] as const),
@@ -536,26 +557,22 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
 
   for(let index=0;index<mixes.length;index++) {
     const requestedMix=mixes[index];
-    const mixVariants:ReadonlyArray<readonly [number,number,number]>=requestedMix[0]===10
-      ? [requestedMix,[9,1,0],[9,0,1],[8,1,1]]
-      : requestedMix[2]===10
-        ? [requestedMix,[0,1,9],[1,0,9],[1,1,8]]
-        : requestedMix[0]===1&&requestedMix[1]===9
-          ? [requestedMix,[2,8,0],[2,7,1],[3,7,0]]
-          : requestedMix[0]===0&&requestedMix[1]===9
-            ? [requestedMix,[1,8,1],[1,7,2],[2,7,1]]
-        : [requestedMix];
+    const mixVariants=kinoAdaptiveMixes(requestedMix);
     const recoveryPlay=index>=105;
     const candidateNumbers=recoveryPlay?allowedNumbers:freshNumbers;
     let accepted:number[]|null=null;
-    let acceptedMix:readonly [number,number,number]=requestedMix;
-    for(let attempt=0;attempt<1800&&!accepted;attempt++) {
-      const mix=mixVariants[Math.min(mixVariants.length-1,Math.floor(attempt/450))];
+    let acceptedMix:KinoMix=requestedMix;
+    const attemptsPerMix=450;
+    for(let attempt=0;attempt<mixVariants.length*attemptsPerMix&&!accepted;attempt++) {
+      const mixIndex=Math.floor(attempt/attemptsPerMix);
+      const mixAttempt=attempt%attemptsPerMix;
+      const mix=mixVariants[mixIndex];
       const persistentMinimum=mix[0]===0?0:mix[0]>=8?3:mix[0]>=4&&mix[1]>=3?2:1;
       const remainingRanges=[...mandatoryMinimums];
       const concentrationScenario=index%4===0;
       if(concentrationScenario) {
-        const desired=attempt<600?(index%12===0?4:3):attempt<1200?3:2;
+        const preferredDesired=index%12===0?4:3;
+        const desired=mixAttempt<300?preferredDesired:Math.max(2,preferredDesired-1);
         const preferred=Math.floor(index/4)%dominantRanges.length;
         const candidates=dominantRanges.map((item,position)=>({
           range:item.range, position,
@@ -628,7 +645,7 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
       // Prefer at most eight shared numbers. Near the end of a constrained
       // 120-play portfolio, allow nine only after exhausting the strict search;
       // the exact-play check still guarantees every ticket is unique.
-      const maximumOverlap = attempt < 1200 ? 8 : 9;
+      const maximumOverlap = mixIndex===0 || mixAttempt<300 ? 8 : 9;
       if(seen.has(key)||selected.filter(number=>persistent.has(number)).length<persistentMinimum||plays.some(play=>overlap(selected,play)>maximumOverlap)) continue;
       accepted=selected;
       acceptedMix=mix;
