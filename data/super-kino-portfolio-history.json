@@ -2463,6 +2463,54 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 1000,
+          "count": 2,
+          "total": 2000
+        },
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 3,
+          "total": 240
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 13,
+      "total": 3200
+    },
+    "prizeDrawNumbers": [
+      1,
+      6,
+      11,
+      13,
+      14,
+      17,
+      19,
+      25,
+      27,
+      37,
+      42,
+      44,
+      46,
+      50,
+      55,
+      68,
+      69,
+      72,
+      73,
+      84
     ]
   },
   {
@@ -2619,6 +2667,54 @@
       42,
       44,
       64
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 1000,
+          "count": 2,
+          "total": 2000
+        },
+        {
+          "amount": 300,
+          "count": 6,
+          "total": 1800
+        },
+        {
+          "amount": 80,
+          "count": 9,
+          "total": 720
+        },
+        {
+          "amount": 60,
+          "count": 7,
+          "total": 420
+        }
+      ],
+      "winningPlays": 24,
+      "total": 4940
+    },
+    "prizeDrawNumbers": [
+      6,
+      7,
+      9,
+      13,
+      16,
+      20,
+      22,
+      26,
+      28,
+      39,
+      40,
+      55,
+      59,
+      63,
+      70,
+      72,
+      74,
+      77,
+      81,
+      84
     ],
     "plays": [
       {
@@ -4931,54 +5027,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 1000,
-          "count": 2,
-          "total": 2000
-        },
-        {
-          "amount": 300,
-          "count": 6,
-          "total": 1800
-        },
-        {
-          "amount": 80,
-          "count": 9,
-          "total": 720
-        },
-        {
-          "amount": 60,
-          "count": 7,
-          "total": 420
-        }
-      ],
-      "winningPlays": 24,
-      "total": 4940
-    },
-    "prizeDrawNumbers": [
-      6,
-      7,
-      9,
-      13,
-      16,
-      20,
-      22,
-      26,
-      28,
-      39,
-      40,
-      55,
-      59,
-      63,
-      70,
-      72,
-      74,
-      77,
-      81,
-      84
     ]
   },
   {
