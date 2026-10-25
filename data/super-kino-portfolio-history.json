@@ -2465,6 +2465,44 @@
         "hits": 0,
         "amount": 80
       }
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 80,
+          "count": 2,
+          "total": 160
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 8,
+      "total": 520
+    },
+    "prizeDrawNumbers": [
+      1,
+      2,
+      8,
+      12,
+      19,
+      21,
+      35,
+      37,
+      38,
+      39,
+      41,
+      42,
+      43,
+      46,
+      48,
+      60,
+      62,
+      64,
+      65,
+      79
     ]
   },
   {
@@ -2619,6 +2657,54 @@
       44,
       49,
       59
+    ],
+    "prizeSummary": {
+      "groups": [
+        {
+          "amount": 1000,
+          "count": 2,
+          "total": 2000
+        },
+        {
+          "amount": 300,
+          "count": 2,
+          "total": 600
+        },
+        {
+          "amount": 80,
+          "count": 3,
+          "total": 240
+        },
+        {
+          "amount": 60,
+          "count": 6,
+          "total": 360
+        }
+      ],
+      "winningPlays": 13,
+      "total": 3200
+    },
+    "prizeDrawNumbers": [
+      1,
+      6,
+      11,
+      13,
+      14,
+      17,
+      19,
+      25,
+      27,
+      37,
+      42,
+      44,
+      46,
+      50,
+      55,
+      68,
+      69,
+      72,
+      73,
+      84
     ],
     "plays": [
       {
@@ -4931,54 +5017,6 @@
         "hits": 0,
         "amount": 80
       }
-    ],
-    "prizeSummary": {
-      "groups": [
-        {
-          "amount": 1000,
-          "count": 2,
-          "total": 2000
-        },
-        {
-          "amount": 300,
-          "count": 2,
-          "total": 600
-        },
-        {
-          "amount": 80,
-          "count": 3,
-          "total": 240
-        },
-        {
-          "amount": 60,
-          "count": 6,
-          "total": 360
-        }
-      ],
-      "winningPlays": 13,
-      "total": 3200
-    },
-    "prizeDrawNumbers": [
-      1,
-      6,
-      11,
-      13,
-      14,
-      17,
-      19,
-      25,
-      27,
-      37,
-      42,
-      44,
-      46,
-      50,
-      55,
-      68,
-      69,
-      72,
-      73,
-      84
     ]
   },
   {
