@@ -14,8 +14,8 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('saved portfolios accept legacy profiles and keep the current hybrid fully exploratory',async()=>{
   const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
-  assert.equal(snapshots[0].algorithm,'kino-v9.4');
-  assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,120);
+  assert.equal(snapshots[0].algorithm,kinoAlgorithmForDate(snapshots[0].targetDate));
+  assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,snapshots[0].plays.length);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
   assert.equal(snapshots[0].persistentTopNumbers?.length,20);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
@@ -203,6 +203,15 @@ test('v10 scales the v9.4 strategy to 200 unique plays without future leakage',a
   assert.equal(snapshot.concentrationPlayCount,50);
   assert.deepEqual(snapshot.plays,buildKinoV10RetrospectiveSnapshot(draws.filter(draw=>draw.date<'2026-10-22'),'2026-10-22').plays);
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+});
+test('current strategy excludes low-frequency numbers delayed more than five days',async()=>{
+  const {buildKinoSnapshot,KINO_STRATEGY_VERSION}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoSnapshot(draws,'2026-10-26',new Date('2026-10-26T22:30:00Z'));
+  const excluded=new Set(snapshot.excludedByDelay?.map(item=>item.number));
+  assert.equal(snapshot.strategyVersion,KINO_STRATEGY_VERSION);
+  assert.deepEqual([...excluded].sort((a,b)=>a-b),[3,15,45,52,54,56,61,66,80,83]);
+  assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>!excluded.has(number))));
+  assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>number<=10).length===2));
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');

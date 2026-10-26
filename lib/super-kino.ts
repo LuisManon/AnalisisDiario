@@ -8,6 +8,11 @@ export const KINO_V91_START = "2026-10-12";
 export const KINO_V93_START = "2026-10-15";
 export const KINO_V94_START = "2026-10-16";
 export const KINO_V10_START = "2026-10-25";
+export const KINO_STRATEGIC_EXCLUSION_START = "2026-10-26";
+export const KINO_STRATEGY_VERSION = "low-frequency-stale-v1";
+export function kinoStrategyVersionForDate(targetDate:string) {
+  return targetDate>=KINO_STRATEGIC_EXCLUSION_START?KINO_STRATEGY_VERSION:undefined;
+}
 export function kinoAlgorithmForDate(targetDate: string) {
   if (targetDate >= KINO_V10_START) return "kino-v10" as const;
   if (targetDate >= KINO_V94_START) return "kino-v9.4" as const;
@@ -687,6 +692,7 @@ export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
   algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9", "kino-v9.1", "kino-v9.3", "kino-v9.4", "kino-v10"]),
+  strategyVersion:z.literal(KINO_STRATEGY_VERSION).optional(),
   delayCutoff: z.iso.date().optional(),
   maximumDaysWithoutAppearance: z.number().int().positive().optional(),
   minimumGlobalAppearances: z.number().int().positive().optional(),
@@ -855,7 +861,14 @@ function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, no
     const number=index+1;
     return {number,lastDate:priorFormatDraws.find(draw=>draw.numbers.includes(number))?.date??null};
   });
-  const excludedByDelay = v94?eligibility.filter(item=>(globalFrequency.get(item.number)??0)<4):getKinoStaleNumbers(draws, targetDate);
+  const latestPriorDate=priorFormatDraws[0]?.date;
+  const strategicExclusions=kinoStrategyVersionForDate(targetDate)&&latestPriorDate?eligibility.filter(item=>{
+    if(item.lastDate===null||(globalFrequency.get(item.number)??0)>7) return false;
+    const daysWithoutAppearance=(new Date(`${latestPriorDate}T12:00:00Z`).getTime()-new Date(`${item.lastDate}T12:00:00Z`).getTime())/86_400_000;
+    return daysWithoutAppearance>5;
+  }):[];
+  const baseExclusions=v94?eligibility.filter(item=>(globalFrequency.get(item.number)??0)<4):getKinoStaleNumbers(draws, targetDate);
+  const excludedByDelay=[...new Map([...baseExclusions,...strategicExclusions].map(item=>[item.number,item])).values()].sort((a,b)=>a.number-b.number);
   const excluded = new Set(excludedByDelay.map(item => item.number));
   const allowedNumbers = new Set(Array.from({length: 84}, (_, index) => index + 1).filter(number => !excluded.has(number)));
   const freshNumbers=new Set([...allowedNumbers].filter(number=>{
@@ -869,7 +882,7 @@ function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, no
   const persistent = algorithm === "kino-v10"?buildKinoV10Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null;
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm, delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:algorithm==="kino-v10"?25:15,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
+    sampleSize: sample.length, algorithm, ...(kinoStrategyVersionForDate(targetDate)?{strategyVersion:KINO_STRATEGY_VERSION}:{}), delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:algorithm==="kino-v10"?25:15,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
     plays: persistent?.plays ?? buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
 }

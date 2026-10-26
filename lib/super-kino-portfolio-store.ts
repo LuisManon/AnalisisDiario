@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, type KinoDraw, type KinoSnapshot } from "./super-kino";
+import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, kinoStrategyVersionForDate, type KinoDraw, type KinoSnapshot } from "./super-kino";
 import { kinoClock, kinoDrawMinutes, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "./super-kino-clock";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "./github-data-store";
 const file = "data/super-kino-portfolio-history.json";
@@ -49,7 +49,8 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
     }
     const existing = snapshots.find(s => s.targetDate === targetDate);
     const expectedAlgorithm = kinoAlgorithmForDate(targetDate);
-    if (existing?.algorithm === expectedAlgorithm) return {current: existing, snapshots};
+    const expectedStrategyVersion=kinoStrategyVersionForDate(targetDate);
+    if (existing?.algorithm === expectedAlgorithm&&existing.strategyVersion===expectedStrategyVersion) return {current: existing, snapshots};
     const current = buildKinoSnapshot(results, targetDate, now);
     const next = (existing ? snapshots.map(snapshot => snapshot.targetDate === targetDate ? current : snapshot) : [...snapshots, current]).sort((a,b) => b.targetDate.localeCompare(a.targetDate));
     if (isGitHubDataStoreEnabled()) {
