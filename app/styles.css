@@ -7066,6 +7066,7 @@ body:has(.appShell.lotoShell) {
 .kinoPreviewCoverage { margin-top:16px; }
 .kinoPostgameWaiting { margin-top:18px; padding:28px; border:1px dashed #b8c9da; border-radius:12px; background:#f7f9fc; text-align:center; }
 .kinoPostgameWaiting strong { color:#244b75; font-size:18px; }
+.kinoPostgameNotice { margin-top:16px; padding:11px 14px; border-radius:9px; background:#fff3dc; color:#815719; font-size:13px; font-weight:700; }
 .kinoPostgameResult { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-top:18px; }
 .kinoPostgameResult h3 { margin-bottom:10px; }
 .kinoPostgameMetrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:16px 0; }
