@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START, KINO_V10_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -145,9 +145,9 @@ test('v9.4 applies freshness, global frequency and average range allocation from
   const recovery=new Set(snapshot.recoveryNumbers);
   assert.ok(snapshot.plays.slice(0,105).every(play=>play.numbers.every(number=>prior.some(draw=>draw.date>='2026-10-07'&&draw.numbers.includes(number)))));
   assert.ok(snapshot.plays.slice(105).every(play=>play.numbers.some(number=>recovery.has(number))));
-  assert.ok(snapshot.plays.every(play=>{const counts=Array.from({length:9},(_,range)=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length);return counts[0]>=1&&counts[0]<=3&&counts[2]>=1&&counts[2]<=2&&counts[8]>=1&&counts[8]<=2&&counts.every(count=>count<=4)}));
+  assert.ok(snapshot.plays.every(play=>{const counts=Array.from({length:9},(_,range)=>play.numbers.filter(number=>Math.min(8,Math.floor((number-1)/10))===range).length);return counts[0]===2&&counts[2]>=1&&counts[2]<=2&&counts[8]>=1&&counts[8]<=2&&counts.every(count=>count<=4)}));
   const dominant=new Set(snapshot.rangeModel?.filter(range=>range.dominant).map(range=>range.range));
-  assert.ok(snapshot.plays.filter((_,index)=>index%4===0).every(play=>Math.max(...[...dominant].map(range=>play.numbers.filter(number=>(number<=9?0:Math.min(8,Math.floor(number/10)))===range).length))>=2));
+  assert.ok(snapshot.plays.filter((_,index)=>index%4===0).every(play=>Math.max(...[...dominant].map(range=>play.numbers.filter(number=>Math.min(8,Math.floor((number-1)/10))===range).length))>=2));
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
   assert.deepEqual(snapshot.plays,buildKinoSnapshot([...draws].reverse(),'2026-10-16',new Date('2026-10-16T13:00:00Z')).plays);
 });
@@ -165,14 +165,14 @@ test('v9.4 completes the next production portfolio after the October 17 draw',as
   assert.equal(snapshot.plays.length,120);
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
   assert.deepEqual(snapshot.plays.map(play=>play.id),Array.from({length:120},(_,index)=>index+1));
-  assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
+  assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>number<=10).length===2&&play.numbers.some(number=>number>=21&&number<=30)&&play.numbers.some(number=>number>=81)));
 });
 test('v9.4 completes the October 22 portfolio when the middle group has no 80-range number',async()=>{
   const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   const snapshot=buildKinoSnapshot(draws,'2026-10-22',new Date('2026-10-22T17:00:00Z'));
   assert.equal(snapshot.plays.length,120);
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120);
-  assert.ok(snapshot.plays.every(play=>play.numbers.some(number=>number<=9)&&play.numbers.some(number=>number>=20&&number<=29)&&play.numbers.some(number=>number>=80)));
+  assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>number<=10).length===2&&play.numbers.some(number=>number>=21&&number<=30)&&play.numbers.some(number=>number>=81)));
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
 });
 test('v9.4 derives nearby group mixes instead of relying on dated exceptions',()=>{
@@ -184,13 +184,25 @@ test('v9.4 derives nearby group mixes instead of relying on dated exceptions',()
 });
 test('v9.4 builds every historical production cutoff and the next portfolio',async()=>{
   const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
-  const targets=[...new Set([...draws.filter(draw=>draw.date>=KINO_V94_START).map(draw=>draw.date),'2026-10-22'])].sort();
+  const targets=[...new Set([...draws.filter(draw=>draw.date>=KINO_V94_START&&draw.date<KINO_V10_START).map(draw=>draw.date),'2026-10-22'])].sort();
   for(const target of targets) {
     const snapshot=buildKinoSnapshot(draws,target,new Date(`${target}T13:00:00Z`));
     assert.equal(snapshot.plays.length,120,target);
     assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,120,target);
     assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true,target);
   }
+});
+test('v10 scales the v9.4 strategy to 200 unique plays without future leakage',async()=>{
+  const {buildKinoV10RetrospectiveSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const snapshot=buildKinoV10RetrospectiveSnapshot(draws,'2026-10-22');
+  assert.equal(snapshot.algorithm,'kino-v10');
+  assert.equal(snapshot.plays.length,200);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,200);
+  assert.deepEqual(snapshot.portfolioPlan,{core:200,recombination:0,underexposed:0,contrast:0});
+  assert.equal(snapshot.recoveryPlayCount,25);
+  assert.equal(snapshot.concentrationPlayCount,50);
+  assert.deepEqual(snapshot.plays,buildKinoV10RetrospectiveSnapshot(draws.filter(draw=>draw.date<'2026-10-22'),'2026-10-22').plays);
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
 });
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
