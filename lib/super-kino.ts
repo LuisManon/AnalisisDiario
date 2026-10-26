@@ -911,6 +911,36 @@ export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
     return {profile, plays, total, cost, net: total - cost, winners: plays.filter(p => p.prize > 0).length};
   });
 }
+export function buildKinoPostgame(snapshot:KinoSnapshot,draw:KinoDraw) {
+  const evaluations=evaluateKinoSnapshot(snapshot,draw);
+  const evaluatedPlays=evaluations.flatMap(evaluation=>evaluation.plays);
+  const exposure=new Map<number,number>();
+  snapshot.plays.forEach(play=>play.numbers.forEach(number=>exposure.set(number,(exposure.get(number)??0)+1)));
+  const expectedNumbers=[...exposure].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,20).map(([number,count])=>({number,count,drawn:draw.numbers.includes(number)}));
+  const rangeIndex=(number:number)=>Math.min(8,Math.floor((number-1)/10));
+  const ranges=Array.from({length:9},(_,range)=>({
+    range,from:range*10+1,to:range===8?84:range*10+10,
+    expected:snapshot.rangeModel?.find(item=>item.range===range)?.recentAverage??0,
+    actual:draw.numbers.filter(number=>rangeIndex(number)===range).length
+  }));
+  const coveredWinningNumbers=draw.numbers.filter(number=>snapshot.plays.some(play=>play.numbers.includes(number)));
+  const persistent=new Set(snapshot.persistentTopNumbers??[]);
+  const recovery=new Set(snapshot.recoveryNumbers??[]);
+  const excluded=new Set(snapshot.excludedByDelay?.map(item=>item.number)??[]);
+  const totalPrize=evaluations.reduce((sum,evaluation)=>sum+evaluation.total,0);
+  const cost=evaluations.reduce((sum,evaluation)=>sum+evaluation.cost,0);
+  return {
+    targetDate:snapshot.targetDate,playCount:snapshot.plays.length,totalPrize,cost,net:totalPrize-cost,
+    awardedPlays:evaluatedPlays.filter(play=>play.prize>0).length,
+    maximumHits:Math.max(...evaluatedPlays.map(play=>play.hits)),
+    hitDistribution:Array.from({length:11},(_,hits)=>({hits,count:evaluatedPlays.filter(play=>play.hits===hits).length})),
+    ranges,coveredWinningNumbers,expectedNumbers,
+    expectedHits:expectedNumbers.filter(item=>item.drawn).map(item=>item.number),
+    excludedHits:draw.numbers.filter(number=>excluded.has(number)),
+    persistentHits:draw.numbers.filter(number=>persistent.has(number)),
+    recoveryHits:draw.numbers.filter(number=>recovery.has(number))
+  };
+}
 export function summarizeKinoPrizes(snapshot: KinoSnapshot, draw: KinoDraw) {
   const winningPlays = evaluateKinoSnapshot(snapshot, draw).flatMap(evaluation => evaluation.plays).filter(play => play.prize > 0);
   const groups = [...new Set(winningPlays.map(play => play.prize))].sort((a,b) => b-a).map(amount => {

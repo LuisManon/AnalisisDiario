@@ -244,7 +244,7 @@ test('snapshot rejects late creation and excludes target and future outcomes',as
   assert.throws(()=>buildKinoSnapshot(draws,'2026-10-06',new Date('2026-10-07T00:55:00Z')));
 });
 test('award totals use saved plays and saved prizes, including zero hits',async()=>{
-  const {buildKinoSnapshot,evaluateKinoSnapshot}=await import('../lib/super-kino.ts');
+  const {buildKinoPostgame,buildKinoSnapshot,evaluateKinoSnapshot}=await import('../lib/super-kino.ts');
   const snapshot=buildKinoSnapshot(draws,'2026-10-06',new Date('2026-10-06T16:00:00Z'));
   const target=snapshot.plays[0];
   const other=Array.from({length:84},(_,i)=>i+1).filter(n=>!target.numbers.includes(n));
@@ -254,6 +254,9 @@ test('award totals use saved plays and saved prizes, including zero hits',async(
   assert.equal(result[0].plays[0].hits,10);assert.equal(result[0].plays[0].prize,25000000);
   assert.equal(result.length,1);assert.equal(result[0].profile,'exploratoria');assert.equal(result[0].cost,3000);
   assert.equal(result[0].net,result[0].total-3000);
+  const postgame=buildKinoPostgame(snapshot,draw);
+  assert.equal(postgame.maximumHits,10);assert.equal(postgame.playCount,120);assert.equal(postgame.coveredWinningNumbers.length,20);
+  assert.equal(postgame.ranges.reduce((sum,range)=>sum+range.actual,0),20);assert.equal(postgame.hitDistribution.reduce((sum,item)=>sum+item.count,0),120);
   assert.equal(evaluateKinoSnapshot(snapshot,{...draw,numbers:other.slice(0,20)})[0].plays[0].prize,80);
   assert.equal(JSON.stringify(snapshot),before);
   assert.throws(()=>evaluateKinoSnapshot(snapshot,{...draw,date:'2026-10-07'}));

@@ -7048,6 +7048,9 @@ body:has(.appShell.lotoShell) {
 .kinoWeekStatus { margin:auto !important; padding:18px; color:#6a7785; text-align:center; }
 .kinoPreview { border-top:4px solid #2e78b8; }
 .kinoPreviewStatus { padding:7px 11px; border-radius:999px; background:#e8f2fb; color:#245b8d; font-size:12px; font-weight:800; }
+.kinoPreviewTabs { display:flex; gap:6px; padding:4px; border-radius:11px; background:#eaf0f6; }
+.kinoPreviewTabs button { border:0; padding:8px 12px; background:transparent; font-size:13px; }
+.kinoPreviewTabs button.active { background:#fff; color:#194f82; box-shadow:0 1px 4px #244b7526; }
 .kinoPreviewGrid { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:16px; margin-top:18px; }
 .kinoPreviewGrid article,.kinoPreviewCoverage { padding:16px; border:1px solid #dce5ee; border-radius:12px; background:#f8fafc; }
 .kinoPreview h3 { margin:0 0 5px; color:#244b75; }
@@ -7061,10 +7064,25 @@ body:has(.appShell.lotoShell) {
 .kinoPreviewRanges strong,.kinoPreviewRanges small { display:block; }
 .kinoPreviewRanges small { margin-top:4px; color:#5e7286; font-size:11px; }
 .kinoPreviewCoverage { margin-top:16px; }
+.kinoPostgameWaiting { margin-top:18px; padding:28px; border:1px dashed #b8c9da; border-radius:12px; background:#f7f9fc; text-align:center; }
+.kinoPostgameWaiting strong { color:#244b75; font-size:18px; }
+.kinoPostgameResult { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-top:18px; }
+.kinoPostgameResult h3 { margin-bottom:10px; }
+.kinoPostgameMetrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:16px 0; }
+.kinoPostgameMetrics article { padding:14px; border-radius:10px; background:#edf4fa; }
+.kinoPostgameMetrics span,.kinoPostgameMetrics strong { display:block; }
+.kinoPostgameMetrics span { color:#60758a; font-size:12px; }
+.kinoPostgameMetrics strong { margin-top:6px; color:#194f82; font-size:21px; }
+.kinoPostgameRanges { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+.kinoPostgameRanges > span { padding:9px; border-radius:8px; background:#eaf2f9; text-align:center; }
+.kinoPostgameRanges strong,.kinoPostgameRanges small { display:block; }
+.kinoPostgameRanges small { margin-top:4px; color:#60758a; font-size:11px; }
+.kinoPostgameBreakdown { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:16px; }
+.kinoPostgameBreakdown article { padding:15px; border:1px solid #dce5ee; border-radius:11px; background:#f8fafc; }
 .kinoAwards .kinoPlayRow { display:block; }
 .kinoAwards .kinoPlayRow .kinoBalls { margin-top:8px; }
 .kinoNote summary { cursor:pointer; color:#215c96; }
-@media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} .kinoPortfolioNavigation { justify-content:space-between; gap:6px; } .kinoPortfolioNavigation > button { padding:8px 9px; font-size:12px; } .kinoPortfolioNavigation > div > button { min-width:32px; padding:7px 8px; } .kinoPreviewGrid { grid-template-columns:1fr; } .kinoPreviewRanges { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .kinoAwardsGrid {grid-template-columns:1fr;} .kinoTheme .kinoLatest .kinoBalls {gap:4px;} .kinoTheme .kinoLatest .ball {font-size:11px;} .kinoAward > strong {font-size:24px;} .kinoPortfolioNavigation { justify-content:space-between; gap:6px; } .kinoPortfolioNavigation > button { padding:8px 9px; font-size:12px; } .kinoPortfolioNavigation > div > button { min-width:32px; padding:7px 8px; } .kinoPreviewGrid,.kinoPostgameBreakdown { grid-template-columns:1fr; } .kinoPreviewRanges { grid-template-columns:repeat(2,minmax(0,1fr)); } .kinoPreviewTabs { width:100%; } .kinoPreviewTabs button { flex:1; } .kinoPostgameResult { flex-direction:column; } .kinoPostgameMetrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 .kinoHistoryCard { text-align:left; }
 .kinoHistoryKey { display:flex; flex-wrap:wrap; gap:8px; }
 .kinoHistoryKey span { display:flex; align-items:center; gap:6px; padding:6px 9px; border:1px solid #dce4ed; border-radius:999px; color:#526477; font-size:12px; font-weight:700; }
