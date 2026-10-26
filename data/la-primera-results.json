@@ -9,6 +9,14 @@
     "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-10-26/"
   },
   {
+    "date": "2026-10-26",
+    "session": "noche",
+    "number": 47,
+    "drawId": 883,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed"
+  },
+  {
     "date": "2026-10-25",
     "session": "dia",
     "number": 59,
