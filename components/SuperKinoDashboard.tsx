@@ -154,6 +154,13 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       };
     });
   }, [calendarMonday, clock.date, portfolio?.snapshots, results]);
+  const previewNumbers = useMemo(() => {
+    if (!current) return [];
+    const exposure=new Map<number,number>();
+    current.plays.forEach(play=>play.numbers.forEach(number=>exposure.set(number,(exposure.get(number)??0)+1)));
+    return [...exposure].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,20).map(([number,count])=>({number,count}));
+  },[current]);
+  const previewRanges = useMemo(() => [...(current?.rangeModel??[])].sort((a,b)=>b.recentAverage-a.recentAverage||a.range-b.range).slice(0,5),[current]);
 
   function download() {
     if (!current) return;
@@ -197,6 +204,11 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         return <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}{hits === undefined ? "" : ` · ${hits} ${hits === 1 ? "acierto" : "aciertos"}`}</strong><span>Premio {money(group.amount)} c/u</span></p>;
       })}</div><footer>Total ganado <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">Sin premios</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
       <p className="muted">El resumen cuenta las jugadas premiadas por monto e indica sus aciertos. No muestra los números sorteados ni las combinaciones.</p>
+    </section>
+
+    <section className="card kinoPreview">
+      <div className="kinoSectionHead"><div><p className="eyebrow">Antes del sorteo</p><h2>Previa del Kino · {current?.targetDate ?? "Próximo sorteo"}</h2></div><span className="kinoPreviewStatus">{current ? `${current.plays.length} jugadas guardadas` : "Preparando cartera"}</span></div>
+      {!current ? <p>La previa aparecerá cuando la cartera quede guardada.</p> : <><div className="kinoPreviewGrid"><article><h3>Descartados</h3><p>{current.strategyVersion?"≤7 apariciones y más de 5 días sin salir":"Filtro activo de la cartera"}</p><div className="kinoPreviewChips">{currentStaleNumbers.length?currentStaleNumbers.map(item=><span className="excluded" key={item.number}>{String(item.number).padStart(2,"0")}</span>):<small>Sin descartes</small>}</div></article><article><h3>Rangos esperados</h3><p>Ordenados por promedio en los 10 sorteos recientes</p><div className="kinoPreviewRanges">{previewRanges.map(range=><span key={range.range}><strong>{range.from}–{range.to}</strong><small>{range.recentAverage.toFixed(1)} por sorteo</small></span>)}</div></article></div><article className="kinoPreviewCoverage"><h3>Mayor cobertura en nuestra cartera</h3><p>Los 20 números presentes en más jugadas; la cifra indica cuántas veces aparecen.</p><div className="kinoPreviewChips">{previewNumbers.map(item=><span key={item.number}><strong>{String(item.number).padStart(2,"0")}</strong><small>{item.count}</small></span>)}</div></article><p className="muted">Esta previa describe la estrategia guardada antes del sorteo. Cuando llegue el resultado, el postgame evaluará aciertos, premios, rangos reales y el comportamiento de los descartados.</p></>}
     </section>
 
     <section className="card">
