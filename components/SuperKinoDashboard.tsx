@@ -160,6 +160,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
         date,
         prizes: snapshot?.prizes ?? kinoPrizes,
         summary: snapshot?.prizeSummary ?? (snapshot && draw ? summarizeKinoPrizes(snapshot, draw) : null),
+        retrospective: snapshot?.simulation?.kind === "retrospective",
         status: !snapshot && date < clock.date ? "missing" as const : "pending" as const
       };
     });
@@ -199,7 +200,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
 
     <section className="card kinoAwards">
       <div className="kinoSectionHead"><div><p className="eyebrow">Evaluación de jugadas guardadas</p><h2>Premios obtenidos</h2></div><label>Sorteo evaluado <select value={selectedAwardDate} onChange={e => setAwardDate(e.target.value)}>{awardDates.map(date => <option key={date} value={date}>{date}</option>)}</select></label></div>
-      {!portfolio ? <p>{portfolioError || "Cargando jugadas guardadas…"}</p> : !savedAward ? <p>No hay jugadas guardadas antes del sorteo del {selectedAwardDate}. La evaluación comenzará con el primer sorteo que tenga su cartera guardada; no se reconstruyen premios retrospectivos.</p> : !awardDraw ? <p>Las {savedAward.plays.length} jugadas del {selectedAwardDate} están guardadas. Esperando el resultado para calcular sus premios.</p> : <p>Resultado del {selectedAwardDate} comparado con las {savedAward.plays.length} jugadas guardadas antes del cierre.</p>}
+      {!portfolio ? <p>{portfolioError || "Cargando jugadas guardadas…"}</p> : !savedAward ? <p>No hay jugadas guardadas para el sorteo del {selectedAwardDate}.</p> : !awardDraw ? <p>Las {savedAward.plays.length} jugadas del {selectedAwardDate} están guardadas. Esperando el resultado para calcular sus premios.</p> : savedAward.simulation ? <p>Simulación retrospectiva del {selectedAwardDate} con {savedAward.plays.length} jugadas reconstruidas después del cierre; no representa apuestas registradas.</p> : <p>Resultado del {selectedAwardDate} comparado con las {savedAward.plays.length} jugadas guardadas antes del cierre.</p>}
       <div className="kinoAwardsGrid">{awardProfiles.map(profile => {
         const evaluation = awards?.find(a => a.profile === profile);
         const playCount = savedAward?.plays.filter(play => play.profile === profile).length ?? 10;
@@ -213,7 +214,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal de premios; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{weeklyPrizes.map(item => <article className={item.date === clock.date ? "today" : ""} key={item.date}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.summary ? item.summary.groups.length ? <><div className="kinoWeekPrizeGroups">{item.summary.groups.map(group => {
         const hits = item.prizes.find(prize => prize.amount === group.amount)?.hits;
         return <p key={group.amount}><strong>{group.count} {group.count === 1 ? "jugada" : "jugadas"}{hits === undefined ? "" : ` · ${hits} ${hits === 1 ? "acierto" : "aciertos"}`}</strong><span>Premio {money(group.amount)} c/u</span></p>;
-      })}</div><footer>Total ganado <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">Sin premios</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
+      })}</div><footer>{item.retrospective ? "Simulación retrospectiva" : "Total ganado"} <strong>{money(item.summary.total)}</strong></footer></> : <p className="kinoWeekStatus">{item.retrospective ? "Retrospectiva · sin premios" : "Sin premios"}</p> : <p className="kinoWeekStatus">{item.status === "missing" ? "Sin registro" : "Pendiente"}</p>}</article>)}</div></div>
       <p className="muted">El resumen cuenta las jugadas premiadas por monto e indica sus aciertos. No muestra los números sorteados ni las combinaciones.</p>
     </section>
 

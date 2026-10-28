@@ -728,6 +728,7 @@ export const kinoSnapshotSchema = z.object({
   persistentTopNumbers: z.array(z.number().int().min(1).max(84)).max(20).optional(),
   prizeSummary: kinoPrizeSummarySchema.optional(),
   prizeDrawNumbers: z.array(z.number().int().min(1).max(84)).length(20).refine(numbers => new Set(numbers).size === 20).optional(),
+  simulation: z.object({kind:z.literal("retrospective"),reconstructedAt:z.iso.datetime(),reason:z.string().min(1)}).optional(),
   plays: kinoPlaySchema.array(),
   prizes: z.array(z.object({hits: z.number().int().min(0).max(10), amount: z.number().nonnegative()})).length(7)
 }).superRefine((snapshot, ctx) => {
@@ -910,8 +911,9 @@ export function buildKinoV94RetrospectiveSnapshot(draws:KinoDraw[],targetDate:st
   return buildKinoSnapshotForAlgorithm(draws,targetDate,now,"kino-v9.4");
 }
 
-export function buildKinoV10RetrospectiveSnapshot(draws:KinoDraw[],targetDate:string,now=new Date(`${targetDate}T13:00:00Z`)):KinoSnapshot {
-  return buildKinoSnapshotForAlgorithm(draws,targetDate,now,"kino-v10");
+export function buildKinoV10RetrospectiveSnapshot(draws:KinoDraw[],targetDate:string,reconstructedAt=new Date(),reason="Reconstrucción posterior al cierre solicitada para análisis retrospectivo."):KinoSnapshot {
+  const snapshot=buildKinoSnapshotForAlgorithm(draws,targetDate,new Date(`${targetDate}T13:00:00Z`),"kino-v10");
+  return kinoSnapshotSchema.parse({...snapshot,simulation:{kind:"retrospective",reconstructedAt:reconstructedAt.toISOString(),reason}});
 }
 
 export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
