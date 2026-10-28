@@ -82,7 +82,7 @@ Despues de guardar las variables, redeploya el proyecto en Vercel.
 
 ## Generación automática
 
-El flujo `.github/workflows/prepare-portfolios.yml` consulta la aplicación de producción cada 30 minutos, aunque nadie tenga una pantalla abierta. Primero actualiza los resultados publicados y después prepara de forma idempotente:
+El flujo `.github/workflows/prepare-portfolios.yml` consulta la aplicación únicamente en ventanas relacionadas con los sorteos, aunque nadie tenga una pantalla abierta. Actualiza cada producto después de su horario y prepara de forma idempotente:
 
 - los repartos Día y Noche de Quinielón 2.0;
 - las 120 jugadas de Super Kino TV;
@@ -90,7 +90,7 @@ El flujo `.github/workflows/prepare-portfolios.yml` consulta la aplicación de p
 - las 60 jugadas de La Primera Loto 5;
 - las 30 jugadas de Quiniela Palé.
 
-GitHub ejecuta los horarios en UTC. El flujo usa los minutos `07` y `37` para evitar la congestión habitual de la hora en punto. También puede ejecutarse manualmente desde **Actions → Prepare lottery portfolios → Run workflow**. Las rutas devuelven la cartera ya guardada cuando existe, por lo que las ejecuciones repetidas no modifican sorteos cerrados.
+GitHub ejecuta los horarios en UTC. El flujo traduce las ventanas a la hora dominicana y usa los minutos `07` y `37` para evitar la congestión habitual de la hora en punto. Esto reduce las ejecuciones de 48 diarias a seis ventanas pequeñas, y en cada una solo llama los productos correspondientes. También puede ejecutarse completo manualmente desde **Actions → Prepare lottery portfolios → Run workflow**. Las rutas devuelven la cartera ya guardada cuando existe, por lo que las ejecuciones repetidas no modifican sorteos cerrados.
 
 ## Funciones incluidas
 

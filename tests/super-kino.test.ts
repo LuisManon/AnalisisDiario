@@ -213,6 +213,22 @@ test('current strategy excludes low-frequency numbers delayed more than five day
   assert.ok(snapshot.plays.every(play=>play.numbers.every(number=>!excluded.has(number))));
   assert.ok(snapshot.plays.every(play=>play.numbers.filter(number=>number<=10).length===2));
 });
+test('v10 finishes when every eligible number is fresh and recovery is empty',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  const productionDraws=[...draws.filter(draw=>draw.date!=='2026-10-26'),{
+    date:'2026-10-26',
+    numbers:[1,2,10,18,19,23,24,28,31,33,34,42,44,46,54,56,58,66,69,71],
+    source:'https://numeros.medios.com.do/leidsa/super-kino-tv/historial/2026-10/'
+  }];
+  const started=performance.now();
+  const snapshot=buildKinoSnapshot(productionDraws,'2026-10-27',new Date('2026-10-27T01:25:59.000Z'));
+  assert.equal(snapshot.plays.length,200);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,200);
+  assert.deepEqual(snapshot.recoveryNumbers,[]);
+  assert.equal(snapshot.recoveryPlayCount,0);
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+  assert.ok(performance.now()-started<10_000,'the October 27 regression must stay within the serverless CPU budget');
+});
 test('calendar-month cutoff handles short months and keeps numbers seen on the boundary',async()=>{
   const {getKinoStaleNumbers,kinoOneMonthCutoff}=await import('../lib/super-kino.ts');
   assert.equal(kinoOneMonthCutoff('2024-03-31'),'2024-02-29');

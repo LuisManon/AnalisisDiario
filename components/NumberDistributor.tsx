@@ -46,22 +46,19 @@ export function NumberDistributor({renderNumber}: Props) {
   const [fallback,setFallback] = useState("");
   const sequence = useRef(0);
   const slotRef = useRef("");
-  const assignmentRef = useRef<Assignment | null>(null);
-  const loadingRef = useRef(false);
   async function load(smart?:boolean) {
-    loadingRef.current = true;
     const id=++sequence.current; setBusy(true);setError("");setCopyFeedback(null);copySequence.current++;setFallback("");
     try {
       const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current, ...(smart === undefined ? {} : {smart})})});
       const data=await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el reparto.");
-      if (id===sequence.current) {setAssignment(data);assignmentRef.current=data;slotRef.current=`${data.date}-${data.session}`;}
+      if (id===sequence.current) {setAssignment(data);slotRef.current=`${data.date}-${data.session}`;}
     } catch(e) {if(id===sequence.current) setError(e instanceof Error ? e.message : "No se pudo cargar el reparto.");}
-    finally {loadingRef.current=false;if(id===sequence.current) setBusy(false);}
+    finally {if(id===sequence.current) setBusy(false);}
   }
   useEffect(() => {
     void load();
-    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();} else if (assignmentRef.current?.smart && !loadingRef.current) {void load();}},60_000);
+    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},60_000);
     return ()=>{window.clearInterval(timer);sequence.current++;};
   },[]);
   useEffect(() => {

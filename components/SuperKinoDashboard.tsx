@@ -85,7 +85,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   useEffect(() => {
     mounted.current = true;
     void loadPortfolio();
-    void update();
+    if (!resultsRef.current.some(d => d.date === kinoExpectedDate())) void update();
     const timer = window.setInterval(() => {
       const expected = kinoExpectedDate();
       setClock(kinoClock());

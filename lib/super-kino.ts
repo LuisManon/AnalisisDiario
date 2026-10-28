@@ -491,7 +491,7 @@ function buildKinoV93Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
 
 type KinoMix = readonly [number,number,number];
 
-export function kinoAdaptiveMixes(requested:KinoMix):KinoMix[] {
+export function kinoAdaptiveMixes(requested:KinoMix, maximumDistance=6):KinoMix[] {
   const supportChanges=(candidate:KinoMix)=>candidate.reduce((total,value,index)=>
     total+Number((requested[index]===0)!==(value===0)),0);
   return Array.from({length:11},(_,hot)=>Array.from({length:11-hot},(_,middle)=>
@@ -499,7 +499,7 @@ export function kinoAdaptiveMixes(requested:KinoMix):KinoMix[] {
   )).flat()
     // Moving at most three positions keeps the requested strategy recognizable
     // while covering every nearby group distribution automatically.
-    .filter(candidate=>candidate.reduce((total,value,index)=>total+Math.abs(value-requested[index]),0)<=6)
+    .filter(candidate=>candidate.reduce((total,value,index)=>total+Math.abs(value-requested[index]),0)<=maximumDistance)
     .sort((left,right)=>{
       const distance=(candidate:KinoMix)=>candidate.reduce((total,value,index)=>total+Math.abs(value-requested[index]),0);
       return distance(left)-distance(right)
@@ -514,9 +514,12 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   const mixCounts=playCount===200?[42,30,28,17,33,25,25]:[25,18,17,10,20,15,15];
   const mixTemplates:KinoMix[]=[[10,0,0],[1,9,0],[0,9,1],[0,0,10],[4,3,3],[5,3,2],[3,3,4]];
   const mixes=mixTemplates.flatMap((mix,index)=>Array.from({length:mixCounts[index]},()=>mix));
-  const recoveryPlayCount=playCount===200?25:15;
   const groups = kinoGroups(sample,freshNumbers);
   const recoveryNumbers=new Set([...allowedNumbers].filter(number=>!freshNumbers.has(number)));
+  // A fully fresh eligible universe legitimately has nothing to recover. The
+  // old fixed tail made every one of those plays require a number from an empty
+  // set, causing an exhaustive search until the function timed out.
+  const recoveryPlayCount=recoveryNumbers.size===0?0:playCount===200?25:15;
   const hotThreshold=groups.hot.at(-1)?.count??Infinity;
   const middleThreshold=groups.middle.at(-1)?.count??Infinity;
   const recoveryItems=kinoStats(sample).filter(item=>recoveryNumbers.has(item.number));
@@ -566,12 +569,19 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
 
   for(let index=0;index<mixes.length;index++) {
     const requestedMix=mixes[index];
-    const mixVariants=kinoAdaptiveMixes(requestedMix);
+    // Start with the intended nearby compositions, then try the three balanced
+    // production mixes as a bounded fallback. This prevents an impossible
+    // extreme mix (for example 0/0/10 after eligibility exclusions) from
+    // stalling the whole portfolio without opening an unbounded search space.
+    const mixVariants=[...new Map([...kinoAdaptiveMixes(requestedMix),[3,3,4] as KinoMix,[4,3,3] as KinoMix,[5,3,2] as KinoMix].map(mix=>[mix.join("/"),mix])).values()];
     const recoveryPlay=index>=playCount-recoveryPlayCount;
     const candidateNumbers=recoveryPlay?allowedNumbers:freshNumbers;
     let accepted:number[]|null=null;
     let acceptedMix:KinoMix=requestedMix;
-    const attemptsPerMix=450;
+    // Keep portfolio creation within a serverless request budget. Some range/group
+    // combinations are impossible and the recursive search used to spend minutes
+    // proving that before trying the next adaptive mix.
+    const attemptsPerMix=90;
     for(let attempt=0;attempt<mixVariants.length*attemptsPerMix&&!accepted;attempt++) {
       const mixIndex=Math.floor(attempt/attemptsPerMix);
       const mixAttempt=attempt%attemptsPerMix;
@@ -611,7 +621,8 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
         const repeatedPairs=selected.reduce((sum,other)=>sum+(pairUsage.get(kinoPairKey(number,other))??0),0);
         const affinity=selected.reduce((sum,other)=>sum+(recentPairs.counts.get(kinoPairKey(number,other))??0),0);
         const jitter=((number*37+index*17+attempt*29+depth*11)%101)/101*60;
-        return (usage.get(number)??0)*25+repeatedPairs*8-affinity*.35+jitter;
+        const recoveryPriority=recoveryPlay&&recoveryNumbers.has(number)?-10_000:0;
+        return recoveryPriority+(usage.get(number)??0)*25+repeatedPairs*8-affinity*.35+jitter;
       };
       const feasible=()=>{
         for(let group=0;group<3;group++) {
@@ -625,7 +636,10 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
         }
         return true;
       };
+      let searchNodes=0;
+      const maximumSearchNodes=1_200;
       const search=(depth:number):boolean=>{
+        if(++searchNodes>maximumSearchNodes) return false;
         if(depth===10) return remainingGroups.every(value=>value===0)&&remainingRanges.every(value=>value===0)&&selected.filter(number=>persistent.has(number)).length>=persistentMinimum&&(!recoveryPlay||selected.some(number=>recoveryNumbers.has(number)));
         if(!feasible()) return false;
         const persistentNeeded=Math.max(0,persistentMinimum-selected.filter(number=>persistent.has(number)).length);
@@ -669,6 +683,7 @@ function buildKinoV94Plays(sample: KinoDraw[], allowedNumbers: ReadonlySet<numbe
   }
   return {
     plays,persistentTopNumbers,recoveryNumbers:[...recoveryNumbers].sort((a,b)=>a-b),
+    recoveryPlayCount,
     rangeModel:rangeModel.map(item=>({...item,dominant:dominantRanges.some(candidate=>candidate.range===item.range)})),
     concentrationPlayCount:plays.filter((_,index)=>index%4===0).length
   };
@@ -736,7 +751,7 @@ export const kinoSnapshotSchema = z.object({
       if(snapshot.maximumDaysWithoutAppearance!==9||snapshot.minimumGlobalAppearances!==4) ctx.addIssue({code:"custom",message:"Kino v9.4 requiere atraso máximo de 9 días y al menos 4 salidas globales."});
       if(snapshot.recoveryPlayCount!==undefined||snapshot.recoveryNumbers!==undefined) {
         const recovery=new Set(snapshot.recoveryNumbers??[]);
-        const expectedRecovery=snapshot.algorithm==="kino-v10"?25:15;
+        const expectedRecovery=(snapshot.recoveryNumbers?.length??0)===0?0:snapshot.algorithm==="kino-v10"?25:15;
         const expectedConcentration=snapshot.algorithm==="kino-v10"?50:30;
         const recoveryStart=snapshot.plays.length-expectedRecovery;
         if(snapshot.recoveryPlayCount!==expectedRecovery||recovery.size!==(snapshot.recoveryNumbers?.length??0)) ctx.addIssue({code:"custom",message:`${snapshot.algorithm} requiere ${expectedRecovery} jugadas de recuperación y números únicos.`});
@@ -882,7 +897,7 @@ function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, no
   const persistent = algorithm === "kino-v10"?buildKinoV10Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null;
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm, ...(kinoStrategyVersionForDate(targetDate)?{strategyVersion:KINO_STRATEGY_VERSION}:{}), delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:algorithm==="kino-v10"?25:15,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
+    sampleSize: sample.length, algorithm, ...(kinoStrategyVersionForDate(targetDate)?{strategyVersion:KINO_STRATEGY_VERSION}:{}), delayCutoff, excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:persistent&&"recoveryPlayCount" in persistent?persistent.recoveryPlayCount:0,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm ? {} : {quickHotNumbers}), ...(persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
     plays: persistent?.plays ?? buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
 }
