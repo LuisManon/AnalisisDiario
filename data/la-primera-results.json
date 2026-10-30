@@ -3,8 +3,10 @@
     "date": "2026-10-30",
     "session": "dia",
     "number": 22,
-    "source": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-10-30/",
-    "verification": "provisional"
+    "drawId": 892,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-10-30/"
   },
   {
     "date": "2026-10-29",
