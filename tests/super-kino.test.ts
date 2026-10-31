@@ -12,8 +12,8 @@ test('one hundred twenty exploratory plays remain distinct with thirty quick-hot
 test('parser rejects missing and duplicate balls',()=>{const row=(nums:number[])=>`<tr><td><a href="/resultados/2026-10-05/">Date</a></td><td class="lad-t-kino">${nums.map(n=>`<span class="b">${n}</span>`).join('')}</td></tr>`;assert.equal(parseKinoArchive(row(draws[0].numbers),draws[0].source)[0].date,'2026-10-05');assert.throws(()=>parseKinoArchive(row(Array(20).fill(1)),draws[0].source));assert.throws(()=>parseKinoArchive('<html>Error</html>',draws[0].source));});
 test('official prizes include zero hits and revised nine-hit prize',()=>{assert.equal(kinoPrize(0),80);assert.equal(kinoPrize(9),200000);assert.equal(kinoPrize(10),25000000);assert.equal(kinoPrize(4),0);});
 test('saved portfolios accept legacy profiles and keep the current hybrid fully exploratory',async()=>{
-  const {kinoSnapshotSchema}=await import('../lib/super-kino.ts');
-  const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
+  const {readKinoSnapshots}=await import('../lib/super-kino-portfolio-store.ts');
+  const snapshots=await readKinoSnapshots();
   assert.equal(snapshots[0].algorithm,kinoAlgorithmForDate(snapshots[0].targetDate));
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,snapshots[0].plays.length);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
@@ -21,8 +21,9 @@ test('saved portfolios accept legacy profiles and keep the current hybrid fully 
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });
 test('weekly prize tracking stays frozen after it is recorded',async()=>{
-  const {freezeKinoPrizeSummaries,kinoSnapshotSchema,summarizeKinoPrizes}=await import('../lib/super-kino.ts');
-  const snapshots=kinoSnapshotSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-portfolio-history.json',import.meta.url),'utf8')));
+  const {freezeKinoPrizeSummaries,summarizeKinoPrizes}=await import('../lib/super-kino.ts');
+  const {readKinoSnapshots}=await import('../lib/super-kino-portfolio-store.ts');
+  const snapshots=await readKinoSnapshots();
   const snapshot=snapshots.find(item=>item.targetDate==='2026-10-06');
   const draw=draws.find(item=>item.date==='2026-10-06');
   assert.ok(snapshot&&draw);
@@ -39,6 +40,19 @@ test('weekly prize tracking stays frozen after it is recorded',async()=>{
   assert.deepEqual(summarizeKinoPrizes(wednesday,{...currentWednesdayDraw,numbers:wednesday.prizeDrawNumbers}),recordedWednesday);
   const changedDraw={...draw,numbers:Array.from({length:20},(_,index)=>index+1)};
   assert.deepEqual(freezeKinoPrizeSummaries([snapshot],[changedDraw])[0].prizeSummary,tuesday);
+});
+
+test('portfolio storage keeps one bounded file per indexed draw',async()=>{
+  const directory=new URL('../data/super-kino-portfolios/',import.meta.url);
+  const dates=JSON.parse(fs.readFileSync(new URL('index.json',directory),'utf8')) as string[];
+  const files=fs.readdirSync(directory).filter(file=>file.endsWith('.json')&&file!=='index.json').sort().reverse();
+  assert.deepEqual(files,dates.map(date=>`${date}.json`));
+  assert.equal(new Set(dates).size,dates.length);
+  for(const date of dates){
+    const file=new URL(`${date}.json`,directory);
+    assert.ok(fs.statSync(file).size<1_000_000);
+    assert.equal(JSON.parse(fs.readFileSync(file,'utf8')).targetDate,date);
+  }
 });
 
 test('full year includes every published date and documents no-draw days',async()=>{
