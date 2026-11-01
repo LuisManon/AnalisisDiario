@@ -1,5 +1,23 @@
 [
   {
+    "date": "2026-11-01",
+    "session": "dia",
+    "number": 45,
+    "drawId": 894,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-11-01/"
+  },
+  {
+    "date": "2026-11-01",
+    "session": "noche",
+    "number": 52,
+    "drawId": 889,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-noche/2026-11-01/"
+  },
+  {
     "date": "2026-10-31",
     "session": "dia",
     "number": 40,
