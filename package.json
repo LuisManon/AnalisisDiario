@@ -16,6 +16,18 @@
     "evaluate:kino-v11": "node --experimental-strip-types scripts/evaluate-super-kino-v11.ts",
     "evaluate:kino-four-groups": "node --experimental-strip-types scripts/evaluate-super-kino-four-groups.ts",
     "evaluate:kino-v12": "node --experimental-strip-types scripts/evaluate-super-kino-v12.ts",
+    "evaluate:kino-v102": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts",
+    "evaluate:kino-v103": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts 2026-10-15 2026-10-31",
+    "evaluate:kino-v104": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts 2026-10-15 2026-10-31",
+    "evaluate:kino-v105": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts 2026-10-15 2026-10-31",
+    "evaluate:kino-diagnostic": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts 2026-10-15 2026-10-31",
+    "evaluate:kino-v106": "node --experimental-strip-types scripts/evaluate-super-kino-v102.ts 2026-10-15 2026-10-31",
+    "evaluate:kino-v13": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts",
+    "evaluate:kino-v131": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts 10 100",
+    "evaluate:kino-v132": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts 10 100",
+    "evaluate:kino-v133": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts 10 100",
+    "evaluate:kino-v133-ratios": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts 10 1000 none hybrid",
+    "evaluate:kino-v133-final": "node --experimental-strip-types scripts/evaluate-super-kino-v13.ts 10 10000 none final",
     "import:la-primera-loto5": "node scripts/import-la-primera-loto5.mjs"
   },
   "dependencies": {

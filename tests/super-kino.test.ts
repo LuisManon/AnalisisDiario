@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START, KINO_V10_START, KINO_V12_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START, KINO_V10_START, KINO_V12_START, KINO_V133_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -11,6 +11,21 @@ test('ten distinct reproducible exploratory plays respect group quotas',()=>{con
 test('one hundred twenty exploratory plays remain distinct with thirty quick-hot reinforcements',()=>{const quick=kinoQuickHotStats(sample);const plays=buildKinoPlays(sample,'exploratoria',undefined,120,quick.map(item=>item.number),30);const quickSet=new Set(quick.map(item=>item.number));assert.equal(plays.length,120);assert.equal(new Set(plays.map(p=>p.numbers.join(','))).size,120);assert.deepEqual(plays.map(p=>p.id),Array.from({length:120},(_,index)=>index+1));assert.equal(plays.filter(p=>p.quickHot).length,30);assert.ok(plays.filter(p=>p.quickHot).every(p=>p.numbers.filter(number=>quickSet.has(number)).length===3));assert.ok(plays.every(p=>p.profile==='exploratoria'&&p.hot===3&&p.middle===3&&p.cold===4));});
 test('parser rejects missing and duplicate balls',()=>{const row=(nums:number[])=>`<tr><td><a href="/resultados/2026-10-05/">Date</a></td><td class="lad-t-kino">${nums.map(n=>`<span class="b">${n}</span>`).join('')}</td></tr>`;assert.equal(parseKinoArchive(row(draws[0].numbers),draws[0].source)[0].date,'2026-10-05');assert.throws(()=>parseKinoArchive(row(Array(20).fill(1)),draws[0].source));assert.throws(()=>parseKinoArchive('<html>Error</html>',draws[0].source));});
 test('official prizes include zero hits and revised nine-hit prize',()=>{assert.equal(kinoPrize(0),80);assert.equal(kinoPrize(9),200000);assert.equal(kinoPrize(10),25000000);assert.equal(kinoPrize(4),0);});
+test('V13.3 generates the main 160/40 portfolio independently from draw history',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  assert.equal(kinoAlgorithmForDate(KINO_V12_START),'kino-v12');
+  assert.equal(kinoAlgorithmForDate('2026-11-02'),'kino-v12');
+  assert.equal(kinoAlgorithmForDate(KINO_V133_START),'kino-v13.3');
+  const snapshot=buildKinoSnapshot(draws,KINO_V133_START,new Date('2026-11-02T16:00:00Z'));
+  assert.equal(snapshot.algorithm,'kino-v13.3');
+  assert.deepEqual(snapshot.hybridPlan,{diversified:160,directed:40,families:8,familySize:5});
+  assert.equal(snapshot.plays.length,200);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,200);
+  assert.equal(snapshot.coverageExposure?.reduce((sum,count)=>sum+count,0),2000);
+  assert.ok(snapshot.coverageExposure?.every(count=>count===23||count===24));
+  assert.equal(snapshot.excludedByDelay?.length,0);
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+});
 test('saved portfolios accept legacy profiles and keep the current hybrid fully exploratory',async()=>{
   const {readKinoSnapshots}=await import('../lib/super-kino-portfolio-store.ts');
   const snapshots=await readKinoSnapshots();

@@ -4,7 +4,9 @@ import { kinoPrize, type KinoDraw } from "../lib/super-kino.ts";
 type Ticket = number[];
 
 const draws=JSON.parse(fs.readFileSync("data/super-kino-results.json","utf8")) as KinoDraw[];
-const era=draws.filter(draw=>draw.date>="2026-09-25"&&draw.date<="2026-10-31").sort((a,b)=>a.date.localeCompare(b.date));
+const eraStart=process.argv[2]??"2026-09-25";
+const eraEnd=process.argv[3]??"2026-10-31";
+const era=draws.filter(draw=>draw.date>=eraStart&&draw.date<=eraEnd).sort((a,b)=>a.date.localeCompare(b.date));
 const ticketCost=25;
 const trials=500;
 
@@ -197,21 +199,37 @@ function randomTickets(groups:number[][],date:string,trial:number) {
   });
 }
 
+function isolatedTenPatternTickets(date:string,trial:number) {
+  const random=randomFor(`${date}:isolated-ten-pattern:${trial}`);
+  const counts=[1,1,0,1,4,0,1,1,1];
+  const ranges=Array.from({length:9},(_,range)=>Array.from({length:range===8?4:10},(_,offset)=>range*10+offset+1));
+  const tickets:Ticket[]=[];
+  const seen=new Set<string>();
+  while(tickets.length<200) {
+    const ticket=counts.flatMap((count,range)=>choose(ranges[range]!,count,random)).sort((a,b)=>a-b);
+    const keyValue=key(ticket);
+    if(ticket.filter(number=>number%2===0).length===3&&!seen.has(keyValue)) { seen.add(keyValue); tickets.push(ticket); }
+  }
+  return tickets;
+}
+
 function evaluate(tickets:Ticket[],draw:KinoDraw) {
   const winning=new Set(draw.numbers);
   const hits=tickets.map(ticket=>ticket.filter(number=>winning.has(number)).length);
-  return {prize:hits.reduce((sum,hit)=>sum+kinoPrize(hit),0),maximum:Math.max(...hits)};
+  return {prize:hits.reduce((sum,hit)=>sum+kinoPrize(hit),0),maximum:Math.max(...hits),tenTickets:tickets.flatMap((ticket,index)=>hits[index]===10?[{id:index+1,numbers:ticket}]:[])};
 }
 
+const tenHitEvents:{trial:number;date:string;kind:string;winningNumbers:number[];tickets:{id:number;numbers:number[]}[]}[]=[];
 function runTrial(trial:number) {
-  const totals={fourGroups:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0},global:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0},hybrid:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0}};
+  const totals={fourGroups:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0},global:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0},hybrid:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0},isolatedPattern:{prize:0,sevenDays:0,eightDays:0,nineDays:0,tenDays:0,maximum:0}};
   for(const draw of era) {
     const groups=groupsFor(draw.date,trial);
     const permutation=[...groups.flat(),...Array.from({length:84},(_,index)=>index+1).filter(number=>!groups.flat().includes(number))];
     const portfolios={
       fourGroups:balancedTickets(groups),
       global:mapGlobalTickets(global200Template,permutation),
-      hybrid:[...mapGlobalTickets(global150Template,permutation),...coverageTemplate.map(ticket=>ticket.map(index=>groups[0]![index]!).sort((a,b)=>a-b))]
+      hybrid:[...mapGlobalTickets(global150Template,permutation),...coverageTemplate.map(ticket=>ticket.map(index=>groups[0]![index]!).sort((a,b)=>a-b))],
+      isolatedPattern:isolatedTenPatternTickets(draw.date,trial)
     };
     for(const kind of Object.keys(portfolios) as Array<keyof typeof portfolios>) {
       const result=evaluate(portfolios[kind],draw);
@@ -221,6 +239,7 @@ function runTrial(trial:number) {
       totals[kind].nineDays+=Number(result.maximum>=9);
       totals[kind].tenDays+=Number(result.maximum>=10);
       totals[kind].maximum=Math.max(totals[kind].maximum,result.maximum);
+      if(result.tenTickets.length) tenHitEvents.push({trial,date:draw.date,kind,winningNumbers:draw.numbers,tickets:result.tenTickets});
     }
   }
   const cost=era.length*200*ticketCost;
@@ -232,7 +251,7 @@ function percentile(values:number[],fraction:number) {
   return sorted[Math.floor((sorted.length-1)*fraction)]!;
 }
 
-function summarize(results:ReturnType<typeof runTrial>[],kind:"fourGroups"|"global"|"hybrid") {
+function summarize(results:ReturnType<typeof runTrial>[],kind:"fourGroups"|"global"|"hybrid"|"isolatedPattern") {
   const roi=results.map(result=>result[kind].roi);
   const eight=results.map(result=>result[kind].eightDays);
   const nine=results.map(result=>result[kind].nineDays);
@@ -278,6 +297,8 @@ console.log(JSON.stringify({
     fourGroups:summarize(results,"fourGroups"),
     global:summarize(results,"global"),
     hybrid:summarize(results,"hybrid")
+    ,isolatedPattern:summarize(results,"isolatedPattern")
   },
+  tenHitEvents,
   generatedPortfolio:{targetDate:nextDate,groups:nextGroups.map(group=>[...group].sort((a,b)=>a-b)),excluded:Array.from({length:84},(_,index)=>index+1).filter(number=>!nextGroups.flat().includes(number)),tickets:nextTickets.map((numbers,index)=>({id:index+1,group:Math.floor(index/50)+1,numbers}))}
 },null,2));

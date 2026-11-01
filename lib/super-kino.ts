@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { buildKinoV133Numbers } from "./super-kino-v133.ts";
 
 export const KINO_OFFICIAL = "https://www.leidsa.com/play/draw/leidsa-kinotv";
 // First observed draw containing 81–84 in the imported archive; not an official rule-change date.
@@ -9,12 +10,16 @@ export const KINO_V93_START = "2026-10-15";
 export const KINO_V94_START = "2026-10-16";
 export const KINO_V10_START = "2026-10-25";
 export const KINO_V12_START = "2026-11-01";
+export const KINO_V133_START = "2026-11-03";
 export const KINO_STRATEGIC_EXCLUSION_START = "2026-10-26";
 export const KINO_STRATEGY_VERSION = "low-frequency-stale-v1";
 export function kinoStrategyVersionForDate(targetDate:string) {
   return targetDate>=KINO_STRATEGIC_EXCLUSION_START&&targetDate<KINO_V12_START?KINO_STRATEGY_VERSION:undefined;
 }
 export function kinoAlgorithmForDate(targetDate: string) {
+  // Preserve the V12 portfolio already frozen for November 2; V13.3 starts
+  // with the first draw that did not already have saved plays.
+  if (targetDate >= KINO_V133_START) return "kino-v13.3" as const;
   if (targetDate >= KINO_V12_START) return "kino-v12" as const;
   if (targetDate >= KINO_V10_START) return "kino-v10" as const;
   if (targetDate >= KINO_V94_START) return "kino-v9.4" as const;
@@ -785,6 +790,20 @@ function buildKinoV12Plays(sample:KinoDraw[],v10Plays:KinoPlay[],targetDate:stri
   throw lastError;
 }
 
+export const KINO_V133_PLAN = {diversified:160,directed:40,families:8,familySize:5} as const;
+
+function buildKinoV133Plays(sample:KinoDraw[],targetDate:string) {
+  const groups=kinoGroups(sample),groupByNumber=new Map<number,number>();
+  [groups.hot,groups.middle,groups.cold].forEach((group,index)=>group.forEach(item=>groupByNumber.set(item.number,index)));
+  const numbers=buildKinoV133Numbers(targetDate);
+  const coverageExposure=Array.from({length:84},(_,index)=>numbers.filter(ticket=>ticket.includes(index+1)).length);
+  const plays=numbers.map((ticket,index):KinoPlay=>{
+    const counts=[0,0,0];ticket.forEach(number=>counts[groupByNumber.get(number)??2]++);
+    return {id:index+1,profile:"exploratoria",numbers:ticket,hot:counts[0],middle:counts[1],cold:counts[2]};
+  });
+  return {plays,coverageExposure,hybridPlan:KINO_V133_PLAN};
+}
+
 export const KINO_V11_CANDIDATE_PLAN = {recent10:70,medium20:65,stable30:65} as const;
 
 function kinoCandidateNoise(seed:string) {
@@ -896,10 +915,11 @@ const kinoPrizeSummarySchema = z.object({
   winningPlays: z.number().int().nonnegative(),
   total: z.number().nonnegative()
 });
+const overlapKinoPlays=(left:KinoPlay,right:KinoPlay)=>left.numbers.filter(number=>right.numbers.includes(number)).length;
 export const kinoSnapshotSchema = z.object({
   targetDate: z.iso.date(), generatedAt: z.iso.datetime(),
   analysisFrom: z.iso.date(), analysisTo: z.iso.date(), sampleSize: z.number().int().positive(),
-  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9", "kino-v9.1", "kino-v9.3", "kino-v9.4", "kino-v10", "kino-v12"]),
+  algorithm: z.enum(["kino-v2", "kino-v3", "kino-v4", "kino-v5", "kino-v7", "kino-v8", "kino-v9", "kino-v9.1", "kino-v9.3", "kino-v9.4", "kino-v10", "kino-v12", "kino-v13.3"]),
   strategyVersion:z.literal(KINO_STRATEGY_VERSION).optional(),
   delayCutoff: z.iso.date().optional(),
   maximumDaysWithoutAppearance: z.number().int().positive().optional(),
@@ -910,6 +930,7 @@ export const kinoSnapshotSchema = z.object({
   portfolioPlan:z.object({core:z.literal(200),recombination:z.literal(0),underexposed:z.literal(0),contrast:z.literal(0)}).optional(),
   coverageBlend:z.object({uniform:z.number().min(0).max(1),v10:z.number().min(0).max(1)}).refine(blend=>Math.abs(blend.uniform+blend.v10-1)<1e-9).optional(),
   coverageExposure:z.array(z.number().int().positive()).length(84).optional(),
+  hybridPlan:z.object({diversified:z.literal(160),directed:z.literal(40),families:z.literal(8),familySize:z.literal(5)}).optional(),
   rangeModel: z.array(z.object({
     range:z.number().int().min(0).max(8), from:z.number().int().min(1).max(84), to:z.number().int().min(1).max(84),
     recentAverage:z.number().nonnegative(), previousAverage:z.number().nonnegative(), historicalAverage:z.number().nonnegative(),
@@ -931,10 +952,13 @@ export const kinoSnapshotSchema = z.object({
   if (Boolean(snapshot.prizeSummary) !== Boolean(snapshot.prizeDrawNumbers)) ctx.addIssue({code: "custom", message: "El premio registrado requiere conservar también el resultado evaluado."});
   const deadline = new Date(`${snapshot.targetDate}T${new Date(`${snapshot.targetDate}T12:00:00Z`).getUTCDay() === 0 ? "15" : "20"}:55:00-04:00`);
   if (new Date(snapshot.generatedAt) >= deadline) ctx.addIssue({code: "custom", message: "No se admiten jugadas creadas después del cierre."});
-  if(snapshot.algorithm==="kino-v12") {
+  if(snapshot.algorithm==="kino-v12"||snapshot.algorithm==="kino-v13.3") {
     if(snapshot.plays.length!==200||new Set(snapshot.plays.map(play=>play.id)).size!==200||snapshot.plays.some(play=>play.profile!=="exploratoria")) ctx.addIssue({code:"custom",message:"Kino v12 requiere 200 jugadas exploratorias únicas."});
-    if(!snapshot.coverageBlend||snapshot.coverageExposure?.reduce((sum,value)=>sum+value,0)!==2000) ctx.addIssue({code:"custom",message:"Kino v12 requiere una ponderación válida sobre los 84 números."});
+    if(snapshot.algorithm==="kino-v12"&&!snapshot.coverageBlend) ctx.addIssue({code:"custom",message:"Kino v12 requiere una ponderación válida."});
+    if(snapshot.algorithm==="kino-v13.3"&&(snapshot.coverageBlend||!snapshot.hybridPlan)) ctx.addIssue({code:"custom",message:"Kino v13.3 requiere el plan híbrido 160/40."});
+    if(snapshot.coverageExposure?.reduce((sum,value)=>sum+value,0)!==2000) ctx.addIssue({code:"custom",message:"La cobertura requiere 2,000 posiciones sobre los 84 números."});
     if(snapshot.coverageExposure&&snapshot.coverageExposure.some((expected,index)=>snapshot.plays.filter(play=>play.numbers.includes(index+1)).length!==expected)) ctx.addIssue({code:"custom",message:"La exposición guardada de Kino v12 no corresponde a sus jugadas."});
+    if(snapshot.algorithm==="kino-v13.3"&&snapshot.plays.some((play,index)=>snapshot.plays.slice(index+1).some(other=>overlapKinoPlays(play,other)>6))) ctx.addIssue({code:"custom",message:"Kino v13.3 contiene familias con más de seis números compartidos."});
   } else if (snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4" || snapshot.algorithm === "kino-v10") {
     const persistent = new Set(snapshot.persistentTopNumbers ?? []);
     const mixCounts = new Map<string,number>();
@@ -1016,19 +1040,21 @@ export type KinoSnapshot = z.infer<typeof kinoSnapshotSchema>;
 export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
   const quickNumbers = snapshot.quickHotNumbers?.map(item => `${String(item.number).padStart(2,"0")} (${item.averageInterval.toFixed(2)})`).join(", ") ?? "No aplica";
   const persistentAlgorithm = snapshot.algorithm === "kino-v9" || snapshot.algorithm === "kino-v9.1" || snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4" || snapshot.algorithm === "kino-v10";
-  const composition = snapshot.algorithm === "kino-v12"
+  const composition = snapshot.algorithm === "kino-v13.3"
+    ? "V13.3 160/40: 160 jugadas diversificadas y 40 dirigidas en ocho familias de cinco"
+    : snapshot.algorithm === "kino-v12"
     ? `V12 ${Math.round((snapshot.coverageBlend?.uniform??1)*100)}/${Math.round((snapshot.coverageBlend?.v10??0)*100)}: cobertura de los 84 números; parejas y similitud entre jugadas reducidas`
     : persistentAlgorithm
     ? snapshot.algorithm === "kino-v9.3" || snapshot.algorithm === "kino-v9.4" || snapshot.algorithm === "kino-v10" ? `Composición principal por grupos y rangos: ${snapshot.algorithm==="kino-v10"?"42×10/0/0 · 30×1/9/0 · 28×0/9/1 · 17×0/0/10 · 33×4/3/3 · 25×5/3/2 · 25×3/3/4; 200 jugadas v9.4 escaladas, 175 recientes + 25 de recuperación":"25×10/0/0 · 18×1/9/0 · 17×0/9/1 · 10×0/0/10 · 20×4/3/3 · 15×5/3/2 · 15×3/3/4; "+(snapshot.algorithm==="kino-v9.4"?"modelo adaptativo de rangos: 90 jugadas ponderadas + 30 escenarios de concentración; 105 recientes + 15 de recuperación":"cada jugada contiene 1–3 números del 1 al 9")}` : `Composición final 84: 5 calientes · 3 intermedios · 2 fríos; top 20 persistente + continuidad + parejas recientes${snapshot.algorithm === "kino-v9.1" ? " + 5 rotaciones intermedias antirredundancia" : ""}`
     : snapshot.algorithm === "kino-v8"
     ? "Composición candidata: 3/4/3 · 4/3/3 · 3/3/4, con cobertura inversa protegida"
     : "Composición: 3 calientes · 3 intermedios · 4 fríos";
-  const reinforcement = snapshot.algorithm === "kino-v12"
+  const reinforcement = snapshot.algorithm === "kino-v12" || snapshot.algorithm === "kino-v13.3"
     ? `Exposición por número: ${snapshot.coverageExposure?.map((count,index)=>`${String(index+1).padStart(2,"0")}:${count}`).join(", ") ?? "No disponible"}`
     : persistentAlgorithm
     ? `Top 20 persistente: ${snapshot.persistentTopNumbers ? [...snapshot.persistentTopNumbers].sort((a,b)=>a-b).map(number => String(number).padStart(2,"0")).join(", ") : "No aplica"}`
     : `Calientes rápidos · promedio de los 3 intervalos recientes: ${quickNumbers}`;
-  const label = snapshot.algorithm === "kino-v12" ? "[V12 GLOBAL]" : persistentAlgorithm ? "[TOP 20]" : "[RÁPIDA 1–2]";
+  const label = snapshot.algorithm === "kino-v13.3" ? "[V13.3 160/40]" : snapshot.algorithm === "kino-v12" ? "[V12 GLOBAL]" : persistentAlgorithm ? "[TOP 20]" : "[RÁPIDA 1–2]";
   return [
     `SUPER KINO TV · ${snapshot.plays.length} JUGADAS EXPLORATORIAS`,
     `Sorteo: ${snapshot.targetDate}`,
@@ -1036,9 +1062,9 @@ export function formatKinoPortfolioText(snapshot: KinoSnapshot) {
     composition,
     reinforcement,
     ...(snapshot.algorithm==="kino-v9.4"||snapshot.algorithm==="kino-v10"?[`Números de recuperación (>9 días): ${snapshot.recoveryNumbers?.map(number=>String(number).padStart(2,"0")).join(", ")||"Ninguno"}`]:[]),
-    snapshot.algorithm === "kino-v12" ? "Todos los números permanecen elegibles; la ponderación modifica su exposición sin excluirlos." : persistentAlgorithm ? snapshot.algorithm==="kino-v9.3"||snapshot.algorithm==="kino-v9.4"||snapshot.algorithm==="kino-v10" ? "La cobertura del top 20 es escalonada según la composición caliente de cada jugada." : "Cada jugada contiene entre 3 y 5 números del top 20." : `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
+    snapshot.algorithm === "kino-v13.3" ? "Construcción independiente del historial: el histórico se conserva únicamente como referencia y retrospectiva." : snapshot.algorithm === "kino-v12" ? "Todos los números permanecen elegibles; la ponderación modifica su exposición sin excluirlos." : persistentAlgorithm ? snapshot.algorithm==="kino-v9.3"||snapshot.algorithm==="kino-v9.4"||snapshot.algorithm==="kino-v10" ? "La cobertura del top 20 es escalonada según la composición caliente de cada jugada." : "Cada jugada contiene entre 3 y 5 números del top 20." : `[RÁPIDA 1–2] identifica las ${snapshot.plays.filter(play => play.quickHot).length} jugadas reforzadas.`,
     "",
-    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${(snapshot.algorithm==="kino-v10"&&play.id>175)||(snapshot.algorithm==="kino-v9.4"&&play.id>105)?"[RECUPERACIÓN]":snapshot.algorithm==="kino-v12"||persistentAlgorithm ? label : play.quickHot ? label : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
+    ...snapshot.plays.map(play => `${String(play.id).padStart(3,"0")} ${(snapshot.algorithm==="kino-v10"&&play.id>175)||(snapshot.algorithm==="kino-v9.4"&&play.id>105)?"[RECUPERACIÓN]":snapshot.algorithm==="kino-v12"||snapshot.algorithm==="kino-v13.3"||persistentAlgorithm ? label : play.quickHot ? label : "[EXPLORATORIA]"} ${play.numbers.map(number => String(number).padStart(2,"0")).join(" ")}`)
   ].join("\n");
 }
 
@@ -1068,9 +1094,10 @@ export function getKinoStaleNumbers(draws: KinoDraw[], targetDate: string) {
 }
 
 function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, now:Date, forcedAlgorithm?:"kino-v9.4"|"kino-v10"): KinoSnapshot {
-  const sample = draws.filter(d => d.date >= KINO_ANALYSIS_START && d.date < targetDate).sort((a,b) => b.date.localeCompare(a.date)).slice(0, 30);
-  if (!sample.length) throw new Error("No hay historial anterior suficiente para generar las jugadas.");
   const algorithm = forcedAlgorithm??kinoAlgorithmForDate(targetDate);
+  const availableSample=draws.filter(d => d.date >= KINO_ANALYSIS_START && d.date < targetDate).sort((a,b) => b.date.localeCompare(a.date));
+  const sample = algorithm==="kino-v13.3"?availableSample:availableSample.slice(0,30);
+  if (!sample.length) throw new Error("No hay historial anterior suficiente para generar las jugadas.");
   const v94=algorithm==="kino-v9.4"||algorithm==="kino-v10";
   const priorFormatDraws=draws.filter(draw=>draw.date>=KINO_ANALYSIS_START&&draw.date<targetDate).sort((a,b)=>b.date.localeCompare(a.date));
   const delayCutoff = v94?kinoNineDayCutoff(targetDate):kinoOneMonthCutoff(targetDate);
@@ -1096,14 +1123,15 @@ function buildKinoSnapshotForAlgorithm(draws: KinoDraw[], targetDate: string, no
   }));
   const quickHotNumbers = kinoQuickHotStats(sample, allowedNumbers);
   const persistentAlgorithm = algorithm === "kino-v9" || algorithm === "kino-v9.1" || algorithm === "kino-v9.3" || algorithm === "kino-v9.4" || algorithm === "kino-v10";
-  if (!persistentAlgorithm && quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
+  if (!persistentAlgorithm && algorithm!=="kino-v12" && algorithm!=="kino-v13.3" && quickHotNumbers.length < 3) throw new Error("No hay al menos tres números calientes con recurrencia reciente media de 1 a 2 sorteos.");
   const quickNumbers = quickHotNumbers.map(item => item.number);
   const v10Base=algorithm==="kino-v12"&&KINO_V12_BLEND.v10>0?buildKinoV10Plays(sample,allowedNumbers,freshNumbers):null;
   const v12=algorithm==="kino-v12"?buildKinoV12Plays(sample,v10Base?.plays??[],targetDate):null;
-  const persistent = v12??(algorithm === "kino-v10"?buildKinoV10Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null);
+  const v133=algorithm==="kino-v13.3"?buildKinoV133Plays(sample,targetDate):null;
+  const persistent = v133??v12??(algorithm === "kino-v10"?buildKinoV10Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.4"?buildKinoV94Plays(sample,allowedNumbers,freshNumbers):algorithm === "kino-v9.3" ? buildKinoV93Plays(sample,allowedNumbers) : persistentAlgorithm ? buildKinoPersistentPlays(draws, targetDate, sample, allowedNumbers, algorithm === "kino-v9.1") : null);
   return kinoSnapshotSchema.parse({
     targetDate, generatedAt: now.toISOString(), analysisFrom: sample.at(-1)!.date, analysisTo: sample[0].date,
-    sampleSize: sample.length, algorithm, ...(algorithm==="kino-v12"?{coverageBlend:KINO_V12_BLEND,coverageExposure:v12?.coverageExposure}:kinoStrategyVersionForDate(targetDate)?{strategyVersion:KINO_STRATEGY_VERSION}:{}), delayCutoff:algorithm==="kino-v12"?undefined:delayCutoff, excludedByDelay:algorithm==="kino-v12"?[]:excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:persistent&&"recoveryPlayCount" in persistent?persistent.recoveryPlayCount:0,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm||algorithm==="kino-v12" ? {} : {quickHotNumbers}), ...(persistent&&"persistentTopNumbers" in persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
+    sampleSize: sample.length, algorithm, ...(algorithm==="kino-v13.3"?{coverageExposure:v133?.coverageExposure,hybridPlan:v133?.hybridPlan}:algorithm==="kino-v12"?{coverageBlend:KINO_V12_BLEND,coverageExposure:v12?.coverageExposure}:kinoStrategyVersionForDate(targetDate)?{strategyVersion:KINO_STRATEGY_VERSION}:{}), delayCutoff:algorithm==="kino-v12"||algorithm==="kino-v13.3"?undefined:delayCutoff, excludedByDelay:algorithm==="kino-v12"||algorithm==="kino-v13.3"?[]:excludedByDelay, ...(v94?{maximumDaysWithoutAppearance:9,minimumGlobalAppearances:4,recoveryPlayCount:persistent&&"recoveryPlayCount" in persistent?persistent.recoveryPlayCount:0,recoveryNumbers:persistent&&"recoveryNumbers" in persistent?persistent.recoveryNumbers:[],concentrationPlayCount:persistent&&"concentrationPlayCount" in persistent?persistent.concentrationPlayCount:undefined,rangeModel:persistent&&"rangeModel" in persistent?persistent.rangeModel:undefined,...(persistent&&"portfolioPlan" in persistent?{portfolioPlan:persistent.portfolioPlan}:{})}:{}), ...(persistentAlgorithm||algorithm==="kino-v12"||algorithm==="kino-v13.3" ? {} : {quickHotNumbers}), ...(persistent&&"persistentTopNumbers" in persistent ? {persistentTopNumbers:persistent.persistentTopNumbers} : {}), prizes: kinoPrizes,
     plays: persistent?.plays ?? buildKinoPlays(sample, "exploratoria", allowedNumbers, 120, quickNumbers, 30)
   });
 }
