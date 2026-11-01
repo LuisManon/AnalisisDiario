@@ -121,7 +121,7 @@ La candidata experimental Kino V11 se compara con V10 mediante una retrospectiva
 npm run evaluate:kino-v11
 ```
 
-Desde el 01/11/2026, Kino V12 genera 200 jugadas con ponderación 50/50: la mitad conserva cobertura global sobre los 84 números y la otra mitad suaviza la exposición producida por V10. Ningún número se excluye; el constructor equilibra cuotas, parejas repetidas y similitud entre jugadas. La comparación retrospectiva de pesos se reproduce con `npm run evaluate:kino-v12`.
+Desde el 01/11/2026, Kino V12 genera 200 jugadas con cobertura global 100/0: los 84 números aparecen 23 o 24 veces y no se utiliza la señal de V10. Ningún número se excluye; el constructor equilibra cuotas, parejas repetidas y similitud entre jugadas. La comparación retrospectiva de pesos se reproduce con `npm run evaluate:kino-v12`.
 
 Con la sección abierta, se consulta cada 60 segundos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
 

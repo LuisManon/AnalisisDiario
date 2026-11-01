@@ -234,16 +234,17 @@ test('v11 candidate diversifies strategies, keeps soft coverage and prevents fut
   assert.ok(candidate.plays.some(play=>play.numbers.filter(number=>number<=10).length===2));
   assert.ok(candidate.plays.some(play=>play.numbers.includes(80)));
 });
-test('v12 activates on November 1 with 50/50 coverage and no excluded numbers',async()=>{
+test('v12 activates on November 1 with 100/0 global coverage and no excluded numbers',async()=>{
   const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   assert.equal(kinoAlgorithmForDate(KINO_V12_START),'kino-v12');
   const snapshot=buildKinoSnapshot(draws,KINO_V12_START,new Date('2026-10-31T16:00:00Z'));
   assert.equal(snapshot.algorithm,'kino-v12');
   assert.equal(snapshot.plays.length,200);
   assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,200);
-  assert.deepEqual(snapshot.coverageBlend,{uniform:.5,v10:.5});
+  assert.deepEqual(snapshot.coverageBlend,{uniform:1,v10:0});
   assert.equal(snapshot.coverageExposure?.reduce((sum,value)=>sum+value,0),2000);
   assert.ok(snapshot.coverageExposure?.every(value=>value>0));
+  assert.deepEqual([Math.min(...snapshot.coverageExposure!),Math.max(...snapshot.coverageExposure!)],[23,24]);
   assert.deepEqual(snapshot.excludedByDelay,[]);
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
   const withoutFuture=buildKinoSnapshot(draws.filter(draw=>draw.date<KINO_V12_START),KINO_V12_START,new Date('2026-10-31T16:00:00Z'));

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, kinoStrategyVersionForDate, type KinoDraw, type KinoSnapshot } from "./super-kino.ts";
+import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, kinoStrategyVersionForDate, KINO_V12_BLEND, type KinoDraw, type KinoSnapshot } from "./super-kino.ts";
 import { kinoClock, kinoDrawMinutes, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "./super-kino-clock.ts";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "./github-data-store.ts";
 
@@ -113,14 +113,17 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
     const existing = snapshots.find(s => s.targetDate === targetDate);
     const expectedAlgorithm = kinoAlgorithmForDate(targetDate);
     const expectedStrategyVersion = kinoStrategyVersionForDate(targetDate);
-    if (existing?.algorithm === expectedAlgorithm && existing.strategyVersion === expectedStrategyVersion) return {current: existing, snapshots};
+    const expectedBlend=expectedAlgorithm==="kino-v12"?KINO_V12_BLEND:undefined;
+    const hasExpectedBlend=!expectedBlend||(existing?.coverageBlend?.uniform===expectedBlend.uniform&&existing.coverageBlend.v10===expectedBlend.v10);
+    if (existing?.algorithm === expectedAlgorithm && existing.strategyVersion === expectedStrategyVersion && hasExpectedBlend) return {current: existing, snapshots};
 
     const current = buildKinoSnapshot(results, targetDate, now);
     try {
       await saveSnapshot(current, targetStored.raw, `Save Super Kino TV ${current.plays.length}-play portfolio`);
     } catch (error) {
       const fresh = await readSnapshot(targetDate);
-      if (fresh.snapshot?.algorithm === expectedAlgorithm && fresh.snapshot.strategyVersion === expectedStrategyVersion) {
+      const freshHasExpectedBlend=!expectedBlend||(fresh.snapshot?.coverageBlend?.uniform===expectedBlend.uniform&&fresh.snapshot.coverageBlend.v10===expectedBlend.v10);
+      if (fresh.snapshot?.algorithm === expectedAlgorithm && fresh.snapshot.strategyVersion === expectedStrategyVersion && freshHasExpectedBlend) {
         const next = [fresh.snapshot, ...snapshots.filter(snapshot => snapshot.targetDate !== targetDate)].sort((a, b) => b.targetDate.localeCompare(a.targetDate));
         return {current: fresh.snapshot, snapshots: next};
       }
