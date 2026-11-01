@@ -6964,6 +6964,8 @@ body:has(.appShell.lotoShell) {
 
 /* Super Kino TV */
 .kinoTheme .hero { grid-template-columns: 1fr 1.2fr; }
+.kinoTheme > .hero { overflow:visible; z-index:10; }
+.kinoTheme .heroPanel { overflow:visible; }
 .kinoAlgorithmLabel { display:inline-flex; align-items:center; margin:0 0 8px; padding:6px 11px; border:1px solid #a9c6e2; border-radius:999px; background:#eaf3fb; color:#214f7d; font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
 .kinoInfoTooltip { position:relative; display:inline-flex; align-items:center; margin-left:6px; text-transform:none; letter-spacing:normal; }
 .kinoInfoIcon { display:inline-grid; place-items:center; width:20px; height:20px; border:1px solid currentColor; border-radius:50%; background:#fff; font:800 13px/1 Georgia,serif; cursor:help; }
