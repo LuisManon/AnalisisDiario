@@ -14,9 +14,8 @@ test('official prizes include zero hits and revised nine-hit prize',()=>{assert.
 test('V13.3 generates the main 160/40 portfolio independently from draw history',async()=>{
   const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
   assert.equal(kinoAlgorithmForDate(KINO_V12_START),'kino-v12');
-  assert.equal(kinoAlgorithmForDate('2026-11-02'),'kino-v12');
   assert.equal(kinoAlgorithmForDate(KINO_V133_START),'kino-v13.3');
-  const snapshot=buildKinoSnapshot(draws,KINO_V133_START,new Date('2026-11-02T16:00:00Z'));
+  const snapshot=buildKinoSnapshot(draws,KINO_V133_START,new Date('2026-11-01T16:00:00Z'));
   assert.equal(snapshot.algorithm,'kino-v13.3');
   assert.deepEqual(snapshot.hybridPlan,{diversified:160,directed:40,families:8,familySize:5});
   assert.equal(snapshot.plays.length,200);
@@ -32,7 +31,7 @@ test('saved portfolios accept legacy profiles and keep the current hybrid fully 
   assert.equal(snapshots[0].algorithm,kinoAlgorithmForDate(snapshots[0].targetDate));
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,snapshots[0].plays.length);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
-  if(snapshots[0].algorithm==='kino-v12') assert.equal(snapshots[0].coverageExposure?.length,84);
+  if(snapshots[0].algorithm==='kino-v12'||snapshots[0].algorithm==='kino-v13.3') assert.equal(snapshots[0].coverageExposure?.length,84);
   else assert.equal(snapshots[0].persistentTopNumbers?.length,20);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });

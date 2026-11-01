@@ -10,15 +10,13 @@ export const KINO_V93_START = "2026-10-15";
 export const KINO_V94_START = "2026-10-16";
 export const KINO_V10_START = "2026-10-25";
 export const KINO_V12_START = "2026-11-01";
-export const KINO_V133_START = "2026-11-03";
+export const KINO_V133_START = "2026-11-02";
 export const KINO_STRATEGIC_EXCLUSION_START = "2026-10-26";
 export const KINO_STRATEGY_VERSION = "low-frequency-stale-v1";
 export function kinoStrategyVersionForDate(targetDate:string) {
   return targetDate>=KINO_STRATEGIC_EXCLUSION_START&&targetDate<KINO_V12_START?KINO_STRATEGY_VERSION:undefined;
 }
 export function kinoAlgorithmForDate(targetDate: string) {
-  // Preserve the V12 portfolio already frozen for November 2; V13.3 starts
-  // with the first draw that did not already have saved plays.
   if (targetDate >= KINO_V133_START) return "kino-v13.3" as const;
   if (targetDate >= KINO_V12_START) return "kino-v12" as const;
   if (targetDate >= KINO_V10_START) return "kino-v10" as const;
