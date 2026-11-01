@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import fs from "node:fs";
-import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START, KINO_V10_START } from "../lib/super-kino.ts";
+import { buildKinoPlays, kinoAdaptiveMixes, kinoAlgorithmForDate, kinoDrawSchema, kinoStats, kinoGroups, kinoPrize, kinoQuickHotStats, parseKinoArchive, KINO_ANALYSIS_START, KINO_CANDIDATE_START, KINO_V91_START, KINO_V93_START, KINO_V94_START, KINO_V10_START, KINO_V12_START } from "../lib/super-kino.ts";
 const draws=kinoDrawSchema.array().parse(JSON.parse(fs.readFileSync(new URL('../data/super-kino-results.json',import.meta.url),'utf8')));
 const sample=draws.filter(d=>d.date>=KINO_ANALYSIS_START);
 test('archive dates and twenty distinct numbers are valid',()=>{assert.equal(new Set(draws.map(d=>d.date)).size,draws.length);assert.ok(draws.some(d=>d.date==='2026-10-05'));assert.ok(sample.length>=21);assert.equal(kinoDrawSchema.safeParse({...draws[0],numbers:Array(20).fill(1)}).success,false);});
@@ -17,7 +17,8 @@ test('saved portfolios accept legacy profiles and keep the current hybrid fully 
   assert.equal(snapshots[0].algorithm,kinoAlgorithmForDate(snapshots[0].targetDate));
   assert.equal(snapshots[0].plays.filter(play=>play.profile==='exploratoria').length,snapshots[0].plays.length);
   assert.equal(snapshots[0].plays.filter(play=>play.quickHot).length,0);
-  assert.equal(snapshots[0].persistentTopNumbers?.length,20);
+  if(snapshots[0].algorithm==='kino-v12') assert.equal(snapshots[0].coverageExposure?.length,84);
+  else assert.equal(snapshots[0].persistentTopNumbers?.length,20);
   assert.ok(snapshots.some(snapshot=>snapshot.algorithm==='kino-v2'));
 });
 test('weekly prize tracking stays frozen after it is recorded',async()=>{
@@ -217,6 +218,36 @@ test('v10 scales the v9.4 strategy to 200 unique plays without future leakage',a
   assert.equal(snapshot.concentrationPlayCount,50);
   assert.deepEqual(snapshot.plays,buildKinoV10RetrospectiveSnapshot(draws.filter(draw=>draw.date<'2026-10-22'),'2026-10-22').plays);
   assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+});
+test('v11 candidate diversifies strategies, keeps soft coverage and prevents future leakage',async()=>{
+  const {buildKinoV11CandidatePlays,KINO_V11_CANDIDATE_PLAN}=await import('../lib/super-kino.ts');
+  const candidate=buildKinoV11CandidatePlays(draws,'2026-10-31');
+  assert.deepEqual(candidate.portfolioPlan,KINO_V11_CANDIDATE_PLAN);
+  assert.equal(candidate.plays.length,200);
+  assert.equal(new Set(candidate.plays.map(play=>play.numbers.join(','))).size,200);
+  assert.deepEqual(candidate.plays,buildKinoV11CandidatePlays(draws.filter(draw=>draw.date<'2026-10-31'),'2026-10-31').plays);
+  const exposure=Object.values(candidate.exposure);
+  assert.ok(Math.min(...exposure)>=20);
+  assert.ok(Math.max(...exposure)<=50);
+  assert.ok(exposure.every(count=>count>0));
+  assert.ok(candidate.plays.some(play=>play.numbers.filter(number=>number<=10).length===1));
+  assert.ok(candidate.plays.some(play=>play.numbers.filter(number=>number<=10).length===2));
+  assert.ok(candidate.plays.some(play=>play.numbers.includes(80)));
+});
+test('v12 activates on November 1 with 50/50 coverage and no excluded numbers',async()=>{
+  const {buildKinoSnapshot,kinoSnapshotSchema}=await import('../lib/super-kino.ts');
+  assert.equal(kinoAlgorithmForDate(KINO_V12_START),'kino-v12');
+  const snapshot=buildKinoSnapshot(draws,KINO_V12_START,new Date('2026-10-31T16:00:00Z'));
+  assert.equal(snapshot.algorithm,'kino-v12');
+  assert.equal(snapshot.plays.length,200);
+  assert.equal(new Set(snapshot.plays.map(play=>play.numbers.join(','))).size,200);
+  assert.deepEqual(snapshot.coverageBlend,{uniform:.5,v10:.5});
+  assert.equal(snapshot.coverageExposure?.reduce((sum,value)=>sum+value,0),2000);
+  assert.ok(snapshot.coverageExposure?.every(value=>value>0));
+  assert.deepEqual(snapshot.excludedByDelay,[]);
+  assert.equal(kinoSnapshotSchema.safeParse(snapshot).success,true);
+  const withoutFuture=buildKinoSnapshot(draws.filter(draw=>draw.date<KINO_V12_START),KINO_V12_START,new Date('2026-10-31T16:00:00Z'));
+  assert.deepEqual(snapshot.plays,withoutFuture.plays);
 });
 test('current strategy excludes low-frequency numbers delayed more than five days',async()=>{
   const {buildKinoSnapshot,KINO_STRATEGY_VERSION}=await import('../lib/super-kino.ts');

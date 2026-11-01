@@ -117,7 +117,7 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
 
     const current = buildKinoSnapshot(results, targetDate, now);
     try {
-      await saveSnapshot(current, targetStored.raw, "Save Super Kino TV 120-play portfolio");
+      await saveSnapshot(current, targetStored.raw, `Save Super Kino TV ${current.plays.length}-play portfolio`);
     } catch (error) {
       const fresh = await readSnapshot(targetDate);
       if (fresh.snapshot?.algorithm === expectedAlgorithm && fresh.snapshot.strategyVersion === expectedStrategyVersion) {

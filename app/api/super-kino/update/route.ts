@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readKinoResults, writeKinoResults } from "../../../../lib/super-kino-store";
 import { fetchLatestKinoResults, missingKinoDates, fetchKinoAnchor } from "../../../../lib/remote-super-kino";
 import { kinoClock, kinoExpectedDate, kinoYearStart } from "../../../../lib/super-kino-clock";
+import { getKinoPortfolio } from "../../../../lib/super-kino-portfolio-store";
 export const dynamic = "force-dynamic";
 let pending: Promise<unknown> | null = null;
 async function update() {
@@ -16,6 +17,7 @@ async function update() {
   }
   const merged = [...new Map([...existing,...remote].map(d=>[d.date,d])).values()];
   const results = await writeKinoResults(merged);
+  await getKinoPortfolio(results);
   const added = results.length-existing.length;
   const missing = missingKinoDates(results,expectedDate,kinoYearStart(kinoClock().date));
   const waiting = !results.some(d=>d.date===expectedDate);

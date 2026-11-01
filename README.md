@@ -115,6 +115,14 @@ Las carteras diarias se guardan por fecha en `data/super-kino-portfolios/`, con 
 
 Sobre las jugadas guardadas se muestra un calendario de lunes a domingo. Cada día agrupa cuántas jugadas cobraron cada monto y el total ganado, sin repetir los números del sorteo ni las combinaciones. Al llegar un resultado, el resumen y los 20 números usados para evaluarlo quedan grabados en la cartera de ese día; el calendario y el detalle reutilizan ese registro para conservar el seguimiento aunque cambien después el resultado importado o el generador. Los días pasados sin cartera guardada aparecen como `Sin registro`; los días sin resultado aparecen como `Pendiente`.
 
+La candidata experimental Kino V11 se compara con V10 mediante una retrospectiva caminante que nunca usa el resultado del día evaluado. No se activa automáticamente en producción. Para repetir la evaluación y separar entrenamiento de validación:
+
+```bash
+npm run evaluate:kino-v11
+```
+
+Desde el 01/11/2026, Kino V12 genera 200 jugadas con ponderación 50/50: la mitad conserva cobertura global sobre los 84 números y la otra mitad suaviza la exposición producida por V10. Ningún número se excluye; el constructor equilibra cuotas, parejas repetidas y similitud entre jugadas. La comparación retrospectiva de pesos se reproduce con `npm run evaluate:kino-v12`.
+
 Con la sección abierta, se consulta cada 60 segundos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
 
 ### Rotación inteligente de Quinielón 2.0

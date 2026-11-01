@@ -13,6 +13,9 @@
     "start": "next start -H 0.0.0.0 -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "evaluate:kino-v11": "node --experimental-strip-types scripts/evaluate-super-kino-v11.ts",
+    "evaluate:kino-four-groups": "node --experimental-strip-types scripts/evaluate-super-kino-four-groups.ts",
+    "evaluate:kino-v12": "node --experimental-strip-types scripts/evaluate-super-kino-v12.ts",
     "import:la-primera-loto5": "node scripts/import-la-primera-loto5.mjs"
   },
   "dependencies": {

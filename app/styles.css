@@ -6965,6 +6965,13 @@ body:has(.appShell.lotoShell) {
 /* Super Kino TV */
 .kinoTheme .hero { grid-template-columns: 1fr 1.2fr; }
 .kinoAlgorithmLabel { display:inline-flex; align-items:center; margin:0 0 8px; padding:6px 11px; border:1px solid #a9c6e2; border-radius:999px; background:#eaf3fb; color:#214f7d; font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+.kinoInfoTooltip { position:relative; display:inline-flex; align-items:center; margin-left:6px; text-transform:none; letter-spacing:normal; }
+.kinoInfoIcon { display:inline-grid; place-items:center; width:20px; height:20px; border:1px solid currentColor; border-radius:50%; background:#fff; font:800 13px/1 Georgia,serif; cursor:help; }
+.kinoInfoContent { position:absolute; z-index:20; top:calc(100% + 10px); left:50%; display:flex; width:290px; max-width:min(290px,calc(100vw - 32px)); padding:14px; border:1px solid #b9ccdc; border-radius:12px; background:#fff; box-shadow:0 12px 30px rgba(24,53,80,.18); color:#183b5d; font-size:13px; font-weight:500; line-height:1.45; opacity:0; pointer-events:none; transform:translate(-50%,-4px); transition:opacity .15s ease,transform .15s ease; flex-direction:column; gap:6px; }
+.kinoInfoTooltip.wide .kinoInfoContent { width:320px; }
+.kinoInfoTooltip:hover .kinoInfoContent,.kinoInfoTooltip:focus .kinoInfoContent,.kinoInfoTooltip:focus-within .kinoInfoContent { opacity:1; pointer-events:auto; transform:translate(-50%,0); }
+.kinoInfoContent strong { font-size:14px; }
+.kinoInfoContent a { color:#17649b; font-weight:800; }
 .kinoBalls { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0; }
 .kinoTheme .kinoBalls .ball { width:36px; height:36px; font-size:14px; flex:0 0 36px; }
 .kinoTheme .card { margin-bottom:22px; }
