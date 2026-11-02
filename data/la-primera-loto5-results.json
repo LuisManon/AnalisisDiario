@@ -1,5 +1,18 @@
 [
   {
+    "date": "2026-11-02",
+    "numbers": [
+      25,
+      29,
+      4,
+      1,
+      34
+    ],
+    "plus": 4,
+    "drawId": 1423,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
     "date": "2026-11-01",
     "numbers": [
       8,
