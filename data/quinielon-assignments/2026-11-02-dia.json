@@ -503,506 +503,405 @@
       "badge": "❄️"
     }
   ],
-  "smart": false,
+  "smart": true,
   "investors": [
     [
-      {
-        "number": 86,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 64,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
       {
         "number": 72,
         "source": "casa",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
         "number": 77,
         "source": "casa",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
         "number": 7,
         "source": "casa",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 71,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 29,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 33,
-        "source": "casa",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 55,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 66,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 95,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 2,
-        "source": "casa",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 10,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 18,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
         "number": 22,
         "source": "casa",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 31,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 39,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 46,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 51,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 58,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 75,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 82,
-        "source": "casa",
-        "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
         "number": 90,
         "source": "casa",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
         "number": 94,
         "source": "casa",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 97,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 8,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 27,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 32,
-        "source": "casa",
-        "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
         "number": 63,
         "source": "casa",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 73,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 74,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 80,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 88,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 98,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 13,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 20,
-        "source": "casa",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 28,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 36,
-        "source": "casa",
-        "badge": "🥶",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
         "number": 37,
         "source": "casa",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 52,
-        "source": "casa",
-        "badge": "❄️",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 56,
-        "source": "respaldo",
-        "badge": "🧊",
-        "winner": false
-      },
-      {
-        "number": 57,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 68,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 76,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 81,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 85,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 92,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 93,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 1,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 3,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 6,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 9,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
         "number": 11,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
         "number": 17,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
         "number": 25,
         "source": "respaldo",
         "badge": "",
-        "winner": false
-      },
-      {
-        "number": 26,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 30,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 38,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 40,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 42,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      }
-    ],
-    [
-      {
-        "number": 43,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 45,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 47,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
-      },
-      {
-        "number": 49,
-        "source": "respaldo",
-        "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
         "number": 59,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      }
+    ],
+    [
+      {
+        "number": 29,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
-        "number": 84,
+        "number": 10,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 39,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 58,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 75,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 82,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 8,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 80,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 3,
         "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      },
+      {
+        "number": 9,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      },
+      {
+        "number": 45,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
         "number": 87,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      }
+    ],
+    [
+      {
+        "number": 55,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
-        "number": 0,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
+        "number": 95,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
-        "number": 4,
+        "number": 31,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 51,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 32,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 74,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 13,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 20,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 40,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
-        "number": 5,
+        "number": 42,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
-        "number": 21,
+        "number": 47,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
-        "number": 24,
+        "number": 49,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      }
+    ],
+    [
+      {
+        "number": 86,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
       },
       {
-        "number": 48,
+        "number": 64,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 71,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 46,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "hot",
+        "betAmount": 850
+      },
+      {
+        "number": 97,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 98,
+        "source": "casa",
+        "badge": "",
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
+      },
+      {
+        "number": 68,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
-        "number": 54,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 61,
-        "source": "respaldo",
-        "badge": "❄️",
-        "winner": false
-      },
-      {
-        "number": 65,
+        "number": 81,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "intermediate",
+        "betAmount": 850
       },
       {
-        "number": 69,
-        "source": "respaldo",
-        "badge": "🥶",
-        "winner": false
-      },
-      {
-        "number": 79,
+        "number": 93,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
-        "number": 89,
+        "number": 1,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       },
       {
-        "number": 91,
+        "number": 6,
         "source": "respaldo",
         "badge": "",
-        "winner": false
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
+      },
+      {
+        "number": 26,
+        "source": "respaldo",
+        "badge": "",
+        "winner": false,
+        "tier": "remaining",
+        "betAmount": 850
       }
     ]
   ],
-  "mixed": false,
-  "blockStarts": [
-    1,
-    21,
-    41,
-    61
-  ],
-  "algorithmVersion": "blocks-v1",
-  "excluded": 0,
-  "priorCount": 0,
-  "createdAt": "2026-11-02T01:07:48.039Z"
+  "mixed": true,
+  "algorithmVersion": "tiers-v6",
+  "prizeMultiplier": 80,
+  "excluded": 32,
+  "priorCount": 2,
+  "createdAt": "2026-11-02T01:31:44.450Z"
 }
