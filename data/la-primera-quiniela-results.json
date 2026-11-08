@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-11-08",
+    "session": "dia",
+    "numbers": [
+      60,
+      30,
+      75
+    ],
+    "drawId": 2531,
+    "source": "https://laprimera.do/resultados/"
+  },
+  {
     "date": "2026-11-06",
     "session": "dia",
     "numbers": [
