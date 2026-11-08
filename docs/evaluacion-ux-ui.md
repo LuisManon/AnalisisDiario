@@ -17,8 +17,8 @@ Se conserva el menú por producto y se añade navegación por tarea:
 | Producto | Analizar | Jugadas / Reparto | Resultados | Historial |
 | --- | --- | --- | --- | --- |
 | Super Kino TV | Métricas, previa/postgame y frecuencias | Cartera y descarga | Calendario y detalle por sorteo | Sorteos oficiales y días sin sorteo |
-| Loto Más | Filtro, métricas, búsqueda de números, ranking, rangos y dispersión | Cartera abierta y comparación anterior | Premios y prueba exploratoria | Resultados paginados |
-| Quinielón 2.0 | Clasificación por grupo y tanda | Asignador por inversionista | Calendario semanal | Incluido en la navegación semanal de Resultados |
+| Loto Más | Filtro, métricas, búsqueda de números, ranking, rangos y dispersión | Cartera abierta y comparación anterior | Premios | Resultados paginados |
+| Quinielón 2.0 | Clasificación por grupo y tanda | Asignador por inversionista | Calendario semanal | Ganadores por fecha, tanda y número, con paginación y fuentes |
 
 Los paneles se mantienen montados para preservar filtros, paginación y estado de las carteras. Solo el panel seleccionado es visible. La nueva navegación admite flechas, Inicio y Fin, relaciona pestañas con paneles y muestra foco de teclado.
 
@@ -38,3 +38,13 @@ Encabezados más compactos, superficies neutras, mejor separación entre tarjeta
 La prueba visual se ejecutó en una copia temporal del proyecto sin copiar archivos de credenciales. Las actualizaciones y generaciones automáticas del aplicativo se limitaron a esa copia. No se cambiaron históricos operativos del repositorio ni se desplegó la interfaz.
 
 La limpieza residual de productos retirados descrita en auditoria-limpieza.md sigue pendiente; no forma parte de esta reorganización visual.
+
+## Ajuste de carga e historial
+
+Se retiraron los skeletons de Loto Más y Quinielón y el retraso artificial de 500 ms. Ambas vistas muestran los resultados iniciales desde el primer render; las consultas a las fuentes continúan en segundo plano. Actualizar Loto Más ya no desmonta su dashboard. También se eliminaron cálculos de una vista antigua de Quinielón que se ejecutaban antes del retorno de la vista 2.0 y no se mostraban.
+
+El historial nuevo usa los resultados ya disponibles, sin una petición adicional. Permite filtrar tanda, fecha y número (incluido 00), limpiar filtros y elegir 10, 25 o 50 sorteos por página. Conserva la distinción entre resultados confirmados, provisionales y registros antiguos sin verificación explícita.
+
+Loto Más conserva solo las 30 jugadas activas. Se retiraron la tarjeta de 100 exploratorias y sus consumidores de generación y automatización. El archivo histórico cerrado se conserva inactivo.
+
+Verificación del ajuste: typecheck y build aprobados, 54 pruebas pertinentes aprobadas. En navegador se comprobó la aparición de ambos dashboards sin skeleton, navegación durante la actualización, filtros por tanda, número 00 y fecha, reinicio de paginación y vista móvil de 390 px sin desbordamiento horizontal. Las pruebas visuales usaron una copia temporal del proyecto.

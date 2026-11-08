@@ -82,8 +82,8 @@ test("a provisional result or wrong-date portfolio does not count as success", (
   assert.equal(operationReady(portfolio, {current:{targetDate:"2026-11-07",plays:[{}]}}), false);
   const loto = automationPlan("37 12 * * *", local("2026-11-08", "08:37")).operations.find(op => op.expect === "loto-portfolio")!;
   const payload = { current: {targetDate:loto.date,plays:Array(30).fill({})} };
-  assert.equal(operationReady(loto, payload), false);
-  assert.equal(operationReady(loto, {...payload, exploratory:{current:{targetDate:loto.date,playCount:100}}}), true);
+  assert.equal(operationReady(loto, payload), true);
+  assert.equal(operationReady(loto, {current: {...payload.current, plays: Array(29).fill({})}}), false);
 });
 
 test("pending publication succeeds on early attempts and fails on final attempt without network retries", async () => {

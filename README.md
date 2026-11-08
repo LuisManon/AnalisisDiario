@@ -85,7 +85,7 @@ El flujo `.github/workflows/prepare-portfolios.yml` ejecuta `scripts/automate-po
 
 - los repartos Día y Noche de Quinielón 2.0;
 - las carteras de Super Kino TV según su versión activa;
-- las 30 jugadas de Loto Más y las 100 exploratorias.
+- las 30 jugadas de Loto Más.
 
 | Operación | Hora dominicana |
 | --- | --- |

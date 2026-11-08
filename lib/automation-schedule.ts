@@ -47,7 +47,7 @@ export function automationPlan(cron: string, now = new Date()) {
       // Loto's application cutoff remains 17:00; prepare only its next open draw.
       let target = date;
       while (!drawSlots("loto", target).length || (target === clock.date && clock.minutes >= 1020)) target = shiftDrawDate(target, 1);
-      add({ label: "Carteras Loto Más", path: `/api/portfolio?drawDate=${target}`, expect: "loto-portfolio", date: target });
+      add({ label: "Cartera Loto Más", path: `/api/portfolio?drawDate=${target}`, expect: "loto-portfolio", date: target });
     }
   };
   if (window.kind === "prepare") {
@@ -73,7 +73,7 @@ export function operationReady(operation: AutomationOperation, payload: Record<s
   if (operation.expect === "portfolio" || operation.expect === "loto-portfolio") {
     const current = payload.current;
     const saved = current?.targetDate === operation.date && Array.isArray(current.plays) && current.plays.length > 0;
-    return saved && (operation.expect !== "loto-portfolio" || (current.plays.length === 30 && payload.exploratory?.current?.targetDate === operation.date && payload.exploratory.current.playCount === 100));
+    return saved && (operation.expect !== "loto-portfolio" || current.plays.length === 30);
   }
   if (operation.expect === "assignment") return payload.date === operation.date && payload.session === operation.session && Array.isArray(payload.investors) && payload.investors.length === 4;
   return Array.isArray(payload.results) && payload.results.some((draw: {date: string; session?: string; verification?: string}) =>

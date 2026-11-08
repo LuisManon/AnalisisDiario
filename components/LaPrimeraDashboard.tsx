@@ -1,20 +1,19 @@
 "use client";
 
-import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
 import { updateWeeklyGesture, finishWeeklyGesture, type WeeklyGesture } from "../lib/weekly-swipe";
 import { calendarDelayBadgeStartDate, numberDelayBadge, tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
+import { QuinielonHistory } from "./QuinielonHistory";
 import { publicationWindow } from "../lib/draw-schedule";
 import { createPortal } from "react-dom";
 import {
-  buildLaPrimeraStats,
   buildLaPrimeraExclusiveRankings,
   buildLaPrimeraFrequencyRanking,
   buildLaPrimeraSuggestions,
-  filterLaPrimeraResults,
   formatQuinielonNumber,
   formatSession,
   laPrimeraSchedules
@@ -28,16 +27,9 @@ type LaPrimeraProduct = "inversionistas" | "quinielon" | "quinielon-v2" | "quini
 type Props = {
   initialData: {
     results: LaPrimeraDraw[];
-    quinielaResults: LaPrimeraQuinielaDraw[];
-    loto5Results: LaPrimeraLoto5Draw[];
   };
 };
 
-type Tooltip = {
-  x: number;
-  y: number;
-  draw: LaPrimeraDraw;
-} | null;
 
 type RosterInfo = "nosotros" | "inversionistas" | "banca";
 
@@ -157,17 +149,7 @@ function isQuinielonCurrent(results: LaPrimeraDraw[]) {
   );
 }
 
-function isPrimeraQuinielaCurrent(results: LaPrimeraQuinielaDraw[]) {
-  const { expectedSession, expectedSessionDate } = getExpectedLaPrimeraDraw();
-  return results.some(
-    (draw) => draw.date === expectedSessionDate && draw.session === expectedSession
-  );
-}
 
-function isPrimeraLoto5Current(results: LaPrimeraLoto5Draw[]) {
-  const { expectedLoto5Date } = getExpectedLaPrimeraDraw();
-  return results.some((draw) => draw.date === expectedLoto5Date);
-}
 
 function getLatestDateLabel(draw: LaPrimeraDraw) {
   const now = getDominicanClock();
@@ -210,397 +192,37 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 }
 
 export function LaPrimeraDashboard({ initialData }: Props) {
-  const [data, setData] = useState(initialData);
-  const [product, setProduct] = useState<LaPrimeraProduct>("quinielon-v2");
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const [status, setStatus] = useState(`Data local: ${initialData.results.length} sorteos cargados.`);
-  const [session, setSession] = useState<LaPrimeraFilter>("todos");
-  const [scatterSession, setScatterSession] = useState<LaPrimeraFilter>("todos");
-  const [historyPage, setHistoryPage] = useState(1);
-  const [tooltip, setTooltip] = useState<Tooltip>(null);
-  const [openRosterInfo, setOpenRosterInfo] = useState<RosterInfo | null>(null);
-  const dataRef = useRef(initialData);
-  const results = data.results;
-  const stats = useMemo(() => buildLaPrimeraStats(results, session), [results, session]);
-  const exclusiveRankings = useMemo(() => buildLaPrimeraExclusiveRankings(results), [results]);
-  const rotationMonday = getWeekMonday(getDominicanClock().date);
-  const movementByNumber = useMemo(() => {
-    const base = results.filter((draw) => draw.date < rotationMonday);
-    return buildNumberMovements(base.length ? buildWeeklyRotations(results, rotationMonday, base) : []);
-  }, [results, rotationMonday]);
-  const rosterDelayReferenceDate = results[0]?.date ?? "";
-  const rosterDelayRankings = useMemo(() => ({
-    nosotros: [...exclusiveRankings.hotDay, ...exclusiveRankings.hotNight],
-    inversionistas: [...exclusiveRankings.investorDay, ...exclusiveRankings.investorNight],
-    banca: exclusiveRankings.bank
-  }), [exclusiveRankings]);
-  const frozenRosterNumbers = useMemo(() => ({
-    nosotrosDia: buildFrozenNumberMap(results, exclusiveRankings.hotDay, ["dia"], rosterDelayReferenceDate),
-    nosotrosNoche: buildFrozenNumberMap(results, exclusiveRankings.hotNight, ["noche"], rosterDelayReferenceDate),
-    inversionistasDia: buildFrozenNumberMap(results, exclusiveRankings.investorDay, ["dia"], rosterDelayReferenceDate),
-    inversionistasNoche: buildFrozenNumberMap(results, exclusiveRankings.investorNight, ["noche"], rosterDelayReferenceDate),
-    banca: buildFrozenNumberMap(results, exclusiveRankings.bank, ["dia", "noche"], rosterDelayReferenceDate)
-  }), [exclusiveRankings, results, rosterDelayReferenceDate]);
-  const weeklyDraws = results.filter((draw) => draw.date >= getWeekMonday(getDominicanClock().date));
-  const weeklyWinningNumbers = weeklyDraws.map((draw) => draw.number);
-  const weeklyWinningNumbersBySession = {
-    dia: weeklyDraws.filter((draw) => draw.session === "dia").map((draw) => draw.number),
-    noche: weeklyDraws.filter((draw) => draw.session === "noche").map((draw) => draw.number)
-  };
-  const daySuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "dia", 5), [results]);
-  const nightSuggestions = useMemo(() => buildLaPrimeraSuggestions(results, "noche", 5), [results]);
-  const daySuggestionDate = stats.latestBySession.dia?.date ?? results[0]?.date ?? "";
-  const nightSuggestionDate = stats.latestBySession.noche?.date ?? results[0]?.date ?? "";
-  const history = stats.filtered;
-  const historyStartDate = results[results.length - 1]?.date ?? "";
-  const historyDates = [...new Set(history.map((draw) => draw.date))];
-  const pageCount = Math.max(1, Math.ceil((session === "todos" ? historyDates.length : history.length) / pageSize));
-  const paginatedHistory = session === "todos"
-    ? historyDates.slice((historyPage - 1) * pageSize, historyPage * pageSize).map((date) => ({
-        date,
-        draws: (["noche", "dia"] as const)
-          .map((currentSession) => history.find((draw) => draw.date === date && draw.session === currentSession))
-          .filter((draw): draw is LaPrimeraDraw => Boolean(draw))
-      }))
-    : history.slice((historyPage - 1) * pageSize, historyPage * pageSize).map((draw) => ({ date: draw.date, draws: [draw] }));
-  const scatterData = useMemo(() => filterLaPrimeraResults(results, scatterSession).slice().reverse(), [results, scatterSession]);
-
+  const [results, setResults] = useState(initialData.results);
+  const [status, setStatus] = useState(`Datos listos: ${initialData.results.length} sorteos cargados.`);
+  const resultsRef = useRef(initialData.results);
   useEffect(() => {
-    let isMounted = true;
-    const updating = new Set<"quinielon" | "quiniela" | "loto5">();
-    const loadingTimeout = window.setTimeout(() => {
-      if (isMounted) setIsPageLoading(false);
-    }, 500);
-
-    async function updateProduct(product: "quinielon" | "quiniela" | "loto5") {
-      if (updating.has(product) || publicationWindow("quinielon")) return;
-      updating.add(product);
+    let mounted = true;
+    let updating = false;
+    async function updateResults() {
+      if (updating || publicationWindow("quinielon")) return;
+      updating = true;
       try {
-        const expected = getExpectedLaPrimeraDraw();
-        const targetDate = product === "loto5" ? expected.expectedLoto5Date : expected.expectedSessionDate;
-        const response = await fetch(`/api/la-primera/update?product=${product}&date=${targetDate}`, { cache: "no-store" });
+        const { expectedSessionDate } = getExpectedLaPrimeraDraw();
+        const response = await fetch(`/api/la-primera/update?date=${expectedSessionDate}`, { cache: "no-store" });
         const payload = await response.json();
-        if (!isMounted) return;
         if (!response.ok) throw new Error(payload.message);
-        setData((current) => {
-          const next = {
-            results: Array.isArray(payload.results) ? payload.results : current.results,
-            quinielaResults: Array.isArray(payload.quinielaResults) ? payload.quinielaResults : current.quinielaResults,
-            loto5Results: Array.isArray(payload.loto5Results) ? payload.loto5Results : current.loto5Results
-          };
-          dataRef.current = next;
-          return next;
-        });
-        if (product === "quinielon") setStatus(`${payload.message} Total: ${payload.total}. Último: ${payload.latest?.date ?? "N/D"}.`);
+        if (!mounted) return;
+        if (Array.isArray(payload.results)) {
+          resultsRef.current = payload.results;
+          setResults(payload.results);
+        }
+        setStatus(`${payload.message} Total: ${payload.total}.`);
       } catch {
-        if (!isMounted) return;
-        if (product === "quinielon") setStatus("La fuente oficial está tardando. Reintentaremos automáticamente en un minuto.");
-      } finally {
-        updating.delete(product);
-      }
+        if (mounted) setStatus("La fuente oficial está tardando. Puede seguir consultando los datos guardados.");
+      } finally { updating = false; }
     }
-
-    if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
-
-    const pollInterval = window.setInterval(() => {
-      if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
+    if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
+    const interval = window.setInterval(() => {
+      if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
     }, 60_000);
-
-    return () => {
-      isMounted = false;
-      window.clearTimeout(loadingTimeout);
-      window.clearInterval(pollInterval);
-    };
+    return () => { mounted = false; window.clearInterval(interval); };
   }, []);
-
-  function changeSession(value: LaPrimeraFilter) {
-    setSession(value);
-    setHistoryPage(1);
-  }
-
-  function downloadHistory() {
-    const blob = new Blob([`${JSON.stringify(results, null, 2)}\n`], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `la-primera-quinielon-${results[0]?.date ?? "sin-fecha"}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function moveTooltip(event: ReactMouseEvent<SVGCircleElement>, draw: LaPrimeraDraw) {
-    const bounds = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
-    if (!bounds) return;
-    setTooltip({
-      x: Math.min(Math.max(event.clientX - bounds.left + 14, 12), bounds.width - 205),
-      y: Math.min(Math.max(event.clientY - bounds.top + 14, 12), 290),
-      draw
-    });
-  }
-
-  if (isPageLoading) {
-    return <LaPrimeraSkeleton message="Actualizando La Primera..." />;
-  }
-
-  return <LaPrimeraQuinielonV2View key="quinielon-v2" variant="quinielon-v2" results={results} onProductChange={setProduct} status={status} />;
-
-  /* Legacy Quinielón view retained below until its shared roster helpers are extracted. */
-  return (
-    <main className="primeraTheme">
-      <ProductSwitch product={product} onChange={setProduct} />
-      <section className="hero primeraHero">
-        <div>
-          <p className="eyebrow primeraEyebrow">La Primera Lab local</p>
-          <h1>Quinielon Dia y Noche</h1>
-          <p className="subcopy">
-            Analisis historico para revisar frecuencia, ultimos resultados, numeros calientes y 5 sugerencias estadisticas por tanda.
-          </p>
-        </div>
-        <div className="heroPanel primeraHeroPanel">
-          <span className="panelLabel primeraLabel">Ultimos sorteos</span>
-          <div className="latestSplit">
-            {(["dia", "noche"] as const).map((option) => {
-              const latest = stats.latestBySession[option];
-              const previous = latest ? getPreviousOccurrence(results, latest) : null;
-              return (
-                <article key={option}>
-                  <span>{laPrimeraSchedules[option].label}</span>
-                  <strong>{laPrimeraSchedules[option].time}</strong>
-                  {latest ? <QuinielonBall number={latest.number} /> : <b>Sin datos</b>}
-                  {latest ? (
-                    <div className="latestDrawDetails">
-                      <small>
-                        {formatShortDate(latest.date)} · <b>{getLatestDateLabel(latest)}</b>
-                      </small>
-                      <small>
-                        Numero ganador: <b>{formatQuinielonNumber(latest.number)}</b>
-                      </small>
-                      {previous ? (
-                        <small>
-                          Antes salio el {formatShortDate(previous.draw.date)} · hace {previous.delay} sorteos de {formatSession(latest.session)}
-                        </small>
-                      ) : (
-                        <small>
-                          No habia salido en esta tanda desde {historyStartDate ? formatShortDate(historyStartDate) : "el inicio del historial"}.
-                        </small>
-                      )}
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="toolbar primeraToolbar">
-        <div className="segmented primeraSegmented">
-          {(["todos", "dia", "noche"] as LaPrimeraFilter[]).map((option) => (
-            <button key={option} className={session === option ? "active" : ""} onClick={() => changeSession(option)}>
-              {formatSession(option)}
-            </button>
-          ))}
-        </div>
-        <button className="downloadButton primeraDownload" onClick={downloadHistory}>
-          <span aria-hidden="true">↓</span> Descargar JSON
-        </button>
-        <span className="status">{status} Las recomendaciones son historicas, no predicciones garantizadas.</span>
-      </section>
-
-      <WeeklyTopChallenge results={results} />
-
-      <section className="metricsGrid">
-        <div className="metric primeraMetric">
-          <span>Sorteos analizados</span>
-          <strong>{stats.drawCount}</strong>
-        </div>
-        <div className="metric primeraMetric">
-          <span>Filtro activo</span>
-          <strong>{formatSession(session)}</strong>
-        </div>
-        <div className="metric primeraMetric">
-          <span>Mas caliente</span>
-          <strong>{stats.topHot[0] ? formatQuinielonNumber(stats.topHot[0].number) : "N/D"}</strong>
-        </div>
-        <div className="metric primeraMetric">
-          <span>Horario</span>
-          <strong>{session === "noche" ? "7:00 PM" : session === "dia" ? "12:00 PM" : "12 / 7"}</strong>
-        </div>
-      </section>
-
-      <section className="quinielonRosterSection nosotrosRosterSection">
-        <header>
-          <span>Nuestra selección</span>
-          <div className="rosterTitleRow">
-            <h2>Top 20 calientes</h2>
-            <RosterDelayButton
-              label="Nosotros"
-              isOpen={openRosterInfo === "nosotros"}
-              onClick={() => setOpenRosterInfo((current) => current === "nosotros" ? null : "nosotros")}
-            />
-          </div>
-          <p>Los números con mayor frecuencia histórica para cada tanda.</p>
-          {openRosterInfo === "nosotros" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.nosotros} referenceDate={rosterDelayReferenceDate} /> : null}
-        </header>
-        <div className="twoColumn">
-          <NumberGridCard results={results} movementByNumber={movementByNumber} title="Top 20 calientes Día" delaySession="dia" ranking={exclusiveRankings.hotDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.nosotrosDia} />
-          <NumberGridCard results={results} movementByNumber={movementByNumber} title="Top 20 calientes Noche" delaySession="noche" ranking={exclusiveRankings.hotNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.nosotrosNoche} />
-        </div>
-      </section>
-
-      <section className="quinielonRosterSection investorSection">
-        <header>
-          <span>Selección exclusiva</span>
-          <div className="rosterTitleRow">
-            <h2>Números de los Inversionistas</h2>
-            <RosterDelayButton
-              label="Inversionistas"
-              isOpen={openRosterInfo === "inversionistas"}
-              onClick={() => setOpenRosterInfo((current) => current === "inversionistas" ? null : "inversionistas")}
-            />
-          </div>
-          <p>Los siguientes 20 números disponibles por tanda, sin repetir los de nuestra selección.</p>
-          {openRosterInfo === "inversionistas" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.inversionistas} referenceDate={rosterDelayReferenceDate} /> : null}
-        </header>
-        <div className="twoColumn">
-          <NumberGridCard results={results} movementByNumber={movementByNumber} title="Top 20 Inversionistas Día" delaySession="dia" ranking={exclusiveRankings.investorDay} winningNumbers={weeklyWinningNumbersBySession.dia} frozenByNumber={frozenRosterNumbers.inversionistasDia} tone="gold" />
-          <NumberGridCard results={results} movementByNumber={movementByNumber} title="Top 20 Inversionistas Noche" delaySession="noche" ranking={exclusiveRankings.investorNight} winningNumbers={weeklyWinningNumbersBySession.noche} frozenByNumber={frozenRosterNumbers.inversionistasNoche} tone="gold" />
-        </div>
-      </section>
-
-      <section className="quinielonRosterSection bankSection">
-        <header>
-          <span>Selección restante</span>
-          <div className="rosterTitleRow">
-            <h2>Números de la Banca</h2>
-            <RosterDelayButton
-              label="Banca"
-              isOpen={openRosterInfo === "banca"}
-              onClick={() => setOpenRosterInfo((current) => current === "banca" ? null : "banca")}
-            />
-          </div>
-          <p>Los 20 números restantes después de las selecciones de Nosotros e Inversionistas.</p>
-          {openRosterInfo === "banca" ? <RosterDelayPanel results={results} ranking={rosterDelayRankings.banca} referenceDate={rosterDelayReferenceDate} /> : null}
-        </header>
-        <NumberGridCard results={results} movementByNumber={movementByNumber} title="20 números restantes" ranking={exclusiveRankings.bank} winningNumbers={weeklyWinningNumbers} frozenByNumber={frozenRosterNumbers.banca} tone="dark" />
-      </section>
-      <p className="weeklyCrownNote quinielonCrownNote">Las coronas acumulan los aciertos de la semana actual y se limpian automáticamente cada lunes.</p>
-
-      <section className="twoColumn">
-        <SuggestionCard title="5 sugerencias Dia" baseDate={daySuggestionDate} suggestions={daySuggestions} winningNumber={stats.latestBySession.dia?.number} />
-        <SuggestionCard title="5 sugerencias Noche" baseDate={nightSuggestionDate} suggestions={nightSuggestions} winningNumber={stats.latestBySession.noche?.number} />
-      </section>
-
-      <section className="card scatterSection primeraScatter">
-        <div className="sectionHeader">
-          <div>
-            <h2>Diagrama de dispersion</h2>
-            <p>Cada punto representa el numero ganador de una tanda en la fecha cargada.</p>
-          </div>
-          <div className="scatterControls">
-            <label>
-              Tanda
-              <select value={scatterSession} onChange={(event) => setScatterSession(event.target.value as LaPrimeraFilter)}>
-                <option value="todos">Todos</option>
-                <option value="dia">Dia</option>
-                <option value="noche">Noche</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div className="scatterWrap primeraScatterWrap">
-          {scatterData.length ? (
-            <>
-              <svg viewBox="0 0 920 360" role="img" aria-label="Dispersion de Quinielon">
-                <rect className="chartPlotBg" x="58" y="22" width="808" height="280" rx="8" />
-                {[0, 20, 40, 60, 80, 99].map((value) => {
-                  const y = 302 - (value / 99) * 280;
-                  return (
-                    <g key={value}>
-                      <line className="chartGrid" x1="58" x2="866" y1={y} y2={y} />
-                      <text className="chartTick" x="26" y={y + 4}>{value}</text>
-                    </g>
-                  );
-                })}
-                {scatterData.map((draw, index) => {
-                  const x = 76 + (index / Math.max(1, scatterData.length - 1)) * 772;
-                  const y = 302 - (draw.number / 99) * 280;
-                  return (
-                    <circle
-                      key={`${draw.date}-${draw.session}`}
-                      className={draw.session === "dia" ? "primeraPoint" : "primeraPoint night"}
-                      cx={x}
-                      cy={y}
-                      r="6"
-                      onMouseEnter={(event) => moveTooltip(event, draw)}
-                      onMouseMove={(event) => moveTooltip(event, draw)}
-                      onMouseLeave={() => setTooltip(null)}
-                    />
-                  );
-                })}
-                <line className="chartAxis" x1="58" x2="866" y1="302" y2="302" />
-                <text className="chartDate endpoint" x="58" y="332">{formatShortDate(scatterData[0].date)}</text>
-                <text className="chartDate endpoint" x="780" y="332">{formatShortDate(scatterData[scatterData.length - 1].date)}</text>
-                <text className="chartAxisLabel" x="390" y="350">Fecha del sorteo</text>
-                <text className="chartAxisLabel" x="10" y="28">Numero</text>
-              </svg>
-              {tooltip ? (
-                <div className="chartTooltip" style={{ left: tooltip!.x, top: tooltip!.y }}>
-                  <strong>{formatShortDate(tooltip!.draw.date)}</strong>
-                  <span>{formatLongDate(tooltip!.draw.date)}</span>
-                  <span>Tanda: <b>{formatSession(tooltip!.draw.session)}</b></span>
-                  <span>Numero: <b>{formatQuinielonNumber(tooltip!.draw.number)}</b></span>
-                </div>
-              ) : null}
-            </>
-          ) : (
-            <div className="emptyChart">Sin datos para el filtro seleccionado.</div>
-          )}
-        </div>
-        <div className="chartLegend">
-          <span><i className="legendDot primeraLegend" /> Dia</span>
-          <span><i className="legendDot primeraLegend night" /> Noche</span>
-        </div>
-      </section>
-
-      <section className="card">
-        <div className="sectionHeader">
-          <div>
-            <h2>Historial paginado</h2>
-            <p>{session === "todos" ? `${historyDates.length} fechas · 5 fechas por página` : `${history.length} sorteos en el filtro ${formatSession(session)}`}.</p>
-          </div>
-          <div className="pagination">
-            <button className="miniButton" disabled={historyPage === 1} onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}>
-              Anterior
-            </button>
-            <span>Pagina {historyPage} de {pageCount}</span>
-            <button className="miniButton" disabled={historyPage === pageCount} onClick={() => setHistoryPage((page) => Math.min(pageCount, page + 1))}>
-              Siguiente
-            </button>
-          </div>
-        </div>
-        <div className="primeraHistory">
-          {paginatedHistory.map((group) => (
-            <article className="historyRow primeraGroupedHistoryRow" key={group.date}>
-              <div className="historyDate">
-                <strong>{formatShortDate(group.date)}</strong>
-                <span>{formatLongDate(group.date)}</span>
-              </div>
-              <div className="primeraHistorySessions">
-                {group.draws.map((draw) => (
-                  <div className={`primeraHistorySession ${draw.session}`} key={draw.session}>
-                    <span>{formatSession(draw.session)}</span>
-                    <QuinielonBall number={draw.number} tone={draw.session === "dia" ? "red" : "dark"} winner={draw.number === stats.latestBySession[draw.session]?.number} />
-                    <small>{laPrimeraSchedules[draw.session].time}</small>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </main>
-  );
+  return <LaPrimeraQuinielonV2View variant="quinielon-v2" results={results} status={status} />;
 }
 
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
@@ -826,7 +448,7 @@ function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { r
   return <aside className="rosterDelayPanel" role="status"><strong>6 meses o más sin salir</strong><small>{formatSession(session)} · calculado hasta {formatShortDate(referenceDate)}</small>{delayed.length ? <div className="rosterDelayList">{delayed.map((item) => <span key={item.number}>{formatQuinielonNumber(item.number)}<small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small></span>)}</div> : <p>Ninguno.</p>}</aside>;
 }
 
-function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }: { results: LaPrimeraDraw[]; onProductChange: (product: LaPrimeraProduct) => void; status: string; variant: QuinielonVariant }) {
+function LaPrimeraQuinielonV2View({ results, status, variant }: { results: LaPrimeraDraw[]; status: string; variant: QuinielonVariant }) {
   const investors = variant === "inversionistas";
   const [showSymbols, setShowSymbols] = useState(true);
   const [openInfo, setOpenInfo] = useState<string | null>(null);
@@ -886,7 +508,8 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
 { id: "resultados", label: "Resultados", description: "Recorre el calendario semanal y compara ganadores con los repartos guardados.", content: <>
 <QuinielonV2WeeklyChallenge results={results} variant={variant} />
 <p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
-</> }
+</> },
+{ id: "historial", label: "Historial", description: "Consulta los ganadores anteriores por fecha, tanda o número.", content: <QuinielonHistory results={results} /> }
 ]} />
 </main>;
 }
@@ -1203,42 +826,7 @@ function LaPrimeraLoto5View({
   );
 }
 
-function LaPrimeraSkeleton({ message }: { message: string }) {
-  return (
-    <main className="primeraTheme">
-      <section className="hero primeraHero">
-        <div>
-          <div className="skeletonLine tiny" />
-          <div className="skeletonBlock heroTitleSkeleton" />
-          <div className="skeletonLine wide" />
-        </div>
-        <div className="heroPanel skeletonPanel">
-          <div className="skeletonLine tiny" />
-          <div className="latestSplit">
-            <div className="skeletonBlock primeraLatestSkeleton" />
-            <div className="skeletonBlock primeraLatestSkeleton" />
-          </div>
-        </div>
-      </section>
-      <section className="toolbar primeraToolbar">
-        <div className="skeletonButton" />
-        <span className="status">{message}</span>
-      </section>
-      <section className="metricsGrid">
-        {[0, 1, 2, 3].map((item) => (
-          <div className="metric" key={item}>
-            <div className="skeletonLine tiny" />
-            <div className="skeletonLine number" />
-          </div>
-        ))}
-      </section>
-      <section className="twoColumn">
-        <div className="card"><div className="skeletonBlock primeraCardSkeleton" /></div>
-        <div className="card"><div className="skeletonBlock primeraCardSkeleton" /></div>
-      </section>
-    </main>
-  );
-}
+
 
 type WeeklyTandaResult = {
   session: LaPrimeraSession;

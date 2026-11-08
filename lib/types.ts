@@ -57,21 +57,6 @@ export type ThirtyPlayPrizeSummary = {
   total: number;
 };
 
-export type HundredPlayExploratoryPortfolio = {
-  targetDate: string;
-  targetDay: DrawDay;
-  generatedAt: string;
-  algorithmVersion: string;
-  plays: Play[];
-};
-
-export type HundredPlayExploratoryResult = {
-  targetDate: string;
-  targetDay: DrawDay;
-  generatedAt: string;
-  playCount: number;
-  summary: ThirtyPlayPrizeSummary | null;
-};
 
 export type DayFilter = DrawDay | "todos";
 

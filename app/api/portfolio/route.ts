@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { readResults } from "../../../lib/data";
-import { getDominicanNow, getNextGameDate, summarizeHundredPlayExploratoryPrizes, summarizeThirtyPlayPrizes } from "../../../lib/game";
+import { getDominicanNow, getNextGameDate, summarizeThirtyPlayPrizes } from "../../../lib/game";
 import { getOrCreatePortfolio, readSavedPortfolios } from "../../../lib/portfolio-store";
-import { getOrCreateExploratoryPortfolio, readExploratoryPortfolios } from "../../../lib/exploratory-portfolio-store";
 import { drawSlots } from "../../../lib/draw-schedule";
 export const maxDuration = 180;
 
@@ -29,21 +28,6 @@ export async function GET(request: Request) {
   const previous = previousDraw ? saved.find(portfolio => portfolio.targetDate === previousDraw.date) ?? null : null;
   const now = getDominicanNow();
   const calendarDate = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
-  const todayIsDrawDay = now.getDay() === 3 || now.getDay() === 6;
-  const todayResult = results.find((draw) => draw.date === calendarDate);
-  const exploratoryTargetDate = todayIsDrawDay && !todayResult ? calendarDate : targetDate;
-  const exploratoryCurrent = await getOrCreateExploratoryPortfolio(exploratoryTargetDate, results);
-  const exploratorySaved = await readExploratoryPortfolios();
-  const exploratoryEvaluated = exploratorySaved.flatMap((portfolio) => {
-    const draw = results.find((item) => item.date === portfolio.targetDate);
-    return draw ? [{
-      targetDate: portfolio.targetDate,
-      targetDay: portfolio.targetDay,
-      generatedAt: portfolio.generatedAt,
-      playCount: portfolio.plays.length,
-      summary: summarizeHundredPlayExploratoryPrizes(portfolio, draw)
-    }] : [];
-  }).slice(0, 4);
   const drawDates = weekDrawDates(calendarDate);
   const calendar = drawDates.map((date, index) => {
     const portfolio = saved.find((item) => item.targetDate === date) ?? (current?.targetDate === date ? current : null);
@@ -59,18 +43,6 @@ export async function GET(request: Request) {
   return NextResponse.json({
     current,
     previous: previous && previousDraw ? { ...previous, draw: previousDraw } : null,
-    calendar,
-    exploratory: exploratoryCurrent ? {
-      current: {
-        targetDate: exploratoryCurrent.targetDate,
-        targetDay: exploratoryCurrent.targetDay,
-        generatedAt: exploratoryCurrent.generatedAt,
-        playCount: exploratoryCurrent.plays.length,
-        summary: todayResult && todayResult.date === exploratoryCurrent.targetDate
-          ? summarizeHundredPlayExploratoryPrizes(exploratoryCurrent, todayResult)
-          : null
-      },
-      evaluated: exploratoryEvaluated
-    } : null
+    calendar
   });
 }

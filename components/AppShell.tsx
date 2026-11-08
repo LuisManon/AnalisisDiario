@@ -34,7 +34,7 @@ export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShel
       ) : activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
       ) : (
-        <LaPrimeraDashboard initialData={{ results: laPrimeraResults, quinielaResults: [], loto5Results: [] }} />
+        <LaPrimeraDashboard initialData={{ results: laPrimeraResults }} />
       )}
     </div>
   );
