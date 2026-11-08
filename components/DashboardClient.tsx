@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEven
 import { Ball } from "./Ball";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
+import { LotoTopFive } from "./LotoTopFive";
 import { publicationWindow } from "../lib/draw-schedule";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
@@ -29,7 +30,6 @@ type PortfolioCalendarEntry = {
 };
 
 const positionColors = ["#0e7c66", "#1e88a8", "#7357a6", "#d79b25", "#7f8c3a", "#242720"];
-const plusColor = "#ee1f2d";
 
 function formatDay(day: string) {
   return day === "miercoles" ? "Miercoles" : day === "sabado" ? "Sabado" : "Todos";
@@ -332,87 +332,13 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </div>
       </section>
 <NumberSearch results={data.results} />
-<details className="topPositionsAccordion" open>
-        <summary>
-          <span>Top 5 por posicion</span>
-          <small>Cada columna calcula repeticion respetando la posicion exacta del sorteo.</small>
-        </summary>
-        <section className="topPositionsBoard">
-          <div className="topPositionsGuide">
-            <span><i className="guideRank">#</i> Orden por frecuencia</span>
-            <span><i className="guideBar" /> La barra compara con el lider de cada posicion</span>
-            <span><b>{stats.drawCount}</b> sorteos en el filtro actual</span>
-          </div>
-          <div className="topPositionsGrid">
-            {stats.byPosition.map((position, positionIndex) => {
-              const maxCount = Math.max(1, ...position.top.map((entry) => entry.count));
-              const color = positionColors[positionIndex];
-              return (
-                <article className="positionRankingCard" key={position.position} style={{ borderTopColor: color }}>
-                  <header className="positionRankingHeader">
-                    <span className="positionColorDot" style={{ backgroundColor: color }} />
-                    <div>
-                      <span>P{position.position}</span>
-                      <h3>Posicion {position.position}</h3>
-                    </div>
-                  </header>
-                  <div className="positionRankingList">
-                    {position.top.map((entry, rank) => (
-                      <div className="positionRankingItem" key={entry.number}>
-                        <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
-                        <Ball value={entry.number} winner={latest?.numbers.includes(entry.number)} />
-                        <div className="positionFrequency">
-                          <div className="positionFrequencyMeta">
-                            <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
-                            <strong>{entry.count} salidas</strong>
-                          </div>
-                          <div className="positionBar">
-                            <span style={{ backgroundColor: color, width: `${(entry.count / maxCount) * 100}%` }} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-            <article className="positionRankingCard positionRankingPlus" style={{ borderTopColor: plusColor }}>
-              <header className="positionRankingHeader">
-                <span className="positionColorDot" style={{ backgroundColor: plusColor }} />
-                <div>
-                  <span>MAS</span>
-                  <h3>Numero Mas</h3>
-                </div>
-              </header>
-              <div className="positionRankingList">
-                {stats.plusTop.map((entry, rank) => {
-                  const maxCount = Math.max(1, ...stats.plusTop.map((item) => item.count));
-                  return (
-                    <div className="positionRankingItem" key={entry.number}>
-                      <span className={`rankNumber rankNumber${rank + 1}`}>{rank + 1}</span>
-                      <Ball value={entry.number} plus winner={entry.number === latest?.plus} />
-                      <div className="positionFrequency">
-                        <div className="positionFrequencyMeta">
-                          <span>{rank === 0 ? "Lider" : `Top ${rank + 1}`}</span>
-                          <strong>{entry.count} salidas</strong>
-                        </div>
-                        <div className="positionBar positionBarPlus">
-                          <span style={{ width: `${(entry.count / maxCount) * 100}%` }} />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </article>
-          </div>
-        </section>
-      </details>
-<section className="sectionHeader">
-        <h2>Mapa de rangos</h2>
-        <p>Rango normal por posicion, ignorando salidas poco comunes para no deformar el analisis.</p>
-      </section>
-<section className="card rangeMapSection">
+<LotoTopFive stats={stats} />
+<section className="card rangeMapSection lotoAnalysisMap">
+        <header className="lotoMapHeading">
+          <span>CONCENTRACIÓN POR POSICIÓN</span>
+          <h2>Mapa de rangos</h2>
+          <p>Compara dónde se concentra el historial de cada posición, en una escala de 01 a 40.</p>
+        </header>
         <div className="scatterControls">
           <label htmlFor="rangeYear">Año</label>
           <select id="rangeYear" value={rangeYear} onChange={(event) => setRangeYear(event.target.value)}>
@@ -421,7 +347,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
               <option value={year} key={year}>{year}</option>
             ))}
           </select>
-          <label htmlFor="rangeDay">Dia</label>
+          <label htmlFor="rangeDay">Día</label>
           <select id="rangeDay" value={rangeDay} onChange={(event) => setRangeDay(event.target.value as DayFilter)}>
             <option value="todos">Todos</option>
             <option value="miercoles">Miercoles</option>
@@ -432,11 +358,12 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} options={["P1", "P2", "P3", "P4", "P5", "P6"]} />
         <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
       </section>
-<section className="sectionHeader">
-        <h2>Diagrama de dispersion</h2>
-        <p>Distribucion de numeros por sorteo. Los puntos rojos representan el numero Mas.</p>
-      </section>
-<section className="card scatterSection">
+<section className="card scatterSection lotoAnalysisMap">
+        <header className="lotoMapHeading">
+          <span>EVOLUCIÓN EN EL TIEMPO</span>
+          <h2>Mapa de dispersión</h2>
+          <p>Cada punto representa un número sorteado. Activa posiciones para compararlas y desplaza el gráfico para recorrer las fechas.</p>
+        </header>
         <div className="scatterControls">
           <label htmlFor="scatterYear">Año</label>
           <select id="scatterYear" value={scatterYear} onChange={(event) => setScatterYear(event.target.value)}>
@@ -445,7 +372,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
               <option value={year} key={year}>{year}</option>
             ))}
           </select>
-          <label htmlFor="scatterDay">Dia</label>
+          <label htmlFor="scatterDay">Día</label>
           <select id="scatterDay" value={scatterDay} onChange={(event) => setScatterDay(event.target.value as DayFilter)}>
             <option value="todos">Todos</option>
             <option value="miercoles">Miercoles</option>
@@ -705,7 +632,8 @@ function SeriesFilter({
       {options.map((option) => (
         <label key={option} className={selected.includes(option) ? "seriesChip active" : "seriesChip"}>
           <input type="checkbox" checked={selected.includes(option)} onChange={() => toggle(option)} />
-          {option}
+          <i className="lotoSeriesDot" style={{ background: option === "Mas" ? "#ce5263" : positionColors[Number(option.slice(1)) - 1] }} aria-hidden="true" />
+          {option === "Mas" ? "Más" : option}
         </label>
       ))}
     </div>
@@ -1015,11 +943,10 @@ function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selected
     <section className="rangeMap" aria-label="Mapa de rangos por posicion">
       <div className="rangeMapHeader">
         <div>
-          <span className="panelLabel">Mapa de rangos</span>
-          <h3>Rango normal de salida por posicion</h3>
+          <h3>Intervalo de concentración histórica</h3>
         </div>
         <p>
-          Calcula por posicion el intervalo mas compacto que concentra el 80% de sus apariciones.
+          Intervalo más corto que reúne al menos el 80% de las salidas. Con menos de 10 sorteos se muestra el rango completo. No es una predicción.
         </p>
         <div className="rangeInfo">
           <button type="button" aria-label="Informacion del mapa de rangos">i</button>
@@ -1066,7 +993,7 @@ function RangeMap({ results, selectedSeries }: { results: DrawResult[]; selected
               </div>
               <div className="rangeStats">
                 <strong>{String(row.low).padStart(2, "0")} - {String(row.high).padStart(2, "0")}</strong>
-                <span>Prom. {row.average.toFixed(1)} · {row.omitted} fuera del rango · {row.samples} sorteos</span>
+                <span>Media {row.average.toFixed(1)} · {row.omitted} de {row.samples} fuera</span>
               </div>
             </article>
           );

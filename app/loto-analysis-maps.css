@@ -1,0 +1,66 @@
+/* Scoped to Loto Más: shared charts for other products retain their layout. */
+.lotoAnalysisMap { background: #fff; border: 1px solid #e2e7ef; border-radius: 18px; padding: 24px; box-shadow: none; min-width: 0; }
+.lotoMapHeading { margin-bottom: 22px; }
+.lotoMapHeading > span { color: #64748b; font-size: .67rem; font-weight: 800; letter-spacing: .14em; }
+.lotoMapHeading h2 { color: #243247; font-size: 1.35rem; margin: 7px 0 8px; }
+.lotoMapHeading p { color: #64748b; font-size: .86rem; line-height: 1.6; margin: 0; max-width: 780px; }
+.lotoAnalysisMap .scatterControls { display: flex; justify-content: flex-start; gap: 10px; padding: 14px; background: #f7f9fc; border: 1px solid #e8edf4; border-radius: 12px; margin-bottom: 12px; }
+.lotoAnalysisMap .scatterControls label { color: #475569; font-size: .8rem; font-weight: 600; }
+.lotoAnalysisMap .scatterControls select { background: #fff; border: 1px solid #dce3ed; border-radius: 8px; color: #334155; min-height: 40px; font-size: .84rem; }
+.lotoAnalysisMap .scatterControls > span { margin-left: auto; color: #64748b; font-size: .78rem; }
+.lotoAnalysisMap .seriesFilter { justify-content: flex-start; padding: 0 0 18px; margin: 0 0 20px; border-bottom: 1px solid #edf0f5; }
+.lotoAnalysisMap .seriesChip { background: #fff; border-color: #e2e8f0; color: #64748b; min-height: 40px; font-size: .8rem; border-radius: 8px; }
+.lotoAnalysisMap .seriesChip.active { background: #edf2ff; color: #334e91; border-color: #c7d4f3; }
+.lotoAnalysisMap .seriesChip input { accent-color: #3d5999; }
+.lotoAnalysisMap .lotoSeriesDot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.lotoAnalysisMap :is(select, input, button):focus-visible { outline: 3px solid #779ae0; outline-offset: 3px; }
+.lotoAnalysisMap .rangeMapHeader { align-items: start; grid-template-columns: 1fr; gap: 6px; margin-bottom: 22px; padding-right: 40px; }
+.lotoAnalysisMap .rangeMapHeader h3 { font-size: .92rem; color: #334155; margin: 0; }
+.lotoAnalysisMap .rangeMapHeader p { text-align: left; font-size: .78rem; line-height: 1.6; padding: 0; max-width: 760px; }
+.lotoAnalysisMap .rangeInfo button { background: #eef2f8; color: #52637d; }
+.lotoAnalysisMap .rangeAxis { margin-left: 78px; margin-right: 220px; height: 28px; }
+.lotoAnalysisMap .rangeAxis::before { display: none; }
+.lotoAnalysisMap .rangeAxis span { font-size: .7rem; font-weight: 500; }
+.lotoAnalysisMap .rangeRows { gap: 0; border: 1px solid #e6ebf2; border-radius: 12px; overflow: hidden; }
+.lotoAnalysisMap .rangeRow { grid-template-columns: 48px minmax(0, 1fr) 190px; gap: 16px; padding: 22px 14px; min-height: 92px; }
+.lotoAnalysisMap .rangeRow + .rangeRow { border-top: 1px solid #edf0f5; }
+.lotoAnalysisMap .rangeRow:nth-child(even) { background: #fafbfd; }
+.lotoAnalysisMap .rangeLabel { display: flex; gap: 8px; }
+.lotoAnalysisMap .rangeLabel span { display: none; }
+.lotoAnalysisMap .rangeLabel i { width: 7px; height: 7px; }
+.lotoAnalysisMap .rangeLabel strong { font-size: .8rem; }
+.lotoAnalysisMap .rangeTrack { height: 8px; background: #e9eef5; border: 0; margin: 0 0 12px; border-radius: 3px; }
+.lotoAnalysisMap .rangeTrack::before, .lotoAnalysisMap .rangeBandGlow { display: none; }
+.lotoAnalysisMap .rangeBand { height: 8px; top: 0; opacity: .85; box-shadow: none; border-radius: 3px; }
+.lotoAnalysisMap .rangeStart, .lotoAnalysisMap .rangeEnd { top: 14px; padding: 0; background: none; border: 0; color: #64748b; font-size: .7rem; font-weight: 600; }
+.lotoAnalysisMap .rangeStats { gap: 5px; }
+.lotoAnalysisMap .rangeStats strong { color: #334155; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.lotoAnalysisMap .rangeStats span { font-size: .72rem; color: #64748b; }
+.lotoAnalysisMap .chartSummary { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px 24px; background: none; padding: 0 0 16px; color: #64748b; font-size: .78rem; }
+.lotoAnalysisMap .scatterPlus { r: 4.5px; fill: #ce5263; stroke: #fff; stroke-width: .7px; opacity: .85; }
+.lotoAnalysisMap .chartSummary strong { color: #334155; }
+.lotoAnalysisMap .scatterChartArea { border: 1px solid #e6ebf2; border-radius: 12px; overflow: hidden; background: #fff; }
+.lotoAnalysisMap .chartPlotBg, .lotoAnalysisMap .scatterFixedAxisBg { fill: #fff; }
+.lotoAnalysisMap .chartGrid { stroke: #e9edf3; }
+.lotoAnalysisMap .chartGrid.vertical { stroke: #f1f4f8; }
+.lotoAnalysisMap .chartTick, .lotoAnalysisMap .chartDate, .lotoAnalysisMap .chartAxisLabel { fill: #64748b; }
+.lotoAnalysisMap .scatterScrollControl { background: #f7f9fc; border: 1px solid #e6ebf2; border-radius: 10px; padding: 12px; margin-top: 12px; }
+.lotoAnalysisMap .scatterScrollControl input { accent-color: #3d5999; }
+@media (max-width: 760px) {
+  .lotoAnalysisMap { padding: 18px 14px; }
+  .lotoMapHeading h2 { font-size: 1.15rem; }
+  .lotoMapHeading p { font-size: .8rem; }
+  .lotoAnalysisMap .scatterControls { display: grid; grid-template-columns: 35px minmax(0, 1fr); padding: 12px; gap: 10px; }
+  .lotoAnalysisMap .scatterControls select { width: 100%; min-width: 0; }
+  .lotoAnalysisMap .scatterControls > span { grid-column: 1 / -1; margin: 2px 0 0; }
+  .lotoAnalysisMap .seriesFilter { gap: 6px; }
+  .lotoAnalysisMap .seriesChip { padding: 0 9px; }
+  .lotoAnalysisMap .rangeAxis { margin: 0 14px; }
+  .lotoAnalysisMap .rangeAxis span:nth-child(even) { display: none; }
+  .lotoAnalysisMap .rangeRow { grid-template-columns: 48px minmax(0, 1fr); padding: 16px 14px 28px; gap: 16px; }
+  .lotoAnalysisMap .rangeTrack { grid-column: 1 / -1; grid-row: 2; margin-bottom: 0; }
+  .lotoAnalysisMap .rangeStats { justify-items: end; text-align: right; }
+  .lotoAnalysisMap .rangeStats span { font-size: .68rem; }
+  .lotoAnalysisMap .rangeMapHeader { margin-bottom: 16px; }
+  .lotoAnalysisMap .chartSummary { display: grid; gap: 7px; font-size: .74rem; }
+}

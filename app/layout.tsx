@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./styles.css";
 import "./analysis-workspace.css";
+import "./loto-top-five.css";
+import "./loto-analysis-maps.css";
 
 export const metadata: Metadata = {
   title: "Análisis Diario",

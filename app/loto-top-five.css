@@ -1,0 +1,70 @@
+.lotoTopFive { background: #fff; border: 1px solid #dce3ed; border-radius: 18px; overflow: hidden; color: #243650; }
+.lotoTopFiveHeader { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px; cursor: pointer; list-style: none; }
+.lotoTopFiveHeader::-webkit-details-marker { display: none; }
+.lotoTopFiveHeader::marker { content: ""; }
+.lotoTopFiveEyebrow { display: block; color: #66768e; font-size: 0.67rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 7px; }
+.appShell .lotoTopFiveHeader h2 { color: #243650; font-size: 1.35rem; font-weight: 750; letter-spacing: -0.025em; margin: 0; }
+.lotoTopFiveHeader p { color: #63718a; font-size: 0.86rem; line-height: 1.5; margin: 7px 0 0; }
+.lotoTopFiveToggle { display: flex; align-items: center; gap: 10px; color: #53647d; font-size: 0.78rem; white-space: nowrap; }
+.lotoTopFiveChevron { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; background: #f1f4f9; border-radius: 50%; font-size: 1rem; }
+.lotoTopFive[open] .lotoTopFiveChevron { transform: rotate(180deg); }
+.lotoTopFive .whenOpen, .lotoTopFive[open] .whenClosed { display: none; }
+.lotoTopFive[open] .whenOpen { display: inline; }
+.lotoTopFiveContent { padding: 0 24px 20px; }
+.lotoTopFiveContext { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid #e9edf3; padding: 16px 0; font-size: 0.78rem; color: #62728b; }
+.lotoTopFiveContext strong { color: #253f70; font-weight: 750; }
+.lotoTopFiveContextDot { margin: 0 8px; color: #9aa8bc; }
+.lotoTopFiveMatchLegend { display: flex; align-items: center; gap: 7px; }
+.lotoTopFiveMatchLegend i { width: 7px; height: 7px; flex: 0 0 7px; background: #24815e; border-radius: 50%; }
+.lotoTopFiveTableWrap { border: 1px solid #e2e8f1; border-radius: 12px; overflow: hidden; }
+.lotoTopFiveTable { width: 100%; table-layout: fixed; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.lotoTopFiveTable th, .lotoTopFiveTable td { padding: 12px 8px; text-align: center; border: 0; }
+.lotoTopFiveTable thead { background: #f6f8fc; }
+.lotoTopFiveTable thead th { height: 55px; color: #64728a; font-size: 0.78rem; font-weight: 600; }
+.lotoTopFiveTable thead th:first-child { width: 100px; }
+.lotoTopFiveRank { font-size: 0.95rem; font-weight: 750; color: #354762; }
+.lotoTopFiveTable thead small { display: block; font-size: 0.65rem; margin-top: 3px; font-weight: 500; }
+.lotoTopFiveTable tbody tr { border-top: 1px solid #e9edf3; }
+.lotoTopFiveTable tbody th { background: #fafbfd; }
+.lotoTopFivePosition { display: inline-flex; width: 42px; min-height: 34px; align-items: center; justify-content: center; border: 1px solid #e0e7f1; border-radius: 9px; color: #4d607d; font-size: 0.85rem; font-weight: 750; background: #fff; }
+.lotoTopFiveEntry { display: grid; justify-items: center; gap: 4px; }
+.lotoTopFiveNumber { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 40px; min-width: 44px; background: #f1f4f9; border: 1px solid transparent; border-radius: 11px; color: #273d60; font-size: 1.15rem; font-weight: 750; letter-spacing: -0.03em; }
+.lotoTopFiveLeader .lotoTopFiveNumber { background: #eaf0fb; color: #254c8d; }
+.lotoTopFiveCount { font-size: 0.75rem; color: #6a7890; }
+.lotoTopFiveCount strong { color: #4c5e77; font-weight: 650; }
+.lotoTopFiveShare { color: #7a879b; font-size: 0.69rem; }
+.lotoTopFiveMatchDot { position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; background: #24815e; border: 2px solid #fff; border-radius: 50%; }
+.lotoTopFiveEntry.isMatch .lotoTopFiveNumber { border-color: #83b8a2; background: #edf7f1; color: #24664d; }
+.lotoTopFiveTable .lotoTopFivePlus { background: #fffbfc; border-top: 2px solid #f0dce2; }
+.lotoTopFiveTable .lotoTopFivePlus th { background: #fff5f7; }
+.lotoTopFivePlus .lotoTopFivePosition { background: #fff; border-color: #f0d7de; color: #ae3a58; }
+.lotoTopFivePlus .lotoTopFiveNumber { background: #fceff2; color: #ac3652; }
+.lotoTopFivePlus .lotoTopFiveLeader .lotoTopFiveNumber { background: #f9e3ea; }
+.lotoTopFiveFootnote { color: #6b7890; font-size: 0.76rem; line-height: 1.6; margin: 14px 0 0; max-width: 800px; }
+.lotoTopFiveMissing { color: #8c99ae; }
+.lotoTopFiveEmpty { padding: 24px 0; color: #63718a; }
+.lotoTopFiveSr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 620px) {
+  .lotoTopFiveHeader { padding: 18px 14px; align-items: flex-start; gap: 10px; }
+  .appShell .lotoTopFiveHeader h2 { font-size: 1.15rem; }
+  .lotoTopFiveHeader p { font-size: 0.8rem; }
+  .lotoTopFiveToggle .whenOpen, .lotoTopFiveToggle .whenClosed { display: none !important; }
+  .lotoTopFiveContent { padding: 0 10px 14px; }
+  .lotoTopFiveContext { padding: 13px 3px; font-size: 0.72rem; gap: 9px; }
+  .lotoTopFiveMatchLegend { font-size: 0.69rem; }
+  .lotoTopFiveTable th, .lotoTopFiveTable td { padding: 11px 2px; }
+  .lotoTopFiveTable thead th { height: 48px; padding: 8px 1px; }
+  .lotoTopFiveTable thead th:first-child { width: 39px; }
+  .lotoTopFiveColumnLabel { font-size: 0.7rem; }
+  .lotoTopFiveRank { font-size: 0.78rem; }
+  .lotoTopFiveTable thead small { display: none; }
+  .lotoTopFivePosition { width: 30px; min-height: 29px; font-size: 0.72rem; border: 0; background: transparent; }
+  .lotoTopFiveNumber { min-width: 34px; height: 34px; border-radius: 9px; font-size: 1rem; }
+  .lotoTopFiveEntry { gap: 4px; }
+  .lotoTopFiveCount { font-size: 0.72rem; }
+  .lotoTopFiveShare { font-size: 0.7rem; }
+  .lotoTopFiveFootnote { font-size: 0.71rem; padding: 0 3px; }
+}
+@media (max-width: 360px) {
+  .lotoTopFiveCountUnit { display: none; }
+}
