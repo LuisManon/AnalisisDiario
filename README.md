@@ -1,6 +1,6 @@
 # Analisis Diario
 
-App web para analizar resultados de Loto Mas, Quiniela Pale de LEIDSA, La Primera y Loteka Repartidera con historiales JSON, frecuencias, diagramas y sugerencias estadisticas.
+App web para analizar Super Kino TV, El Quinielón 2.0 y Loto Más con historiales JSON, frecuencias, carteras y sugerencias estadísticas.
 
 ## Requisitos
 
@@ -51,8 +51,7 @@ Los resultados locales estan en:
 ```txt
 data/results.json
 data/la-primera-results.json
-data/loteka-repartidera-results.json
-data/quiniela-pale-results.json
+data/super-kino-results.json
 ```
 
 En desarrollo local, los endpoints escriben directamente estos archivos JSON.
@@ -82,15 +81,26 @@ Despues de guardar las variables, redeploya el proyecto en Vercel.
 
 ## Generación automática
 
-El flujo `.github/workflows/prepare-portfolios.yml` consulta la aplicación únicamente en ventanas relacionadas con los sorteos, aunque nadie tenga una pantalla abierta. Actualiza cada producto después de su horario y prepara de forma idempotente:
+El flujo `.github/workflows/prepare-portfolios.yml` ejecuta `scripts/automate-portfolios.ts` sin depender de visitas a la web. Hay 12 ejecuciones programadas por día en hora dominicana:
 
 - los repartos Día y Noche de Quinielón 2.0;
-- las 120 jugadas de Super Kino TV;
-- las 30 jugadas de Loto Más;
-- las 60 jugadas de La Primera Loto 5;
-- las 30 jugadas de Quiniela Palé.
+- las carteras de Super Kino TV según su versión activa;
+- las 30 jugadas de Loto Más y las 100 exploratorias.
 
-GitHub ejecuta los horarios en UTC. El flujo traduce las ventanas a la hora dominicana y usa los minutos `07` y `37` para evitar la congestión habitual de la hora en punto. Esto reduce las ejecuciones de 48 diarias a seis ventanas pequeñas, y en cada una solo llama los productos correspondientes. También puede ejecutarse completo manualmente desde **Actions → Prepare lottery portfolios → Run workflow**. Las rutas devuelven la cartera ya guardada cuando existe, por lo que las ejecuciones repetidas no modifican sorteos cerrados.
+| Operación | Hora dominicana |
+| --- | --- |
+| Recuperar ganadores anteriores y preparar carteras de los tres productos | 08:37 y 10:37 |
+| Consultar ganador Quinielón Día | 12:17, 12:47, 13:17 |
+| Verificar/preparar reparto Quinielón Noche | 17:37 |
+| Consultar ganador Quinielón Noche | 19:17, 19:47, 20:17 |
+| Consultar Super Kino y Loto Más (Loto solo miércoles/sábado) | 21:17, 21:47, 22:17 de lunes a sábado |
+| Consultar Super Kino el domingo, en lugar del bloque nocturno | 16:17, 16:47, 17:17 |
+
+Durante los primeros 15 minutos posteriores al sorteo, la web muestra **Sorteo en curso** con minutos restantes y los endpoints no consultan fuentes externas. La primera ventana programada queda después de ese margen. Un resultado no publicado se registra como pendiente en los primeros intentos; en el último se señala como incidencia. Cada llamada tiene un límite de 180 segundos y no hay reintentos HTTP internos; los productos restantes continúan aunque otro falle. El resumen queda en GitHub Actions.
+
+El plan usa `github.event.schedule`, no la hora de arranque, y rechaza ventanas con más de tres horas de retraso. Los cron contemplan el cambio de fecha UTC para las consultas nocturnas. Loto Más conserva el cierre de generación a las 17:00; no se crean carteras retrospectivas para un sorteo cerrado.
+
+Para activarlo hay que publicar el workflow en la rama predeterminada, desplegar los endpoints y tener configurada la persistencia GitHub en Vercel. Opcionalmente configura la variable de repositorio `APP_URL`. La ejecución manual solicita el cron exacto de la ventana que se desea reintentar; tampoco ejecuta todos los intentos del día. GitHub puede retrasar u omitir cron bajo alta carga: los horarios son objetivos de ejecución, no una garantía de puntualidad. Consulta [la documentación de GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
 ## Funciones incluidas
 
@@ -100,7 +110,7 @@ GitHub ejecuta los horarios en UTC. El flujo traduce las ventanas a la hora domi
 - Top 5 del numero Mas.
 - Historial visual con bolitas.
 - Simulador de minimo 5 jugadas.
-- Pestañas para La Primera y Loteka.
+- Menú directo para Super Kino TV, El Quinielón 2.0 y Loto Más.
 - API para resultados, simulacion, actualizacion y persistencia.
 
 ### Super Kino TV

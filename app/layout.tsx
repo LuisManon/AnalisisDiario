@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./styles.css";
+import "./analysis-workspace.css";
 
 export const metadata: Metadata = {
-  title: "Loto Mas Lab",
-  description: "Analisis local de resultados de Loto Mas",
+  title: "Análisis Diario",
+  description: "Análisis de Super Kino TV, El Quinielón 2.0 y Loto Más",
   other: {
     google: "notranslate"
   }

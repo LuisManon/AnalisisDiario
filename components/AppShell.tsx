@@ -5,23 +5,17 @@ import { SuperKinoDashboard } from "./SuperKinoDashboard";
 import type { KinoDraw } from "../lib/super-kino";
 import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
-import { LotekaRepartideraDashboard } from "./LotekaRepartideraDashboard";
-import { QuinielaPaleDashboard } from "./QuinielaPaleDashboard";
-import type { DrawResult, LaPrimeraDraw, LaPrimeraLoto5Draw, LaPrimeraQuinielaDraw, LotekaRepartideraDraw, QuinielaPaleDraw } from "../lib/types";
+import type { DrawResult, LaPrimeraDraw } from "../lib/types";
 
 type AppShellProps = {
   kinoResults: KinoDraw[];
   lotoResults: DrawResult[];
   laPrimeraResults: LaPrimeraDraw[];
-  laPrimeraQuinielaResults: LaPrimeraQuinielaDraw[];
-  laPrimeraLoto5Results: LaPrimeraLoto5Draw[];
-  lotekaRepartideraResults: LotekaRepartideraDraw[];
-  quinielaPaleResults: QuinielaPaleDraw[];
 };
 
-type ActiveTab = "kino" | "loto" | "quiniela" | "primera" | "loteka";
+type ActiveTab = "kino" | "quinielon" | "loto";
 
-export function AppShell({ kinoResults, lotoResults, laPrimeraResults, laPrimeraQuinielaResults, laPrimeraLoto5Results, lotekaRepartideraResults, quinielaPaleResults }: AppShellProps) {
+export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("kino");
 
   function changeTab(tab: ActiveTab) {
@@ -29,31 +23,18 @@ export function AppShell({ kinoResults, lotoResults, laPrimeraResults, laPrimera
   }
 
   return (
-    <div className={`appShell ${activeTab === "primera" ? "primeraShell" : activeTab === "loteka" ? "lotekaShell" : "lotoShell"}`}>
+    <div className={`appShell ${activeTab === "quinielon" ? "primeraShell" : "lotoShell"}`}>
       <nav className="appTabs" aria-label="Secciones de analisis">
-        <button className={activeTab === "kino" || activeTab === "loto" || activeTab === "quiniela" ? "active leidsaTab" : "leidsaTab"} onClick={() => changeTab("kino")}>LEIDSA</button>
-        <button className={activeTab === "primera" ? "active primeraTab" : "primeraTab"} onClick={() => changeTab("primera")}>La Primera</button>
-        <button className={activeTab === "loteka" ? "active lotekaTab" : "lotekaTab"} onClick={() => changeTab("loteka")}>
-          Loteka
-        </button>
+        <button aria-pressed={activeTab === "kino"} className={activeTab === "kino" ? "active" : ""} onClick={() => changeTab("kino")}>Super Kino TV</button>
+        <button aria-pressed={activeTab === "quinielon"} className={activeTab === "quinielon" ? "active" : ""} onClick={() => changeTab("quinielon")}>El Quinielón 2.0</button>
+        <button aria-pressed={activeTab === "loto"} className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>Loto Más</button>
       </nav>
-      {activeTab === "kino" || activeTab === "loto" || activeTab === "quiniela" ? (
-        <nav className="leidsaProductSwitch" aria-label="Producto de LEIDSA">
-          <button className={activeTab === "kino" ? "active" : ""} onClick={() => changeTab("kino")}>Super Kino TV</button>
-          <button className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}>Loto Más</button>
-          <button className={activeTab === "quiniela" ? "active" : ""} onClick={() => changeTab("quiniela")}>Quiniela Palé</button>
-        </nav>
-      ) : null}
       {activeTab === "kino" ? (
         <SuperKinoDashboard initialResults={kinoResults} />
       ) : activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
-      ) : activeTab === "quiniela" ? (
-        <QuinielaPaleDashboard initialData={{ results: quinielaPaleResults }} />
-      ) : activeTab === "primera" ? (
-        <LaPrimeraDashboard initialData={{ results: laPrimeraResults, quinielaResults: laPrimeraQuinielaResults, loto5Results: laPrimeraLoto5Results }} />
       ) : (
-        <LotekaRepartideraDashboard initialData={{ results: lotekaRepartideraResults }} />
+        <LaPrimeraDashboard initialData={{ results: laPrimeraResults, quinielaResults: [], loto5Results: [] }} />
       )}
     </div>
   );

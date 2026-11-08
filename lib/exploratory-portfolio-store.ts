@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubJsonFile } from "./github-data-store";
 import { buildHundredPlayExploratoryPortfolio, hundredPlayExploratoryAlgorithmVersion } from "./game";
+import { canGenerateLotoPortfolio } from "./draw-schedule";
 import type { DrawResult, HundredPlayExploratoryPortfolio } from "./types";
 
 const exploratoryPath = path.join(process.cwd(), "data", "loto-mas-exploratory-history.json");
@@ -13,8 +14,9 @@ export async function readExploratoryPortfolios(): Promise<HundredPlayExplorator
     const raw = remote ?? await fs.readFile(exploratoryPath, "utf8");
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw error;
   }
 }
 
@@ -31,10 +33,13 @@ export async function getOrCreateExploratoryPortfolio(targetDate: string, result
   const portfolios = await readExploratoryPortfolios();
   const existing = portfolios.find((portfolio) => portfolio.targetDate === targetDate);
   const latestResultDate = results[0]?.date ?? "";
-  const shouldRegenerate = existing && targetDate > latestResultDate && existing.algorithmVersion !== hundredPlayExploratoryAlgorithmVersion;
+  const canGenerate = canGenerateLotoPortfolio(targetDate) && !results.some(draw => draw.date === targetDate);
+  const shouldRegenerate = canGenerate && existing && targetDate > latestResultDate && existing.algorithmVersion !== hundredPlayExploratoryAlgorithmVersion;
   if (existing && !shouldRegenerate) return existing;
+  if (!canGenerate) return null;
 
   const portfolio = buildHundredPlayExploratoryPortfolio(results, targetDate);
+  if (!canGenerateLotoPortfolio(targetDate)) throw new Error("Cerró la generación de Loto Más antes de guardar las jugadas exploratorias.");
   await writeExploratoryPortfolios([...portfolios.filter((item) => item.targetDate !== targetDate), portfolio]);
   return portfolio;
 }

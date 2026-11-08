@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { readResults, writeResults } from "../../../lib/data";
 import { fetchRemoteResults } from "../../../lib/remote-results";
 import { drawSchema } from "../../../lib/validation";
+import { publicationWindow } from "../../../lib/draw-schedule";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 180;
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -23,6 +25,8 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const existing = await readResults();
+    const window = publicationWindow("loto");
+    if (window) return NextResponse.json({ ok: true, results: existing, total: existing.length, latest: existing[0] ?? null, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` });
     const remote = await fetchRemoteResults();
     const existingDates = new Set(existing.map((result) => result.date));
     const added = remote.results.filter((result) => !existingDates.has(result.date)).length;

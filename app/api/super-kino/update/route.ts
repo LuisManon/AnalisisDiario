@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { readKinoResults, writeKinoResults } from "../../../../lib/super-kino-store";
 import { fetchLatestKinoResults, missingKinoDates, fetchKinoAnchor } from "../../../../lib/remote-super-kino";
 import { kinoClock, kinoExpectedDate, kinoYearStart } from "../../../../lib/super-kino-clock";
-import { getKinoPortfolio } from "../../../../lib/super-kino-portfolio-store";
+import { publicationWindow } from "../../../../lib/draw-schedule";
 export const dynamic = "force-dynamic";
+export const maxDuration = 180;
 let pending: Promise<unknown> | null = null;
 async function update() {
   const existing = await readKinoResults();
   const expectedDate = kinoExpectedDate();
+  const window = publicationWindow("kino");
+  if (window) return { results: existing, expectedDate, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` };
   const remote = await fetchLatestKinoResults(expectedDate);
   // Repair one oldest missing block per update without refetching the entire year every minute.
   const gaps = missingKinoDates([...existing,...remote], expectedDate, kinoYearStart(kinoClock().date));
@@ -17,7 +20,6 @@ async function update() {
   }
   const merged = [...new Map([...existing,...remote].map(d=>[d.date,d])).values()];
   const results = await writeKinoResults(merged);
-  await getKinoPortfolio(results);
   const added = results.length-existing.length;
   const missing = missingKinoDates(results,expectedDate,kinoYearStart(kinoClock().date));
   const waiting = !results.some(d=>d.date===expectedDate);

@@ -5,6 +5,9 @@ import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
 import { updateWeeklyGesture, finishWeeklyGesture, type WeeklyGesture } from "../lib/weekly-swipe";
 import { calendarDelayBadgeStartDate, numberDelayBadge, tierLabels, formatInvestment, investorPrizeStartDate, investorWinnerStartDate, type InvestorWinner } from "../lib/quinielon-distributor";
 import { NumberDistributor } from "./NumberDistributor";
+import { AnalysisWorkspace } from "./AnalysisWorkspace";
+import { DrawPublicationStatus } from "./DrawPublicationStatus";
+import { publicationWindow } from "../lib/draw-schedule";
 import { createPortal } from "react-dom";
 import {
   buildLaPrimeraStats,
@@ -270,7 +273,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     }, 500);
 
     async function updateProduct(product: "quinielon" | "quiniela" | "loto5") {
-      if (updating.has(product)) return;
+      if (updating.has(product) || publicationWindow("quinielon")) return;
       updating.add(product);
       try {
         const expected = getExpectedLaPrimeraDraw();
@@ -298,8 +301,6 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     }
 
     if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
-    if (!isPrimeraQuinielaCurrent(dataRef.current.quinielaResults)) void updateProduct("quiniela");
-    if (!isPrimeraLoto5Current(dataRef.current.loto5Results)) void updateProduct("loto5");
 
     const pollInterval = window.setInterval(() => {
       if (!isQuinielonCurrent(dataRef.current.results)) void updateProduct("quinielon");
@@ -341,18 +342,9 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     return <LaPrimeraSkeleton message="Actualizando La Primera..." />;
   }
 
-  if (product === "quiniela") {
-    return <LaPrimeraQuinielaView results={data.quinielaResults} onProductChange={setProduct} status={status} />;
-  }
+  return <LaPrimeraQuinielonV2View key="quinielon-v2" variant="quinielon-v2" results={results} onProductChange={setProduct} status={status} />;
 
-  if (product === "loto5") {
-    return <LaPrimeraLoto5View results={data.loto5Results} onProductChange={setProduct} status={status} />;
-  }
-
-  if (product === "quinielon-v2" || product === "inversionistas") {
-    return <LaPrimeraQuinielonV2View key={product} variant={product} results={results} onProductChange={setProduct} status={status} />;
-  }
-
+  /* Legacy Quinielón view retained below until its shared roster helpers are extracted. */
   return (
     <main className="primeraTheme">
       <ProductSwitch product={product} onChange={setProduct} />
@@ -553,11 +545,11 @@ export function LaPrimeraDashboard({ initialData }: Props) {
                 <text className="chartAxisLabel" x="10" y="28">Numero</text>
               </svg>
               {tooltip ? (
-                <div className="chartTooltip" style={{ left: tooltip.x, top: tooltip.y }}>
-                  <strong>{formatShortDate(tooltip.draw.date)}</strong>
-                  <span>{formatLongDate(tooltip.draw.date)}</span>
-                  <span>Tanda: <b>{formatSession(tooltip.draw.session)}</b></span>
-                  <span>Numero: <b>{formatQuinielonNumber(tooltip.draw.number)}</b></span>
+                <div className="chartTooltip" style={{ left: tooltip!.x, top: tooltip!.y }}>
+                  <strong>{formatShortDate(tooltip!.draw.date)}</strong>
+                  <span>{formatLongDate(tooltip!.draw.date)}</span>
+                  <span>Tanda: <b>{formatSession(tooltip!.draw.session)}</b></span>
+                  <span>Numero: <b>{formatQuinielonNumber(tooltip!.draw.number)}</b></span>
                 </div>
               ) : null}
             </>
@@ -612,15 +604,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
 }
 
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
-  return (
-    <nav className="primeraProductSwitch" aria-label="Producto de La Primera">
-      <button className={product === "quinielon-v2" ? "active" : ""} onClick={() => onChange("quinielon-v2")}>El Quinielón 2.0</button>
-      <button className={product === "quiniela" ? "active" : ""} onClick={() => onChange("quiniela")}>Quiniela Día/Noche</button>
-      <button className={product === "loto5" ? "active" : ""} onClick={() => onChange("loto5")}>Loto 5</button>
-      <button className={product === "inversionistas" ? "active" : ""} onClick={() => onChange("inversionistas")}>Inversionistas</button>
-      <button className={product === "quinielon" ? "active" : ""} onClick={() => onChange("quinielon")}>El Quinielón</button>
-    </nav>
-  );
+  return null;
 }
 
 type QuinielonV2Group = "nosotros" | "inversionistas" | "banca";
@@ -873,16 +857,17 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
     { key: "banca", title: "Banca", description: investors ? "Los 40 restantes, incluidos todos los números con 6 meses o más sin salir." : "Los 20 restantes, donde se concentran los de menor frecuencia y mayor atraso.", tone: "dark" }
   ];
 
-  return <main className={`primeraTheme quinielonV2Theme${!investors ? " quinielon20Theme" : ""}${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
-    <ProductSwitch product={variant} onChange={onProductChange} />
-    <section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "El Quinielón 2.0"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
+  return <main className={`primeraTheme analysisDashboard quinielonV2Theme${!investors ? " quinielon20Theme" : ""}${!investors && !showSymbols ? " hideNumberSymbols" : ""}`}>
+<section className="hero primeraHero quinielonV2Hero"><div><p className="eyebrow primeraEyebrow">La Primera · clasificación independiente</p><h1>{investors ? "Inversionistas" : "El Quinielón 2.0"}</h1><p className="subcopy">La Casa, Inversionistas y Banca calculados por separado para Día y Noche.</p></div><div className="heroPanel primeraHeroPanel"><span className="panelLabel primeraLabel">Últimos sorteos</span><div className="latestSplit v2LatestSplit">{(["dia", "noche"] as const).map((session) => {
       const latest = latestBySession[session];
-      return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{latest.verification==="provisional"?"Provisional · esperando La Primera":getLatestDateLabel(latest)}</b></> : "Sin fecha"}</small></article>;
+      return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{latest.verification==="provisional"?"Provisional · esperando La Primera":latest.date===today||latest.date===addDays(today,-1)?getLatestDateLabel(latest):"Último cargado"}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
-    <section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
-    <QuinielonV2WeeklyChallenge results={results} variant={variant} />
-    {!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, enfriamiento, hielo y flechas de rotación</label><small>🥶 más de 3 y menos de 4 meses · ❄️ de 4 a menos de 6 meses · 🧊 6 meses o más</small></div> : null}
-    {groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
+<section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
+<DrawPublicationStatus product="quinielon" results={results} />
+<AnalysisWorkspace panels={[
+{ id: "analizar", label: "Analizar", description: "Compara La Casa, Inversionistas y Banca por tanda. Toca un número para ver su detalle.", content: <>
+{!investors ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={(event) => setShowSymbols(event.target.checked)} /> Mostrar coronas, enfriamiento, hielo y flechas de rotación</label><small>🥶 más de 3 y menos de 4 meses · ❄️ de 4 a menos de 6 meses · 🧊 6 meses o más</small></div> : null}
+{groups.map((group) => <section className={`quinielonRosterSection v2RosterSection ${group.key === "inversionistas" ? "investorSection" : group.key === "banca" ? "bankSection" : "nosotrosRosterSection"}`} key={group.key}>
       <header><span>Clasificación {investors ? "Inversionistas" : "El Quinielón 2.0"}</span><h2>{group.title}</h2><p>{group.description}</p></header>
       <div className="twoColumn">{(["dia", "noche"] as const).map((session) => {
         const infoKey = `${group.key}-${session}`;
@@ -894,9 +879,16 @@ function LaPrimeraQuinielonV2View({ results, onProductChange, status, variant }:
         </div>;
       })}</div>
     </section>)}
-    {!investors ? <NumberDistributor renderNumber={(number, source, badge, winner, session) => <NumberDetails results={results} number={number} session={session}><QuinielonBall number={number} tone={source === "casa" ? "red" : "gold"} winner={winner} />{badge ? <span className="frozenBallBadge" role="img" aria-label={badge === "🥶" ? "Más de 3 y menos de 4 meses sin salir" : badge === "❄️" ? "De 4 a menos de 6 meses sin salir" : "6 meses o más sin salir"}>{badge}</span> : null}</NumberDetails>} /> : null}
-    <p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
-  </main>;
+</> },
+{ id: "reparto", label: "Reparto", description: "Consulta la asignación por inversionista y tanda antes de compartirla.", content: <>
+{!investors ? <NumberDistributor renderNumber={(number, source, badge, winner, session) => <NumberDetails results={results} number={number} session={session}><QuinielonBall number={number} tone={source === "casa" ? "red" : "gold"} winner={winner} />{badge ? <span className="frozenBallBadge" role="img" aria-label={badge === "🥶" ? "Más de 3 y menos de 4 meses sin salir" : badge === "❄️" ? "De 4 a menos de 6 meses sin salir" : "6 meses o más sin salir"}>{badge}</span> : null}</NumberDetails>} /> : null}
+</> },
+{ id: "resultados", label: "Resultados", description: "Recorre el calendario semanal y compara ganadores con los repartos guardados.", content: <>
+<QuinielonV2WeeklyChallenge results={results} variant={variant} />
+<p className="weeklyCrownNote quinielonCrownNote">Las coronas y rotaciones corresponden a la semana actual y se reinician cada lunes.</p>
+</> }
+]} />
+</main>;
 }
 
 function quinielaTopByPosition(results: LaPrimeraQuinielaDraw[]) {

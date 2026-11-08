@@ -2,14 +2,31 @@ name: Prepare lottery portfolios
 
 on:
   schedule:
-    # UTC = Dominican time +4. These windows replace the old 48 daily runs.
-    - cron: "37 14 * * *" # 10:37 AM: prepare Quinielon Dia
-    - cron: "7 16 * * *"  # 12:07 PM: update Dia and prepare daily portfolios
-    - cron: "37 21 * * *" # 5:37 PM: prepare Quinielon Noche
-    - cron: "7 23 * * *"  # 7:07 PM: update Noche and Loto 5
-    - cron: "7 1 * * *"   # 9:07 PM Dominican time on the previous date
-    - cron: "7 20 * * 0"  # Sunday 4:07 PM: Kino and Quiniela Pale
+    # Dominican time (UTC-4): 12 runs/day, independent of browser visits.
+    - cron: "37 12 * * *" # 08:37: refresh and prepare all products
+    - cron: "37 14 * * *" # 10:37: preparation retry and verification
+    - cron: "17 16 * * *" # 12:17: Quinielon Dia, attempt 1
+    - cron: "47 16 * * *" # 12:47: attempt 2
+    - cron: "17 17 * * *" # 13:17: final attempt
+    - cron: "37 21 * * *" # 17:37: prepare Quinielon Noche
+    - cron: "17 23 * * *" # 19:17: Quinielon Noche, attempt 1
+    - cron: "47 23 * * *" # 19:47: attempt 2
+    - cron: "17 0 * * *"  # 20:17: final attempt (next UTC date)
+    # Mon-Sat at 21:17 / 21:47 / 22:17 DR => Tue-Sun UTC.
+    - cron: "17 1 * * 0,2-6"
+    - cron: "47 1 * * 0,2-6"
+    - cron: "17 2 * * 0,2-6"
+    # Sunday Kino at 16:17 / 16:47 / 17:17 DR.
+    - cron: "17 20 * * 0"
+    - cron: "47 20 * * 0"
+    - cron: "17 21 * * 0"
   workflow_dispatch:
+    inputs:
+      schedule:
+        description: "Exact cron window to retry (within 3 hours of scheduled time)"
+        required: true
+        type: string
+        default: "37 12 * * *"
 
 permissions:
   contents: read
@@ -21,95 +38,14 @@ concurrency:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
-      - name: Update results and prepare every portfolio
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Update and verify scheduled products
         env:
-          APP_URL: https://analisis-diario.vercel.app
-        shell: bash
-        run: |
-          set -u
-          failures=0
-
-          call_get() {
-            local label="$1"
-            local path="$2"
-            local retries="${3:-1}"
-            echo "::group::${label}"
-            if ! curl --fail-with-body --silent --show-error --retry "$retries" --retry-delay 5 --max-time 90 \
-              -H "Cache-Control: no-cache" \
-              -H "User-Agent: AnalisisDiario-Scheduler/1.0" \
-              "${APP_URL}${path}" > /tmp/automation-response.json; then
-              failures=$((failures + 1))
-            else
-              node -e 'const fs=require("fs");const value=JSON.parse(fs.readFileSync("/tmp/automation-response.json","utf8"));console.log(JSON.stringify({ok:value.ok??true,message:value.message??null,targetDate:value.current?.targetDate??null,waitingForResult:value.waitingForResult??false}))'
-            fi
-            echo "::endgroup::"
-          }
-
-          call_post() {
-            local label="$1"
-            local path="$2"
-            local body="$3"
-            echo "::group::${label}"
-            if ! curl --fail-with-body --silent --show-error --retry 2 --retry-delay 5 --max-time 120 \
-              -X POST \
-              -H "Cache-Control: no-cache" \
-              -H "Content-Type: application/json" \
-              -H "User-Agent: AnalisisDiario-Scheduler/1.0" \
-              --data "$body" \
-              "${APP_URL}${path}" > /tmp/automation-response.json; then
-              failures=$((failures + 1))
-            else
-              node -e 'const fs=require("fs");const value=JSON.parse(fs.readFileSync("/tmp/automation-response.json","utf8"));console.log(JSON.stringify({date:value.date??null,session:value.session??null,error:value.error??null}))'
-            fi
-            echo "::endgroup::"
-          }
-
-          # Select only the products whose draw window is active. Portfolio
-          # generators are not retried inside the same run: the next scheduled
-          # window can retry without doubling an expensive serverless request.
-          dr_hour=$(TZ=America/Santo_Domingo date +%H)
-          dr_minute=$(TZ=America/Santo_Domingo date +%M)
-          dr_weekday=$(TZ=America/Santo_Domingo date +%u)
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            call_get "Update Loto Mas" "/api/update"
-            call_get "Update Super Kino TV" "/api/super-kino/update"
-            call_get "Update Quinielon" "/api/la-primera/update?product=quinielon"
-            call_get "Update La Primera Loto 5" "/api/la-primera/update?product=loto5"
-            call_get "Update Quiniela Pale" "/api/quiniela-pale/update"
-            call_post "Prepare Quinielon 2.0 assignment" "/api/quinielon/distributor" '{"session":"auto"}'
-            call_get "Prepare Super Kino TV plays" "/api/super-kino/portfolio" 0
-            call_get "Prepare Loto Mas plays" "/api/portfolio" 0
-            call_get "Prepare La Primera Loto 5 plays" "/api/la-primera/loto5-portfolio" 0
-            call_get "Prepare Quiniela Pale plays" "/api/quiniela-pale/portfolio" 0
-          elif [[ "$dr_hour" == "10" || "$dr_hour" == "17" ]]; then
-            call_post "Prepare Quinielon 2.0 assignment" "/api/quinielon/distributor" '{"session":"auto"}'
-          elif [[ "$dr_hour" == "12" ]]; then
-            call_get "Update Quinielon Dia" "/api/la-primera/update?product=quinielon"
-            call_post "Prepare Quinielon Noche assignment" "/api/quinielon/distributor" '{"session":"auto"}'
-            call_get "Prepare Loto Mas plays" "/api/portfolio" 0
-          elif [[ "$dr_hour" == "19" ]]; then
-            call_get "Update Quinielon Noche" "/api/la-primera/update?product=quinielon"
-            call_get "Update La Primera Loto 5" "/api/la-primera/update?product=loto5"
-            call_get "Prepare La Primera Loto 5 plays" "/api/la-primera/loto5-portfolio" 0
-          elif [[ "$dr_hour" == "21" && "$dr_weekday" != "7" ]]; then
-            call_get "Update Super Kino TV" "/api/super-kino/update"
-            call_get "Update Quiniela Pale" "/api/quiniela-pale/update"
-            if [[ "$dr_weekday" == "3" || "$dr_weekday" == "6" ]]; then call_get "Update Loto Mas" "/api/update"; fi
-            call_get "Prepare Super Kino TV plays" "/api/super-kino/portfolio" 0
-            call_get "Prepare Quiniela Pale plays" "/api/quiniela-pale/portfolio" 0
-          elif [[ "$dr_hour" == "16" && "$dr_weekday" == "7" ]]; then
-            call_get "Update Super Kino TV" "/api/super-kino/update"
-            call_get "Update Quiniela Pale" "/api/quiniela-pale/update"
-            call_get "Prepare Super Kino TV plays" "/api/super-kino/portfolio" 0
-            call_get "Prepare Quiniela Pale plays" "/api/quiniela-pale/portfolio" 0
-          else
-            echo "No lottery operation is due in this Dominican-time window."
-          fi
-
-          if (( failures > 0 )); then
-            echo "${failures} automatic operations failed. Successful products were still prepared."
-            exit 1
-          fi
+          APP_URL: ${{ vars.APP_URL || 'https://analisis-diario.vercel.app' }}
+          AUTOMATION_SCHEDULE: ${{ github.event.schedule || inputs.schedule }}
+        run: node --experimental-strip-types scripts/automate-portfolios.ts

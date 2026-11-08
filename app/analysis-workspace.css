@@ -1,0 +1,349 @@
+/* Task-based navigation shared by the three products. */
+.drawPublicationStatus {
+  display: grid;
+  gap: 6px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  border: 1px solid #e5d295;
+  border-radius: 14px;
+  background: #fff9e8;
+  color: #72531b;
+  line-height: 1.5;
+}
+.drawPublicationStatus span { font-size: 0.86rem; }
+.drawPublicationStatus .drawPublicationDate { font-weight: 600; }
+.drawPublicationStatus small { font-size: 0.78rem; }
+.appShell:is(.lotoShell, .primeraShell) {
+  background: #f3f5f9;
+  box-shadow: 0 0 0 100vmax #f3f5f9;
+}
+
+.appShell .appTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1184px;
+  gap: 6px;
+  background: #fff;
+  border-color: #e0e5ee;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.appShell .appTabs button {
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 12px;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.appShell .appTabs button:not(.active) {
+  background: transparent;
+  box-shadow: none;
+  color: #44516a;
+}
+
+.appShell .appTabs button.active {
+  background: #253f77;
+  color: #fff;
+  box-shadow: 0 3px 8px #18345d21;
+}
+
+.appShell .analysisDashboard {
+  --workspace-ink: #243650;
+  --workspace-muted: #52627a;
+  --workspace-accent: #284c8c;
+  padding-top: 20px;
+}
+
+.appShell .analysisDashboard > .hero {
+  min-height: 0;
+  padding: 24px;
+  gap: 24px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 5px 20px #24365009;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  background: #fff;
+  border: 1px solid #dce3ed;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.appShell .analysisDashboard::before,
+.appShell .analysisDashboard::after,
+.appShell .analysisDashboard > .hero::after {
+  display: none;
+}
+
+.appShell .analysisDashboard > .hero h1 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  margin: 10px 0 12px;
+}
+
+.appShell .analysisDashboard > .hero p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+
+.appShell .analysisDashboard > .hero .eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+}
+
+.appShell .analysisDashboard > .hero .heroPanel {
+  min-width: 0;
+  width: 100%;
+  padding: 16px;
+  margin: 0;
+}
+
+.appShell .analysisDashboard .v2LatestSplit {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.appShell .analysisDashboard .v2LatestCard {
+  min-height: 0;
+  height: auto;
+  padding: 14px;
+  gap: 7px;
+}
+
+.appShell .analysisDashboard .v2LatestCard strong {
+  font-size: 1rem;
+}
+
+.appShell .analysisDashboard .v2LatestCard small {
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.appShell .analysisDashboard .v2LatestCard .v2SkyIcon {
+  transform: scale(0.55);
+  transform-origin: top right;
+}
+
+.analysisWorkspace {
+  min-width: 0;
+  margin-top: 20px;
+}
+
+.analysisWorkspaceIntro {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 2px 10px;
+  color: var(--workspace-muted);
+}
+
+.analysisWorkspaceIntro > span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.analysisWorkspaceIntro small {
+  font-size: 0.76rem;
+}
+
+.analysisWorkspaceTabs {
+  display: flex;
+  padding: 6px;
+  gap: 5px;
+  border: 1px solid #dce3ed;
+  border-radius: 14px;
+  background: #f8fafd;
+}
+
+.appShell .analysisWorkspaceTabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: #52627a;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.appShell .analysisWorkspaceTabs button[aria-selected="true"] {
+  color: #23447e;
+  background: #fff;
+  border-color: #d9e2f0;
+  box-shadow: 0 2px 5px #1c345410;
+}
+
+.analysisWorkspaceIndex {
+  font-size: 0.68rem;
+  opacity: 0.65;
+  font-variant-numeric: tabular-nums;
+}
+
+.analysisPanel {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+  padding-top: 16px;
+}
+
+.analysisPanel[hidden] {
+  display: none !important;
+}
+
+.analysisPanel > * {
+  min-width: 0;
+}
+
+.appShell .analysisPanel > .analysisPanelDescription {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--workspace-muted);
+  margin: 0;
+  padding: 0 2px;
+}
+
+.appShell .analysisPanel > .card,
+.appShell .analysisPanel > .topPositionsAccordion,
+.appShell .analysisPanel > .quinielonRosterSection,
+.appShell .analysisPanel > .metricsGrid,
+.appShell .analysisPanel > .toolbar {
+  margin: 0;
+}
+
+.appShell .analysisPanel > .card,
+.appShell .analysisPanel > .topPositionsAccordion,
+.appShell .analysisPanel > .quinielonRosterSection {
+  border: 1px solid #dce3ed;
+  border-radius: 16px;
+  background: #ffffffeb;
+  box-shadow: 0 4px 16px #24365006;
+}
+
+.appShell .analysisPanel h2 {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  line-height: 1.3;
+}
+
+.analysisPanel .sectionHeader {
+  margin: 4px 0 -8px;
+}
+
+.analysisPanel .toolbar {
+  flex-wrap: wrap;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.analysisPanel .toolbar .status {
+  flex-basis: 100%;
+  line-height: 1.5;
+}
+
+.analysisPanel .v2SymbolControls {
+  margin: 0;
+}
+
+.appShell :is(button, a, input, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid #3976c8;
+  outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  .appShell .analysisDashboard {
+    padding: 16px 12px 32px;
+  }
+
+  .appShell .appTabs {
+    width: calc(100% - 24px);
+    margin-top: 12px;
+    padding: 5px;
+    gap: 3px;
+  }
+
+  .appShell .appTabs button {
+    font-size: 0.76rem;
+    padding: 9px 5px;
+  }
+
+  .appShell .analysisDashboard > .hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .appShell .analysisDashboard > .hero h1 {
+    font-size: 2rem;
+  }
+
+  .appShell .analysisDashboard > .hero .heroPanel {
+    padding: 12px;
+  }
+
+  .appShell .analysisDashboard .v2LatestCard {
+    padding: 12px;
+  }
+
+  .analysisWorkspaceTabs {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .appShell .analysisWorkspaceTabs button {
+    font-size: 0.76rem;
+    padding: 9px 4px;
+  }
+
+  .analysisWorkspaceIndex {
+    display: none;
+  }
+
+  .analysisPanel {
+    gap: 16px;
+  }
+
+  .analysisPanel .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .analysisPanel .metricsGrid .metric {
+    min-width: 0;
+    min-height: 86px;
+    padding: 14px;
+  }
+
+  .analysisPanel > .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .analysisPanel > .toolbar :is(.segmented, .status) {
+    grid-column: 1 / -1;
+  }
+
+  .analysisPanel > .toolbar > button {
+    padding: 10px 8px;
+    min-height: 44px;
+    font-size: 0.75rem;
+  }
+}

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readLaPrimeraLoto5Results, readLaPrimeraQuinielaResults, readLaPrimeraResults, writeLaPrimeraLoto5Results, writeLaPrimeraQuinielaResults, writeLaPrimeraResults } from "../../../../lib/data";
-import { fetchLaPrimeraLoto5ResultsSince, fetchLaPrimeraQuinielaResultsSince, fetchLaPrimeraResultsSince } from "../../../../lib/remote-la-primera";
+import { readLaPrimeraResults, writeLaPrimeraResults } from "../../../../lib/data";
+import { fetchLaPrimeraResultsSince } from "../../../../lib/remote-la-primera";
+import { publicationWindow } from "../../../../lib/draw-schedule";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 180;
 
 function subtractDays(date: string, days: number) {
   const value = new Date(`${date}T00:00:00Z`);
@@ -15,27 +17,9 @@ export async function GET(request: NextRequest) {
   const requestedDate = request.nextUrl.searchParams.get("date");
   const targetDate = requestedDate && /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : null;
   try {
-    if (product === "quiniela") {
-      const existing = await readLaPrimeraQuinielaResults();
-      const latestDate = existing[0]?.date ?? "2025-09-01";
-      const beforeKeys = new Set(existing.map((result) => `${result.date}-${result.session}`));
-      const remote = await fetchLaPrimeraQuinielaResultsSince(targetDate ?? subtractDays(latestDate, 1), targetDate ?? undefined);
-      const added = remote.results.filter((result) => !beforeKeys.has(`${result.date}-${result.session}`)).length;
-      const quinielaResults = await writeLaPrimeraQuinielaResults([...existing, ...remote.results]);
-      return NextResponse.json({ ok: true, product, added, total: quinielaResults.length, latest: quinielaResults[0] ?? null, quinielaResults, message: added ? `Se agregaron ${added} resultados de Quiniela.` : "Quiniela está actualizada." });
-    }
-
-    if (product === "loto5") {
-      const existing = await readLaPrimeraLoto5Results();
-      const latestDate = existing[0]?.date ?? "2025-09-03";
-      const beforeDates = new Set(existing.map((result) => result.date));
-      const remote = await fetchLaPrimeraLoto5ResultsSince(targetDate ?? subtractDays(latestDate, 1), targetDate ?? undefined);
-      const added = remote.results.filter((result) => !beforeDates.has(result.date)).length;
-      const loto5Results = await writeLaPrimeraLoto5Results([...existing, ...remote.results]);
-      return NextResponse.json({ ok: true, product, added, total: loto5Results.length, latest: loto5Results[0] ?? null, loto5Results, message: added ? `Se agregaron ${added} resultados de Loto 5.` : "Loto 5 está actualizado." });
-    }
-
     const existing = await readLaPrimeraResults();
+    const window = publicationWindow("quinielon");
+    if (window) return NextResponse.json({ ok: true, results: existing, total: existing.length, latest: existing[0] ?? null, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` });
     const latestDate = existing[0]?.date ?? "2025-07-01";
     const beforeKeys = new Set(existing.map((result) => `${result.date}-${result.session}`));
     const remote = await fetchLaPrimeraResultsSince(targetDate ?? subtractDays(latestDate, 1), targetDate ?? undefined);

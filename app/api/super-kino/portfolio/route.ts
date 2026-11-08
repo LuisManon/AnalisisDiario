@@ -3,6 +3,7 @@ import { readKinoResults } from "../../../../lib/super-kino-store";
 import { getKinoPortfolio } from "../../../../lib/super-kino-portfolio-store";
 import { kinoExpectedDate } from "../../../../lib/super-kino-clock";
 export const dynamic = "force-dynamic";
+export const maxDuration = 180;
 export async function GET() {
   try {
     const results = await readKinoResults();

@@ -3,7 +3,7 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { buildKinoSnapshot, freezeKinoPrizeSummaries, kinoAlgorithmForDate, kinoSnapshotSchema, kinoStrategyVersionForDate, KINO_V12_BLEND, type KinoDraw, type KinoSnapshot } from "./super-kino.ts";
-import { kinoClock, kinoDrawMinutes, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "./super-kino-clock.ts";
+import { isKinoNoDraw, kinoClock, kinoDrawMinutes, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "./super-kino-clock.ts";
 import { isGitHubDataStoreEnabled, readGitHubJsonFile, writeGitHubSnapshot } from "./github-data-store.ts";
 
 const directory = "data/super-kino-portfolios";
@@ -105,7 +105,7 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
     }
 
     const clock = kinoClock(now);
-    const pendingDate = clock.minutes >= kinoDrawMinutes(clock.date) - 5 ? clock.date : kinoExpectedDate(now);
+    const pendingDate = !isKinoNoDraw(clock.date) && clock.minutes >= kinoDrawMinutes(clock.date) - 5 ? clock.date : kinoExpectedDate(now);
     if (!results.some(d => d.date === pendingDate)) {
       return {current: snapshots.find(s => s.targetDate === pendingDate) ?? null, snapshots, waitingForResult: true};
     }

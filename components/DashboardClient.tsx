@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { Ball } from "./Ball";
+import { AnalysisWorkspace } from "./AnalysisWorkspace";
+import { DrawPublicationStatus } from "./DrawPublicationStatus";
+import { publicationWindow } from "../lib/draw-schedule";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
@@ -141,6 +144,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [exploratoryPortfolio, setExploratoryPortfolio] = useState<ExploratoryPortfolioState | null>(null);
   const [portfolioMessage, setPortfolioMessage] = useState("Cargando las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
+  const resultsRevision = useRef(initialData.results[0]?.date);
 
   useEffect(() => {
     const expectedDate = getLatestExpectedDrawDate();
@@ -180,6 +184,30 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   }, [portfolioRequested, portfolioTargetDate]);
 
   useEffect(() => {
+    let mounted = true;
+    let busy = false;
+    const timer = window.setInterval(async () => {
+      if (busy || publicationWindow("loto")) return;
+      busy = true;
+      try {
+        // Read the scheduler's saved results; do not refetch external sources from every open tab.
+        const response = await fetch("/api/results", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (mounted && Array.isArray(payload.results)) {
+          setData({ results: payload.results });
+          if (resultsRevision.current !== payload.results[0]?.date) {
+            resultsRevision.current = payload.results[0]?.date;
+            void loadPortfolioData();
+          }
+        }
+      } catch { /* Keep the last valid local results visible. */ }
+      finally { busy = false; }
+    }, 60_000);
+    return () => { mounted = false; window.clearInterval(timer); };
+  }, []);
+
+  useEffect(() => {
     if (!isUpdating) return;
     const interval = window.setInterval(() => setUpdateSeconds((seconds) => seconds + 1), 1000);
     return () => window.clearInterval(interval);
@@ -196,6 +224,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   }
 
   async function checkUpdate() {
+    if (publicationWindow("loto")) return;
     setIsUpdating(true);
     setIsPageLoading(true);
     setUpdateSeconds(0);
@@ -250,13 +279,13 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   }
 
   return (
-    <main className="lotoTheme">
-      <section className="hero">
+    <main className="lotoTheme analysisDashboard">
+<section className="hero">
         <div>
-          <p className="eyebrow">Loto Mas Lab local</p>
-          <h1>Analisis, frecuencia y generacion de jugadas</h1>
+          <p className="eyebrow">LEIDSA · Miércoles y sábados</p>
+          <h1>Loto Más</h1>
           <p className="subcopy">
-            Dashboard privado para revisar resultados, comparar miercoles contra sabado y consultar el generador de 30 jugadas.
+            Compara frecuencias y posiciones, consulta tus jugadas y revisa sus resultados.
           </p>
         </div>
         <div className="heroPanel latestDrawPanel">
@@ -285,8 +314,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           )}
         </div>
       </section>
-
-      <section className="toolbar">
+<DrawPublicationStatus product="loto" results={data.results} />
+<AnalysisWorkspace panels={[
+{ id: "analizar", label: "Analizar", description: "Filtra el historial, busca un número y compara frecuencias, posiciones y rangos.", content: <>
+<section className="toolbar">
         <div className="segmented">
           {(["todos", "miercoles", "sabado"] as DayFilter[]).map((option) => (
             <button key={option} className={day === option ? "active" : ""} onClick={() => changeDay(option)}>
@@ -302,8 +333,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         </button>
         <span className="status">{isUpdating ? `${status} ${updateSeconds}s` : status}</span>
       </section>
-
-      <section className="metricsGrid">
+<section className="metricsGrid">
         <div className="metric">
           <span>Sorteos analizados</span>
           <strong>{stats.drawCount}</strong>
@@ -321,8 +351,8 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           <strong className="redText">{stats.plusTop[0]?.number ?? "N/D"}</strong>
         </div>
       </section>
-
-      <details className="topPositionsAccordion" open>
+<NumberSearch results={data.results} />
+<details className="topPositionsAccordion" open>
         <summary>
           <span>Top 5 por posicion</span>
           <small>Cada columna calcula repeticion respetando la posicion exacta del sorteo.</small>
@@ -398,8 +428,87 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
         </section>
       </details>
-
-      <section className="card lotoPortfolioCalendar">
+<section className="sectionHeader">
+        <h2>Mapa de rangos</h2>
+        <p>Rango normal por posicion, ignorando salidas poco comunes para no deformar el analisis.</p>
+      </section>
+<section className="card rangeMapSection">
+        <div className="scatterControls">
+          <label htmlFor="rangeYear">Año</label>
+          <select id="rangeYear" value={rangeYear} onChange={(event) => setRangeYear(event.target.value)}>
+            <option value="todos">Todos</option>
+            {availableYears.map((year) => (
+              <option value={year} key={year}>{year}</option>
+            ))}
+          </select>
+          <label htmlFor="rangeDay">Dia</label>
+          <select id="rangeDay" value={rangeDay} onChange={(event) => setRangeDay(event.target.value as DayFilter)}>
+            <option value="todos">Todos</option>
+            <option value="miercoles">Miercoles</option>
+            <option value="sabado">Sabado</option>
+          </select>
+          <span>{rangeResults.length} sorteos analizados</span>
+        </div>
+        <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} options={["P1", "P2", "P3", "P4", "P5", "P6"]} />
+        <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
+      </section>
+<section className="sectionHeader">
+        <h2>Diagrama de dispersion</h2>
+        <p>Distribucion de numeros por sorteo. Los puntos rojos representan el numero Mas.</p>
+      </section>
+<section className="card scatterSection">
+        <div className="scatterControls">
+          <label htmlFor="scatterYear">Año</label>
+          <select id="scatterYear" value={scatterYear} onChange={(event) => setScatterYear(event.target.value)}>
+            <option value="todos">Todos</option>
+            {availableYears.map((year) => (
+              <option value={year} key={year}>{year}</option>
+            ))}
+          </select>
+          <label htmlFor="scatterDay">Dia</label>
+          <select id="scatterDay" value={scatterDay} onChange={(event) => setScatterDay(event.target.value as DayFilter)}>
+            <option value="todos">Todos</option>
+            <option value="miercoles">Miercoles</option>
+            <option value="sabado">Sabado</option>
+          </select>
+          <span>{scatterResults.length} sorteos graficados</span>
+        </div>
+        <SeriesFilter selected={scatterSeries} onChange={setScatterSeries} />
+        <ScatterPlot results={scatterResults} selectedSeries={scatterSeries} />
+      </section>
+</> },
+{ id: "jugadas", label: "Jugadas", description: "Consulta la cartera objetivo y compárala con el sorteo anterior.", content: <>
+<details
+        className="topPositionsAccordion thirtyPortfolioAccordion"
+        open
+        onToggle={(event) => {
+          if (event.currentTarget.open) setPortfolioRequested(true);
+        }}
+      >
+        <summary>
+          <span>Generador de 30 Jugadas</span>
+          <small>Inclinado al {formatDay(portfolioTargetDay)} {formatShortDate(portfolioTargetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+        </summary>
+        {thirtyPlayPortfolio ? (
+          <div className="portfolioSnapshots">
+            <ThirtyPlayPortfolioView portfolio={thirtyPlayPortfolio} />
+            {previousPortfolio ? (
+              <details className="portfolioPreviousAccordion">
+                <summary>
+                  <span>Comparar con el sorteo anterior</span>
+                  <small>{formatDay(previousPortfolio.targetDay)} {formatShortDate(previousPortfolio.targetDate)}</small>
+                </summary>
+                <ThirtyPlayPortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} historical />
+              </details>
+            ) : null}
+          </div>
+        ) : (
+          <div className="thirtyPortfolioLoading">{portfolioMessage}</div>
+        )}
+      </details>
+</> },
+{ id: "resultados", label: "Resultados", description: "Revisa los premios de las carteras guardadas y la prueba exploratoria independiente.", content: <>
+<section className="card lotoPortfolioCalendar">
         <div className="lotoPortfolioCalendarHeader">
           <div>
             <span className="panelLabel">Miércoles y sábados</span>
@@ -432,8 +541,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
         ) : <p className="muted">{portfolioMessage}</p>}
       </section>
-
-      <section className="card lotoExploratoryCard">
+<section className="card lotoExploratoryCard">
         <div className="lotoExploratoryHeader">
           <div>
             <span className="panelLabel">Prueba independiente</span>
@@ -461,88 +569,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
         ) : <p className="lotoExploratoryPending">{portfolioMessage}</p>}
       </section>
-
-      <details
-        className="topPositionsAccordion thirtyPortfolioAccordion"
-        onToggle={(event) => {
-          if (event.currentTarget.open) setPortfolioRequested(true);
-        }}
-      >
-        <summary>
-          <span>Generador de 30 Jugadas</span>
-          <small>Inclinado al {formatDay(portfolioTargetDay)} {formatShortDate(portfolioTargetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
-        </summary>
-        {thirtyPlayPortfolio ? (
-          <div className="portfolioSnapshots">
-            <ThirtyPlayPortfolioView portfolio={thirtyPlayPortfolio} />
-            {previousPortfolio ? (
-              <details className="portfolioPreviousAccordion">
-                <summary>
-                  <span>Comparar con el sorteo anterior</span>
-                  <small>{formatDay(previousPortfolio.targetDay)} {formatShortDate(previousPortfolio.targetDate)}</small>
-                </summary>
-                <ThirtyPlayPortfolioView portfolio={previousPortfolio} winningDraw={previousPortfolio.draw} historical />
-              </details>
-            ) : null}
-          </div>
-        ) : (
-          <div className="thirtyPortfolioLoading">{portfolioMessage}</div>
-        )}
-      </details>
-
-      <NumberSearch results={data.results} />
-
-      <section className="sectionHeader">
-        <h2>Diagrama de dispersion</h2>
-        <p>Distribucion de numeros por sorteo. Los puntos rojos representan el numero Mas.</p>
-      </section>
-      <section className="card scatterSection">
-        <div className="scatterControls">
-          <label htmlFor="scatterYear">Año</label>
-          <select id="scatterYear" value={scatterYear} onChange={(event) => setScatterYear(event.target.value)}>
-            <option value="todos">Todos</option>
-            {availableYears.map((year) => (
-              <option value={year} key={year}>{year}</option>
-            ))}
-          </select>
-          <label htmlFor="scatterDay">Dia</label>
-          <select id="scatterDay" value={scatterDay} onChange={(event) => setScatterDay(event.target.value as DayFilter)}>
-            <option value="todos">Todos</option>
-            <option value="miercoles">Miercoles</option>
-            <option value="sabado">Sabado</option>
-          </select>
-          <span>{scatterResults.length} sorteos graficados</span>
-        </div>
-        <SeriesFilter selected={scatterSeries} onChange={setScatterSeries} />
-        <ScatterPlot results={scatterResults} selectedSeries={scatterSeries} />
-      </section>
-
-      <section className="sectionHeader">
-        <h2>Mapa de rangos</h2>
-        <p>Rango normal por posicion, ignorando salidas poco comunes para no deformar el analisis.</p>
-      </section>
-      <section className="card rangeMapSection">
-        <div className="scatterControls">
-          <label htmlFor="rangeYear">Año</label>
-          <select id="rangeYear" value={rangeYear} onChange={(event) => setRangeYear(event.target.value)}>
-            <option value="todos">Todos</option>
-            {availableYears.map((year) => (
-              <option value={year} key={year}>{year}</option>
-            ))}
-          </select>
-          <label htmlFor="rangeDay">Dia</label>
-          <select id="rangeDay" value={rangeDay} onChange={(event) => setRangeDay(event.target.value as DayFilter)}>
-            <option value="todos">Todos</option>
-            <option value="miercoles">Miercoles</option>
-            <option value="sabado">Sabado</option>
-          </select>
-          <span>{rangeResults.length} sorteos analizados</span>
-        </div>
-        <SeriesFilter selected={rangeSeries} onChange={setRangeSeries} options={["P1", "P2", "P3", "P4", "P5", "P6"]} />
-        <RangeMap results={rangeResults} selectedSeries={rangeSeries} />
-      </section>
-
-      <section className="card historyCard">
+</> },
+{ id: "historial", label: "Historial", description: "Consulta los sorteos cargados. El filtro de día elegido en Analizar también se aplica aquí.", content: <>
+<section className="card historyCard">
         <header className="historyCardHeader">
           <div>
             <h2>Historial cargado</h2>
@@ -589,7 +618,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </button>
         </nav>
       </section>
-    </main>
+</> }
+]} />
+</main>
   );
 }
 
