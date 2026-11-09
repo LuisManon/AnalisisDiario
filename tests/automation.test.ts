@@ -4,8 +4,58 @@ import { readFileSync } from "node:fs";
 import { automationPlan, automationWindows, operationReady } from "../lib/automation-schedule.ts";
 import { canGenerateLotoPortfolio, latestPublishedSlot, publicationWindow } from "../lib/draw-schedule.ts";
 import { runAutomation } from "../scripts/automate-portfolios.ts";
+import { savedStateReady } from "../lib/automation-status.ts";
 
 const local = (date: string, time: string) => new Date(`${date}T${time}:00-04:00`);
+
+test("exact emailed failure becomes read-only verification of the original targets", async () => {
+  const now = new Date("2026-11-08T18:59:55Z");
+  const plan = automationPlan("37 14 * * *", now);
+  assert.equal(plan.expired,true);
+  assert.equal(plan.operations.length,6);
+  assert.ok(plan.operations.some(op=>op.date==="2026-11-08" && op.session==="dia"));
+  const calls: string[]=[];
+  const request = (async (url, init) => {
+    const target = new URL(String(url)); calls.push(target.pathname);
+    assert.equal(init?.method,"GET"); assert.equal(init?.body,undefined);
+    return Response.json({ready:true,date:target.searchParams.get("date"),session:target.searchParams.get("session") ?? undefined});
+  }) as typeof fetch;
+  const result = await runAutomation({cron:"37 14 * * *",appUrl:"https://example.test",now,request});
+  assert.equal(result.failed,false);
+  assert.equal(result.report[0].state,"warning");
+  assert.ok(calls.every(path=>path==="/api/automation/status"));
+});
+
+test("expired early attempts still fail for missing records and HTTP errors", async () => {
+  for (const request of [
+    (async ()=>Response.json({ready:false,date:"2026-11-08",session:"dia"})) as typeof fetch,
+    (async ()=>Response.json({error:"storage unavailable"},{status:503})) as typeof fetch
+  ]) {
+    const result=await runAutomation({cron:"17 16 * * *",appUrl:"https://example.test",now:local("2026-11-08","16:00"),request});
+    assert.equal(result.failed,true);
+    assert.ok(result.report.some(row=>row.state==="failed"));
+  }
+});
+
+test("three-hour boundary, midnight targets, invalid cron and saved state safeguards",()=>{
+  assert.equal(automationPlan("17 16 * * *",local("2026-11-08","15:17")).expired,false);
+  assert.equal(automationPlan("17 16 * * *",new Date("2026-11-08T19:17:00.001Z")).expired,true);
+  const midnight=automationPlan("17 1 * * 0,2-6",local("2026-11-08","01:30"));
+  assert.equal(midnight.date,"2026-11-07");
+  assert.ok(midnight.operations.some(op=>op.date==="2026-11-07"));
+  assert.throws(()=>automationPlan("invalid",local("2026-11-08","16:00")));
+  assert.equal(savedStateReady("portfolio","2026-11-08",undefined,null),false);
+  const kino = JSON.parse(readFileSync(new URL("../data/super-kino-portfolios/2026-11-08.json",import.meta.url),"utf8"));
+  assert.equal(savedStateReady("portfolio","2026-11-08",undefined,kino),true);
+  assert.equal(savedStateReady("portfolio","2026-11-07",undefined,kino),false);
+  assert.equal(savedStateReady("assignment","2026-11-08","dia",null),false);
+  const assignment = JSON.parse(readFileSync(new URL("../data/quinielon-assignments/2026-11-08-dia.json",import.meta.url),"utf8"));
+  assert.equal(savedStateReady("assignment","2026-11-08","dia",assignment),true);
+  assert.equal(savedStateReady("assignment","2026-11-08","dia",{...assignment,simulation:{kind:"retrospective"}}),false);
+  assert.equal(savedStateReady("loto-portfolio","2026-11-08",undefined,{targetDate:"2026-11-07",plays:Array(30).fill({})}),false);
+  assert.equal(savedStateReady("quinielon-result","2026-11-08","dia",[{date:"2026-11-08",session:"dia",verification:"provisional"}]),false);
+  assert.equal(savedStateReady("quinielon-result","2026-11-08","dia",[{date:"2026-11-08",session:"dia",verification:"confirmed"}]),true);
+});
 
 test("Quinielón waits fifteen minutes and advances its expected published session only after the buffer", () => {
   assert.equal(publicationWindow("quinielon", local("2026-11-08", "11:59")), null);
@@ -44,7 +94,7 @@ test("a delayed job retains its scheduled operation rather than branching on the
   assert.equal(plan.window.kind, "dia");
   assert.equal(plan.operations[0].session, "dia");
   assert.equal(plan.date, "2026-11-08");
-  assert.throws(() => automationPlan("17 16 * * *", local("2026-11-08", "16:00")), /tres horas/);
+  assert.equal(automationPlan("17 16 * * *", local("2026-11-08", "16:00")).expired, true);
   assert.ok(!automationPlan("37 14 * * *", local("2026-11-08", "12:10")).operations.some(op => op.expect === "assignment"));
 });
 

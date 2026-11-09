@@ -23,7 +23,7 @@ on:
   workflow_dispatch:
     inputs:
       schedule:
-        description: "Exact cron window to retry (within 3 hours of scheduled time)"
+        description: "Exact cron window to retry; after 3 hours, verify saved records only"
         required: true
         type: string
         default: "37 12 * * *"

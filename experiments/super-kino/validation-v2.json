@@ -1,0 +1,2572 @@
+{
+  "protocol": {
+    "version": "kino-lab-v2",
+    "phase": "validation-only",
+    "cutoff": "2026-11-08",
+    "datasetSha256": "dfe8de8a0c4cba472932c6167aa40c1ca5ff9756ef6673eea6f581fa73eadf38",
+    "codeSha256": "4b373e01a9358ab2e49959ddc9f0b415c626a413d839fc8afa7129b860cd54d7",
+    "node": "v26.5.0",
+    "lockfileSha256": "f840c01603271d4425ca52bd45c10d7a4e032ed313bf52b375e3cdf64cca7a5b",
+    "sources": [
+      "scripts/run-kino-experiment-v2.ts",
+      "lib/kino-experiment-v2.ts",
+      "lib/kino-experiment-strategies.ts",
+      "lib/kino-experiment-data.ts",
+      "lib/kino-experiment-metrics.ts",
+      "lib/super-kino-v133.ts",
+      "lib/super-kino.ts"
+    ],
+    "metadata": {
+      "analysisStart": "2026-09-15",
+      "cutoff": "2026-11-08",
+      "drawCount": 55,
+      "warmupCount": 30,
+      "validationCount": 10,
+      "holdoutCount": 15,
+      "firstDate": "2026-09-15",
+      "lastDate": "2026-11-08"
+    },
+    "partitions": {
+      "warmup": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14"
+      ],
+      "validation": [
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24"
+      ],
+      "holdout": [
+        "2026-10-25",
+        "2026-10-26",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01",
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ]
+    },
+    "modes": [
+      "uniform",
+      "balanced",
+      "balanced-diverse",
+      "v133-production"
+    ],
+    "drawsPerReplicate": 5000,
+    "replicates": 12,
+    "construction": "balanced-diverse starts from the same balanced seed, fixed10,000 quota-preserving swaps; no winning results",
+    "primary": "atLeast7Rate per200-ticket portfolio",
+    "historical": "Reconstructed validation only, not recorded bets; no historical or synthetic holdout evaluated",
+    "criterion": "Exploratory advancement only: mean7+ advantage>=1percentage point versus balanced AND V13.3; Bonferroni3-comparison bootstrap lower bounds>0 versus all3 references; all leave-one-out means>0; mean8+ deterioration versus V13.3 no worse than0.2percentage point",
+    "uncertainty": "10,000 bootstrap resamples of whole independent seed replicates; 3 Bonferroni-adjusted percentile intervals, approximate with few replicates; not confirmatory proof",
+    "activation": "None. No automatic deployment or holdout consumption"
+  },
+  "historical": [
+    {
+      "date": "2026-10-15",
+      "priorCount": 30,
+      "priorLastDate": "2026-10-14",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-15",
+          "penalty": 15989,
+          "evaluation": {
+            "meanHits": 2.175,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              51,
+              55,
+              56,
+              21,
+              3,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-15",
+          "penalty": 12657,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              43,
+              58,
+              54,
+              22,
+              11,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-15",
+          "penalty": 8585,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              44,
+              58,
+              56,
+              20,
+              10,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-15",
+          "penalty": 24999,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              37,
+              61,
+              50,
+              24,
+              11,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "priorCount": 31,
+      "priorLastDate": "2026-10-15",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-16",
+          "penalty": 15022,
+          "evaluation": {
+            "meanHits": 2.28,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              42,
+              67,
+              43,
+              27,
+              6,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-16",
+          "penalty": 15148,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              33,
+              70,
+              59,
+              23,
+              7,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-16",
+          "penalty": 8563,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              37,
+              58,
+              58,
+              23,
+              9,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-16",
+          "penalty": 26153,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              51,
+              51,
+              50,
+              28,
+              10,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "priorCount": 32,
+      "priorLastDate": "2026-10-16",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-17",
+          "penalty": 15141,
+          "evaluation": {
+            "meanHits": 2.445,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              39,
+              57,
+              56,
+              29,
+              8,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-17",
+          "penalty": 13398,
+          "evaluation": {
+            "meanHits": 2.37,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              38,
+              60,
+              48,
+              35,
+              4,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-17",
+          "penalty": 8547,
+          "evaluation": {
+            "meanHits": 2.37,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              48,
+              49,
+              52,
+              33,
+              8,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-17",
+          "penalty": 26633,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              40,
+              64,
+              55,
+              23,
+              4,
+              2,
+              3,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "priorCount": 33,
+      "priorLastDate": "2026-10-17",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-18",
+          "penalty": 14885,
+          "evaluation": {
+            "meanHits": 2.345,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              45,
+              58,
+              54,
+              29,
+              6,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-18",
+          "penalty": 13709,
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              39,
+              59,
+              53,
+              28,
+              8,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-18",
+          "penalty": 8604,
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              40,
+              58,
+              58,
+              16,
+              15,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-18",
+          "penalty": 26730,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              29,
+              72,
+              55,
+              21,
+              6,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "priorCount": 34,
+      "priorLastDate": "2026-10-18",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-19",
+          "penalty": 14573,
+          "evaluation": {
+            "meanHits": 2.34,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              40,
+              60,
+              57,
+              20,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-19",
+          "penalty": 14215,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              38,
+              63,
+              57,
+              21,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-19",
+          "penalty": 8586,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              7,
+              46,
+              60,
+              50,
+              28,
+              6,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-19",
+          "penalty": 25037,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              19,
+              43,
+              41,
+              51,
+              35,
+              8,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "priorCount": 35,
+      "priorLastDate": "2026-10-19",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-20",
+          "penalty": 16104,
+          "evaluation": {
+            "meanHits": 2.34,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              6,
+              52,
+              53,
+              56,
+              24,
+              8,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-20",
+          "penalty": 12963,
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              42,
+              63,
+              47,
+              22,
+              13,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-20",
+          "penalty": 8550,
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              37,
+              70,
+              46,
+              28,
+              7,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-20",
+          "penalty": 24161,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              41,
+              58,
+              52,
+              29,
+              8,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "priorCount": 36,
+      "priorLastDate": "2026-10-20",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-21",
+          "penalty": 16580,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              5,
+              45,
+              64,
+              55,
+              19,
+              9,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-21",
+          "penalty": 14335,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              37,
+              56,
+              65,
+              27,
+              5,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-21",
+          "penalty": 8513,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              39,
+              60,
+              53,
+              25,
+              7,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-21",
+          "penalty": 27634,
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              16,
+              37,
+              58,
+              47,
+              31,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "priorCount": 37,
+      "priorLastDate": "2026-10-21",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-22",
+          "penalty": 14354,
+          "evaluation": {
+            "meanHits": 2.355,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              5,
+              46,
+              66,
+              52,
+              22,
+              6,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-22",
+          "penalty": 13565,
+          "evaluation": {
+            "meanHits": 2.37,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              4,
+              39,
+              76,
+              48,
+              27,
+              5,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-22",
+          "penalty": 8539,
+          "evaluation": {
+            "meanHits": 2.37,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              6,
+              45,
+              69,
+              42,
+              27,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-22",
+          "penalty": 25071,
+          "evaluation": {
+            "meanHits": 2.395,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              41,
+              60,
+              45,
+              26,
+              11,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "priorCount": 38,
+      "priorLastDate": "2026-10-22",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-23",
+          "penalty": 15193,
+          "evaluation": {
+            "meanHits": 2.475,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              27,
+              72,
+              56,
+              24,
+              12,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-23",
+          "penalty": 13985,
+          "evaluation": {
+            "meanHits": 2.365,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              41,
+              56,
+              57,
+              31,
+              5,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-23",
+          "penalty": 8541,
+          "evaluation": {
+            "meanHits": 2.365,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              37,
+              59,
+              58,
+              29,
+              3,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-23",
+          "penalty": 23943,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              36,
+              69,
+              49,
+              22,
+              11,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "priorCount": 39,
+      "priorLastDate": "2026-10-23",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2026-10-24",
+          "penalty": 15217,
+          "evaluation": {
+            "meanHits": 2.37,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              45,
+              61,
+              50,
+              25,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-24",
+          "penalty": 12919,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              38,
+              59,
+              60,
+              22,
+              6,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2026-10-24",
+          "penalty": 8600,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              41,
+              59,
+              48,
+              32,
+              7,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "2026-10-24",
+          "penalty": 25156,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              39,
+              59,
+              49,
+              29,
+              10,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "synthetic": [
+    {
+      "replicate": 0,
+      "drawSeed": "kino-lab-v2/validation/draws/0",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/0",
+          "penalty": 14625,
+          "portfolioSha256": "92f6e9d967f7dadcbd8b7a48dbde361b0f777f1da6a1df8cf97a8db5b5f5a583",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809770000000023,
+            "meanMax": 6.1078,
+            "atLeast6Rate": 0.8642,
+            "atLeast7Rate": 0.222,
+            "atLeast8Rate": 0.0204,
+            "histogram": [
+              54783,
+              199615,
+              304481,
+              256471,
+              131669,
+              42938,
+              8788,
+              1153,
+              96,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/0",
+          "penalty": 12456,
+          "portfolioSha256": "b03b9d58d7b6a189c71ae0ed53821ce2ff98f8e782a88c584c93571d307c27da",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809010000000064,
+            "meanMax": 6.127,
+            "atLeast6Rate": 0.8816,
+            "atLeast7Rate": 0.2256,
+            "atLeast8Rate": 0.0186,
+            "histogram": [
+              54867,
+              199353,
+              304474,
+              256738,
+              131910,
+              42568,
+              8824,
+              1172,
+              88,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/0",
+          "penalty": 8531,
+          "portfolioSha256": "280103b03372f301cf275f6caa23ced2b686e8591e76ab6ab9b24bd61ae555ec",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809010000000064,
+            "meanMax": 6.1554,
+            "atLeast6Rate": 0.8996,
+            "atLeast7Rate": 0.2382,
+            "atLeast8Rate": 0.0172,
+            "histogram": [
+              54815,
+              199507,
+              304749,
+              256335,
+              131624,
+              42829,
+              8825,
+              1230,
+              84,
+              2,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/0",
+          "penalty": 24099,
+          "portfolioSha256": "2df7aa90773f0478d81c5604bbfed3cc7463eca35392d09c96ef7873c49fd847",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.38111400000001,
+            "meanMax": 6.1284,
+            "atLeast6Rate": 0.8862,
+            "atLeast7Rate": 0.2224,
+            "atLeast8Rate": 0.019,
+            "histogram": [
+              55187,
+              199642,
+              303882,
+              256213,
+              131796,
+              43143,
+              8890,
+              1150,
+              93,
+              4,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 1,
+      "drawSeed": "kino-lab-v2/validation/draws/1",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/1",
+          "penalty": 15232,
+          "portfolioSha256": "d3754b5925de365f497f693ec6f9ae6f5a912c28607354ec65eec1ca18bd0245",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380323999999991,
+            "meanMax": 6.1052,
+            "atLeast6Rate": 0.8682,
+            "atLeast7Rate": 0.2156,
+            "atLeast8Rate": 0.0202,
+            "histogram": [
+              55150,
+              199449,
+              304272,
+              256727,
+              131374,
+              42840,
+              8971,
+              1114,
+              97,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/1",
+          "penalty": 13698,
+          "portfolioSha256": "a4802c261cdd60dd7e44c36819401990f917babbe9e6179219e6de3d4f3a36ab",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380941000000011,
+            "meanMax": 6.1308,
+            "atLeast6Rate": 0.8872,
+            "atLeast7Rate": 0.2246,
+            "atLeast8Rate": 0.018,
+            "histogram": [
+              54981,
+              199368,
+              304758,
+              255985,
+              131899,
+              42897,
+              8858,
+              1164,
+              85,
+              5,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/1",
+          "penalty": 8573,
+          "portfolioSha256": "09d66d7988a9a0325159396fe2823ba6c4b8aa422e5a9cf80434cd4de6ded20a",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380941000000011,
+            "meanMax": 6.166,
+            "atLeast6Rate": 0.9128,
+            "atLeast7Rate": 0.2366,
+            "atLeast8Rate": 0.0166,
+            "histogram": [
+              54803,
+              199939,
+              303972,
+              256805,
+              131460,
+              42709,
+              9009,
+              1220,
+              83,
+              0,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/1",
+          "penalty": 25218,
+          "portfolioSha256": "4ef4cda87d52dfc2a7adfe8411bc18a492a3bef6f28d5ffe4412c014d9a243e1",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380921000000001,
+            "meanMax": 6.1442,
+            "atLeast6Rate": 0.891,
+            "atLeast7Rate": 0.2314,
+            "atLeast8Rate": 0.0212,
+            "histogram": [
+              54828,
+              199602,
+              304457,
+              256668,
+              131456,
+              42769,
+              8917,
+              1197,
+              103,
+              3,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 2,
+      "drawSeed": "kino-lab-v2/validation/draws/2",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/2",
+          "penalty": 15013,
+          "portfolioSha256": "9627027adf11d669bcdf1b831d61cb69b6317fd22376c6ee0a87f008c4c10ee0",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.379112,
+            "meanMax": 6.118,
+            "atLeast6Rate": 0.8726,
+            "atLeast7Rate": 0.2246,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              55304,
+              199177,
+              304698,
+              257022,
+              131039,
+              42593,
+              8921,
+              1148,
+              92,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2",
+          "penalty": 13213,
+          "portfolioSha256": "b490f469fb28901de563b5fb81a767f447490371cae0f5e6e007191e58b7e535",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380715000000012,
+            "meanMax": 6.1434,
+            "atLeast6Rate": 0.8886,
+            "atLeast7Rate": 0.2332,
+            "atLeast8Rate": 0.0208,
+            "histogram": [
+              55061,
+              199550,
+              304518,
+              256088,
+              131645,
+              42947,
+              8897,
+              1188,
+              102,
+              4,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/2",
+          "penalty": 8546,
+          "portfolioSha256": "6dca3551358c8f5a69dcf74b89919f2d91674eab1877129c03ff5eaceee1d2cc",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380715000000012,
+            "meanMax": 6.1564,
+            "atLeast6Rate": 0.903,
+            "atLeast7Rate": 0.2306,
+            "atLeast8Rate": 0.0214,
+            "histogram": [
+              54997,
+              199265,
+              305053,
+              255890,
+              131746,
+              42996,
+              8776,
+              1169,
+              101,
+              7,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/2",
+          "penalty": 24568,
+          "portfolioSha256": "f9083b8f6a8a15771bd70ee4ec5a1f894bd8bb7876460c4a0460865372317db7",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808810000000102,
+            "meanMax": 6.1398,
+            "atLeast6Rate": 0.893,
+            "atLeast7Rate": 0.2278,
+            "atLeast8Rate": 0.0186,
+            "histogram": [
+              54559,
+              200095,
+              304520,
+              256093,
+              131804,
+              42682,
+              8985,
+              1168,
+              91,
+              3,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 3,
+      "drawSeed": "kino-lab-v2/validation/draws/3",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/3",
+          "penalty": 13937,
+          "portfolioSha256": "d11d7046828775d85c3aaee72a7425d679635dabe4d6be0d4cecd69866b6def0",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3799310000000014,
+            "meanMax": 6.1228,
+            "atLeast6Rate": 0.874,
+            "atLeast7Rate": 0.2284,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              55245,
+              199221,
+              304727,
+              256367,
+              131663,
+              42570,
+              8898,
+              1211,
+              94,
+              4,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/3",
+          "penalty": 12571,
+          "portfolioSha256": "24a354361ca38d687b618d9604ff572141d61de1fa1408ff1a0a9c7f0c72462b",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809570000000018,
+            "meanMax": 6.1266,
+            "atLeast6Rate": 0.8854,
+            "atLeast7Rate": 0.2214,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54732,
+              199439,
+              305191,
+              255808,
+              131921,
+              42772,
+              8891,
+              1149,
+              94,
+              3,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/3",
+          "penalty": 8561,
+          "portfolioSha256": "a425afb3759027a54d53292be1ceb53a019a88fd2d3231bdf65eed5ab81fee14",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809570000000018,
+            "meanMax": 6.144,
+            "atLeast6Rate": 0.8974,
+            "atLeast7Rate": 0.2308,
+            "atLeast8Rate": 0.0154,
+            "histogram": [
+              54489,
+              199727,
+              304889,
+              256639,
+              131140,
+              43062,
+              8793,
+              1183,
+              76,
+              2,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/3",
+          "penalty": 26015,
+          "portfolioSha256": "a11edbd2fd41ed73c402ca4f7ae07d41da2f92a8cb95c602af6c26dc0d3d9d1b",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810720000000063,
+            "meanMax": 6.1274,
+            "atLeast6Rate": 0.8866,
+            "atLeast7Rate": 0.2218,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54989,
+              199261,
+              304747,
+              256085,
+              131891,
+              42979,
+              8829,
+              1127,
+              88,
+              4,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 4,
+      "drawSeed": "kino-lab-v2/validation/draws/4",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/4",
+          "penalty": 14497,
+          "portfolioSha256": "92c6f1e624b3b8a248a3f58ff0dc4db81a039e861d3840de41f8e536d0547797",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3788529999999994,
+            "meanMax": 6.117,
+            "atLeast6Rate": 0.873,
+            "atLeast7Rate": 0.2234,
+            "atLeast8Rate": 0.019,
+            "histogram": [
+              54935,
+              199878,
+              304803,
+              256145,
+              131663,
+              42539,
+              8777,
+              1163,
+              89,
+              8,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/4",
+          "penalty": 14459,
+          "portfolioSha256": "702c1de0c0a331d499409790278cccdb2a0f11b4327c83eafd8902b2e6d7f621",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380934000000007,
+            "meanMax": 6.1266,
+            "atLeast6Rate": 0.8808,
+            "atLeast7Rate": 0.2252,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              54271,
+              199849,
+              305065,
+              256561,
+              131391,
+              42835,
+              8767,
+              1162,
+              94,
+              5,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/4",
+          "penalty": 8593,
+          "portfolioSha256": "a944a7d9433550215f1074d47d1c39d25c05b1f945bef031e19da39364a4deec",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380934000000007,
+            "meanMax": 6.15,
+            "atLeast6Rate": 0.9044,
+            "atLeast7Rate": 0.2276,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54745,
+              199759,
+              304764,
+              255898,
+              131817,
+              42755,
+              9014,
+              1159,
+              88,
+              1,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/4",
+          "penalty": 26622,
+          "portfolioSha256": "e54b937a3563422a66f9e7dba1bff20fa73e1f08d425f93551fcb5f10698b820",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808500000000095,
+            "meanMax": 6.1326,
+            "atLeast6Rate": 0.891,
+            "atLeast7Rate": 0.2232,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54989,
+              200001,
+              303485,
+              256775,
+              131606,
+              43075,
+              8820,
+              1160,
+              86,
+              3,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 5,
+      "drawSeed": "kino-lab-v2/validation/draws/5",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/5",
+          "penalty": 14651,
+          "portfolioSha256": "70a9beb9caf194096101b2adf58e77b7ad6300c89d85fdeca6c4a6a31c02f3df",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.379995999999997,
+            "meanMax": 6.1266,
+            "atLeast6Rate": 0.8752,
+            "atLeast7Rate": 0.2282,
+            "atLeast8Rate": 0.0228,
+            "histogram": [
+              55070,
+              199297,
+              304793,
+              256603,
+              131491,
+              42548,
+              8903,
+              1180,
+              113,
+              2,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/5",
+          "penalty": 12728,
+          "portfolioSha256": "e9e71dbe170480c9b41727e5a3a2721e3b098e305e8251968b5ae8a9102d9b20",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3807280000000026,
+            "meanMax": 6.129,
+            "atLeast6Rate": 0.8866,
+            "atLeast7Rate": 0.222,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54845,
+              199624,
+              304761,
+              256276,
+              131252,
+              43037,
+              8977,
+              1131,
+              91,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/5",
+          "penalty": 8574,
+          "portfolioSha256": "adea658d21da98482a0fa3aaef731eb85c4a286772c9b9686484ed252368cd2d",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3807280000000026,
+            "meanMax": 6.163,
+            "atLeast6Rate": 0.9084,
+            "atLeast7Rate": 0.2324,
+            "atLeast8Rate": 0.0214,
+            "histogram": [
+              54956,
+              198967,
+              305378,
+              256410,
+              131248,
+              42841,
+              8934,
+              1158,
+              104,
+              4,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/5",
+          "penalty": 25076,
+          "portfolioSha256": "fde18ae13dbb27d23960d3bb89a7fb72fe0a06bd0fc31ff955a9295591925292",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809720000000145,
+            "meanMax": 6.1344,
+            "atLeast6Rate": 0.8954,
+            "atLeast7Rate": 0.219,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54841,
+              199124,
+              304871,
+              256670,
+              131770,
+              42638,
+              8877,
+              1112,
+              93,
+              4,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 6,
+      "drawSeed": "kino-lab-v2/validation/draws/6",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/6",
+          "penalty": 14850,
+          "portfolioSha256": "b8b00f816ed16dfd7265f6f3aeddecc01187bba306641b01f9f747ad8809f7bb",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3822860000000063,
+            "meanMax": 6.1062,
+            "atLeast6Rate": 0.8764,
+            "atLeast7Rate": 0.2138,
+            "atLeast8Rate": 0.0148,
+            "histogram": [
+              55028,
+              198831,
+              305145,
+              255737,
+              131957,
+              42971,
+              9127,
+              1129,
+              69,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/6",
+          "penalty": 13424,
+          "portfolioSha256": "694c09b846c29e84a6e79139d4ffa5c1f2bf5d57acb14a7145b01f0cba0287fc",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808640000000034,
+            "meanMax": 6.1262,
+            "atLeast6Rate": 0.885,
+            "atLeast7Rate": 0.2266,
+            "atLeast8Rate": 0.0142,
+            "histogram": [
+              54913,
+              199330,
+              304661,
+              256670,
+              131378,
+              42938,
+              8843,
+              1196,
+              69,
+              2,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/6",
+          "penalty": 8579,
+          "portfolioSha256": "f7d719535732c3e2a4adb8b630d1ffb6f007eac778c4f4374d7359f0dec69e85",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808640000000034,
+            "meanMax": 6.1532,
+            "atLeast6Rate": 0.9114,
+            "atLeast7Rate": 0.2264,
+            "atLeast8Rate": 0.0136,
+            "histogram": [
+              54820,
+              199937,
+              304081,
+              256604,
+              131388,
+              42926,
+              9017,
+              1156,
+              62,
+              9,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/6",
+          "penalty": 25304,
+          "portfolioSha256": "2c00ad6d7ec13472b6d1d0ecfc54a44d9303c75e1af625dd9e8b6491420ad174",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381114000000002,
+            "meanMax": 6.1486,
+            "atLeast6Rate": 0.8944,
+            "atLeast7Rate": 0.2322,
+            "atLeast8Rate": 0.0206,
+            "histogram": [
+              54814,
+              199540,
+              304145,
+              257057,
+              131655,
+              42650,
+              8841,
+              1194,
+              97,
+              7,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 7,
+      "drawSeed": "kino-lab-v2/validation/draws/7",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/7",
+          "penalty": 14401,
+          "portfolioSha256": "f079fc5b70c592767c95eb9dc9c34f0cd7c848feeac9e816604eee893db416c4",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3812510000000002,
+            "meanMax": 6.126,
+            "atLeast6Rate": 0.8742,
+            "atLeast7Rate": 0.227,
+            "atLeast8Rate": 0.0236,
+            "histogram": [
+              54944,
+              199317,
+              304824,
+              255869,
+              132181,
+              42625,
+              8974,
+              1148,
+              112,
+              6,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/7",
+          "penalty": 13108,
+          "portfolioSha256": "931f16ddd8d41640afaf0bbd63ed86a76f15c4680eaa4bcb4c6bde70bac744d4",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810750000000036,
+            "meanMax": 6.1356,
+            "atLeast6Rate": 0.8828,
+            "atLeast7Rate": 0.2312,
+            "atLeast8Rate": 0.0206,
+            "histogram": [
+              55278,
+              199439,
+              303840,
+              256478,
+              131984,
+              42722,
+              8945,
+              1211,
+              98,
+              5,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/7",
+          "penalty": 8533,
+          "portfolioSha256": "33d1caafc71dfaa4eaeaebd4827a8b96d65578e4d7b3e0eb8e995bd87d43b629",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810750000000036,
+            "meanMax": 6.1704,
+            "atLeast6Rate": 0.9066,
+            "atLeast7Rate": 0.2398,
+            "atLeast8Rate": 0.0236,
+            "histogram": [
+              54788,
+              199654,
+              304437,
+              256665,
+              131419,
+              42782,
+              8940,
+              1196,
+              117,
+              2,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/7",
+          "penalty": 26913,
+          "portfolioSha256": "30f6939f553c5ebaf185ba77fea682d778eef0c1c1528c319a8b42f710b80f6c",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810580000000146,
+            "meanMax": 6.1314,
+            "atLeast6Rate": 0.8856,
+            "atLeast7Rate": 0.2282,
+            "atLeast8Rate": 0.0172,
+            "histogram": [
+              54768,
+              199711,
+              304273,
+              256588,
+              131675,
+              42958,
+              8731,
+              1209,
+              85,
+              2,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 8,
+      "drawSeed": "kino-lab-v2/validation/draws/8",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/8",
+          "penalty": 15346,
+          "portfolioSha256": "4ae22bd2522a0f1736933fa9c3c83b8028518cc11caeb4215d5361b284d52f24",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.379717000000003,
+            "meanMax": 6.1046,
+            "atLeast6Rate": 0.868,
+            "atLeast7Rate": 0.2208,
+            "atLeast8Rate": 0.0152,
+            "histogram": [
+              54942,
+              199914,
+              304156,
+              256989,
+              130980,
+              42850,
+              8909,
+              1183,
+              74,
+              3,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/8",
+          "penalty": 13303,
+          "portfolioSha256": "cb86bd345441fc1a743752e4bab09f5a537cec088f437d2947386bcd01633adb",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381005000000009,
+            "meanMax": 6.1298,
+            "atLeast6Rate": 0.8832,
+            "atLeast7Rate": 0.2236,
+            "atLeast8Rate": 0.0224,
+            "histogram": [
+              54707,
+              199797,
+              304398,
+              257011,
+              130658,
+              43206,
+              8959,
+              1152,
+              109,
+              3,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/8",
+          "penalty": 8583,
+          "portfolioSha256": "4b4fd10156218a100e4097d40346e5d37aef099d7a20bdb8cd9611f271767794",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381005000000009,
+            "meanMax": 6.1448,
+            "atLeast6Rate": 0.8966,
+            "atLeast7Rate": 0.2256,
+            "atLeast8Rate": 0.0214,
+            "histogram": [
+              54909,
+              199020,
+              304820,
+              256894,
+              131510,
+              42805,
+              8810,
+              1124,
+              102,
+              6,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/8",
+          "penalty": 24898,
+          "portfolioSha256": "58143a89f516c2447cf0a97b0e13f7027b3b61b5a7182968198767964f64381d",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.38099700000001,
+            "meanMax": 6.1512,
+            "atLeast6Rate": 0.9012,
+            "atLeast7Rate": 0.2292,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              54888,
+              199419,
+              304335,
+              256773,
+              131948,
+              42409,
+              8949,
+              1180,
+              93,
+              6,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 9,
+      "drawSeed": "kino-lab-v2/validation/draws/9",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/9",
+          "penalty": 15104,
+          "portfolioSha256": "633b07db882fbb26b92c6abb4f376b0030a76e9c7acb50707b0217214f758ea3",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3814920000000024,
+            "meanMax": 6.0954,
+            "atLeast6Rate": 0.8714,
+            "atLeast7Rate": 0.2058,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54613,
+              199115,
+              305429,
+              256420,
+              131154,
+              43221,
+              8889,
+              1070,
+              87,
+              2,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/9",
+          "penalty": 13150,
+          "portfolioSha256": "726b98fda4339204adc419fe2616509c4162efb98817645d4431ddea381241a0",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809470000000137,
+            "meanMax": 6.13,
+            "atLeast6Rate": 0.8862,
+            "atLeast7Rate": 0.225,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54727,
+              199445,
+              304880,
+              256525,
+              131454,
+              42794,
+              8939,
+              1144,
+              90,
+              1,
+              1
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/9",
+          "penalty": 8568,
+          "portfolioSha256": "7fd502329b75fdc3fcaab2d6cd89921f749828de65946d21856fb294d5fe2243",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809470000000137,
+            "meanMax": 6.1666,
+            "atLeast6Rate": 0.9056,
+            "atLeast7Rate": 0.2392,
+            "atLeast8Rate": 0.0212,
+            "histogram": [
+              54524,
+              199742,
+              304628,
+              256745,
+              131624,
+              42625,
+              8801,
+              1204,
+              104,
+              3,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/9",
+          "penalty": 24688,
+          "portfolioSha256": "79be83f25fed707af3a66ea87ded7e131c8a287a2dfba9c3f31353b9560ce935",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810630000000046,
+            "meanMax": 6.1278,
+            "atLeast6Rate": 0.8926,
+            "atLeast7Rate": 0.2178,
+            "atLeast8Rate": 0.0168,
+            "histogram": [
+              54600,
+              199131,
+              305616,
+              256488,
+              131171,
+              42712,
+              9070,
+              1127,
+              82,
+              3,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 10,
+      "drawSeed": "kino-lab-v2/validation/draws/10",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/10",
+          "penalty": 16070,
+          "portfolioSha256": "86c0ee67ad424174f9789b3c1acafc904f32c63ce7786084a47b5964b1179e38",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380833,
+            "meanMax": 6.1262,
+            "atLeast6Rate": 0.8744,
+            "atLeast7Rate": 0.227,
+            "atLeast8Rate": 0.0232,
+            "histogram": [
+              55318,
+              199645,
+              303393,
+              256755,
+              131847,
+              42881,
+              8907,
+              1138,
+              108,
+              8,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/10",
+          "penalty": 14824,
+          "portfolioSha256": "bd9fcbf4c7b70ee24cce30a0b2f4e8548b00d715b3874359eb7726f09bc42465",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3811460000000086,
+            "meanMax": 6.1224,
+            "atLeast6Rate": 0.88,
+            "atLeast7Rate": 0.2242,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54452,
+              200156,
+              303960,
+              257088,
+              131457,
+              42688,
+              8947,
+              1162,
+              88,
+              2,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/10",
+          "penalty": 8606,
+          "portfolioSha256": "80b003319275c0c83aca20a192b9c25866eec880b0815ee20f9e7775a826f3ed",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3811460000000086,
+            "meanMax": 6.159,
+            "atLeast6Rate": 0.9054,
+            "atLeast7Rate": 0.2336,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              54375,
+              199742,
+              305066,
+              256449,
+              131428,
+              42813,
+              8841,
+              1188,
+              96,
+              2,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/10",
+          "penalty": 21961,
+          "portfolioSha256": "25b5c85df205a4083cf729c72027cd289f51386748183e0207ebc68f2b5edd61",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380804000000016,
+            "meanMax": 6.1274,
+            "atLeast6Rate": 0.8916,
+            "atLeast7Rate": 0.22,
+            "atLeast8Rate": 0.0154,
+            "histogram": [
+              55167,
+              199163,
+              304291,
+              257100,
+              131153,
+              42911,
+              8992,
+              1146,
+              75,
+              2,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "replicate": 11,
+      "drawSeed": "kino-lab-v2/validation/draws/11",
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-v2/validation/portfolio/uniform/11",
+          "penalty": 15289,
+          "portfolioSha256": "74e4b044b71187412b61ae10de31922c10adce434073d8aa8d13be6cfcb1e68b",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381378000000001,
+            "meanMax": 6.105,
+            "atLeast6Rate": 0.8664,
+            "atLeast7Rate": 0.2206,
+            "atLeast8Rate": 0.0176,
+            "histogram": [
+              55051,
+              199444,
+              304059,
+              256481,
+              132031,
+              42722,
+              8935,
+              1189,
+              86,
+              2,
+              0
+            ]
+          }
+        },
+        "balanced": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/11",
+          "penalty": 12541,
+          "portfolioSha256": "13256d34291c51528a3bd161245fe6245f38401d58e9ed7c2908124a57c610d1",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810420000000088,
+            "meanMax": 6.1344,
+            "atLeast6Rate": 0.8788,
+            "atLeast7Rate": 0.2302,
+            "atLeast8Rate": 0.0246,
+            "histogram": [
+              54991,
+              199389,
+              303785,
+              257698,
+              131183,
+              42893,
+              8763,
+              1174,
+              120,
+              4,
+              0
+            ]
+          }
+        },
+        "balanced-diverse": {
+          "seed": "kino-lab-v2/validation/portfolio/balanced/11",
+          "penalty": 8554,
+          "portfolioSha256": "03c974e16a2f08295aa2cfb57e6e00bd002b3b993eb1a9a014862dead3daa6ac",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3810420000000088,
+            "meanMax": 6.1632,
+            "atLeast6Rate": 0.9138,
+            "atLeast7Rate": 0.2302,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54933,
+              199536,
+              304182,
+              256720,
+              131801,
+              42545,
+              9024,
+              1168,
+              86,
+              5,
+              0
+            ]
+          }
+        },
+        "v133-production": {
+          "seed": "kino-lab-v2/validation/portfolio/v133-production/11",
+          "penalty": 26941,
+          "portfolioSha256": "ec8d5775f70bbebe6f73b22bead154eec411d7e7438c4e17b24380662f112312",
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380976000000007,
+            "meanMax": 6.1236,
+            "atLeast6Rate": 0.8874,
+            "atLeast7Rate": 0.216,
+            "atLeast8Rate": 0.019,
+            "histogram": [
+              55276,
+              199270,
+              303904,
+              256715,
+              131816,
+              42924,
+              8898,
+              1101,
+              90,
+              6,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "summaries": {
+    "uniform": {
+      "meanHits": 2.3805125,
+      "meanMax": 6.1133999999999995,
+      "atLeast6Rate": 0.8715,
+      "atLeast7Rate": 0.22143333333333334,
+      "atLeast8Rate": 0.019483333333333335
+    },
+    "balanced": {
+      "meanHits": 2.380937916666674,
+      "meanMax": 6.13015,
+      "atLeast6Rate": 0.8838500000000001,
+      "atLeast7Rate": 0.22606666666666667,
+      "atLeast8Rate": 0.019433333333333334
+    },
+    "balanced-diverse": {
+      "meanHits": 2.380937916666674,
+      "meanMax": 6.1576666666666675,
+      "atLeast6Rate": 0.9054166666666666,
+      "atLeast7Rate": 0.23258333333333328,
+      "atLeast8Rate": 0.018949999999999998
+    },
+    "v133-production": {
+      "meanHits": 2.3809851666666755,
+      "meanMax": 6.134733333333333,
+      "atLeast6Rate": 0.8913333333333334,
+      "atLeast7Rate": 0.22408333333333338,
+      "atLeast8Rate": 0.01855
+    }
+  },
+  "comparisons": {
+    "uniform": {
+      "replicateDifferences": [
+        0.016199999999999992,
+        0.02099999999999999,
+        0.006000000000000005,
+        0.0024000000000000132,
+        0.004200000000000009,
+        0.004200000000000009,
+        0.0126,
+        0.012800000000000006,
+        0.004799999999999999,
+        0.033399999999999985,
+        0.006599999999999995,
+        0.009599999999999997
+      ],
+      "meanDifference": 0.01115,
+      "range": [
+        0.0024000000000000132,
+        0.033399999999999985
+      ],
+      "simultaneousBootstrapInterval": [
+        0.006150000000000003,
+        0.01776666666666666
+      ],
+      "leaveOneOutMinimum": 0.009127272727272729
+    },
+    "balanced": {
+      "replicateDifferences": [
+        0.0126,
+        0.01200000000000001,
+        -0.002599999999999991,
+        0.009399999999999992,
+        0.0023999999999999855,
+        0.010399999999999993,
+        -0.00020000000000000573,
+        0.008600000000000024,
+        0.0020000000000000018,
+        0.01419999999999999,
+        0.009399999999999992,
+        0
+      ],
+      "meanDifference": 0.006516666666666666,
+      "range": [
+        -0.002599999999999991,
+        0.01419999999999999
+      ],
+      "simultaneousBootstrapInterval": [
+        0.002699999999999999,
+        0.010216666666666666
+      ],
+      "leaveOneOutMinimum": 0.005818181818181819
+    },
+    "v133-production": {
+      "replicateDifferences": [
+        0.01580000000000001,
+        0.00520000000000001,
+        0.002799999999999997,
+        0.009000000000000008,
+        0.004399999999999987,
+        0.013399999999999995,
+        -0.0058,
+        0.011600000000000027,
+        -0.003599999999999992,
+        0.021400000000000002,
+        0.013600000000000001,
+        0.01419999999999999
+      ],
+      "meanDifference": 0.008500000000000002,
+      "range": [
+        -0.0058,
+        0.021400000000000002
+      ],
+      "simultaneousBootstrapInterval": [
+        0.003066666666666669,
+        0.013483333333333332
+      ],
+      "leaveOneOutMinimum": 0.00732727272727273
+    }
+  },
+  "qualifiesForFurtherTesting": false
+}

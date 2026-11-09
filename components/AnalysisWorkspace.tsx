@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState, type ReactNode } from "react";
+import { orderAnalysisPanels } from "../lib/analysis-navigation";
 
 type AnalysisPanel = {
   id: string;
@@ -10,14 +11,15 @@ type AnalysisPanel = {
 };
 
 /** Panels stay mounted so filters, pagination and saved portfolio state survive navigation. */
-export function AnalysisWorkspace({ panels }: { panels: AnalysisPanel[] }) {
+export function AnalysisWorkspace({ panels: suppliedPanels }: { panels: AnalysisPanel[] }) {
+  const panels = orderAnalysisPanels(suppliedPanels);
   const instance = useId();
   const [selected, setSelected] = useState(panels[0].id);
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
   const active = panels.find((panel) => panel.id === selected) ?? panels[0];
 
   return <div className="analysisWorkspace">
-    <div className="analysisWorkspaceIntro"><span>Área de trabajo</span><small>Elige qué quieres revisar</small></div>
+    <div className="analysisWorkspaceIntro"><span>Área de trabajo</span><small>Consulta, compara y profundiza.</small></div>
     <div className="analysisWorkspaceTabs" role="tablist" aria-label="Áreas de análisis">
       {panels.map((panel, index) => <button
         ref={(element) => { buttons.current[index] = element; }}
@@ -40,7 +42,7 @@ export function AnalysisWorkspace({ panels }: { panels: AnalysisPanel[] }) {
           setSelected(panels[next].id);
           buttons.current[next]?.focus();
         }}
-      ><span className="analysisWorkspaceIndex" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{panel.label}</button>)}
+      ><span className="analysisWorkspaceIndex" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><span className="analysisWorkspaceTabLabel">{panel.label}<small aria-hidden="true">{{resultados:"Resumen de sorteos",analizar:"Cobertura y datos",jugadas:"Carteras guardadas",reparto:"Asignaciones",historial:"Sorteos anteriores"}[panel.id]}</small></span></button>)}
     </div>
     {panels.map((panel) => <div
       className="analysisPanel"
@@ -51,7 +53,7 @@ export function AnalysisWorkspace({ panels }: { panels: AnalysisPanel[] }) {
       hidden={active.id !== panel.id}
       tabIndex={0}
     >
-      <p className="analysisPanelDescription">{panel.description}</p>
+      <header className="analysisPanelHeading"><span>{panel.label}</span><p className="analysisPanelDescription">{panel.description}</p></header>
       {panel.content}
     </div>)}
   </div>;

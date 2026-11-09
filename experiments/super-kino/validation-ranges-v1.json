@@ -1,0 +1,2933 @@
+{
+  "protocol": {
+    "version": "kino-lab-ranges-v1",
+    "phase": "validation-only",
+    "cutoff": "2026-11-08",
+    "node": "v26.5.0",
+    "datasetSha256": "dfe8de8a0c4cba472932c6167aa40c1ca5ff9756ef6673eea6f581fa73eadf38",
+    "codeSha256": "9bc9ceb7d15ec4a9200803a55e144ee8bd332fb282e460aab7639a98be48eec7",
+    "lockfileSha256": "f840c01603271d4425ca52bd45c10d7a4e032ed313bf52b375e3cdf64cca7a5b",
+    "sources": [
+      "scripts/run-kino-ranges.ts",
+      "lib/kino-experiment-ranges.ts",
+      "lib/kino-experiment-v2.ts",
+      "lib/kino-experiment-strategies.ts",
+      "lib/kino-experiment-data.ts",
+      "lib/kino-experiment-metrics.ts",
+      "lib/super-kino-v133.ts",
+      "lib/super-kino.ts"
+    ],
+    "metadata": {
+      "analysisStart": "2026-09-15",
+      "cutoff": "2026-11-08",
+      "drawCount": 55,
+      "warmupCount": 30,
+      "validationCount": 10,
+      "holdoutCount": 15,
+      "firstDate": "2026-09-15",
+      "lastDate": "2026-11-08"
+    },
+    "partitions": {
+      "warmup": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14"
+      ],
+      "validation": [
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24"
+      ],
+      "holdout": [
+        "2026-10-25",
+        "2026-10-26",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01",
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ]
+    },
+    "modes": [
+      "uniform",
+      "diverse",
+      "ranges-uniform",
+      "ranges-history"
+    ],
+    "drawsPerReplicate": 5000,
+    "replicates": 12,
+    "syntheticTrainingDates": [
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-19",
+      "2026-09-20",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23",
+      "2026-09-24",
+      "2026-09-25",
+      "2026-09-26",
+      "2026-09-27",
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-01",
+      "2026-10-02",
+      "2026-10-03",
+      "2026-10-04",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-10",
+      "2026-10-11",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14"
+    ],
+    "bins": "1-10,11-20,...,71-80,81-84; final bin width4",
+    "historicalWeight": 0.5,
+    "construction": "Fixed range-profile target, 10,000 reciprocal swaps, same diverse base seed, exact number exposure preserved, diversity penalty cap1.05x base",
+    "primary": "atLeast7Rate per200-ticket portfolio",
+    "criterion": "Mean advantage>=1percentage point versus diverse and ranges-uniform, Bonferroni2-comparison bootstrap lower bounds>0, positive leave-one-out means, mean8+ deterioration versus diverse<=0.2percentage point",
+    "uncertainty": "10,000 bootstrap resamples of whole seed replicates; approximate with12seeds, exploratory",
+    "historical": "Prior30only, reconstructed comparisons on previously inspected validation dates",
+    "activation": "None; no historical or synthetic holdout evaluated"
+  },
+  "historical": [
+    {
+      "date": "2026-10-15",
+      "trainingDates": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-15",
+          "diversity": 15415,
+          "evaluation": {
+            "meanHits": 2.335,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              18,
+              34,
+              56,
+              59,
+              24,
+              6,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-15",
+          "diversity": 8569,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              36,
+              66,
+              52,
+              19,
+              14,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-15",
+          "diversity": 8996,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              36,
+              65,
+              55,
+              22,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-15",
+          "diversity": 8996,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              38,
+              67,
+              53,
+              22,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "trainingDates": [
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-16",
+          "diversity": 14462,
+          "evaluation": {
+            "meanHits": 2.46,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              37,
+              52,
+              55,
+              28,
+              10,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-16",
+          "diversity": 8569,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              44,
+              51,
+              58,
+              30,
+              6,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-16",
+          "diversity": 8995,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              46,
+              55,
+              55,
+              25,
+              11,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-16",
+          "diversity": 8996,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              38,
+              59,
+              58,
+              24,
+              10,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "trainingDates": [
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-17",
+          "diversity": 16192,
+          "evaluation": {
+            "meanHits": 2.295,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              17,
+              30,
+              80,
+              38,
+              23,
+              9,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-17",
+          "diversity": 8552,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              37,
+              62,
+              49,
+              26,
+              12,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-17",
+          "diversity": 8977,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              33,
+              71,
+              53,
+              16,
+              10,
+              5,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-17",
+          "diversity": 8979,
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              30,
+              72,
+              49,
+              25,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "trainingDates": [
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-18",
+          "diversity": 15139,
+          "evaluation": {
+            "meanHits": 2.355,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              46,
+              57,
+              50,
+              29,
+              9,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-18",
+          "diversity": 8556,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              7,
+              48,
+              60,
+              45,
+              31,
+              5,
+              3,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-18",
+          "diversity": 8945,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              7,
+              43,
+              67,
+              46,
+              27,
+              7,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-18",
+          "diversity": 8983,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              6,
+              52,
+              53,
+              52,
+              26,
+              8,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "trainingDates": [
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-19",
+          "diversity": 14313,
+          "evaluation": {
+            "meanHits": 2.29,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              15,
+              38,
+              63,
+              52,
+              22,
+              10,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-19",
+          "diversity": 8625,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              35,
+              68,
+              53,
+              21,
+              10,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-19",
+          "diversity": 9052,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              33,
+              74,
+              52,
+              22,
+              9,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-19",
+          "diversity": 9056,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              34,
+              69,
+              47,
+              25,
+              9,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "trainingDates": [
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-20",
+          "diversity": 15066,
+          "evaluation": {
+            "meanHits": 2.345,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              46,
+              58,
+              50,
+              21,
+              11,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-20",
+          "diversity": 8588,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              42,
+              61,
+              51,
+              27,
+              8,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-20",
+          "diversity": 9015,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              7,
+              42,
+              67,
+              46,
+              30,
+              5,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-20",
+          "diversity": 9015,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              38,
+              68,
+              48,
+              23,
+              11,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "trainingDates": [
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-21",
+          "diversity": 14543,
+          "evaluation": {
+            "meanHits": 2.43,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              36,
+              64,
+              47,
+              36,
+              6,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-21",
+          "diversity": 8580,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              39,
+              63,
+              51,
+              25,
+              7,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-21",
+          "diversity": 9002,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              36,
+              66,
+              48,
+              28,
+              8,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-21",
+          "diversity": 9000,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              16,
+              31,
+              67,
+              47,
+              27,
+              9,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "trainingDates": [
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-22",
+          "diversity": 14706,
+          "evaluation": {
+            "meanHits": 2.345,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              41,
+              62,
+              53,
+              21,
+              11,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-22",
+          "diversity": 8529,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              37,
+              58,
+              58,
+              23,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-22",
+          "diversity": 8954,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              44,
+              53,
+              53,
+              26,
+              9,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-22",
+          "diversity": 8954,
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              39,
+              61,
+              53,
+              26,
+              8,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "trainingDates": [
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-23",
+          "diversity": 14792,
+          "evaluation": {
+            "meanHits": 2.43,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              37,
+              56,
+              51,
+              32,
+              10,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-23",
+          "diversity": 8540,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              45,
+              59,
+              50,
+              25,
+              8,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-23",
+          "diversity": 8965,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              42,
+              64,
+              47,
+              26,
+              10,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-23",
+          "diversity": 8967,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              39,
+              66,
+              44,
+              29,
+              8,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "trainingDates": [
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14",
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23"
+      ],
+      "methods": {
+        "uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-24",
+          "diversity": 17675,
+          "evaluation": {
+            "meanHits": 2.235,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              15,
+              43,
+              62,
+              50,
+              22,
+              6,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "diverse": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-24",
+          "diversity": 8618,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              27,
+              73,
+              51,
+              26,
+              7,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-uniform": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-24",
+          "diversity": 9048,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              12,
+              34,
+              67,
+              49,
+              30,
+              6,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "ranges-history": {
+          "seed": "kino-lab-ranges-v1/validation/historical/2026-10-24",
+          "diversity": 9048,
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              36,
+              64,
+              56,
+              28,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "synthetic": [
+    {
+      "replicate": 0,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/0",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/0",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381506000000001,
+            "meanMax": 6.1224,
+            "atLeast6Rate": 0.879,
+            "atLeast7Rate": 0.2244,
+            "atLeast8Rate": 0.0176,
+            "histogram": [
+              54927,
+              199391,
+              304356,
+              256606,
+              131652,
+              42775,
+              9045,
+              1159,
+              82,
+              7,
+              0
+            ]
+          },
+          "diversity": 15074,
+          "historicalRangeLoss": 0.04654249248504638,
+          "uniformRangeLoss": 0.04093709526062011,
+          "portfolioSha256": "2361e61d8906ed9334b32837bb3cc20e1facc1337d4eb8a2cd3bdb9d86b703eb"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380970000000009,
+            "meanMax": 6.158,
+            "atLeast6Rate": 0.9106,
+            "atLeast7Rate": 0.2286,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54985,
+              199522,
+              304011,
+              256801,
+              132024,
+              42363,
+              9041,
+              1161,
+              89,
+              3,
+              0
+            ]
+          },
+          "diversity": 8603,
+          "historicalRangeLoss": 0.015082336235046383,
+          "uniformRangeLoss": 0.009345103073120116,
+          "portfolioSha256": "87df68636688e719347302ed01b9598c3deab974b3e57ff935a4e77f1c7f72ba"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380970000000009,
+            "meanMax": 6.1476,
+            "atLeast6Rate": 0.9074,
+            "atLeast7Rate": 0.2224,
+            "atLeast8Rate": 0.0168,
+            "histogram": [
+              55149,
+              199091,
+              304156,
+              257029,
+              131961,
+              42370,
+              9013,
+              1145,
+              81,
+              5,
+              0
+            ]
+          },
+          "diversity": 9033,
+          "historicalRangeLoss": 0.010265246391296386,
+          "uniformRangeLoss": 0.0006681499481201167,
+          "portfolioSha256": "87e2195e699e8ef503ab1132b00143ef067a6f7a71969f1443c994608eb2c8f1"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380970000000009,
+            "meanMax": 6.1524,
+            "atLeast6Rate": 0.901,
+            "atLeast7Rate": 0.23,
+            "atLeast8Rate": 0.0208,
+            "histogram": [
+              54948,
+              199285,
+              304901,
+              255939,
+              132150,
+              42559,
+              8963,
+              1150,
+              102,
+              3,
+              0
+            ]
+          },
+          "diversity": 9032,
+          "historicalRangeLoss": 0.002908898735046385,
+          "uniformRangeLoss": 0.008328892135620119,
+          "portfolioSha256": "ddd67de23b72a174c222b99d72c334120cce858eb77c6dc3afec9af4535228b4"
+        }
+      }
+    },
+    {
+      "replicate": 1,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/1",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/1",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381799000000002,
+            "meanMax": 6.1196,
+            "atLeast6Rate": 0.8714,
+            "atLeast7Rate": 0.225,
+            "atLeast8Rate": 0.022,
+            "histogram": [
+              54714,
+              199551,
+              304062,
+              257225,
+              131428,
+              42753,
+              9013,
+              1144,
+              104,
+              6,
+              0
+            ]
+          },
+          "diversity": 13908,
+          "historicalRangeLoss": 0.023778782653808592,
+          "uniformRangeLoss": 0.02486411170959473,
+          "portfolioSha256": "0c7b3fcb2a219dcbc097d70878f64fda8f60daa5ef8bfc586575c6a402d56b90"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380920000000011,
+            "meanMax": 6.1642,
+            "atLeast6Rate": 0.9068,
+            "atLeast7Rate": 0.2344,
+            "atLeast8Rate": 0.0218,
+            "histogram": [
+              54579,
+              200066,
+              304235,
+              256548,
+              131737,
+              42622,
+              8924,
+              1180,
+              103,
+              6,
+              0
+            ]
+          },
+          "diversity": 8545,
+          "historicalRangeLoss": 0.05720095062255859,
+          "uniformRangeLoss": 0.03650649452209472,
+          "portfolioSha256": "fb6c802205703f9a60c57aa4210afb2586073ba1b66ca56c4d6417cca2f5fba0"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380920000000011,
+            "meanMax": 6.1604,
+            "atLeast6Rate": 0.9006,
+            "atLeast7Rate": 0.2394,
+            "atLeast8Rate": 0.0194,
+            "histogram": [
+              54593,
+              199694,
+              304642,
+              256675,
+              131689,
+              42498,
+              8894,
+              1218,
+              93,
+              3,
+              1
+            ]
+          },
+          "diversity": 8941,
+          "historicalRangeLoss": 0.013967356872558595,
+          "uniformRangeLoss": 0.00042866249084472696,
+          "portfolioSha256": "feca17537fd544c35a2ec9341161fb523c64f190fa95615e4857453196c438e2"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380920000000011,
+            "meanMax": 6.1612,
+            "atLeast6Rate": 0.895,
+            "atLeast7Rate": 0.2434,
+            "atLeast8Rate": 0.0212,
+            "histogram": [
+              54635,
+              199621,
+              304879,
+              256476,
+              131506,
+              42662,
+              8882,
+              1233,
+              98,
+              8,
+              0
+            ]
+          },
+          "diversity": 8969,
+          "historicalRangeLoss": 0.0030346420288085937,
+          "uniformRangeLoss": 0.009979346084594724,
+          "portfolioSha256": "cb0f3872e98dfc87cde8439204f32b2cdc59b58ebf4881452d9ce925763900f1"
+        }
+      }
+    },
+    {
+      "replicate": 2,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/2",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/2",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3786340000000004,
+            "meanMax": 6.1276,
+            "atLeast6Rate": 0.879,
+            "atLeast7Rate": 0.2266,
+            "atLeast8Rate": 0.0204,
+            "histogram": [
+              55168,
+              199918,
+              304670,
+              256240,
+              131076,
+              42606,
+              9042,
+              1178,
+              95,
+              6,
+              1
+            ]
+          },
+          "diversity": 14615,
+          "historicalRangeLoss": 0.0488768367767334,
+          "uniformRangeLoss": 0.03327439594268798,
+          "portfolioSha256": "9c5d082b86005d278935c3ba0fc24a6e0e549bcc211a019508cac34112db84cb"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809090000000115,
+            "meanMax": 6.1594,
+            "atLeast6Rate": 0.9076,
+            "atLeast7Rate": 0.23,
+            "atLeast8Rate": 0.021,
+            "histogram": [
+              55102,
+              198928,
+              304745,
+              256540,
+              132085,
+              42452,
+              8874,
+              1169,
+              101,
+              4,
+              0
+            ]
+          },
+          "diversity": 8578,
+          "historicalRangeLoss": 0.024404571151733404,
+          "uniformRangeLoss": 0.020005743598937996,
+          "portfolioSha256": "47780c158f7989a25bec10bb068a72873f14b0b9f74de8fcce854d811729e729"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809090000000115,
+            "meanMax": 6.1512,
+            "atLeast6Rate": 0.8996,
+            "atLeast7Rate": 0.23,
+            "atLeast8Rate": 0.021,
+            "histogram": [
+              54726,
+              199723,
+              304332,
+              256701,
+              131688,
+              42703,
+              8845,
+              1177,
+              102,
+              3,
+              0
+            ]
+          },
+          "diversity": 9002,
+          "historicalRangeLoss": 0.011376055526733393,
+          "uniformRangeLoss": 0.00040252094268798807,
+          "portfolioSha256": "d36a683ffafe72cce18b34c1f9f62dad4be3533890b0b6752164a1b6c9f2bb02"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3809090000000115,
+            "meanMax": 6.153,
+            "atLeast6Rate": 0.9084,
+            "atLeast7Rate": 0.2224,
+            "atLeast8Rate": 0.022,
+            "histogram": [
+              54920,
+              199354,
+              304622,
+              256426,
+              131887,
+              42590,
+              8983,
+              1108,
+              109,
+              1,
+              0
+            ]
+          },
+          "diversity": 9005,
+          "historicalRangeLoss": 0.0029850399017333977,
+          "uniformRangeLoss": 0.009145294380187987,
+          "portfolioSha256": "b515d897e95027fba5a0da86e0d3f284598d27c073422e9077368f18b583bb6f"
+        }
+      }
+    },
+    {
+      "replicate": 3,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/3",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/3",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380447999999997,
+            "meanMax": 6.1258,
+            "atLeast6Rate": 0.8744,
+            "atLeast7Rate": 0.2298,
+            "atLeast8Rate": 0.0202,
+            "histogram": [
+              54641,
+              199471,
+              305258,
+              256413,
+              131421,
+              42623,
+              8897,
+              1174,
+              95,
+              7,
+              0
+            ]
+          },
+          "diversity": 14202,
+          "historicalRangeLoss": 0.04637628974914551,
+          "uniformRangeLoss": 0.024703988456726073,
+          "portfolioSha256": "ecbc689c0a8fa07bcd14d52c7bb8b671b5a7b8ccebd8dd3bf680168107c97b15"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380834000000004,
+            "meanMax": 6.1438,
+            "atLeast6Rate": 0.8998,
+            "atLeast7Rate": 0.2246,
+            "atLeast8Rate": 0.0188,
+            "histogram": [
+              54743,
+              199782,
+              304468,
+              256340,
+              131646,
+              42951,
+              8831,
+              1144,
+              92,
+              3,
+              0
+            ]
+          },
+          "diversity": 8583,
+          "historicalRangeLoss": 0.029895039749145508,
+          "uniformRangeLoss": 0.025356527519226083,
+          "portfolioSha256": "354ae5e1a78ccf6b2105fe81a5401be46be764e7d38418be8a8a714d63516058"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380834000000004,
+            "meanMax": 6.1446,
+            "atLeast6Rate": 0.9012,
+            "atLeast7Rate": 0.228,
+            "atLeast8Rate": 0.0154,
+            "histogram": [
+              54783,
+              199682,
+              304150,
+              257122,
+              131414,
+              42601,
+              8989,
+              1181,
+              78,
+              0,
+              0
+            ]
+          },
+          "diversity": 8991,
+          "historicalRangeLoss": 0.014028145217895506,
+          "uniformRangeLoss": 0.0005345548629760745,
+          "portfolioSha256": "acc0b7f465d9ca5618955cfddba6f974ed4a2fe6bb4a0ab83a36a1602982175d"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380834000000004,
+            "meanMax": 6.1468,
+            "atLeast6Rate": 0.9006,
+            "atLeast7Rate": 0.2274,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54668,
+              199690,
+              304375,
+              256959,
+              131472,
+              42751,
+              8815,
+              1179,
+              88,
+              3,
+              0
+            ]
+          },
+          "diversity": 9012,
+          "historicalRangeLoss": 0.0029188678741455054,
+          "uniformRangeLoss": 0.010841293144226074,
+          "portfolioSha256": "332d04c900eeabeb80847e4609a0f24a7749d1de1cf3f2b310726a528823e35a"
+        }
+      }
+    },
+    {
+      "replicate": 4,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/4",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/4",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381273000000008,
+            "meanMax": 6.1236,
+            "atLeast6Rate": 0.8818,
+            "atLeast7Rate": 0.2176,
+            "atLeast8Rate": 0.0238,
+            "histogram": [
+              54706,
+              199423,
+              305006,
+              256145,
+              131834,
+              42611,
+              9034,
+              1122,
+              117,
+              2,
+              0
+            ]
+          },
+          "diversity": 15662,
+          "historicalRangeLoss": 0.01972633457183838,
+          "uniformRangeLoss": 0.023577118873596193,
+          "portfolioSha256": "9cbbea27a3780116ac35e9dd746a9f8fd117ab9da6cd27d7c54db5eba693ed97"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380957000000007,
+            "meanMax": 6.1574,
+            "atLeast6Rate": 0.9058,
+            "atLeast7Rate": 0.2322,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54686,
+              199761,
+              304753,
+              256114,
+              131600,
+              42937,
+              8877,
+              1176,
+              95,
+              1,
+              0
+            ]
+          },
+          "diversity": 8528,
+          "historicalRangeLoss": 0.009711783790588376,
+          "uniformRangeLoss": 0.014685614967346192,
+          "portfolioSha256": "221c292f9a34256eb55934b6f2a19339c41b133914fcf5b533ac96821df4b133"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380957000000007,
+            "meanMax": 6.1498,
+            "atLeast6Rate": 0.903,
+            "atLeast7Rate": 0.227,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54731,
+              199599,
+              304888,
+              256142,
+              131654,
+              42730,
+              9002,
+              1157,
+              95,
+              1,
+              1
+            ]
+          },
+          "diversity": 8950,
+          "historicalRangeLoss": 0.01177330722808838,
+          "uniformRangeLoss": 0.00041413059234619165,
+          "portfolioSha256": "73153a317f295ef29a4a16180ff2f0258475fbd0c1cfa56bae077e96b078edfe"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380957000000007,
+            "meanMax": 6.1452,
+            "atLeast6Rate": 0.9018,
+            "atLeast7Rate": 0.224,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54807,
+              199639,
+              304502,
+              256422,
+              131581,
+              42887,
+              8942,
+              1124,
+              95,
+              1,
+              0
+            ]
+          },
+          "diversity": 8952,
+          "historicalRangeLoss": 0.002122428321838378,
+          "uniformRangeLoss": 0.00872223606109619,
+          "portfolioSha256": "120fb51cc0eb5ae4b6b563563cdd74a7c985a910fd6fc69c699f02a80d121a23"
+        }
+      }
+    },
+    {
+      "replicate": 5,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/5",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/5",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3803929999999993,
+            "meanMax": 6.1174,
+            "atLeast6Rate": 0.8682,
+            "atLeast7Rate": 0.229,
+            "atLeast8Rate": 0.0194,
+            "histogram": [
+              54859,
+              199944,
+              304357,
+              256221,
+              131631,
+              42769,
+              8932,
+              1189,
+              94,
+              4,
+              0
+            ]
+          },
+          "diversity": 15217,
+          "historicalRangeLoss": 0.06391951351165773,
+          "uniformRangeLoss": 0.050670426177978525,
+          "portfolioSha256": "21102ff0cc08e7950d9eb96a13d646c52d4f6ffa1a14029d8cf601f8bb9e6347"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.38101800000001,
+            "meanMax": 6.1652,
+            "atLeast6Rate": 0.9064,
+            "atLeast7Rate": 0.2378,
+            "atLeast8Rate": 0.0206,
+            "histogram": [
+              54694,
+              199371,
+              305374,
+              256209,
+              131210,
+              42837,
+              8995,
+              1205,
+              103,
+              2,
+              0
+            ]
+          },
+          "diversity": 8549,
+          "historicalRangeLoss": 0.05222888851165773,
+          "uniformRangeLoss": 0.04148956680297852,
+          "portfolioSha256": "46fefe4a41bbdbedd101c118c6766f83dff0834095aedd36c66977970b5fe2e5"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.38101800000001,
+            "meanMax": 6.1512,
+            "atLeast6Rate": 0.898,
+            "atLeast7Rate": 0.2338,
+            "atLeast8Rate": 0.019,
+            "histogram": [
+              54560,
+              199819,
+              304917,
+              256092,
+              131670,
+              42633,
+              9018,
+              1194,
+              95,
+              2,
+              0
+            ]
+          },
+          "diversity": 8973,
+          "historicalRangeLoss": 0.010595685386657715,
+          "uniformRangeLoss": 0.0004227699279785146,
+          "portfolioSha256": "4e1d6a42d72f492f6f488e9c89ee22753e47418b51417f4b0fe622b3a24d154a"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.38101800000001,
+            "meanMax": 6.1614,
+            "atLeast6Rate": 0.903,
+            "atLeast7Rate": 0.239,
+            "atLeast8Rate": 0.019,
+            "histogram": [
+              54672,
+              199382,
+              305181,
+              256624,
+              131051,
+              42785,
+              8961,
+              1247,
+              95,
+              2,
+              0
+            ]
+          },
+          "diversity": 8974,
+          "historicalRangeLoss": 0.002972833824157711,
+          "uniformRangeLoss": 0.007353141021728516,
+          "portfolioSha256": "0ef1943307062c4157b0adc2481888a91143bedde7fc31782e049a0affef89fb"
+        }
+      }
+    },
+    {
+      "replicate": 6,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/6",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/6",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380626999999999,
+            "meanMax": 6.1068,
+            "atLeast6Rate": 0.872,
+            "atLeast7Rate": 0.2156,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54867,
+              199503,
+              304703,
+              256758,
+              130994,
+              42903,
+              9048,
+              1134,
+              83,
+              7,
+              0
+            ]
+          },
+          "diversity": 14392,
+          "historicalRangeLoss": 0.03514803524017334,
+          "uniformRangeLoss": 0.02915623302459716,
+          "portfolioSha256": "c3cbf585d443436ad4bb03ad2ca35b1eb11412a2a3f91a2f2ee83f17f94d349d"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380833000000008,
+            "meanMax": 6.1502,
+            "atLeast6Rate": 0.9064,
+            "atLeast7Rate": 0.2256,
+            "atLeast8Rate": 0.0174,
+            "histogram": [
+              54681,
+              199816,
+              305233,
+              255303,
+              131883,
+              42740,
+              9089,
+              1168,
+              83,
+              4,
+              0
+            ]
+          },
+          "diversity": 8581,
+          "historicalRangeLoss": 0.027947546958923333,
+          "uniformRangeLoss": 0.022978693962097167,
+          "portfolioSha256": "f8ebfc367005c781876bcd812ad8789f8f47e3e915820ea7cebe9c08302d0a76"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380833000000008,
+            "meanMax": 6.146,
+            "atLeast6Rate": 0.8988,
+            "atLeast7Rate": 0.2284,
+            "atLeast8Rate": 0.0184,
+            "histogram": [
+              54653,
+              199890,
+              304984,
+              255579,
+              131822,
+              42829,
+              8991,
+              1159,
+              91,
+              2,
+              0
+            ]
+          },
+          "diversity": 9005,
+          "historicalRangeLoss": 0.008302332115173337,
+          "uniformRangeLoss": 0.0004745923995971676,
+          "portfolioSha256": "03443cde2e53f016887a3455889797c0a12b02ebbefecc554a8d7c3d889f3fe4"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380833000000008,
+            "meanMax": 6.1464,
+            "atLeast6Rate": 0.9012,
+            "atLeast7Rate": 0.2278,
+            "atLeast8Rate": 0.017,
+            "histogram": [
+              54907,
+              199505,
+              305070,
+              255672,
+              131691,
+              42871,
+              9022,
+              1177,
+              83,
+              2,
+              0
+            ]
+          },
+          "diversity": 9007,
+          "historicalRangeLoss": 0.001659461021423339,
+          "uniformRangeLoss": 0.0066295728683471705,
+          "portfolioSha256": "21cbe63c23fbc70ba532cd30fb326e22d8d88c86d03e64f214e58554b1636003"
+        }
+      }
+    },
+    {
+      "replicate": 7,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/7",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/7",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3820060000000014,
+            "meanMax": 6.1152,
+            "atLeast6Rate": 0.8732,
+            "atLeast7Rate": 0.228,
+            "atLeast8Rate": 0.0138,
+            "histogram": [
+              54217,
+              199565,
+              305282,
+              256207,
+              131791,
+              42891,
+              8763,
+              1214,
+              69,
+              1,
+              0
+            ]
+          },
+          "diversity": 15370,
+          "historicalRangeLoss": 0.025392378997802733,
+          "uniformRangeLoss": 0.018177131843566896,
+          "portfolioSha256": "50d5d202d58981b07a495816a6f7154e1292cbad88535276d13e1a2f21f353da"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380805000000007,
+            "meanMax": 6.1464,
+            "atLeast6Rate": 0.9082,
+            "atLeast7Rate": 0.2196,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              54924,
+              199543,
+              304416,
+              256313,
+              131972,
+              42691,
+              8933,
+              1118,
+              87,
+              2,
+              1
+            ]
+          },
+          "diversity": 8584,
+          "historicalRangeLoss": 0.024305953216552732,
+          "uniformRangeLoss": 0.01541345996856689,
+          "portfolioSha256": "6776679dfb725efa5df502ef1055495de11fc8fcefc74cbef4438f7cbf37983d"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380805000000007,
+            "meanMax": 6.15,
+            "atLeast6Rate": 0.9028,
+            "atLeast7Rate": 0.2272,
+            "atLeast8Rate": 0.0188,
+            "histogram": [
+              55119,
+              199263,
+              304453,
+              256298,
+              131956,
+              42900,
+              8759,
+              1158,
+              89,
+              4,
+              1
+            ]
+          },
+          "diversity": 9013,
+          "historicalRangeLoss": 0.008938668060302734,
+          "uniformRangeLoss": 0.00047830371856689557,
+          "portfolioSha256": "421917c60fa5ed9ff5ec7a4214a8ea606141c4689f83550cc39196ef26cb1c3a"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380805000000007,
+            "meanMax": 6.1416,
+            "atLeast6Rate": 0.9004,
+            "atLeast7Rate": 0.222,
+            "atLeast8Rate": 0.0176,
+            "histogram": [
+              54859,
+              199796,
+              304058,
+              256520,
+              131876,
+              42832,
+              8842,
+              1127,
+              83,
+              6,
+              1
+            ]
+          },
+          "diversity": 9013,
+          "historicalRangeLoss": 0.0026159141540527345,
+          "uniformRangeLoss": 0.005268831062316896,
+          "portfolioSha256": "0c4858c28dff3a0e0ff1ce33a87d343221885b6c31c30365b39e3c136f66ffc6"
+        }
+      }
+    },
+    {
+      "replicate": 8,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/8",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/8",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.379412000000001,
+            "meanMax": 6.1166,
+            "atLeast6Rate": 0.8744,
+            "atLeast7Rate": 0.223,
+            "atLeast8Rate": 0.0184,
+            "histogram": [
+              55100,
+              199488,
+              304878,
+              256189,
+              131485,
+              42836,
+              8784,
+              1147,
+              89,
+              4,
+              0
+            ]
+          },
+          "diversity": 15004,
+          "historicalRangeLoss": 0.04864526920318603,
+          "uniformRangeLoss": 0.033079630661010745,
+          "portfolioSha256": "5b0952d9cf326925af1e794165a395cbca4dadb5c6a3e7aed6db0e37903af04b"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381067000000006,
+            "meanMax": 6.1632,
+            "atLeast6Rate": 0.9074,
+            "atLeast7Rate": 0.2354,
+            "atLeast8Rate": 0.0198,
+            "histogram": [
+              54682,
+              199481,
+              305346,
+              255879,
+              131378,
+              43045,
+              8905,
+              1185,
+              96,
+              3,
+              0
+            ]
+          },
+          "diversity": 8588,
+          "historicalRangeLoss": 0.01691773014068603,
+          "uniformRangeLoss": 0.013712931442260748,
+          "portfolioSha256": "4367bd22eece3d8a0e73c4d951c8f4be53c3335dab4939c458933aa4502f998b"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381067000000006,
+            "meanMax": 6.1516,
+            "atLeast6Rate": 0.903,
+            "atLeast7Rate": 0.2298,
+            "atLeast8Rate": 0.0182,
+            "histogram": [
+              54669,
+              199476,
+              305155,
+              256158,
+              131463,
+              42879,
+              8934,
+              1175,
+              88,
+              3,
+              0
+            ]
+          },
+          "diversity": 9016,
+          "historicalRangeLoss": 0.010112066078186035,
+          "uniformRangeLoss": 0.00038627128601074155,
+          "portfolioSha256": "d89f926aa51878465d094527f1adc2921adcaa596bef0b6269f3572b2b79191d"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381067000000006,
+            "meanMax": 6.1614,
+            "atLeast6Rate": 0.9052,
+            "atLeast7Rate": 0.2362,
+            "atLeast8Rate": 0.0194,
+            "histogram": [
+              54828,
+              199173,
+              305150,
+              256427,
+              131488,
+              42666,
+              8946,
+              1224,
+              95,
+              3,
+              0
+            ]
+          },
+          "diversity": 9016,
+          "historicalRangeLoss": 0.0023791559219360344,
+          "uniformRangeLoss": 0.006493693161010742,
+          "portfolioSha256": "1923d2061a2950cf4779cd8aa047462cea07ea304441a3520813d6e0ad58a2c2"
+        }
+      }
+    },
+    {
+      "replicate": 9,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/9",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/9",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3818510000000033,
+            "meanMax": 6.1226,
+            "atLeast6Rate": 0.8778,
+            "atLeast7Rate": 0.2238,
+            "atLeast8Rate": 0.0192,
+            "histogram": [
+              54590,
+              199285,
+              305296,
+              256120,
+              131698,
+              42651,
+              9058,
+              1206,
+              87,
+              9,
+              0
+            ]
+          },
+          "diversity": 15506,
+          "historicalRangeLoss": 0.04793404960632323,
+          "uniformRangeLoss": 0.026796678543090813,
+          "portfolioSha256": "582c44fc9669fe35467102309f97ba9864233d75f1467f3f00702245294074e1"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3811140000000064,
+            "meanMax": 6.1498,
+            "atLeast6Rate": 0.903,
+            "atLeast7Rate": 0.2258,
+            "atLeast8Rate": 0.0198,
+            "histogram": [
+              54920,
+              198954,
+              305000,
+              256983,
+              131056,
+              42895,
+              8937,
+              1156,
+              93,
+              6,
+              0
+            ]
+          },
+          "diversity": 8578,
+          "historicalRangeLoss": 0.04423815116882324,
+          "uniformRangeLoss": 0.02500263557434083,
+          "portfolioSha256": "920e4dc72577c3ec4907b133422f5fe09ad57ff809185515bc5d47b5e35a144a"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3811140000000064,
+            "meanMax": 6.1522,
+            "atLeast6Rate": 0.9024,
+            "atLeast7Rate": 0.2312,
+            "atLeast8Rate": 0.0178,
+            "histogram": [
+              55103,
+              198865,
+              304798,
+              256950,
+              131147,
+              42980,
+              8877,
+              1191,
+              85,
+              4,
+              0
+            ]
+          },
+          "diversity": 9006,
+          "historicalRangeLoss": 0.012941569137573236,
+          "uniformRangeLoss": 0.00033203010559082024,
+          "portfolioSha256": "5c9b51ddc3a138fcaae2b61229c6092d65d3e5d859d79791883dc60e1dbad73c"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3811140000000064,
+            "meanMax": 6.1352,
+            "atLeast6Rate": 0.896,
+            "atLeast7Rate": 0.2194,
+            "atLeast8Rate": 0.0186,
+            "histogram": [
+              54821,
+              199254,
+              305083,
+              256211,
+              131517,
+              43008,
+              8888,
+              1125,
+              87,
+              6,
+              0
+            ]
+          },
+          "diversity": 9005,
+          "historicalRangeLoss": 0.0026732097625732413,
+          "uniformRangeLoss": 0.010720409011840824,
+          "portfolioSha256": "3a0a1b3a9f332dbede66789d4da3dc6dc19ca96608bbd00c963ebead1d20f7b4"
+        }
+      }
+    },
+    {
+      "replicate": 10,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/10",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/10",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380254999999993,
+            "meanMax": 6.1146,
+            "atLeast6Rate": 0.8686,
+            "atLeast7Rate": 0.2254,
+            "atLeast8Rate": 0.0196,
+            "histogram": [
+              54639,
+              200013,
+              304790,
+              256189,
+              131386,
+              42721,
+              8992,
+              1171,
+              94,
+              5,
+              0
+            ]
+          },
+          "diversity": 15574,
+          "historicalRangeLoss": 0.06406764965057374,
+          "uniformRangeLoss": 0.05716871719360351,
+          "portfolioSha256": "9ebec213f9f97a53a98a723357c2f61c85e41c91c5a66bbb5ed547c8569bcc16"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808910000000094,
+            "meanMax": 6.1564,
+            "atLeast6Rate": 0.9046,
+            "atLeast7Rate": 0.2302,
+            "atLeast8Rate": 0.021,
+            "histogram": [
+              54457,
+              200379,
+              304202,
+              256355,
+              131514,
+              42943,
+              8887,
+              1157,
+              103,
+              3,
+              0
+            ]
+          },
+          "diversity": 8590,
+          "historicalRangeLoss": 0.04034235668182373,
+          "uniformRangeLoss": 0.03741803359985352,
+          "portfolioSha256": "d7f3ceba88d1a252fc31ac8df536314aa36bc0e0655375a7af07d6c1b7850dba"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808910000000094,
+            "meanMax": 6.1546,
+            "atLeast6Rate": 0.9004,
+            "atLeast7Rate": 0.2308,
+            "atLeast8Rate": 0.0226,
+            "histogram": [
+              54688,
+              199936,
+              304372,
+              256449,
+              131504,
+              42854,
+              8921,
+              1160,
+              112,
+              4,
+              0
+            ]
+          },
+          "diversity": 9017,
+          "historicalRangeLoss": 0.01187516918182373,
+          "uniformRangeLoss": 0.0005426429748535156,
+          "portfolioSha256": "12c356bccb02b6f263d3131e72545356c872de9bbc49788a7be25e885d6a4a12"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.3808910000000094,
+            "meanMax": 6.1366,
+            "atLeast6Rate": 0.892,
+            "atLeast7Rate": 0.2248,
+            "atLeast8Rate": 0.0194,
+            "histogram": [
+              54694,
+              199945,
+              304109,
+              256559,
+              131783,
+              42869,
+              8812,
+              1132,
+              95,
+              2,
+              0
+            ]
+          },
+          "diversity": 9019,
+          "historicalRangeLoss": 0.003754856681823731,
+          "uniformRangeLoss": 0.008850553131103514,
+          "portfolioSha256": "52bba34f0ed8897742a86c12eb43e92f0c07a754614fb1d7739a6f0bc63989c3"
+        }
+      }
+    },
+    {
+      "replicate": 11,
+      "seed": "kino-lab-ranges-v1/validation/portfolio/11",
+      "drawSeed": "kino-lab-ranges-v1/validation/draws/11",
+      "methods": {
+        "uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.381209999999997,
+            "meanMax": 6.101,
+            "atLeast6Rate": 0.8666,
+            "atLeast7Rate": 0.2174,
+            "atLeast8Rate": 0.016,
+            "histogram": [
+              54707,
+              199003,
+              305495,
+              256375,
+              131479,
+              42788,
+              8920,
+              1153,
+              75,
+              5,
+              0
+            ]
+          },
+          "diversity": 14351,
+          "historicalRangeLoss": 0.04829199142456055,
+          "uniformRangeLoss": 0.03728472061157227,
+          "portfolioSha256": "3acda2eea3648e39954bb60fbafe7ed4a7537ea702cfb5afe1539b5252db20da"
+        },
+        "diverse": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380792000000003,
+            "meanMax": 6.1616,
+            "atLeast6Rate": 0.9062,
+            "atLeast7Rate": 0.2326,
+            "atLeast8Rate": 0.022,
+            "histogram": [
+              55135,
+              199271,
+              304562,
+              256226,
+              131772,
+              42951,
+              8819,
+              1154,
+              106,
+              4,
+              0
+            ]
+          },
+          "diversity": 8630,
+          "historicalRangeLoss": 0.015213182830810546,
+          "uniformRangeLoss": 0.013151224517822267,
+          "portfolioSha256": "d08e40ba5427cff64eb16241b7f33b42bc8bca48175b991dfe34c0d41e21b69d"
+        },
+        "ranges-uniform": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380792000000003,
+            "meanMax": 6.1566,
+            "atLeast6Rate": 0.9,
+            "atLeast7Rate": 0.234,
+            "atLeast8Rate": 0.0212,
+            "histogram": [
+              54792,
+              199913,
+              304210,
+              256330,
+              131758,
+              42932,
+              8792,
+              1166,
+              100,
+              7,
+              0
+            ]
+          },
+          "diversity": 9061,
+          "historicalRangeLoss": 0.012998729705810542,
+          "uniformRangeLoss": 0.0004240760803222655,
+          "portfolioSha256": "141bb9eb888ed24773ced3a77bbe554b71a288cf1e75125cc1bdc3b11393d95b"
+        },
+        "ranges-history": {
+          "summary": {
+            "draws": 5000,
+            "meanHits": 2.380792000000003,
+            "meanMax": 6.1362,
+            "atLeast6Rate": 0.8914,
+            "atLeast7Rate": 0.2212,
+            "atLeast8Rate": 0.0228,
+            "histogram": [
+              54824,
+              199627,
+              304665,
+              256098,
+              131638,
+              43223,
+              8719,
+              1092,
+              110,
+              4,
+              0
+            ]
+          },
+          "diversity": 9045,
+          "historicalRangeLoss": 0.002313964080810546,
+          "uniformRangeLoss": 0.009395072174072264,
+          "portfolioSha256": "6979321f5dc787c25ed166e123d714e2c207bd57ab7190f89357bba573e5e57e"
+        }
+      }
+    }
+  ],
+  "summaries": {
+    "uniform": {
+      "meanHits": 2.3807845000000003,
+      "meanMax": 6.117766666666667,
+      "atLeast6Rate": 0.8738666666666667,
+      "atLeast7Rate": 0.2238,
+      "atLeast8Rate": 0.019016666666666668
+    },
+    "diverse": {
+      "meanHits": 2.380925833333341,
+      "meanMax": 6.156299999999999,
+      "atLeast6Rate": 0.9060666666666667,
+      "atLeast7Rate": 0.22973333333333334,
+      "atLeast8Rate": 0.019783333333333333
+    },
+    "ranges-uniform": {
+      "meanHits": 2.380925833333341,
+      "meanMax": 6.151316666666666,
+      "atLeast6Rate": 0.9014333333333332,
+      "atLeast7Rate": 0.23016666666666663,
+      "atLeast8Rate": 0.018983333333333335
+    },
+    "ranges-history": {
+      "meanHits": 2.380925833333341,
+      "meanMax": 6.148116666666667,
+      "atLeast6Rate": 0.899666666666667,
+      "atLeast7Rate": 0.22813333333333333,
+      "atLeast8Rate": 0.019600000000000003
+    }
+  },
+  "comparisons": {
+    "diverse": {
+      "replicateDifferences": [
+        0.0014000000000000123,
+        0.009000000000000008,
+        -0.007600000000000023,
+        0.002799999999999997,
+        -0.008199999999999985,
+        0.0011999999999999789,
+        0.0022000000000000075,
+        0.0024000000000000132,
+        0.0007999999999999952,
+        -0.006399999999999989,
+        -0.005399999999999988,
+        -0.011399999999999993
+      ],
+      "meanDifference": -0.0015999999999999973,
+      "interval": [
+        -0.0053500000000000075,
+        0.0020166666666666666
+      ],
+      "leaveOneOutMinimum": -0.0025636363636363613
+    },
+    "ranges-uniform": {
+      "replicateDifferences": [
+        0.007600000000000023,
+        0.0040000000000000036,
+        -0.007600000000000023,
+        -0.0006000000000000172,
+        -0.0030000000000000027,
+        0.005199999999999982,
+        -0.0005999999999999894,
+        -0.00520000000000001,
+        0.006399999999999989,
+        -0.011799999999999977,
+        -0.006000000000000005,
+        -0.012800000000000006
+      ],
+      "meanDifference": -0.002033333333333336,
+      "interval": [
+        -0.006350000000000004,
+        0.0021
+      ],
+      "leaveOneOutMinimum": -0.002909090909090914
+    }
+  },
+  "qualifiesForFurtherTesting": false
+}

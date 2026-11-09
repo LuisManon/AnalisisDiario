@@ -1159,7 +1159,14 @@ export function evaluateKinoSnapshot(snapshot: KinoSnapshot, draw: KinoDraw) {
     return {profile, plays, total, cost, net: total - cost, winners: plays.filter(p => p.prize > 0).length};
   });
 }
-export function buildKinoPostgame(snapshot:KinoSnapshot,draw:KinoDraw) {
+/** Preserve the recorded result when a source later corrects its mutable history. */
+export function kinoRecordedDraw(snapshot:Pick<KinoSnapshot,"targetDate"|"prizeDrawNumbers">,draw:KinoDraw|undefined):KinoDraw|undefined {
+  if(!draw)return undefined;
+  if(draw.date!==snapshot.targetDate)throw new Error("El resultado no corresponde a la cartera guardada.");
+  return snapshot.prizeDrawNumbers?{...draw,numbers:[...snapshot.prizeDrawNumbers]}:draw;
+}
+export function buildKinoPostgame(snapshot:KinoSnapshot,currentDraw:KinoDraw) {
+  const draw=kinoRecordedDraw(snapshot,currentDraw)!;
   const evaluations=evaluateKinoSnapshot(snapshot,draw);
   const evaluatedPlays=evaluations.flatMap(evaluation=>evaluation.plays);
   const exposure=new Map<number,number>();

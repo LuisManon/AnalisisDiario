@@ -7,6 +7,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "experiment:kino": "node --experimental-strip-types scripts/run-kino-experiment.ts",
     "dev": "next dev",
     "dev:lan": "next dev -H 0.0.0.0 -p 3000",
     "build": "next build",

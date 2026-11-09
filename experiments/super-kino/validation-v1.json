@@ -1,0 +1,1426 @@
+{
+  "protocol": {
+    "version": "kino-lab-v1",
+    "phase": "validation",
+    "cutoff": "2026-11-08",
+    "datasetSha256": "dfe8de8a0c4cba472932c6167aa40c1ca5ff9756ef6673eea6f581fa73eadf38",
+    "codeSha256": "52a076fc357ceb65e8ed28f4b2ef9ef525e2aef43bad5cd7a96451d5b3b3471c",
+    "metadata": {
+      "analysisStart": "2026-09-15",
+      "cutoff": "2026-11-08",
+      "drawCount": 55,
+      "warmupCount": 30,
+      "validationCount": 10,
+      "holdoutCount": 15,
+      "firstDate": "2026-09-15",
+      "lastDate": "2026-11-08"
+    },
+    "partitions": {
+      "warmup": [
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-19",
+        "2026-09-20",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-09-26",
+        "2026-09-27",
+        "2026-09-28",
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-14"
+      ],
+      "validation": [
+        "2026-10-15",
+        "2026-10-16",
+        "2026-10-17",
+        "2026-10-18",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21",
+        "2026-10-22",
+        "2026-10-23",
+        "2026-10-24"
+      ],
+      "holdout": [
+        "2026-10-25",
+        "2026-10-26",
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01",
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ]
+    },
+    "modes": [
+      "uniform",
+      "balanced",
+      "v133-production"
+    ],
+    "ticketsPerPortfolio": 200,
+    "numbersPerTicket": 10,
+    "syntheticDrawsPerReplicate": 5000,
+    "portfolioReplicates": 3,
+    "primaryMetric": "probability of at least one7+ ticket per200-ticket portfolio",
+    "secondaryMetrics": [
+      "maxHits",
+      "atLeast6Rate",
+      "atLeast8Rate",
+      "meanHits"
+    ],
+    "selection": "No automatic winner, deployment or parameter tuning",
+    "historicalExposure": "Previously inspected during audit; historical holdout is descriptive, not pristine",
+    "syntheticHoldoutReserved": true,
+    "syntheticUncertainty": "Paired scenario bootstrap per fixed portfolio. Inspect variation across portfolio replicates; not a confidence interval across generator seeds.",
+    "prizes": "Not optimized or compared; rare jackpot events make short-run ROI unstable",
+    "model": "Uniform84/20/10; observed regime boundary, not independently verified official rules",
+    "sources": [
+      "scripts/run-kino-experiment.ts",
+      "lib/kino-experiment-data.ts",
+      "lib/kino-experiment-strategies.ts",
+      "lib/kino-experiment-metrics.ts",
+      "lib/super-kino-v133.ts",
+      "lib/super-kino.ts"
+    ]
+  },
+  "historical": {
+    "kind": "Reconstructed comparison, not recorded bets. V13.3 is replayed even before its activation date; prior outcomes never enter these coverage-only builders.",
+    "summaries": {
+      "uniform": {
+        "draws": 10,
+        "meanHits": 2.367,
+        "meanMax": 6.6,
+        "atLeast6Rate": 0.9,
+        "atLeast7Rate": 0.5,
+        "atLeast8Rate": 0.2,
+        "histogram": [
+          110,
+          403,
+          613,
+          523,
+          242,
+          93,
+          11,
+          3,
+          2,
+          0,
+          0
+        ]
+      },
+      "balanced": {
+        "draws": 10,
+        "meanHits": 2.384,
+        "meanMax": 6.4,
+        "atLeast6Rate": 1,
+        "atLeast7Rate": 0.3,
+        "atLeast8Rate": 0.1,
+        "histogram": [
+          103,
+          398,
+          626,
+          505,
+          265,
+          80,
+          19,
+          3,
+          1,
+          0,
+          0
+        ]
+      },
+      "v133-production": {
+        "draws": 10,
+        "meanHits": 2.3834999999999997,
+        "meanMax": 6.2,
+        "atLeast6Rate": 1,
+        "atLeast7Rate": 0.2,
+        "atLeast8Rate": 0,
+        "histogram": [
+          127,
+          394,
+          593,
+          503,
+          268,
+          88,
+          23,
+          4,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "rows": {
+      "uniform": [
+        {
+          "date": "2026-10-15",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-15",
+          "priorCount": 30,
+          "priorLastDate": "2026-10-14",
+          "evaluation": {
+            "meanHits": 2.34,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              46,
+              57,
+              58,
+              22,
+              8,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-16",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-16",
+          "priorCount": 31,
+          "priorLastDate": "2026-10-15",
+          "evaluation": {
+            "meanHits": 2.31,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              45,
+              57,
+              47,
+              26,
+              8,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-17",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-17",
+          "priorCount": 32,
+          "priorLastDate": "2026-10-16",
+          "evaluation": {
+            "meanHits": 2.355,
+            "maxHits": 8,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": true,
+            "histogram": [
+              8,
+              46,
+              62,
+              48,
+              27,
+              7,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-18",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-18",
+          "priorCount": 33,
+          "priorLastDate": "2026-10-17",
+          "evaluation": {
+            "meanHits": 2.305,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              44,
+              62,
+              47,
+              21,
+              11,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-19",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-19",
+          "priorCount": 34,
+          "priorLastDate": "2026-10-18",
+          "evaluation": {
+            "meanHits": 2.295,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              46,
+              58,
+              59,
+              17,
+              9,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-20",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-20",
+          "priorCount": 35,
+          "priorLastDate": "2026-10-19",
+          "evaluation": {
+            "meanHits": 2.45,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              33,
+              69,
+              53,
+              27,
+              9,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-21",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-21",
+          "priorCount": 36,
+          "priorLastDate": "2026-10-20",
+          "evaluation": {
+            "meanHits": 2.49,
+            "maxHits": 8,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": true,
+            "histogram": [
+              13,
+              37,
+              52,
+              58,
+              22,
+              15,
+              2,
+              0,
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-22",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-22",
+          "priorCount": 37,
+          "priorLastDate": "2026-10-21",
+          "evaluation": {
+            "meanHits": 2.435,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              33,
+              65,
+              57,
+              24,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-23",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-23",
+          "priorCount": 38,
+          "priorLastDate": "2026-10-22",
+          "evaluation": {
+            "meanHits": 2.395,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              34,
+              68,
+              48,
+              31,
+              7,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-24",
+          "portfolioSeed": "kino-lab-v1/historical/uniform/2026-10-24",
+          "priorCount": 39,
+          "priorLastDate": "2026-10-23",
+          "evaluation": {
+            "meanHits": 2.295,
+            "maxHits": 5,
+            "atLeast6": false,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              15,
+              39,
+              63,
+              48,
+              25,
+              10,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "balanced": [
+        {
+          "date": "2026-10-15",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-15",
+          "priorCount": 30,
+          "priorLastDate": "2026-10-14",
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              39,
+              61,
+              54,
+              26,
+              6,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-16",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-16",
+          "priorCount": 31,
+          "priorLastDate": "2026-10-15",
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              34,
+              60,
+              58,
+              23,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-17",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-17",
+          "priorCount": 32,
+          "priorLastDate": "2026-10-16",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              41,
+              61,
+              55,
+              28,
+              6,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-18",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-18",
+          "priorCount": 33,
+          "priorLastDate": "2026-10-17",
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 8,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": true,
+            "histogram": [
+              9,
+              38,
+              74,
+              46,
+              21,
+              8,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-19",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-19",
+          "priorCount": 34,
+          "priorLastDate": "2026-10-18",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              35,
+              73,
+              45,
+              31,
+              6,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-20",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-20",
+          "priorCount": 35,
+          "priorLastDate": "2026-10-19",
+          "evaluation": {
+            "meanHits": 2.395,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              5,
+              50,
+              60,
+              45,
+              27,
+              12,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-21",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-21",
+          "priorCount": 36,
+          "priorLastDate": "2026-10-20",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              10,
+              45,
+              58,
+              49,
+              26,
+              8,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-22",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-22",
+          "priorCount": 37,
+          "priorLastDate": "2026-10-21",
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              34,
+              64,
+              50,
+              33,
+              3,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-23",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-23",
+          "priorCount": 38,
+          "priorLastDate": "2026-10-22",
+          "evaluation": {
+            "meanHits": 2.395,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              16,
+              37,
+              49,
+              62,
+              25,
+              9,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-24",
+          "portfolioSeed": "kino-lab-v1/historical/balanced/2026-10-24",
+          "priorCount": 39,
+          "priorLastDate": "2026-10-23",
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              45,
+              66,
+              41,
+              25,
+              13,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "v133-production": [
+        {
+          "date": "2026-10-15",
+          "portfolioSeed": "2026-10-15",
+          "priorCount": 30,
+          "priorLastDate": "2026-10-14",
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              14,
+              37,
+              61,
+              50,
+              24,
+              11,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-16",
+          "portfolioSeed": "2026-10-16",
+          "priorCount": 31,
+          "priorLastDate": "2026-10-15",
+          "evaluation": {
+            "meanHits": 2.385,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              8,
+              51,
+              51,
+              50,
+              28,
+              10,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-17",
+          "portfolioSeed": "2026-10-17",
+          "priorCount": 32,
+          "priorLastDate": "2026-10-16",
+          "evaluation": {
+            "meanHits": 2.39,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              9,
+              40,
+              64,
+              55,
+              23,
+              4,
+              2,
+              3,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-18",
+          "portfolioSeed": "2026-10-18",
+          "priorCount": 33,
+          "priorLastDate": "2026-10-17",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              29,
+              72,
+              55,
+              21,
+              6,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-19",
+          "portfolioSeed": "2026-10-19",
+          "priorCount": 34,
+          "priorLastDate": "2026-10-18",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              19,
+              43,
+              41,
+              51,
+              35,
+              8,
+              3,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-20",
+          "portfolioSeed": "2026-10-20",
+          "priorCount": 35,
+          "priorLastDate": "2026-10-19",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 7,
+            "atLeast6": true,
+            "atLeast7": true,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              41,
+              58,
+              52,
+              29,
+              8,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-21",
+          "portfolioSeed": "2026-10-21",
+          "priorCount": 36,
+          "priorLastDate": "2026-10-20",
+          "evaluation": {
+            "meanHits": 2.375,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              16,
+              37,
+              58,
+              47,
+              31,
+              9,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-22",
+          "portfolioSeed": "2026-10-22",
+          "priorCount": 37,
+          "priorLastDate": "2026-10-21",
+          "evaluation": {
+            "meanHits": 2.395,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              41,
+              60,
+              45,
+              26,
+              11,
+              4,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-23",
+          "portfolioSeed": "2026-10-23",
+          "priorCount": 38,
+          "priorLastDate": "2026-10-22",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              11,
+              36,
+              69,
+              49,
+              22,
+              11,
+              2,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "date": "2026-10-24",
+          "portfolioSeed": "2026-10-24",
+          "priorCount": 39,
+          "priorLastDate": "2026-10-23",
+          "evaluation": {
+            "meanHits": 2.38,
+            "maxHits": 6,
+            "atLeast6": true,
+            "atLeast7": false,
+            "atLeast8": false,
+            "histogram": [
+              13,
+              39,
+              59,
+              49,
+              29,
+              10,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "synthetic": [
+    {
+      "replicate": 0,
+      "portfolioSeeds": {
+        "uniform": "kino-lab-v1/validation/portfolio/uniform/0",
+        "balanced": "kino-lab-v1/validation/portfolio/balanced/0",
+        "v133-production": "kino-lab-v1/validation/portfolio/v133-production/0"
+      },
+      "drawSeed": "kino-lab-v1/validation/draws/0",
+      "summaries": {
+        "uniform": {
+          "draws": 5000,
+          "meanHits": 2.379977999999997,
+          "meanMax": 6.1098,
+          "atLeast6Rate": 0.8676,
+          "atLeast7Rate": 0.223,
+          "atLeast8Rate": 0.0182,
+          "histogram": [
+            54468,
+            200261,
+            304809,
+            256327,
+            131057,
+            42920,
+            8914,
+            1151,
+            88,
+            5,
+            0
+          ]
+        },
+        "balanced": {
+          "draws": 5000,
+          "meanHits": 2.3810140000000017,
+          "meanMax": 6.1242,
+          "atLeast6Rate": 0.8772,
+          "atLeast7Rate": 0.2258,
+          "atLeast8Rate": 0.0204,
+          "histogram": [
+            55172,
+            199411,
+            304303,
+            255991,
+            131998,
+            43087,
+            8776,
+            1159,
+            99,
+            4,
+            0
+          ]
+        },
+        "v133-production": {
+          "draws": 5000,
+          "meanHits": 2.3808840000000093,
+          "meanMax": 6.1358,
+          "atLeast6Rate": 0.89,
+          "atLeast7Rate": 0.2218,
+          "atLeast8Rate": 0.0228,
+          "histogram": [
+            54508,
+            199793,
+            304759,
+            256768,
+            131200,
+            42740,
+            8976,
+            1141,
+            109,
+            6,
+            0
+          ]
+        }
+      },
+      "versusUniform": {
+        "balanced": {
+          "max": {
+            "meanDifference": 0.0144,
+            "ci95": [
+              -0.010005,
+              0.038409999999999986
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": 0.0028,
+            "ci95": [
+              -0.012205,
+              0.0184
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": 0.0022,
+            "ci95": [
+              -0.0032,
+              0.0076
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        },
+        "v133-production": {
+          "max": {
+            "meanDifference": 0.026,
+            "ci95": [
+              0.0022,
+              0.05000999999999999
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": -0.0012,
+            "ci95": [
+              -0.016804999999999997,
+              0.013404999999999995
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": 0.0046,
+            "ci95": [
+              -0.001,
+              0.0098
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        }
+      }
+    },
+    {
+      "replicate": 1,
+      "portfolioSeeds": {
+        "uniform": "kino-lab-v1/validation/portfolio/uniform/1",
+        "balanced": "kino-lab-v1/validation/portfolio/balanced/1",
+        "v133-production": "kino-lab-v1/validation/portfolio/v133-production/1"
+      },
+      "drawSeed": "kino-lab-v1/validation/draws/1",
+      "summaries": {
+        "uniform": {
+          "draws": 5000,
+          "meanHits": 2.3797289999999944,
+          "meanMax": 6.1038,
+          "atLeast6Rate": 0.8684,
+          "atLeast7Rate": 0.218,
+          "atLeast8Rate": 0.0168,
+          "histogram": [
+            55149,
+            199552,
+            304332,
+            256687,
+            131347,
+            42857,
+            8840,
+            1152,
+            81,
+            3,
+            0
+          ]
+        },
+        "balanced": {
+          "draws": 5000,
+          "meanHits": 2.380949000000005,
+          "meanMax": 6.1404,
+          "atLeast6Rate": 0.8848,
+          "atLeast7Rate": 0.231,
+          "atLeast8Rate": 0.0238,
+          "histogram": [
+            54905,
+            199098,
+            304772,
+            256842,
+            131593,
+            42742,
+            8762,
+            1165,
+            117,
+            4,
+            0
+          ]
+        },
+        "v133-production": {
+          "draws": 5000,
+          "meanHits": 2.38094600000001,
+          "meanMax": 6.1316,
+          "atLeast6Rate": 0.8874,
+          "atLeast7Rate": 0.2238,
+          "atLeast8Rate": 0.0192,
+          "histogram": [
+            54825,
+            199269,
+            305070,
+            256491,
+            131179,
+            42980,
+            8956,
+            1134,
+            90,
+            6,
+            0
+          ]
+        }
+      },
+      "versusUniform": {
+        "balanced": {
+          "max": {
+            "meanDifference": 0.0366,
+            "ci95": [
+              0.010595,
+              0.0614
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": 0.013,
+            "ci95": [
+              -0.0042049999999999995,
+              0.0302
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": 0.007,
+            "ci95": [
+              0.0014,
+              0.0126
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        },
+        "v133-production": {
+          "max": {
+            "meanDifference": 0.0278,
+            "ci95": [
+              0.0022,
+              0.0534
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": 0.0058,
+            "ci95": [
+              -0.0108,
+              0.0234
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": 0.0024,
+            "ci95": [
+              -0.003,
+              0.0078
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        }
+      }
+    },
+    {
+      "replicate": 2,
+      "portfolioSeeds": {
+        "uniform": "kino-lab-v1/validation/portfolio/uniform/2",
+        "balanced": "kino-lab-v1/validation/portfolio/balanced/2",
+        "v133-production": "kino-lab-v1/validation/portfolio/v133-production/2"
+      },
+      "drawSeed": "kino-lab-v1/validation/draws/2",
+      "summaries": {
+        "uniform": {
+          "draws": 5000,
+          "meanHits": 2.3820099999999895,
+          "meanMax": 6.115,
+          "atLeast6Rate": 0.8634,
+          "atLeast7Rate": 0.2276,
+          "atLeast8Rate": 0.0226,
+          "histogram": [
+            54656,
+            199561,
+            304658,
+            256102,
+            131782,
+            43165,
+            8780,
+            1181,
+            108,
+            7,
+            0
+          ]
+        },
+        "balanced": {
+          "draws": 5000,
+          "meanHits": 2.3810270000000133,
+          "meanMax": 6.1306,
+          "atLeast6Rate": 0.8798,
+          "atLeast7Rate": 0.2296,
+          "atLeast8Rate": 0.02,
+          "histogram": [
+            54764,
+            199467,
+            304921,
+            256200,
+            131648,
+            42875,
+            8831,
+            1193,
+            95,
+            6,
+            0
+          ]
+        },
+        "v133-production": {
+          "draws": 5000,
+          "meanHits": 2.3808020000000067,
+          "meanMax": 6.1388,
+          "atLeast6Rate": 0.891,
+          "atLeast7Rate": 0.2298,
+          "atLeast8Rate": 0.0172,
+          "histogram": [
+            54988,
+            198936,
+            305318,
+            256244,
+            131525,
+            42904,
+            8808,
+            1190,
+            83,
+            4,
+            0
+          ]
+        }
+      },
+      "versusUniform": {
+        "balanced": {
+          "max": {
+            "meanDifference": 0.0156,
+            "ci95": [
+              -0.009009999999999999,
+              0.040414999999999986
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": 0.002,
+            "ci95": [
+              -0.013005,
+              0.018
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": -0.0026,
+            "ci95": [
+              -0.008,
+              0.003
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        },
+        "v133-production": {
+          "max": {
+            "meanDifference": 0.0238,
+            "ci95": [
+              -0.0006,
+              0.048604999999999995
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "sevenPlus": {
+            "meanDifference": 0.0022,
+            "ci95": [
+              -0.014,
+              0.0184
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          },
+          "eightPlus": {
+            "meanDifference": -0.0054,
+            "ci95": [
+              -0.0114,
+              -0.00039500000000000456
+            ],
+            "samples": 5000,
+            "bootstrapReplicates": 1000,
+            "seed": 20261108,
+            "unit": "draw/portfolio",
+            "interpretation": "A minus B; paired percentile bootstrap. Synthetic intervals are conditional Monte Carlo uncertainty, not evidence of generalization across portfolios. Historical intervals assume exchangeable draws and may be unstable with small samples."
+          }
+        }
+      }
+    }
+  ]
+}

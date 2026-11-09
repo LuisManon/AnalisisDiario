@@ -1,4 +1,16 @@
 /* Shared presentation layer. Product colors and result states remain semantic. */
+.appShell .analysisPanel { font-variant-numeric: tabular-nums; }
+.appShell .analysisPanel :is(p, small, td) { line-height: 1.6; }
+.appShell .analysisPanel :is(.numberTable, .weeklyTable) tbody tr:nth-child(even) { background: #f8fafc; }
+.appShell .analysisPanel :is(.numberTable, .weeklyTable) tbody tr:hover { background: #eef3fa; }
+.appShell .analysisPanel :is(.kinoSectionHead, .historyCardHeader, .quinielonHistoryHeader) { padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid #e6ebf2; }
+.appShell .analysisPanel :is(.kinoAward > strong, .metric > strong) { letter-spacing: -.035em; }
+.appShell .analysisPanel :is(.kinoAward > small, .metric > span) { color: #52627a; }
+.appShell .analysisPanel :is(.kinoWeekGrid, .lotoPortfolioCalendarGrid) > article { background: #fff; box-shadow: none; }
+.appShell .analysisPanel :is(.kinoWeekGrid, .lotoPortfolioCalendarGrid) footer { border-top: 1px solid #dce9df; font-size: .72rem; line-height: 1.5; }
+.appShell .analysisPanel :is(.kinoWeekGrid, .lotoPortfolioCalendarGrid) footer strong { display: block; margin-top: 3px; color: #245338; font-size: 1.15rem; font-weight: 750; }
+.appShell .analysisPanel .kinoWeekPrizeGroups strong { font-size: .85rem; font-weight: 650; line-height: 1.5; }
+.appShell .analysisPanel :is(.kinoWeekStatus, .lotoPortfolioCalendarStatus) { font-size: .83rem; color: #52627a; }
 .appShell .analysisDashboard { --text: #243247; --muted: #64748b; --line: #e2e8f0; --panel: #fff; }
 .appShell .analysisDashboard :is(.card, .metric, .topPositionsAccordion, .quinielonRosterSection, .investorSection, .bankSection) {
   background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: none; backdrop-filter: none;

@@ -16,6 +16,7 @@ Lee la skill del perfil que corresponda antes de trabajar. El perfil principal s
 | Fuentes, importaciones y calidad del historial | `.agents/skills/ingeniero-datos/SKILL.md` |
 | Métricas, consultas e interpretación de resultados | `.agents/skills/analista-datos/SKILL.md` |
 | Estrategias, simulaciones y experimentos estadísticos | `.agents/skills/cientifico-datos/SKILL.md` |
+| Combinatoria, probabilidad, límites de cobertura y objetivos de optimización | `.agents/skills/matematico-aplicado/SKILL.md` |
 | Regresiones y verificación de reglas | `.agents/skills/ingeniero-qa/SKILL.md` |
 | Navegación, dashboards y experiencia móvil | `.agents/skills/disenador-ux-ui/SKILL.md` |
 

@@ -20,16 +20,26 @@ export const automationWindows = [
 
 export type AutomationOperation = {
   label: string; path: string; body?: { session: "dia" | "noche" };
-  expect: "kino-result" | "loto-result" | "quinielon-result" | "portfolio" | "loto-portfolio" | "assignment";
+  expect: "kino-result" | "loto-result" | "quinielon-result" | "portfolio" | "loto-portfolio" | "assignment" | "saved-state";
   date: string; session?: "dia" | "noche";
 };
-export function automationPlan(cron: string, now = new Date()) {
+type AutomationPlan = { date: string; window: typeof automationWindows[number]; operations: AutomationOperation[]; missed: string[]; expired: boolean };
+export function automationPlan(cron: string, now = new Date()): AutomationPlan {
   const window = automationWindows.find(window => window.cron === cron);
   if (!window) throw new Error("Ventana de automatización desconocida.");
   const clock = dominicanClock(now);
   const date = clock.minutes < window.minute ? shiftDrawDate(clock.date, -1) : clock.date;
   const due = drawTimestamp({ date, minutes: window.minute });
-  if (now.getTime() - due > 3 * 60 * 60_000) throw new Error("La ventana llegó con más de tres horas de retraso; no se generarán carteras para otra tanda.");
+  if (now.getTime() - due > 3 * 60 * 60_000) {
+    // Reconstruct the intended targets, not the current/next session. Never call
+    // generation or update endpoints when the window has expired.
+    const intended = automationPlan(cron, new Date(due));
+    return { ...intended, expired: true, operations: intended.operations.map(operation => ({
+      ...operation, expect: "saved-state" as const,
+      path: `/api/automation/status?kind=${operation.expect}&date=${operation.date}${operation.session ? `&session=${operation.session}` : ""}`,
+      body: undefined
+    })) };
+  }
   const operations: AutomationOperation[] = [];
   const missed: string[] = [];
   const add = (operation: AutomationOperation) => operations.push(operation);
@@ -66,10 +76,11 @@ export function automationPlan(cron: string, now = new Date()) {
     while (!drawSlots("kino", nextKinoDate).length) nextKinoDate = shiftDrawDate(nextKinoDate, 1);
     add({ label: "Seguimiento Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date: nextKinoDate });
   }
-  return { date, window, operations, missed };
+  return { date, window, operations, missed, expired: false };
 }
 
 export function operationReady(operation: AutomationOperation, payload: Record<string, any>) {
+  if (operation.expect === "saved-state") return payload.ready === true && payload.date === operation.date && (!operation.session || payload.session === operation.session);
   if (operation.expect === "portfolio" || operation.expect === "loto-portfolio") {
     const current = payload.current;
     const saved = current?.targetDate === operation.date && Array.isArray(current.plays) && current.plays.length > 0;

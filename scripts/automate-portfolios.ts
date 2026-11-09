@@ -7,6 +7,7 @@ export async function runAutomation({ cron, appUrl, now = new Date(), request = 
 }) {
   const plan = automationPlan(cron, now);
   const report: Array<{ label: string; state: string; detail: string }> = plan.missed.map(detail => ({ label: "Ventana de preparación vencida", state: "failed", detail }));
+  if (plan.expired) report.push({ label: "Ventana vencida", state: "warning", detail: "Más de tres horas de retraso: solo se verifican registros guardados; no se generan carteras ni se actualizan resultados." });
   for (const operation of plan.operations) {
     try {
       const response = await request(new URL(operation.path, appUrl), {
@@ -18,7 +19,7 @@ export async function runAutomation({ cron, appUrl, now = new Date(), request = 
       const payload = await response.json();
       if (!response.ok || payload.ok === false || payload.error) throw new Error(payload.message ?? payload.error ?? `HTTP ${response.status}`);
       const ready = operationReady(operation, payload);
-      report.push({ label: operation.label, state: ready ? "ready" : plan.window.final ? "failed" : "pending", detail: ready ? `${operation.date} guardado/verificado` : `Pendiente ${operation.date}${operation.session ? ` ${operation.session}` : ""}` });
+      report.push({ label: operation.label, state: ready ? "ready" : plan.expired || plan.window.final ? "failed" : "pending", detail: ready ? `${operation.date} guardado/verificado` : `Pendiente ${operation.date}${operation.session ? ` ${operation.session}` : ""}${plan.expired ? ": falta el registro guardado; requiere recuperación en una ventana vigente" : ""}` });
     } catch (error) {
       report.push({ label: operation.label, state: "failed", detail: error instanceof Error ? error.message : "Error de consulta" });
     }
