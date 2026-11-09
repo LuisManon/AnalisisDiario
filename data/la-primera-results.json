@@ -5,7 +5,17 @@
     "number": 9,
     "drawId": 901,
     "source": "https://laprimera.do/resultados/",
-    "verification": "confirmed"
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-11-08/"
+  },
+  {
+    "date": "2026-11-08",
+    "session": "noche",
+    "number": 77,
+    "drawId": 896,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-noche/2026-11-08/"
   },
   {
     "date": "2026-11-07",
