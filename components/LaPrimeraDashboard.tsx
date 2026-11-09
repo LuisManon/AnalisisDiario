@@ -1,4 +1,5 @@
 "use client";
+import { quinielonOutcomeTone, summarizeQuinielonOutcomes } from "../lib/quinielon-outcome-tone";
 
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent, type ReactNode } from "react";
 import { buildQuinielonV2Rankings } from "../lib/quinielon-rankings";
@@ -384,10 +385,11 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         status = winner?.number === draw.number && !winner.validationError && winner.group ? winner.group : "pendiente";
       }
       const delayBadge = draw && date >= calendarDelayBadgeStartDate ? winner?.delayBadge ?? numberDelayBadge(results, draw.number, draw) : "";
-      return { session, draw, status, delayBadge };
+      return { session, draw, status, delayBadge, outcomeTone: investors ? "neutral" as const : quinielonOutcomeTone(draw, winner) };
     })
   }));
   const resolved = days.flatMap((day) => day.tandas).filter((tanda) => tanda.status !== "pendiente");
+  const outcomeSummary = summarizeQuinielonOutcomes(days.flatMap(day=>day.tandas.map(tanda=>tanda.outcomeTone)));
   const totals = {
     nosotros: resolved.filter((tanda) => tanda.status === "nosotros").length,
     inversionistas: resolved.filter((tanda) => tanda.status === "inversionistas").length,
@@ -411,11 +413,11 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "Desde el 29 de septiembre, el grupo y el ganador corresponden al reparto guardado de cada tanda. Las tandas sin un reparto validado quedan pendientes de revisión."}</p></div>
         {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
       </header>
-      <div className="quinielonCalendarOverview"><div><strong>{resolved.length}<small>/14</small></strong><span>Tandas resueltas</span></div><div><strong>{awaitingValidation}</strong><span>Por validar</span></div><div><strong>{pending}</strong><span>Sin resultado</span></div><p><span className="casa">La Casa</span><span className="inversionistas">Inversionistas</span><span className="banca">Banca</span></p></div>
+      <div className="quinielonCalendarOverview"><div><strong>{resolved.length}<small>/14</small></strong><span>Tandas resueltas</span></div><div><strong>{awaitingValidation}</strong><span>Por validar</span></div><div><strong>{pending}</strong><span>Sin resultado</span></div><p><span className="casa">Ganador · La Casa</span><span className="inversionistas">Ganador · Inversionistas</span><span className="banca">Banca / sin ganador</span><span className="neutral">Por validar</span></p></div>
       <div className="weeklyDayGrid">
         {days.map((day) => <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
           <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div></header>
-          <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status}`} key={tanda.session}>
+          <div className="weeklyTandas">{day.tandas.map((tanda) => <div className={`weeklyTanda ${tanda.status} outcome-${tanda.outcomeTone}`} key={tanda.session}>
             <span>{formatSession(tanda.session)}</span>
             <strong>{tanda.status === "pendiente" ? (tanda.draw ? "Por validar" : "Pendiente") : quinielonV2GroupLabels[tanda.status]}</strong>
             {tanda.draw ? <div className="weeklyDrawResult"><b>{formatQuinielonNumber(tanda.draw.number)}</b><small>{tanda.draw.verification==="provisional"?"Provisional · La Banca":"Quinielón confirmado"}</small></div> : <small>Esperando resultado</small>}
@@ -439,7 +441,15 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         </div>)}</div> : <p>Sin cambios de grupo esta semana.</p>}
       </aside>
       <div className="weeklyTopActions">
-        <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {awaitingValidation ? `${awaitingValidation} tandas pendientes de validación. ` : ""}{pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : awaitingValidation ? "" : "La semana está completa."}</p></div>
+        {investors ? <div className="weeklyTopSummary"><strong>{percentages.nosotros}% La Casa · {percentages.inversionistas}% Inversionistas · {percentages.banca}% Banca</strong><p>Marcador de la semana: <b>{totals.nosotros}–{totals.inversionistas}–{totals.banca}</b> en {resolved.length} tandas resueltas{lastResolvedDate ? `, desde el lunes hasta el ${formatShortDate(lastResolvedDate)}` : ""}. {awaitingValidation ? `${awaitingValidation} tandas pendientes de validación. ` : ""}{pending ? monday < history.currentMonday ? `Faltan ${pending} resultados en el historial.` : `Quedan ${pending} tandas pendientes.` : awaitingValidation ? "" : "La semana está completa."}</p></div> : (
+          <div className="weeklyTopSummary quinielonOutcomeSummary">
+            <div>
+              <article><span>Sorteos ganados</span><strong>{outcomeSummary.wonPercentage===null?"—":`${outcomeSummary.wonPercentage}%`}</strong><small>{outcomeSummary.won} de {outcomeSummary.evaluated} evaluados</small></article>
+              <article><span>Sorteos perdidos</span><strong>{outcomeSummary.lostPercentage===null?"—":`${outcomeSummary.lostPercentage}%`}</strong><small>{outcomeSummary.lost} de {outcomeSummary.evaluated} evaluados</small></article>
+            </div>
+            <p>Ganados: con ganador de La Casa o Inversionistas. Perdidos: Banca o sin ganador registrado en un reparto validado. Cada tanda cuenta como un sorteo. {outcomeSummary.pending ? `Sin evaluación operativa: ${outcomeSummary.pending}. Pendientes y retrospectivas se excluyen del cálculo.` : "Las 14 tandas están evaluadas."} Este indicador no mide rentabilidad.</p>
+          </div>
+        )}
       </div>
       </AnimatedWeek>
     </section>

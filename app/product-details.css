@@ -88,23 +88,33 @@
 .quinielonCalendarOverview strong small { color: #8190a5; font-size: .8rem; font-weight: 400; }
 .quinielonCalendarOverview > div > span { font-size: .7rem; color: #64748b; }
 .quinielonCalendarOverview > p { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 0 auto; font-size: .72rem; color: #52627a; }
-.quinielonCalendarOverview > p > span::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; background: #c98090; }
-.quinielonCalendarOverview .inversionistas::before { background: #667fa9; }
-.quinielonCalendarOverview .banca::before { background: #b69a57; }
+.quinielonCalendarOverview > p > span::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; background: #328052; }
+.quinielonCalendarOverview .inversionistas::before { background: #b38a17; }
+.quinielonCalendarOverview .banca::before { background: #bd4141; }
+.quinielonCalendarOverview .neutral::before { background: #94a3b8; }
 .appShell .quinielonV2Weekly .weeklyDayCard { box-shadow: none; background: #fff; border: 1px solid #dfe6ef; border-radius: 12px; overflow: hidden; }
 .appShell .quinielonV2Weekly .weeklyDayCard > header { background: #eef2f8; border-bottom: 1px solid #e0e7f1; padding: 12px; }
 .appShell .quinielonV2Weekly .weeklyDayCard > header strong { color: #293f6c; font-size: .9rem; text-transform: capitalize; }
 .appShell .quinielonV2Weekly .weeklyDayCard > header span { color: #64748b; font-size: .69rem; }
 .appShell .quinielonV2Weekly .weeklyTanda { padding: 12px; border-radius: 0; background: #fff; border-left: 3px solid #b7c4d8; }
-.appShell .quinielonV2Weekly .weeklyTanda.nosotros { background: #fff8fa; border-left-color: #cf94a3; }
-.appShell .quinielonV2Weekly .weeklyTanda.inversionistas { background: #f7faff; border-left-color: #829ac2; }
-.appShell .quinielonV2Weekly .weeklyTanda.banca { background: #fffdf7; border-left-color: #c7ae74; }
+.appShell .quinielonV2Weekly .weeklyTanda.outcome-neutral { background: #f8fafc; border-left-color: #b7c4d8; }
+.appShell .quinielonV2Weekly .weeklyTanda.outcome-danger { background: #fff8fa; border-left-color: #cf94a3; }
+.appShell .quinielonV2Weekly .weeklyTanda.outcome-success { background: #f6fbf7; border-left-color: #a1c9ae; }
+.appShell .quinielonV2Weekly .weeklyTanda.outcome-warning { background: #fffdf7; border-left-color: #c7ae74; }
 .appShell .quinielonV2Weekly .weeklyTanda > span:first-child { font-size: .65rem; color: #64748b; text-transform: uppercase; letter-spacing: .06em; }
 .appShell .quinielonV2Weekly .weeklyTanda > strong { color: #43546d; font-size: .75rem; }
 .appShell .quinielonV2Weekly .weeklyDrawResult { flex-direction: column; align-items: start; gap: 6px; margin: 8px 0; }
 .appShell .quinielonV2Weekly .weeklyDrawResult b { display: grid; place-items: center; width: 42px; height: 42px; background: #fff; border: 1px solid #dce4ef; border-radius: 10px; color: #293f6c; font-size: 1.4rem; font-weight: 750; line-height: 1; }
 .appShell .quinielonV2Weekly .weeklyDrawResult small { font-size: .64rem; color: #64748b; }
 .appShell .quinielonV2Weekly .weeklyInvestorWinner { color: #43546d; font-size: .72rem; line-height: 1.5; }
+.appShell .quinielonV2Weekly .quinielonOutcomeSummary { width: 100%; }
+.quinielonOutcomeSummary > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.quinielonOutcomeSummary article { display: grid; gap: 6px; padding: 18px; background: #f3f6fc; border: 1px solid #dce5f2; border-radius: 12px; }
+.appShell .quinielonV2Weekly .quinielonOutcomeSummary article :is(span,strong,small) { color: #293f6c; }
+.quinielonOutcomeSummary article > span { font-size: .85rem; font-weight: 650; }
+.quinielonOutcomeSummary article > strong { font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+.quinielonOutcomeSummary article > small { font-size: .74rem; }
+.appShell .quinielonV2Weekly .quinielonOutcomeSummary > p { margin-top: 12px; color: #52627a; font-size: .76rem; line-height: 1.6; }
 
 @media(max-width: 900px) {
   .appShell .lotoTheme .numberSearchFilters { grid-template-columns: repeat(2,minmax(0,1fr)); }

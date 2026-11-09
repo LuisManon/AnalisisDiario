@@ -22,3 +22,11 @@ Se rediseñaron los filtros y métricas del buscador, la densidad del Top 5, la 
 Quinielón utiliza una franja compacta para el estado de datos, con advertencia para errores/provisionales, y un calendario con números destacados, colores por grupo y resumen de tandas resueltas, por validar y sin resultado. Los tres conteos describen el estado existente; no modifican la resolución de ganadores.
 
 Verificación visual en escritorio, 390px y Top 5 a 320px, sin desbordamiento horizontal de página. Se corrigió el recorte del botón PDF en móvil, se comprobó la apertura de premios mediante Enter y el avance del historial a la página 2 con cinco filas. Las pruebas se ejecutan contra una copia temporal sin credenciales; no se modifican registros operativos.
+
+## Resultado operativo de Quinielón
+
+El calendario distingue ganador de La Casa (verde suave), ganador de Inversionistas (amarillo suave) y Banca o sin ganador (rojo suave). Los números mantienen el azul y fondo blanco de la línea gráfica. Estados sin validar, provisionales, errores y retrospectivas permanecen neutros.
+
+El resumen público reemplaza las cuotas por grupo por «Sorteos ganados» y «Sorteos perdidos», ambos en azul. Cada tanda cuenta como un sorteo. Ganado significa que existe ganador identificado de La Casa o Inversionistas en un reparto validado; perdido significa Banca o sin ganador. Pendientes y retrospectivas se excluyen del denominador; sin evaluaciones se muestra un guion, no 0% de rendimiento. Es un indicador de aciertos operativos, no de rentabilidad.
+
+En la semana del 2–8 de noviembre, los registros de prueba muestran 7 ganados y 6 perdidos de 13 evaluados: 54% y 46%, con una tanda sin reparto validado excluida. Los tests cubren cada color, grupo histórico, discrepancia de número, datos provisionales, simulaciones, porcentajes y cero evaluaciones.
