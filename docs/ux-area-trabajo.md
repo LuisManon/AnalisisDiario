@@ -14,3 +14,11 @@ La intervención utiliza el perfil de UX/UI y la capa compartida existente; no a
 Inspección visual en el navegador del entorno temporal aislado, escritorio y móvil de 390px, en Super Kino TV, El Quinielón 2.0 y Loto Más. La página no desborda horizontalmente en móvil; el calendario Kino conserva su desplazamiento interno intencional. Se observaron carga, resultados guardados, sin cartera y pendientes sin convertirlos en ceros. Home/End siguen seleccionando primera/última pestaña. Pruebas del orden, conservación de referencias y no mutación, TypeScript y build.
 
 Alcance: mejora de navegación y línea gráfica compartida, no rediseño individual de todos los gráficos. Cambios locales pendientes de publicación.
+
+## Refinamiento de componentes de Loto Más y Quinielón
+
+Se rediseñaron los filtros y métricas del buscador, la densidad del Top 5, la cabecera y filas del generador de 30 jugadas, y las filas del historial. Se conservan porcentajes, conteos, filtros y cinco resultados por página. La tabla de premios pasa a un botón de información con apertura por teclado/toque, sin cambiar los importes de referencia.
+
+Quinielón utiliza una franja compacta para el estado de datos, con advertencia para errores/provisionales, y un calendario con números destacados, colores por grupo y resumen de tandas resueltas, por validar y sin resultado. Los tres conteos describen el estado existente; no modifican la resolución de ganadores.
+
+Verificación visual en escritorio, 390px y Top 5 a 320px, sin desbordamiento horizontal de página. Se corrigió el recorte del botón PDF en móvil, se comprobó la apertura de premios mediante Enter y el avance del historial a la página 2 con cinco filas. Las pruebas se ejecutan contra una copia temporal sin credenciales; no se modifican registros operativos.

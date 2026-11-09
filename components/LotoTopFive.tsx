@@ -38,8 +38,7 @@ export function LotoTopFive({ stats }: { stats: Stats }) {
               return <td key={index} className={index === 0 ? "lotoTopFiveLeader" : undefined}>
                 <div className={`lotoTopFiveEntry${match ? " isMatch" : ""}`} title={`${row.name}: ${String(entry.number).padStart(2, "0")} · ${entry.count} apariciones en ${stats.drawCount} sorteos${match ? " · Coincide con la posición del último sorteo" : ""}`}>
                   <span className="lotoTopFiveNumber">{String(entry.number).padStart(2, "0")}{match ? <i className="lotoTopFiveMatchDot" aria-hidden="true" /> : null}</span>
-                  <span className="lotoTopFiveCount"><strong>{entry.count}</strong> <span className="lotoTopFiveCountUnit">{entry.count === 1 ? "vez" : "veces"}</span></span>
-                  <span className="lotoTopFiveShare">{percentage}%</span>
+                  <span className="lotoTopFiveStats"><span className="lotoTopFiveCount"><strong>{entry.count}</strong> <span className="lotoTopFiveCountUnit">{entry.count === 1 ? "vez" : "veces"}</span></span><span className="lotoTopFiveShare">{percentage}%</span></span>
                   {match ? <span className="lotoTopFiveSr">Coincide con la posición del último sorteo</span> : null}
                 </div>
               </td>;

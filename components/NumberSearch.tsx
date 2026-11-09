@@ -142,11 +142,8 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
 
   return (
     <>
-      <section className="sectionHeader">
-        <h2>Buscador de Números</h2>
-        <p>Análisis estadístico histórico de números principales y número Más.</p>
-      </section>
       <section className="card numberSearch">
+        <header className="lotoSearchHeader"><div><span className="lotoSectionEyebrow">Consulta histórica</span><h2>Buscador de números</h2><p>Explora apariciones, posiciones y fechas. Los datos históricos no predicen el próximo sorteo.</p></div><span className="lotoSearchCount">{results.length} sorteos disponibles</span></header>
         <SearchAccordion title="Filtros de búsqueda" summary={hasSearched ? `${subject} · ${positionLabel} · ${formatDay(day)}` : "Configura los criterios y pulsa Buscar"} defaultOpen>
           <form onSubmit={(event) => {
             event.preventDefault();
@@ -217,6 +214,8 @@ export function NumberSearch({ results }: { results: DrawResult[] }) {
             </div>
           </form>
         </SearchAccordion>
+
+        {!hasSearched ? <p className="lotoSearchEmpty">Elige un número y pulsa <strong>Buscar</strong> para ver su resumen, comparativas e historial.</p> : null}
 
         {hasSearched ? (
           <>

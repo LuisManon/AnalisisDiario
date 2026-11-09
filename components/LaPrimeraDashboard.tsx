@@ -194,6 +194,7 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 export function LaPrimeraDashboard({ initialData }: Props) {
   const [results, setResults] = useState(initialData.results);
   const [status, setStatus] = useState(`Datos listos: ${initialData.results.length} sorteos cargados.`);
+  const [statusTone, setStatusTone] = useState<"ready" | "warning">("ready");
   const resultsRef = useRef(initialData.results);
   useEffect(() => {
     let mounted = true;
@@ -212,8 +213,9 @@ export function LaPrimeraDashboard({ initialData }: Props) {
           setResults(payload.results);
         }
         setStatus(`${payload.message} Total: ${payload.total}.`);
+        setStatusTone(payload.provisional || payload.waiting ? "warning" : "ready");
       } catch {
-        if (mounted) setStatus("La fuente oficial está tardando. Puede seguir consultando los datos guardados.");
+        if (mounted) { setStatus("La fuente oficial está tardando. Puede seguir consultando los datos guardados."); setStatusTone("warning"); }
       } finally { updating = false; }
     }
     if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
@@ -222,7 +224,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     }, 60_000);
     return () => { mounted = false; window.clearInterval(interval); };
   }, []);
-  return <LaPrimeraQuinielonV2View variant="quinielon-v2" results={results} status={status} />;
+  return <LaPrimeraQuinielonV2View variant="quinielon-v2" results={results} status={status} statusTone={statusTone} />;
 }
 
 function ProductSwitch({ product, onChange }: { product: LaPrimeraProduct; onChange: (product: LaPrimeraProduct) => void }) {
@@ -409,6 +411,7 @@ function QuinielonV2WeeklyChallenge({ results, variant }: { results: LaPrimeraDr
         <div><span className="panelLabel primeraLabel">{investors ? "Puja semanal Inversionistas" : "Calendario de sorteos"} · 14 tandas</span><h2>La Casa contra Inversionistas y Banca</h2><p>{investors ? "La Casa: 30 activos · Inversionistas: siguientes 30 activos · Banca: 40 restantes. La alineación queda congelada al comenzar el lunes." : "Desde el 29 de septiembre, el grupo y el ganador corresponden al reparto guardado de cada tanda. Las tandas sin un reparto validado quedan pendientes de revisión."}</p></div>
         {investors ? <div className="weeklyRoster"><strong>100 por tanda</strong><span>Día y Noche independientes · {formatShortDate(monday)}–{formatShortDate(sunday)}</span></div> : null}
       </header>
+      <div className="quinielonCalendarOverview"><div><strong>{resolved.length}<small>/14</small></strong><span>Tandas resueltas</span></div><div><strong>{awaitingValidation}</strong><span>Por validar</span></div><div><strong>{pending}</strong><span>Sin resultado</span></div><p><span className="casa">La Casa</span><span className="inversionistas">Inversionistas</span><span className="banca">Banca</span></p></div>
       <div className="weeklyDayGrid">
         {days.map((day) => <article className={`weeklyDayCard ${day.date === today ? "today" : ""}`} key={day.date}>
           <header><div><strong>{new Intl.DateTimeFormat("es-DO", { weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</strong><span>{formatShortDate(day.date)}</span></div></header>
@@ -448,7 +451,7 @@ function QuinielonV2DelayPanel({ results, ranking, session, referenceDate }: { r
   return <aside className="rosterDelayPanel" role="status"><strong>6 meses o más sin salir</strong><small>{formatSession(session)} · calculado hasta {formatShortDate(referenceDate)}</small>{delayed.length ? <div className="rosterDelayList">{delayed.map((item) => <span key={item.number}>{formatQuinielonNumber(item.number)}<small>{item.lastDate ? formatShortDate(item.lastDate) : "Sin registro"}</small></span>)}</div> : <p>Ninguno.</p>}</aside>;
 }
 
-function LaPrimeraQuinielonV2View({ results, status, variant }: { results: LaPrimeraDraw[]; status: string; variant: QuinielonVariant }) {
+function LaPrimeraQuinielonV2View({ results, status, variant, statusTone = "ready" }: { results: LaPrimeraDraw[]; status: string; variant: QuinielonVariant; statusTone?: "ready" | "warning" }) {
   const investors = variant === "inversionistas";
   const [showSymbols, setShowSymbols] = useState(true);
   const [openInfo, setOpenInfo] = useState<string | null>(null);
@@ -484,7 +487,7 @@ function LaPrimeraQuinielonV2View({ results, status, variant }: { results: LaPri
       const latest = latestBySession[session];
       return <article className={`v2LatestCard ${session}`} key={session}><i className="v2SkyIcon" aria-hidden="true" /><span>{formatSession(session)}</span><strong>{laPrimeraSchedules[session].time}</strong>{latest ? <QuinielonBall number={latest.number} tone={session === "dia" ? "red" : "dark"} /> : <b>Sin datos</b>}<small>{latest ? <>{formatShortDate(latest.date)} · <b>{latest.verification==="provisional"?"Provisional · esperando La Primera":latest.date===today||latest.date===addDays(today,-1)?getLatestDateLabel(latest):"Último cargado"}</b></> : "Sin fecha"}</small></article>;
     })}</div></div></section>
-<section className="toolbar primeraToolbar"><span className="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</span></section>
+<p className={`quinielonDataStatus ${statusTone}`} role="status">{status} {investors ? "Inversionistas" : "El Quinielón 2.0"} mantiene clasificaciones independientes por tanda.</p>
 <DrawPublicationStatus product="quinielon" results={results} />
 <AnalysisWorkspace panels={[
 { id: "analizar", label: "Analizar", description: "Compara La Casa, Inversionistas y Banca por tanda. Toca un número para ver su detalle.", content: <>

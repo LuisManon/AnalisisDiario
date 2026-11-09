@@ -5,11 +5,12 @@ import { Ball } from "./Ball";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
 import { LotoTopFive } from "./LotoTopFive";
+import { LotoPrizeInfo } from "./LotoPrizeInfo";
 import { publicationWindow } from "../lib/draw-schedule";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize, virtualPrizeTable } from "../lib/game";
+import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize } from "../lib/game";
 import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
 
 type ApiState = {
@@ -263,25 +264,11 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           </p>
         </div>
         <div className="heroPanel latestDrawPanel">
-          <span className="panelLabel">Ultimo sorteo</span>
+          <div className="lotoLatestHeading"><span className="panelLabel">Último sorteo cargado</span><LotoPrizeInfo /></div>
           {latest ? (
             <>
               <strong>{latest.date} · {formatDay(latest.day)}</strong>
               <DrawBalls numbers={latest.numbers} plus={latest.plus} />
-              <details className="latestPrizeTable">
-                <summary>Ver tabla de premios</summary>
-                <table>
-                  <tbody>
-                    {virtualPrizeTable.map((prize) => (
-                      <tr key={`${prize.matches}-${prize.plus}`}>
-                        <td>{prize.label}</td>
-                        <th>{formatMoney(prize.amount)}</th>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <small>Tabla de premios de referencia para Loto Más.</small>
-              </details>
             </>
           ) : (
             <strong>Sin datos</strong>
@@ -384,8 +371,8 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         open
       >
         <summary>
-          <span>Generador de 30 Jugadas</span>
-          <small>Inclinado al {formatDay(portfolioTargetDay)} {formatShortDate(portfolioTargetDate)} · 10 fuertes, 10 equilibradas y 10 exploratorias.</small>
+          <span><span className="lotoSectionEyebrow">Cartera guardada</span>Generador de 30 Jugadas</span>
+          <small>{formatDay(portfolioTargetDay)} · {formatShortDate(portfolioTargetDate)}<span className="lotoPortfolioProfiles">10 fuertes · 10 equilibradas · 10 exploratorias</span></small>
         </summary>
         {thirtyPlayPortfolio ? (
           <div className="portfolioSnapshots">
@@ -445,8 +432,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
 <section className="card historyCard">
         <header className="historyCardHeader">
           <div>
+            <span className="lotoSectionEyebrow">Archivo de sorteos</span>
             <h2>Historial cargado</h2>
-            <p>{filteredHistory.length} sorteos en el filtro actual. Mostrando {paginatedHistory.length} por pagina.</p>
+            <p>{filteredHistory.length} sorteos · {day === "todos" ? "Todos los días" : formatDay(day)} · {paginatedHistory.length} en esta página</p>
           </div>
           <span className="historyControls">5 resultados por página</span>
         </header>
@@ -454,10 +442,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
           {paginatedHistory.map((result) => (
             <div className="historyRow" key={result.date}>
               <div className="historyDate">
-                <strong>{result.date}</strong>
-                <span>{formatLongDate(result.date)}</span>
+                <strong>{formatShortDate(result.date)}</strong>
+                <span>{formatDay(result.day)}</span>
               </div>
-              <DrawBalls numbers={result.numbers} plus={result.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} />
+              <div className="lotoHistoryNumbers"><span>Principales <b>+ Más</b></span><DrawBalls numbers={result.numbers} plus={result.plus} winningNumbers={latest?.numbers} winningPlus={latest?.plus} /></div>
             </div>
           ))}
         </div>
