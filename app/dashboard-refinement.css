@@ -1,0 +1,64 @@
+/* Shared presentation layer. Product colors and result states remain semantic. */
+.appShell .analysisDashboard { --text: #243247; --muted: #64748b; --line: #e2e8f0; --panel: #fff; }
+.appShell .analysisDashboard :is(.card, .metric, .topPositionsAccordion, .quinielonRosterSection, .investorSection, .bankSection) {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: none; backdrop-filter: none;
+}
+.appShell .analysisDashboard :is(.card, .quinielonRosterSection) { padding: 24px; }
+.appShell .analysisDashboard :is(h2,h3) { color: #243247; letter-spacing: -.025em; }
+.appShell .analysisDashboard h2 { font-size: 1.25rem; line-height: 1.4; }
+.appShell .analysisDashboard h3 { font-size: 1rem; line-height: 1.4; }
+.appShell .analysisDashboard :is(.eyebrow, .panelLabel) { color: #64748b; font-size: .68rem; font-weight: 800; letter-spacing: .11em; }
+.appShell .analysisDashboard :is(.sectionHeader, .kinoSectionHead, .historyCardHeader, .quinielonHistoryHeader) { gap: 14px; align-items: flex-start; }
+.appShell .analysisDashboard :is(.sectionHeader, .kinoSectionHead, .historyCardHeader, .quinielonHistoryHeader) p { font-size: .82rem; line-height: 1.65; color: #64748b; }
+.appShell .analysisDashboard .heroPanel { background: #f8fafc; border: 1px solid #e8edf4; border-radius: 14px; box-shadow: none; }
+.appShell .analysisDashboard :is(.metric, .kinoMetrics > div) { padding: 18px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; box-shadow: none; transform: none; }
+.appShell .analysisDashboard .metric strong { font-size: 1.9rem; color: #334e82; }
+.appShell .analysisDashboard .metric > span { font-size: .78rem; color: #64748b; }
+.appShell .analysisDashboard :is(.toolbar, .searchControls, .numberSearchControls) { background: #f7f9fc; border: 1px solid #e6ebf2; box-shadow: none; border-radius: 12px; }
+.appShell .analysisDashboard :is(.primaryButton, .secondaryButton, .downloadButton, .miniButton) { background: #334e82; border: 1px solid #334e82; color: #fff; box-shadow: none; border-radius: 8px; min-height: 40px; font-size: .82rem; }
+.appShell .analysisDashboard button:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.appShell .analysisDashboard :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select) { border: 1px solid #dce3ed; border-radius: 8px; background: #fff; color: #334155; box-shadow: none; min-height: 40px; max-width: 100%; }
+.appShell .analysisDashboard .segmented { border: 1px solid #e2e8f0; background: #f1f5f9; border-radius: 9px; box-shadow: none; }
+.appShell .analysisDashboard .segmented button { border-radius: 7px; box-shadow: none; }
+.appShell .analysisDashboard .segmented button.active { background: #334e82; color: #fff; }
+.appShell .analysisDashboard .topPositionsAccordion > summary { padding: 20px 24px; background: #fff; color: #243247; border-radius: 16px; }
+.appShell .analysisDashboard .topPositionsAccordion > summary small { display: block; color: #64748b; font-size: .78rem; font-weight: 400; margin-top: 7px; line-height: 1.6; }
+.appShell .analysisDashboard :is(.historyRow, .numberHistory > div, .kinoHistory > article) { box-shadow: none; border: 1px solid #e6ebf2; background: #fafbfd; border-radius: 10px; }
+.appShell .analysisDashboard :is(.numberTable, .weeklyTable) { border-collapse: collapse; font-size: .82rem; }
+.appShell .analysisDashboard :is(.numberTable, .weeklyTable) th { background: #f7f9fc; color: #64748b; font-size: .74rem; padding: 12px; }
+.appShell .analysisDashboard :is(.numberTable, .weeklyTable) td { padding: 12px; border-color: #edf0f5; }
+.appShell .analysisDashboard :is(.numberTableWrap, .tableWrap) { border: 1px solid #e6ebf2; border-radius: 12px; overflow-x: auto; }
+.appShell .analysisDashboard :is(.numberSearchPanel, .numberMainMetric, .additionalMetrics > div, .numberInterpretation) { background: #f8fafc; border: 1px solid #e6ebf2; box-shadow: none; border-radius: 12px; }
+.appShell .analysisDashboard :is(.v2LatestCard, .v2RosterColumn, .primeraCard, .distributorGrid article, .kinoPlayColumn, .portfolioColumn) { box-shadow: none; border-radius: 12px; border: 1px solid #e2e8f0; }
+.appShell .analysisDashboard .v2RosterColumn { background: #fafbfd; padding: 14px; }
+.appShell .analysisDashboard .v2RosterColumnTitle { padding-bottom: 12px; border-bottom: 1px solid #e6ebf2; margin-bottom: 12px; }
+.appShell .analysisDashboard :is(.kinoPlayColumn, .portfolioColumn) > header { background: #f7f9fc; color: #334155; border-bottom: 1px solid #e6ebf2; }
+.appShell .analysisDashboard :is(.kinoPlayRow, .portfolioPlay) { border-color: #edf0f5; }
+.appShell .analysisDashboard .ball { box-shadow: none; }
+.appShell .analysisDashboard :is(.lotoPortfolioCalendarGrid > article, .kinoCalendar > article) { box-shadow: none; border-radius: 10px; }
+.appShell .analysisDashboard :is(.pagination, .kinoHistoryPagination, .kinoPortfolioNavigation) { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 0 0; margin-top: 16px; border-top: 1px solid #e6ebf2; background: none; font-size: .78rem; color: #64748b; }
+.appShell .analysisDashboard :is(.pagination, .kinoHistoryPagination, .kinoPortfolioNavigation) button { min-height: 40px; padding: 9px 13px; border: 1px solid #dce3ed; border-radius: 8px; background: #fff; color: #334e82; box-shadow: none; font-size: .78rem; }
+.appShell .analysisDashboard .kinoPortfolioNavigation button.active { background: #334e82; color: #fff; }
+.appShell .analysisDashboard .kinoPortfolioGrid { grid-template-columns: minmax(0, 1fr); min-width: 0; max-width: 700px; margin: auto; }
+.appShell .analysisDashboard .kinoPortfolioNavigation > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.quinielonHistoryDay { border: 1px solid #e2e8f0; border-radius: 12px; margin-top: 14px; overflow: hidden; }
+.appShell .analysisDashboard :is(.quinielonHistoryFilters, .kinoSectionHead) > button { border: 1px solid #dce3ed; background: #fff; color: #334e82; border-radius: 8px; min-height: 40px; padding: 10px 12px; font-size: .8rem; cursor: pointer; }
+.quinielonHistoryDay > header { padding: 12px 16px; background: #f7f9fc; border-bottom: 1px solid #e6ebf2; color: #334155; font-size: .84rem; font-weight: 700; text-transform: capitalize; }
+.quinielonHistorySessions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.quinielonHistorySession { padding: 16px; display: grid; grid-template-columns: minmax(0,1fr) 48px; align-items: center; gap: 12px; }
+.quinielonHistorySession + .quinielonHistorySession { border-left: 1px solid #e6ebf2; }
+.quinielonHistorySession h3 { margin: 0 0 4px; }
+.quinielonHistorySession > p { grid-column: 1 / -1; margin: 0; color: #64748b; font-size: .78rem; }
+.quinielonHistorySession small { color: #64748b; font-size: .72rem; }
+.quinielonHistorySession .quinielonHistorySource { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #edf0f5; font-size: .75rem; }
+.quinielonHistorySession.isSearchMatch { background: #eff8f4; box-shadow: inset 3px 0 #548573; }
+@media (max-width: 760px) {
+  .appShell .analysisDashboard :is(.card, .quinielonRosterSection) { padding: 18px 14px; }
+  .appShell .analysisDashboard h2 { font-size: 1.1rem; }
+  .appShell .analysisDashboard .topPositionsAccordion > summary { padding: 18px 14px; }
+  .appShell .analysisDashboard :is(.pagination, .kinoHistoryPagination, .kinoPortfolioNavigation) { justify-content: center; gap: 8px; }
+  .appShell .analysisDashboard .kinoPortfolioNavigation > div { order: 3; flex-basis: 100%; justify-content: center; }
+  .quinielonHistorySessions { grid-template-columns: 1fr; }
+  .quinielonHistorySession + .quinielonHistorySession { border-left: 0; border-top: 1px solid #e6ebf2; }
+  .quinielonHistoryFilters { gap: 10px; }
+}

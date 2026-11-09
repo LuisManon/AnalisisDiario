@@ -3,6 +3,7 @@ import "./styles.css";
 import "./analysis-workspace.css";
 import "./loto-top-five.css";
 import "./loto-analysis-maps.css";
+import "./dashboard-refinement.css";
 
 export const metadata: Metadata = {
   title: "Análisis Diario",

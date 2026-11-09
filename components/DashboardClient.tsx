@@ -21,7 +21,6 @@ type DashboardClientProps = {
 };
 
 const defaultHistoryPageSize = 5;
-type HistoryPageSize = 5 | 10 | 25 | 50 | "todos";
 type PortfolioCalendarEntry = {
   date: string;
   day: "miercoles" | "sabado";
@@ -124,7 +123,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSeconds, setUpdateSeconds] = useState(0);
   const [historyPage, setHistoryPage] = useState(1);
-  const [historyPageSize, setHistoryPageSize] = useState<HistoryPageSize>(defaultHistoryPageSize);
   const [scatterYear, setScatterYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
   const [scatterDay, setScatterDay] = useState<DayFilter>("todos");
   const [scatterSeries, setScatterSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6", "Mas"]);
@@ -166,7 +164,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     const byYear = rangeYear === "todos" ? data.results : data.results.filter((result) => result.date.startsWith(rangeYear));
     return rangeDay === "todos" ? byYear : byYear.filter((result) => result.day === rangeDay);
   }, [data.results, rangeDay, rangeYear]);
-  const activePageSize = historyPageSize === "todos" ? filteredHistory.length || defaultHistoryPageSize : historyPageSize;
+  const activePageSize = defaultHistoryPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
   useEffect(() => {
@@ -208,10 +206,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     setHistoryPage(1);
   }
 
-  function changeHistoryPageSize(value: string) {
-    setHistoryPageSize(value === "todos" ? "todos" : (Number(value) as HistoryPageSize));
-    setHistoryPage(1);
-  }
 
   async function checkUpdate() {
     if (publicationWindow("loto")) return;
@@ -454,17 +448,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
             <h2>Historial cargado</h2>
             <p>{filteredHistory.length} sorteos en el filtro actual. Mostrando {paginatedHistory.length} por pagina.</p>
           </div>
-          <div className="historyControls">
-            <label htmlFor="historyPageSize">Mostrar</label>
-            <select id="historyPageSize" value={historyPageSize} onChange={(event) => changeHistoryPageSize(event.target.value)}>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="todos">Todos</option>
-            </select>
-            <span>resultados</span>
-          </div>
+          <span className="historyControls">5 resultados por página</span>
         </header>
         <div className="history historyList">
           {paginatedHistory.map((result) => (
@@ -480,15 +464,15 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         <nav className="pagination" aria-label="Paginacion del historial">
           <button
             className="secondaryButton"
-            disabled={historyPage === 1 || historyPageSize === "todos"}
+            disabled={historyPage === 1}
             onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}
           >
             Anterior
           </button>
-          <span>{historyPageSize === "todos" ? "Todos visibles" : `Pagina ${historyPage} de ${historyPageCount}`}</span>
+          <span>Página {historyPage} de {historyPageCount}</span>
           <button
             className="secondaryButton"
-            disabled={historyPage === historyPageCount || historyPageSize === "todos"}
+            disabled={historyPage === historyPageCount}
             onClick={() => setHistoryPage((page) => Math.min(historyPageCount, page + 1))}
           >
             Siguiente
