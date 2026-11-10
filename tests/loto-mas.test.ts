@@ -10,7 +10,8 @@ test("the top five Mas numbers are distributed exactly six times across thirty p
   const targetDate = "2026-10-10";
   const prior = results.filter((draw) => draw.date < targetDate).sort((a, b) => b.date.localeCompare(a.date));
   const portfolio = buildThirtyPlayPortfolio(results, targetDate);
-  const expected = buildPlusOrder(prior).slice(0, 5);
+  const expected = buildPlusOrder(prior.filter(draw=>draw.day===portfolio.targetDay)).slice(0, 5);
+  assert.deepEqual(buildPlusOrder(prior),buildPlusOrder([...prior].reverse()));
   assert.equal(portfolio.algorithmVersion, thirtyPlayAlgorithmVersion);
   assert.deepEqual(portfolio.plusTopFive, expected);
   assert.equal(portfolio.plays.length, 30);
@@ -27,4 +28,19 @@ test("the Loto Mas calendar summary uses the frozen thirty plays", () => {
   assert.ok(summary.total >= 150_000_000);
   assert.ok(summary.groups.some(group => group.matches === 6 && group.plusMatched && group.amount === 150_000_000));
   assert.throws(() => summarizeThirtyPlayPrizes(portfolio, {...draw,date:"2026-10-11"}));
+});
+
+test("independent-day portfolios ignore opposite-day and target/future outcomes",()=>{
+  const target="2026-10-10",input=results.filter(d=>d.date<target),before=JSON.stringify(input);
+  const a=buildThirtyPlayPortfolio(input,target);
+  const b=buildThirtyPlayPortfolio(input.filter(d=>d.day==="sabado"),target);
+  const c=buildThirtyPlayPortfolio(results,target);
+  assert.deepEqual(a.plays,b.plays);assert.deepEqual(a.plays,c.plays);
+  assert.deepEqual(a.plusTopFive,b.plusTopFive);
+  assert.ok(a.plays.every(p=>p.scope==="mismo-dia"));
+  assert.equal(new Set(a.plays.map(p=>p.numbers.join(","))).size,30);
+  assert.ok(a.exposure.every(item=>item.count<=9));
+  for(let position=0;position<6;position++)for(let number=1;number<=40;number++)assert.ok(a.plays.filter(p=>p.numbers[position]===number).length<=6);
+  for(const profile of ["fuerte","equilibrada","exploratoria"])assert.equal(a.plays.filter(p=>p.profile===profile).length,10);
+  assert.equal(JSON.stringify(input),before);
 });

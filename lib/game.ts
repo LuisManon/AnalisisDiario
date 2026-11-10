@@ -19,7 +19,7 @@ export const virtualPrizeTable = [
   { matches: 3, plus: false, amount: 100, label: "3 aciertos" }
 ];
 
-export const thirtyPlayAlgorithmVersion = "v4-top5-plus";
+export const thirtyPlayAlgorithmVersion = "v5-independent-days";
 
 export function formatMoney(amount: number) {
   return new Intl.NumberFormat("es-DO", {
@@ -567,6 +567,7 @@ function positionalDelayAlert(numbers: number[], results: DrawResult[], targetDa
 }
 
 export function buildPlusOrder(draws: DrawResult[]) {
+  draws = [...draws].sort((a,b)=>b.date.localeCompare(a.date));
   const counts = countNumbers(draws, (draw) => [draw.plus]);
   return Array.from({ length: 12 }, (_, index) => index + 1).sort((a, b) => {
     const delayA = draws.findIndex((draw) => draw.plus === a);
@@ -575,19 +576,23 @@ export function buildPlusOrder(draws: DrawResult[]) {
   });
 }
 
-export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: string): ThirtyPlayPortfolio {
+export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: string, experiment: {mode?: "legacy" | "day-plus" | "day-only"; relaxFilters?: boolean} = {}): ThirtyPlayPortfolio {
   const targetDay = getDrawDay(targetDate);
   const prior = [...results]
     .filter((draw) => draw.date < targetDate)
     .sort((a, b) => b.date.localeCompare(a.date));
   const sameDay = prior.filter((draw) => draw.day === targetDay);
-  const previousDraw = prior[0];
+  const mode = experiment.mode ?? "day-only";
+  const relaxFilters = experiment.relaxFilters ?? mode === "day-only";
+  if(!sameDay.length) throw new Error("No hay historial del día objetivo para construir la cartera.");
+  const scopedPrior = mode === "day-only" ? sameDay : prior;
+  const previousDraw = scopedPrior[0];
   const previousSameDay = sameDay[0];
-  const historical = new Set(prior.map((draw) => combinationKey(draw.numbers)));
+  const historical = new Set(scopedPrior.map((draw) => combinationKey(draw.numbers)));
   const profiles: RecommendationProfile[] = ["fuerte", "equilibrada", "exploratoria"];
   const scopes: Array<{ scope: PortfolioScope; analysis: DrawResult[] }> = [
     { scope: "mismo-dia", analysis: sameDay },
-    { scope: "historial-completo", analysis: prior }
+    { scope: "historial-completo", analysis: scopedPrior }
   ];
   const groups = profiles.flatMap((profile) => scopes.map(({ scope, analysis }) => {
     const forcedProfiles = Array.from({ length: 100 }, () => profile);
@@ -607,9 +612,9 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
         previousSameDayRepeats,
         inRangeCount,
         p1p3Nearby: p1p3NearbyCount(play.numbers, analysis),
-        positionalDelayAlert: positionalDelayAlert(play.numbers, prior, targetDate)
+        positionalDelayAlert: positionalDelayAlert(play.numbers, scopedPrior, targetDate)
       };
-    }).filter((play) => !historical.has(combinationKey(play.numbers)) && play.p1p3Nearby >= 3 && !play.positionalDelayAlert)
+    }).filter((play) => !historical.has(combinationKey(play.numbers)) && (relaxFilters || (play.p1p3Nearby >= 3 && !play.positionalDelayAlert)))
       .filter((play) => profile !== "fuerte" || (play.daySupportCount === 6 && play.previousDrawRepeats <= 2 && play.previousSameDayRepeats <= 1))
       .filter((play) => profile !== "equilibrada" || play.daySupportCount >= 4)
       .filter((play) => profile !== "exploratoria" || (play.daySupportCount >= 4 && play.daySupportCount <= 5));
@@ -649,7 +654,7 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     }
   }
 
-  const plusTopFive = buildPlusOrder(prior).slice(0, 5);
+  const plusTopFive = buildPlusOrder(mode === "legacy" ? prior : sameDay).slice(0, 5);
   const plays: PortfolioPlay[] = [];
   const totalPlayCount = groups.reduce((sum, group) => sum + group.selected.length, 0);
   if (totalPlayCount !== 30) throw new Error(`Solo se pudieron construir ${totalPlayCount} de las 30 jugadas de Loto Más.`);
@@ -658,9 +663,10 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     const profileGroups = groups.filter((group) => group.profile === profile);
     const profilePlays = profileGroups.flatMap((group) => group.selected);
     profilePlays.forEach((play, index) => {
-      const scopeLabel = play.scope === "mismo-dia" ? `solo ${targetDay}` : "miercoles y sabados";
+      const scopeLabel = mode === "day-only" || play.scope === "mismo-dia" ? `solo ${targetDay}` : "miercoles y sabados";
       plays.push({
         ...play,
+        scope: mode === "day-only" ? "mismo-dia" : play.scope,
         id: index + 1,
         plus: plusAssignments[plays.length],
         explanation: `${scopeLabel}; ${play.inRangeCount}/6 dentro de rango; ${play.p1p3Nearby} antecedentes P1-P3 cercanos; repite ${play.previousDrawRepeats} del sorteo anterior.`
@@ -672,7 +678,7 @@ export function buildThirtyPlayPortfolio(results: DrawResult[], targetDate: stri
     targetDate,
     targetDay,
     generatedAt: new Date().toISOString(),
-    algorithmVersion: thirtyPlayAlgorithmVersion,
+    algorithmVersion: mode === "day-only" && relaxFilters ? thirtyPlayAlgorithmVersion : `experiment-${mode}${relaxFilters?"-relaxed":""}`,
     plusTopFive,
     plays,
     exposure: Array.from({ length: 40 }, (_, index) => ({ number: index + 1, count: numberExposure[index + 1] }))
