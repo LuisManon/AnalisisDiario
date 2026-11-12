@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { readResults } from "../../../lib/data";
-import { getDominicanNow, getNextGameDate, summarizeThirtyPlayPrizes } from "../../../lib/game";
+import { getDominicanNow, summarizeThirtyPlayPrizes } from "../../../lib/game";
 import { getOrCreatePortfolio, readSavedPortfolios } from "../../../lib/portfolio-store";
+import { lotoPortfolioDisplayDate } from "../../../lib/loto-portfolio-date";
 import { drawSlots } from "../../../lib/draw-schedule";
 export const maxDuration = 180;
 
@@ -19,9 +20,9 @@ function weekDrawDates(targetDate: string) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const targetDate = searchParams.get("drawDate") || getNextGameDate();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate) || !Number.isFinite(Date.parse(`${targetDate}T12:00:00Z`)) || new Date(`${targetDate}T12:00:00Z`).toISOString().slice(0,10) !== targetDate || !drawSlots("loto", targetDate).length) return NextResponse.json({ message: "Fecha de Loto Más inválida." }, { status: 400 });
   const results = await readResults();
+  const targetDate = searchParams.get("drawDate") || lotoPortfolioDisplayDate(results);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate) || !Number.isFinite(Date.parse(`${targetDate}T12:00:00Z`)) || new Date(`${targetDate}T12:00:00Z`).toISOString().slice(0,10) !== targetDate || !drawSlots("loto", targetDate).length) return NextResponse.json({ message: "Fecha de Loto Más inválida." }, { status: 400 });
   const current = await getOrCreatePortfolio(targetDate, results);
   const previousDraw = results.find((draw) => draw.date < targetDate) ?? null;
   const saved = await readSavedPortfolios();

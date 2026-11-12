@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { Ball } from "./Ball";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
 import { LotoTopFive } from "./LotoTopFive";
 import { LotoPrizeInfo } from "./LotoPrizeInfo";
+import { lotoPortfolioDisplayDate } from "../lib/loto-portfolio-date";
 import { publicationWindow } from "../lib/draw-schedule";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getNextGameDate, getVirtualPrize } from "../lib/game";
+import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getVirtualPrize } from "../lib/game";
 import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
 
 type ApiState = {
@@ -130,14 +131,31 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [rangeYear, setRangeYear] = useState(initialData.results[0]?.date.slice(0, 4) ?? "todos");
   const [rangeDay, setRangeDay] = useState<DayFilter>("todos");
   const [rangeSeries, setRangeSeries] = useState(["P1", "P2", "P3", "P4", "P5", "P6"]);
-  const [portfolioTargetDate] = useState(() => getNextGameDate());
+  const [portfolioClock, setPortfolioClock] = useState(() => Date.now());
+  const portfolioTargetDate = lotoPortfolioDisplayDate(data.results, new Date(portfolioClock));
   const portfolioTargetDay = getDrawDay(portfolioTargetDate);
   const [thirtyPlayPortfolio, setThirtyPlayPortfolio] = useState<ThirtyPlayPortfolio | null>(null);
   const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
   const [portfolioCalendar, setPortfolioCalendar] = useState<PortfolioCalendarEntry[]>([]);
   const [portfolioMessage, setPortfolioMessage] = useState("Cargando las jugadas guardadas.");
   const automaticUpdateStarted = useRef(false);
-  const resultsRevision = useRef(initialData.results[0]?.date);
+
+  const loadPortfolioData = useCallback(async (signal?: AbortSignal) => {
+    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
+    try {
+      const response = await fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`, { signal });
+      if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
+      const payload = await response.json();
+      if (signal?.aborted) return;
+      setThirtyPlayPortfolio(payload.current ?? null);
+      setPreviousPortfolio(payload.previous ?? null);
+      setPortfolioCalendar(payload.calendar ?? []);
+      setPortfolioMessage("");
+    } catch {
+      if (signal?.aborted) return;
+      setPortfolioMessage("No se pudieron cargar las jugadas guardadas.");
+    }
+  }, [portfolioTargetDate]);
 
   useEffect(() => {
     const expectedDate = getLatestExpectedDrawDate();
@@ -169,13 +187,16 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
   useEffect(() => {
-    void loadPortfolioData();
-  }, [portfolioTargetDate]);
+    const controller = new AbortController();
+    void loadPortfolioData(controller.signal);
+    return () => controller.abort();
+  }, [loadPortfolioData, data.results[0]?.date]);
 
   useEffect(() => {
     let mounted = true;
     let busy = false;
     const timer = window.setInterval(async () => {
+      setPortfolioClock(Date.now());
       if (busy || publicationWindow("loto")) return;
       busy = true;
       try {
@@ -185,10 +206,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         const payload = await response.json();
         if (mounted && Array.isArray(payload.results)) {
           setData({ results: payload.results });
-          if (resultsRevision.current !== payload.results[0]?.date) {
-            resultsRevision.current = payload.results[0]?.date;
-            void loadPortfolioData();
-          }
         }
       } catch { /* Keep the last valid local results visible. */ }
       finally { busy = false; }
@@ -218,7 +235,9 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message);
       if (Array.isArray(payload.results)) setData({ results: payload.results });
-      await loadPortfolioData();
+      if (!Array.isArray(payload.results) || lotoPortfolioDisplayDate(payload.results) === portfolioTargetDate) {
+        await loadPortfolioData();
+      }
       setStatus(`${payload.message} Total: ${payload.total}. Ultimo sorteo: ${payload.latest?.date ?? "N/D"}.`);
     } catch {
       setStatus("No se pudo consultar la fuente remota. La data local permanece disponible.");
@@ -227,20 +246,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     }
   }
 
-  async function loadPortfolioData() {
-    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
-    try {
-      const response = await fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`);
-      if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
-      const payload = await response.json();
-      setThirtyPlayPortfolio(payload.current ?? null);
-      setPreviousPortfolio(payload.previous ?? null);
-      setPortfolioCalendar(payload.calendar ?? []);
-      setPortfolioMessage("");
-    } catch {
-      setPortfolioMessage("No se pudieron cargar las jugadas guardadas.");
-    }
-  }
 
   function downloadHistory() {
     const blob = new Blob([`${JSON.stringify(data.results, null, 2)}\n`], { type: "application/json" });

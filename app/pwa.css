@@ -1,0 +1,72 @@
+/* Use the same canvas around every product, including Safari overscroll. */
+:root { --app-background: #f3f5f9; }
+html:has(.appShell:is(.lotoShell, .primeraShell)), body:has(.appShell:is(.lotoShell, .primeraShell)) { background: var(--app-background); }
+.appShell:is(.lotoShell, .primeraShell) { background: var(--app-background); box-shadow: none; }
+.analysisWorkspaceIcon, .mobileWorkspaceNavigation { display: none; }
+/* Mobile app frame: bars occupy their own rows and never cover the workspace. */
+.mobileAppHeader, .appTabIcon { display: none; }
+.appWorkspace { min-width: 0; max-width: 100%; }
+@media (max-width: 760px) {
+  html, body { height: 100%; width: 100%; overflow: hidden; overscroll-behavior: none; }
+  .appShell:is(.lotoShell, .primeraShell) {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: var(--app-viewport-height, 100dvh);
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  .mobileAppHeader {
+    grid-row: 1; display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; z-index: 30; color: #fff; background: #243650;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+  }
+  .mobileAppHeader strong { font-size: 16px; }
+  .mobileAppHeader button { min-width: 44px; min-height: 44px; border: 1px solid #ffffff55; border-radius: 8px; color: #fff; background: transparent; font: inherit; padding: 8px; }
+  .appWorkspace {
+    grid-row: 3; min-height: 0; overflow-y: auto; overflow-x: hidden;
+    overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
+    scroll-padding-block: 20px; padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  }
+  .appWorkspace > .analysisDashboard { min-height: 0; max-width: 100%; min-width: 0; }
+  .appShell .appTabs {
+    grid-row: 2; position: relative; inset: auto; z-index: 30;
+    width: 100%; max-width: 100%; margin: 0; border-radius: 0;
+    border: 0; border-bottom: 1px solid #dce3ed;
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) 6px max(8px, env(safe-area-inset-left, 0px));
+    background: #fff; gap: 4px;
+  }
+  .appShell .appTabs button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 44px; min-width: 44px; padding: 6px 2px; font-size: 12px; border-radius: 8px; }
+  .mobileWorkspaceNavigation {
+    display: block; grid-row: 4; z-index: 30; min-width: 0;
+    background: var(--app-background); border-top: 1px solid #dce3ed;
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+  }
+  .appShell .mobileWorkspaceNavigation .analysisWorkspaceTabs {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px; padding: 0; border: 0; border-radius: 0; background: transparent;
+  }
+  .appShell .mobileWorkspaceNavigation .analysisWorkspaceTabs button {
+    flex-direction: column; gap: 4px; min-width: 44px; min-height: 56px;
+    padding: 6px 2px; font-size: 12px; line-height: 1.3; border-radius: 8px;
+  }
+  .mobileWorkspaceNavigation .analysisWorkspaceTabLabel { text-align: center; }
+  .mobileWorkspaceNavigation :is(.analysisWorkspaceIndex, .analysisWorkspaceTabLabel small) { display: none; }
+  .mobileWorkspaceNavigation .analysisWorkspaceIcon { display: block; width: 22px; height: 22px; }
+  .appShell .analysisWorkspaceIntro { display: none; }
+  .keyboardOpen .mobileWorkspaceNavigation { display: none; }
+  .appShell .analysisDashboard :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) { font-size: 16px; scroll-margin-block: 24px; }
+  .appWorkspace .kinoInfoTooltip { position: static; }
+  .appWorkspace .kinoAlgorithmLabel, .appWorkspace .heroPanel { position: relative; }
+  .appWorkspace .kinoInfoContent { left: 0; width: 100%; max-width: 100%; transform: translateY(-4px); }
+  .appWorkspace .kinoInfoTooltip:is(:hover, :focus, :focus-within) .kinoInfoContent { transform: translateY(0); }
+  .appWorkspace :is(img, svg, canvas) { max-width: 100%; }
+  .appWorkspace :is(.analysisWorkspace, .analysisPanel) { min-width: 0; max-width: 100%; }
+}
+@media (max-width: 430px) {
+  .appShell .lotoTheme .heroPanel .ballsRow { flex-wrap: wrap; }
+}
