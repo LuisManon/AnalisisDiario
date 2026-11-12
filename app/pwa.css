@@ -70,3 +70,17 @@ html:has(.appShell:is(.lotoShell, .primeraShell)), body:has(.appShell:is(.lotoSh
 @media (max-width: 430px) {
   .appShell .lotoTheme .heroPanel .ballsRow { flex-wrap: wrap; }
 }
+
+/* Installed WebKit can report a dvh shorter than its layout viewport. Anchor
+   the frame to the viewport edges and apply the home-indicator inset once. */
+@media (max-width: 760px) and (display-mode: standalone) {
+  .appShell:is(.lotoShell, .primeraShell) {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
+  .keyboardOpen .appShell:is(.lotoShell, .primeraShell) {
+    bottom: auto;
+    height: var(--app-viewport-height, 100%);
+  }
+}

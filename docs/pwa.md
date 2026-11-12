@@ -39,3 +39,9 @@ Se unifica el lienzo de `html`, `body` y el contenedor de los tres productos a `
 La consulta de la web publicada durante el diagnóstico devolvió 404 para `/apple-touch-icon.png` y `/manifest.webmanifest`: las mejoras locales requieren despliegue para estar disponibles al instalar desde producción.
 
 Verificación del ajuste: 48 combinaciones (tres productos × cuatro áreas × cuatro anchos) sin desbordamiento general, con cuatro destinos al pie de al menos 44×44 px y fondos exteriores uniformes. Escritorio a 1280 px conserva las pestañas dentro del área de trabajo. Se verificó el enlace `apple-touch-icon` del HTML y la descarga local de `/apple-icon.png?v=2`: PNG de 180×180. TypeScript, build y nueve pruebas de navegación/caché/gestos correctos. Safari e instalación física siguen pendientes.
+
+## Ajuste de los extremos en iPhone
+
+La barra de estado usa ahora `black` (opaca) en vez de `black-translucent` para evitar el velo claro sobre la cabecera. El color del navegador vuelve al azul de la cabecera. En modo instalado el marco se ancla con `position: fixed; inset: 0` y altura automática, sin usar `100dvh` como altura principal. Esto evita que una diferencia entre la altura dinámica y el viewport de WebKit deje el menú elevado. Se conserva una sola aplicación del safe area inferior; Safari normal sigue usando unidades dinámicas y el teclado conserva su ajuste con VisualViewport.
+
+Después de publicar, volver a agregar la aplicación desde Safari si iOS conserva el estilo translúcido de la instalación anterior. El cambio de metadatos puede requerir reinstalación; el comportamiento final en el dispositivo debe comprobarse allí.
