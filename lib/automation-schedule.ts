@@ -30,7 +30,7 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
   const clock = dominicanClock(now);
   const date = clock.minutes < window.minute ? shiftDrawDate(clock.date, -1) : clock.date;
   const due = drawTimestamp({ date, minutes: window.minute });
-  if (now.getTime() - due > 3 * 60 * 60_000) {
+  if (now.getTime() - due > 6 * 60 * 60_000) {
     // Reconstruct the intended targets, not the current/next session. Never call
     // generation or update endpoints when the window has expired.
     const intended = automationPlan(cron, new Date(due));

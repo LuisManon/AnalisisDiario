@@ -12,7 +12,7 @@ Se reservan 15 minutos tras cada sorteo sin consultar fuentes externas desde los
 
 Hay 12 ventanas diarias, documentadas en README.md. El bloque dominical de Kino reemplaza el bloque nocturno. Cada publicación tiene tres consultas separadas por 30 minutos; las preparaciones generales se realizan a las 08:37 y 10:37 y el reparto noche se verifica de nuevo a las 17:37. Las ventanas matutinas recuperan resultados previos, incluidas publicaciones tardías del día anterior.
 
-El workflow pasa su cron original al planificador. Un retraso de GitHub no cambia la operación elegida. A partir de tres horas de retraso se rechaza el plan; una preparación cuyo cierre ya pasó no intenta preparar la tanda siguiente como si fuera la original.
+El workflow pasa su cron original al planificador. Un retraso de GitHub no cambia la operación elegida. Con más de seis horas de retraso solo se verifican los registros guardados; una preparación cuyo cierre ya pasó no intenta preparar la tanda siguiente como si fuera la original.
 
 Cada petición tiene un límite de 180 segundos sin reintentos HTTP automáticos; el job completo tiene 20 minutos. No instala dependencias: el ejecutor usa Node 22 y módulos del repositorio que no dependen de Next. Se mantienen las ejecuciones en serie para reducir conflictos de persistencia. Las ejecuciones manuales y los reintentos manuales son adicionales a las 12 ventanas programadas.
 

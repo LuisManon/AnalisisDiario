@@ -8,8 +8,8 @@ import { savedStateReady } from "../lib/automation-status.ts";
 
 const local = (date: string, time: string) => new Date(`${date}T${time}:00-04:00`);
 
-test("exact emailed failure becomes read-only verification of the original targets", async () => {
-  const now = new Date("2026-11-08T18:59:55Z");
+test("expired preparation becomes read-only verification of the original targets", async () => {
+  const now = new Date("2026-11-08T21:59:55Z");
   const plan = automationPlan("37 14 * * *", now);
   assert.equal(plan.expired,true);
   assert.equal(plan.operations.length,6);
@@ -31,15 +31,15 @@ test("expired early attempts still fail for missing records and HTTP errors", as
     (async ()=>Response.json({ready:false,date:"2026-11-08",session:"dia"})) as typeof fetch,
     (async ()=>Response.json({error:"storage unavailable"},{status:503})) as typeof fetch
   ]) {
-    const result=await runAutomation({cron:"17 16 * * *",appUrl:"https://example.test",now:local("2026-11-08","16:00"),request});
+    const result=await runAutomation({cron:"17 16 * * *",appUrl:"https://example.test",now:local("2026-11-08","19:00"),request});
     assert.equal(result.failed,true);
     assert.ok(result.report.some(row=>row.state==="failed"));
   }
 });
 
-test("three-hour boundary, midnight targets, invalid cron and saved state safeguards",()=>{
-  assert.equal(automationPlan("17 16 * * *",local("2026-11-08","15:17")).expired,false);
-  assert.equal(automationPlan("17 16 * * *",new Date("2026-11-08T19:17:00.001Z")).expired,true);
+test("six-hour boundary, midnight targets, invalid cron and saved state safeguards",()=>{
+  assert.equal(automationPlan("17 16 * * *",local("2026-11-08","18:17")).expired,false);
+  assert.equal(automationPlan("17 16 * * *",new Date("2026-11-08T22:17:00.001Z")).expired,true);
   const midnight=automationPlan("17 1 * * 0,2-6",local("2026-11-08","01:30"));
   assert.equal(midnight.date,"2026-11-07");
   assert.ok(midnight.operations.some(op=>op.date==="2026-11-07"));
@@ -94,7 +94,7 @@ test("a delayed job retains its scheduled operation rather than branching on the
   assert.equal(plan.window.kind, "dia");
   assert.equal(plan.operations[0].session, "dia");
   assert.equal(plan.date, "2026-11-08");
-  assert.equal(automationPlan("17 16 * * *", local("2026-11-08", "16:00")).expired, true);
+  assert.equal(automationPlan("17 16 * * *", local("2026-11-08", "16:00")).expired, false);
   assert.ok(!automationPlan("37 14 * * *", local("2026-11-08", "12:10")).operations.some(op => op.expect === "assignment"));
 });
 
@@ -156,4 +156,18 @@ test("a preparation window that arrives after the draw is reported, never silent
   const request = (async () => Response.json({ok:true,results:[]})) as typeof fetch;
   const result = await runAutomation({cron:"37 14 * * *",appUrl:"https://example.test",now:local("2026-11-08","12:10"),request});
   assert.ok(result.report.some(item => item.label === "Ventana de preparación vencida" && item.state === "failed"));
+});
+
+test("observed four-hour delays still recover the original Quinielón day result", async () => {
+  for (const [cron, time] of [["17 16 * * *", "16:41"], ["47 16 * * *", "16:58"]]) {
+    const request = (async (url, init) => {
+      assert.equal(new URL(String(url)).pathname, "/api/la-primera/update");
+      assert.equal(new URL(String(url)).searchParams.get("date"), "2026-11-14");
+      assert.equal(init?.method, "GET");
+      return Response.json({results:[{date:"2026-11-14",session:"dia",verification:"confirmed"}]});
+    }) as typeof fetch;
+    const result = await runAutomation({cron,appUrl:"https://example.test",now:local("2026-11-14",time),request});
+    assert.equal(result.failed,false);
+    assert.equal(result.report[0].state,"ready");
+  }
 });
