@@ -9,6 +9,15 @@
     "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-dia/2026-11-16/"
   },
   {
+    "date": "2026-11-16",
+    "session": "noche",
+    "number": 37,
+    "drawId": 904,
+    "source": "https://laprimera.do/resultados/",
+    "verification": "confirmed",
+    "provisionalSource": "https://labanca.do/loterias/la-primera/quinielon-noche/2026-11-16/"
+  },
+  {
     "date": "2026-11-15",
     "session": "dia",
     "number": 87,
