@@ -7069,3 +7069,30 @@ body:has(.appShell.lotoShell) {
   .appShell .appTabs.hasKinoNeighbor { grid-template-columns:repeat(2,minmax(0,1fr)); border-radius:20px; }
   .appShell .appTabs.hasKinoNeighbor button { padding:5px 8px; min-height:44px; }
 }
+.quinielonHistoryHeader h2 { margin: 0; }
+.quinielonHistoryHeader p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; }
+.quinielonHistoryFilters { display: flex; align-items: end; flex-wrap: wrap; gap: 8px; margin: 14px 0 8px; }
+.quinielonHistoryFilters label { display: grid; gap: 4px; flex: 1 1 140px; font-size: .75rem; }
+.quinielonHistoryFilters input, .quinielonHistoryFilters select { min-width: 0; width: 100%; }
+.quinielonHistoryList { list-style: none; padding: 0; margin: 0; }
+.quinielonHistoryDay { display: grid; grid-template-columns: minmax(150px, .7fr) minmax(0, 2fr); align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.quinielonHistoryDay > header { font-size: .8rem; font-weight: 600; }
+.quinielonHistorySessions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.quinielonHistorySession { display: grid; grid-template-columns: auto 34px minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; padding: 0; }
+.quinielonHistorySession h3 { margin: 0; font-size: .8rem; }
+.quinielonHistorySession small { color: var(--muted); font-size: .68rem; }
+.quinielonHistorySession .primeraBall { width: 34px; height: 34px; min-width: 34px; font-size: 1rem; margin: 0; }
+.quinielonHistorySource { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 7px; font-size: .7rem; line-height: 1.4; }
+.quinielonHistorySource > span { width: 100%; color: var(--muted); }
+.quinielonHistorySource a { display: inline-flex; align-items: center; min-height: 28px; }
+.quinielonHistorySession.isSearchMatch { background: #fff5d7; border-radius: 6px; outline: 3px solid #fff5d7; }
+.quinielonHistorySession > .muted { margin: 0; font-size: .75rem; grid-column: span 2; }
+.quinielonHistoryCard > .pagination { margin-top: 12px; }
+@media (max-width: 700px) {
+  .quinielonHistoryDay { grid-template-columns: 1fr; gap: 7px; padding: 9px 0; }
+  .quinielonHistorySessions { gap: 7px; }
+  .quinielonHistorySession { grid-template-columns: 34px minmax(0, 1fr); gap: 3px 7px; }
+  .quinielonHistorySession > div:first-child { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 6px; }
+  .quinielonHistorySource { gap: 0 5px; }
+  .quinielonHistorySession > .muted { grid-column: 1 / -1; }
+}

@@ -20,7 +20,7 @@ export function QuinielonHistory({ results }: { results: LaPrimeraDraw[] }) {
 
   return <section className="card quinielonHistoryCard" aria-labelledby="quinielon-history-title">
     <header className="quinielonHistoryHeader">
-      <div><h2 id="quinielon-history-title">Historial de Quinielón</h2><p>{filtered.length} fechas · 5 días por página · más recientes primero.</p><p>La búsqueda conserva las tandas de cada fecha para facilitar la comparación.</p></div>
+      <div><h2 id="quinielon-history-title">Historial de Quinielón</h2><p>{filtered.length} fechas · 5 días por página · más recientes primero.</p></div>
     </header>
     <div className="quinielonHistoryFilters">
       <label>Tanda<select value={session} onChange={event => { setSession(event.target.value as LaPrimeraFilter); setPage(1); }}>
