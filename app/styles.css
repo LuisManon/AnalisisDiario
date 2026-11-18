@@ -7046,3 +7046,26 @@ body:has(.appShell.lotoShell) {
 @media(max-width:700px) { .kinoHistory > article { grid-template-columns:1fr; gap:10px; } .kinoHistoryRanges { grid-template-columns:repeat(3,minmax(72px,1fr)); } .kinoHistoryPagination { align-items:flex-start; } }
 .kinoPortfolioGrid { min-width:720px; gap:10px; }
 .kinoTheme .kinoPlayRow .ball { font-size:10px; }
+
+/* Super Kino TV ±1: companion portfolio, sharing the established calendar. */
+.appShell .appTabs.hasKinoNeighbor { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.kinoNeighborPlayGrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:18px 0; }
+.kinoNeighborPlay { min-width:0; padding:16px; border:1px solid #d8e1eb; border-radius:14px; background:#f7f9fc; }
+.kinoNeighborPlay > strong { color:#294d73; font-size:14px; }
+.kinoNeighborPlay details { color:#61758a; font-size:12px; }
+.kinoNeighborPlay summary { cursor:pointer; padding:8px 0; }
+.kinoNeighborTheme .heroPanel > strong { display:block; margin:12px 0; font-size:25px; }
+.kinoNeighborTheme .kinoWeekStatus small { display:block; margin-top:10px; font-size:11px; font-weight:400; }
+.kinoNeighborTheme .neighborStatus-not-scheduled { color:#68768b; }
+.kinoNeighborDetailButton { display:block; margin-top:8px; padding:6px 9px; font-size:12px; }
+.kinoNeighborError { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#8c3328; }
+.kinoNeighborTheme select { max-width:100%; }
+@media(max-width:760px) {
+  .kinoNeighborPlayGrid { grid-template-columns:1fr; }
+  .kinoNeighborTheme .kinoSectionHead { align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  .kinoNeighborTheme .kinoPortfolioNavigation { flex-wrap:wrap; }
+}
+@media(max-width:620px) {
+  .appShell .appTabs.hasKinoNeighbor { grid-template-columns:repeat(2,minmax(0,1fr)); border-radius:20px; }
+  .appShell .appTabs.hasKinoNeighbor button { padding:5px 8px; min-height:44px; }
+}

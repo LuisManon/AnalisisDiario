@@ -1,4 +1,5 @@
 import { dominicanClock, drawSlots, drawTimestamp, latestPublishedSlot, shiftDrawDate } from "./draw-schedule.ts";
+import { KINO_NEIGHBOR_START, KINO_NEIGHBOR_VERSION } from "./super-kino-neighbor-schedule.ts";
 
 export const automationWindows = [
   { cron: "37 12 * * *", minute: 517, kind: "prepare", final: false },
@@ -19,8 +20,8 @@ export const automationWindows = [
 ] as const;
 
 export type AutomationOperation = {
-  label: string; path: string; body?: { session: "dia" | "noche" };
-  expect: "kino-result" | "loto-result" | "quinielon-result" | "portfolio" | "loto-portfolio" | "assignment" | "saved-state";
+  label: string; path: string; body?: { session: "dia" | "noche" } | { date: string };
+  expect: "kino-result" | "loto-result" | "quinielon-result" | "portfolio" | "neighbor-portfolio" | "loto-portfolio" | "assignment" | "saved-state";
   date: string; session?: "dia" | "noche";
 };
 type AutomationPlan = { date: string; window: typeof automationWindows[number]; operations: AutomationOperation[]; missed: string[]; expired: boolean };
@@ -43,6 +44,9 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
   const operations: AutomationOperation[] = [];
   const missed: string[] = [];
   const add = (operation: AutomationOperation) => operations.push(operation);
+  const prepareNeighbor = (target: string) => {
+    if (target >= KINO_NEIGHBOR_START) add({ label: "Cartera Super Kino TV ±1", path: "/api/super-kino-neighbor/portfolio", body: { date: target }, expect: "neighbor-portfolio", date: target });
+  };
   const prepare = (product: "kino" | "loto" | "quinielon", session?: "dia" | "noche") => {
     if (product === "quinielon") {
       const slot = drawSlots(product, date).find(slot => slot.session === session)!;
@@ -53,6 +57,7 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
       if (!slot) return;
       if (now.getTime() >= drawTimestamp(slot) - 5 * 60_000) { missed.push("Preparación Kino: el sorteo ya cerró"); return; }
       add({ label: "Cartera Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date });
+      prepareNeighbor(date);
     } else {
       // Loto's application cutoff remains 17:00; prepare only its next open draw.
       let target = date;
@@ -75,12 +80,14 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
     let nextKinoDate = shiftDrawDate(date, 1);
     while (!drawSlots("kino", nextKinoDate).length) nextKinoDate = shiftDrawDate(nextKinoDate, 1);
     add({ label: "Seguimiento Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date: nextKinoDate });
+    prepareNeighbor(nextKinoDate);
   }
   return { date, window, operations, missed, expired: false };
 }
 
 export function operationReady(operation: AutomationOperation, payload: Record<string, any>) {
   if (operation.expect === "saved-state") return payload.ready === true && payload.date === operation.date && (!operation.session || payload.session === operation.session);
+  if (operation.expect === "neighbor-portfolio") return payload.current?.targetDate === operation.date && payload.current?.version === KINO_NEIGHBOR_VERSION && Array.isArray(payload.current.plays) && payload.current.plays.length === 200;
   if (operation.expect === "portfolio" || operation.expect === "loto-portfolio") {
     const current = payload.current;
     const saved = current?.targetDate === operation.date && Array.isArray(current.plays) && current.plays.length > 0;

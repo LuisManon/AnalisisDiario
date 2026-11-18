@@ -1,0 +1,59 @@
+{
+  "iterations": 2000000,
+  "seed": "kino-scratch-learner-v1/20261114/final-test",
+  "models": [
+    {
+      "index": 0,
+      "baseline": false,
+      "histogram": [
+        109794,
+        399140,
+        609007,
+        512610,
+        262984,
+        85878,
+        18081,
+        2313,
+        184,
+        9,
+        0
+      ],
+      "meanHits": 2.38127,
+      "maxHits": 9,
+      "atLeast6": 0.0102935,
+      "atLeast7": 0.001253,
+      "perfect10": 0
+    },
+    {
+      "index": 1,
+      "baseline": true,
+      "histogram": [
+        110097,
+        398823,
+        608589,
+        512853,
+        263849,
+        85593,
+        17671,
+        2331,
+        186,
+        8,
+        0
+      ],
+      "meanHits": 2.380912,
+      "maxHits": 9,
+      "atLeast6": 0.010098,
+      "atLeast7": 0.0012625,
+      "perfect10": 0
+    }
+  ],
+  "versusUniform": [
+    {
+      "difference": 0.000358,
+      "ci95": [
+        -0.002135927863351585,
+        0.0028519278633515844
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "iterations": 100000,
+  "seed": "kino-scratch-learner-v1/20261114/positive-test",
+  "models": [
+    {
+      "index": 0,
+      "baseline": false,
+      "histogram": [
+        4389,
+        17623,
+        29382,
+        26836,
+        15067,
+        5313,
+        1222,
+        149,
+        19,
+        0,
+        0
+      ],
+      "meanHits": 2.52255,
+      "maxHits": 8,
+      "atLeast6": 0.0139,
+      "atLeast7": 0.00168,
+      "perfect10": 0
+    },
+    {
+      "index": 1,
+      "baseline": true,
+      "histogram": [
+        5465,
+        19836,
+        30463,
+        25803,
+        13151,
+        4225,
+        922,
+        128,
+        7,
+        0,
+        0
+      ],
+      "meanHits": 2.38384,
+      "maxHits": 8,
+      "atLeast6": 0.01057,
+      "atLeast7": 0.00135,
+      "perfect10": 0
+    }
+  ],
+  "versusUniform": [
+    {
+      "difference": 0.13871,
+      "ci95": [
+        0.1274595634691252,
+        0.1499604365308748
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "kino-budget-stability-v1",
+  "dates": [
+    "2026-11-02",
+    "2026-11-04",
+    "2026-11-06",
+    "2026-11-08",
+    "2026-11-10",
+    "2026-11-12",
+    "2026-11-14"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "budgets": [
+    20,
+    50,
+    100,
+    200
+  ],
+  "iterationsPerPair": 20000,
+  "totalSyntheticDraws": 420000,
+  "codeSha256": "4b7f3ba47257a34a2169e18fbbea11522f53cb8fbf69b701acf5c7d7b85d65f3",
+  "protocolSha256": "410b3a6c01833a5b2dffd9f09e65a0bbafc29f5cce64110c99550a125dbe0c6c",
+  "inputs": [
+    {
+      "date": "2026-11-02",
+      "path": "data/super-kino-portfolios/2026-11-02.json",
+      "sha256": "ba849b67385aa15c065dce4b705e9524aac0e479c62fb5c174459e3ac3ea47ee"
+    },
+    {
+      "date": "2026-11-04",
+      "path": "data/super-kino-portfolios/2026-11-04.json",
+      "sha256": "05e3aea427edd7b00ba3111b5d179c55ee3988163152c6ee05459f1a4f03aca3"
+    },
+    {
+      "date": "2026-11-06",
+      "path": "data/super-kino-portfolios/2026-11-06.json",
+      "sha256": "6dc9348ba69daa17a25d6f8832a26e0aa7bf3d154ec4d60ff5396adbd96f62aa"
+    },
+    {
+      "date": "2026-11-08",
+      "path": "data/super-kino-portfolios/2026-11-08.json",
+      "sha256": "b52aab8e62fe00b73895d6c23d39a0812b522dd5e09b7bf27ad04a82400d9305"
+    },
+    {
+      "date": "2026-11-10",
+      "path": "data/super-kino-portfolios/2026-11-10.json",
+      "sha256": "c04d00052317375db1e9629c19dc64b87c77af3dbf72eb53a103d05fa35a0c46"
+    },
+    {
+      "date": "2026-11-12",
+      "path": "data/super-kino-portfolios/2026-11-12.json",
+      "sha256": "59a0e9f43e80a53e5ebdd18c160cfd198a7a32cfa0f0e1118015ca3034e1a334"
+    },
+    {
+      "date": "2026-11-14",
+      "path": "data/super-kino-portfolios/2026-11-14.json",
+      "sha256": "ccce3da615aeb6cb3206e8c7918f006e222846c3a0323b9ae29dd11287be6094"
+    }
+  ],
+  "generatedAt": "2026-11-14T22:46:13.731Z",
+  "node": "v26.5.0",
+  "operationalWrites": false
+}

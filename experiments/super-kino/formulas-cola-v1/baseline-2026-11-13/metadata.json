@@ -1,0 +1,22 @@
+{
+  "version": "kino-tail-formulas-v1",
+  "cutoff": "2026-11-13",
+  "iterations": 2000000,
+  "seed": "kino-tail-formulas-v1/20261114",
+  "target": 0.01,
+  "generatedAt": "2026-11-14T22:20:58.670Z",
+  "node": "v26.5.0",
+  "dataSha256": "aa6a7e791419cd31c7a9b19f1f33c47a354c1c4139ae7ac7e3aeec1d986b4ef7",
+  "codeSha256": "1e7d824255a158e6c1184669d17f98734df2eecb7526c667a3b665cfcd8642f4",
+  "protocolSha256": "412bf13cf4589288ef07ad47d1d15e10d0860d184cdf88da04f67e156851ee11",
+  "source": {
+    "analysisStart": "2026-09-15",
+    "cutoff": "2026-11-13",
+    "drawCount": 60,
+    "warmupCount": 30,
+    "validationCount": 10,
+    "holdoutCount": 20,
+    "firstDate": "2026-09-15",
+    "lastDate": "2026-11-13"
+  }
+}

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { WorkspaceNavigationTarget } from "./WorkspaceNavigation";
 import { PwaRuntime } from "./PwaRuntime";
 import { SuperKinoDashboard } from "./SuperKinoDashboard";
+import { SuperKinoNeighborDashboard } from "./SuperKinoNeighborDashboard";
 import type { KinoDraw } from "../lib/super-kino";
 import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
@@ -15,7 +16,7 @@ type AppShellProps = {
   laPrimeraResults: LaPrimeraDraw[];
 };
 
-type ActiveTab = "kino" | "quinielon" | "loto";
+type ActiveTab = "kino" | "kino-neighbor" | "quinielon" | "loto";
 
 export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("kino");
@@ -36,14 +37,17 @@ export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShel
         <strong>Análisis Diario</strong>
         <button type="button" onClick={() => workspace.current?.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Ir al inicio de la sección">Inicio ↑</button>
       </header>
-      <nav className="appTabs" aria-label="Secciones de analisis">
+      <nav className="appTabs hasKinoNeighbor" aria-label="Secciones de analisis">
         <button aria-pressed={activeTab === "kino"} className={activeTab === "kino" ? "active" : ""} onClick={() => changeTab("kino")}><span className="appTabIcon" aria-hidden="true">◎</span><span>Super Kino TV</span></button>
+        <button aria-pressed={activeTab === "kino-neighbor"} className={activeTab === "kino-neighbor" ? "active" : ""} onClick={() => changeTab("kino-neighbor")}><span className="appTabIcon" aria-hidden="true">±1</span><span>Super Kino TV ±1</span></button>
         <button aria-pressed={activeTab === "quinielon"} className={activeTab === "quinielon" ? "active" : ""} onClick={() => changeTab("quinielon")}><span className="appTabIcon" aria-hidden="true">▦</span><span>El Quinielón 2.0</span></button>
         <button aria-pressed={activeTab === "loto"} className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}><span className="appTabIcon" aria-hidden="true">✦</span><span>Loto Más</span></button>
       </nav>
       <div className="appWorkspace" ref={workspace} id="app-workspace" tabIndex={-1}>
       {activeTab === "kino" ? (
         <SuperKinoDashboard initialResults={kinoResults} />
+      ) : activeTab === "kino-neighbor" ? (
+        <SuperKinoNeighborDashboard initialResults={kinoResults} />
       ) : activeTab === "loto" ? (
         <DashboardClient initialData={{ results: lotoResults }} />
       ) : (

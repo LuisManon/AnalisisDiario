@@ -1,0 +1,13 @@
+{
+  "version": "kino-neighbor-checks-v1",
+  "originalCommit": "937a9348b3d56c014d70f2d1936982e587b35cb2",
+  "sourceReportSha256": "178602b813299764bb9ffdfb6d93bdb29647696f35153d5a0ad4ee0f8db9532b",
+  "nullReplicatesPerControl": 1000,
+  "drawsPerDate": 20000,
+  "newVariantDraws": 280000,
+  "codeSha256": "8b9b7ab6cea83ad67c7afd49d6ca1bde0b6d644d606372e7d0e75426bc6fda35",
+  "protocolSha256": "2fcc8651db12f9f9aa88985fb1f51297d56ba8d64a435a8026ba043b2e3d2e62",
+  "generatedAt": "2026-11-18T02:15:54.043Z",
+  "node": "v26.5.0",
+  "operationalWrites": false
+}

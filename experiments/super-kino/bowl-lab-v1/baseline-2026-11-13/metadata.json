@@ -1,0 +1,23 @@
+{
+  "version": "kino-bowl-lab-v1",
+  "seed": "kino-bowl-lab-v1/20261114",
+  "iterationsPerScenario": 1000000,
+  "cutoff": "2026-11-13",
+  "data": {
+    "analysisStart": "2026-09-15",
+    "cutoff": "2026-11-13",
+    "drawCount": 60,
+    "warmupCount": 30,
+    "validationCount": 10,
+    "holdoutCount": 20,
+    "firstDate": "2026-09-15",
+    "lastDate": "2026-11-13"
+  },
+  "dataSha256": "aa6a7e791419cd31c7a9b19f1f33c47a354c1c4139ae7ac7e3aeec1d986b4ef7",
+  "codeSha256": "0dd34f625729e587fe7b54b6a719625feef28bd48fd71be85798f37eaa685bf4",
+  "protocolSha256": "5ff7d6bd5bb02f61c4be27942983fdbe6b6b4bec4804a7486a95d63cac47d0fc",
+  "node": "v26.5.0",
+  "generatedAt": "2026-11-14T22:15:18.525Z",
+  "target": "at-least-10-winners-in-selected-20",
+  "operational": false
+}

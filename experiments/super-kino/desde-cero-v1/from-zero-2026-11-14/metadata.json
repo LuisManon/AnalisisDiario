@@ -1,0 +1,22 @@
+{
+  "version": "kino-scratch-learner-v1",
+  "seed": "kino-scratch-learner-v1/20261114",
+  "rates": [
+    0.002,
+    0.01,
+    0.05
+  ],
+  "training": 1000000,
+  "validation": 250000,
+  "finalTest": 2000000,
+  "positiveTraining": 100000,
+  "positiveTest": 100000,
+  "totalDistinctSyntheticDraws": 3450000,
+  "realHistoryUsed": false,
+  "previousAlgorithmImports": false,
+  "codeSha256": "dddfb8e5da891ed18d0e231c99f29b9b773030a2dfb98781074eb5f43205b5b7",
+  "protocolSha256": "d5847ae373500c12640e9e507ce5fd32bc0f15ae4e9e579c6392996296fff478",
+  "createdAt": "2026-11-14T23:05:00.715Z",
+  "node": "v26.5.0",
+  "operationalWrites": false
+}

@@ -4,6 +4,8 @@
 
 Los productos vigentes son Super Kino TV, El Quinielón 2.0 y Loto Más, en ese orden en el menú principal. La Primera sigue siendo la fuente de Quinielón; los nombres internos `la-primera` no implican que sus demás productos estén habilitados.
 
+Super Kino TV ±1 es una vista paralela junto a Super Kino TV: guarda 200 variantes nuevas antes del cierre desde el 18 de noviembre de 2026. Evalúa aciertos exactos y no reconstruye fechas anteriores a su inicio.
+
 Aplicación Next.js/React/TypeScript. La interfaz está en `components/`, los endpoints en `app/api/`, la lógica en `lib/` y los históricos en `data/`. La persistencia usa archivos locales o GitHub según el entorno. Las ventanas automáticas están en `.github/workflows/prepare-portfolios.yml`.
 
 ## Selección de especialista
@@ -16,6 +18,7 @@ Lee la skill del perfil que corresponda antes de trabajar. El perfil principal s
 | Fuentes, importaciones y calidad del historial | `.agents/skills/ingeniero-datos/SKILL.md` |
 | Métricas, consultas e interpretación de resultados | `.agents/skills/analista-datos/SKILL.md` |
 | Estrategias, simulaciones y experimentos estadísticos | `.agents/skills/cientifico-datos/SKILL.md` |
+| Registro, planificación y cierre de líneas experimentales | `.agents/skills/gestion-experimentos/SKILL.md` |
 | Combinatoria, probabilidad, límites de cobertura y objetivos de optimización | `.agents/skills/matematico-aplicado/SKILL.md` |
 | Regresiones y verificación de reglas | `.agents/skills/ingeniero-qa/SKILL.md` |
 | Navegación, dashboards y experiencia móvil | `.agents/skills/disenador-ux-ui/SKILL.md` |

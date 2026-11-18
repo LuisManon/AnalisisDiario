@@ -7,6 +7,9 @@
 - Lógica, parámetros, semilla, versión de código y hash de datos:
 - Fechas de entrenamiento, validación y prueba; información disponible antes de cada sorteo:
 - Métrica primaria, umbral de adopción y regla de parada fijados antes de evaluar:
+- Unidad independiente y agrupación por fecha/cartera; separar error Monte Carlo y variación entre carteras:
+- Efecto mínimo absoluto, potencia y justificación del tamaño de muestra; piloto si la precisión es insuficiente:
+- Número de comparaciones y control de búsqueda adaptativa; escenarios usados para diseñar frente a evaluar:
 - Tamaño de muestra y presupuesto de cálculo:
 - Resultados, incertidumbre, costos y sensibilidad:
 - Limitaciones, comparaciones múltiples y datos ya explorados:

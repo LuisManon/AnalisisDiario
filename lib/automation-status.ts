@@ -1,11 +1,16 @@
 /** Validate only the minimum stored state required by the scheduler. No writes. */
 import { operationReady, type AutomationOperation } from "./automation-schedule.ts";
 import { kinoSnapshotSchema } from "./super-kino.ts";
+import { kinoNeighborSchema } from "./super-kino-neighbor.ts";
 import { validateAssignment, type Assignment } from "./quinielon-distributor.ts";
 
-export const savedStateKinds = ["kino-result", "loto-result", "quinielon-result", "portfolio", "loto-portfolio", "assignment"] as const;
+export const savedStateKinds = ["kino-result", "loto-result", "quinielon-result", "portfolio", "neighbor-portfolio", "loto-portfolio", "assignment"] as const;
 export type SavedStateKind = typeof savedStateKinds[number];
 export function savedStateReady(kind: SavedStateKind, date: string, session: "dia" | "noche" | undefined, value: unknown) {
+  if (kind === "neighbor-portfolio") {
+    const parsed = kinoNeighborSchema.safeParse(value);
+    return parsed.success && parsed.data.targetDate === date;
+  }
   if (kind === "portfolio") {
     const parsed = kinoSnapshotSchema.safeParse(value);
     return parsed.success && parsed.data.targetDate === date && !parsed.data.simulation;

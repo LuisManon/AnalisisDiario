@@ -50,6 +50,12 @@ async function readSnapshot(date: string) {
   return {file, raw, snapshot: parseSnapshot(raw, file)};
 }
 
+/** Read-only access for companion views; never creates or regenerates a portfolio. */
+export async function readSavedKinoSnapshot(date: string) {
+  z.iso.date().parse(date);
+  return (await readSnapshot(date)).snapshot;
+}
+
 async function ensureIndexed(date: string) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const {raw, dates} = await readIndex();

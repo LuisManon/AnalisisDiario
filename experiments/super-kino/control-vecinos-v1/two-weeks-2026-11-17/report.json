@@ -1,0 +1,1117 @@
+{
+  "metadata": {
+    "version": "kino-neighbor-checks-v1",
+    "originalCommit": "937a9348b3d56c014d70f2d1936982e587b35cb2",
+    "sourceReportSha256": "178602b813299764bb9ffdfb6d93bdb29647696f35153d5a0ad4ee0f8db9532b",
+    "nullReplicatesPerControl": 1000,
+    "drawsPerDate": 20000,
+    "newVariantDraws": 280000,
+    "codeSha256": "8b9b7ab6cea83ad67c7afd49d6ca1bde0b6d644d606372e7d0e75426bc6fda35",
+    "protocolSha256": "2fcc8651db12f9f9aa88985fb1f51297d56ba8d64a435a8026ba043b2e3d2e62",
+    "generatedAt": "2026-11-18T02:15:54.043Z",
+    "node": "v26.5.0",
+    "operationalWrites": false
+  },
+  "observed": {
+    "days9": 12,
+    "days10": 1,
+    "meanMax": 8.928571428571429
+  },
+  "nullResults": [
+    {
+      "control": "uniform",
+      "days9": {
+        "observed": 12,
+        "nullMean": 10.786,
+        "nullCentral95": [
+          8,
+          13
+        ],
+        "fractionAtLeastObserved": 0.33266733266733267,
+        "descriptiveBonferroniTwoControls": 0.6653346653346653
+      },
+      "days10": {
+        "observed": 1,
+        "nullMean": 1.485,
+        "nullCentral95": [
+          0,
+          4
+        ],
+        "fractionAtLeastObserved": 0.7952047952047953,
+        "descriptiveBonferroniTwoControls": 1
+      },
+      "meanMax": {
+        "observed": 8.928571428571429,
+        "nullMean": 8.874857142857174,
+        "nullCentral95": [
+          8.571428571428571,
+          9.142857142857142
+        ],
+        "fractionAtLeastObserved": 0.44955044955044954,
+        "descriptiveBonferroniTwoControls": 0.8991008991008991
+      }
+    },
+    {
+      "control": "labels",
+      "days9": {
+        "observed": 12,
+        "nullMean": 11,
+        "nullCentral95": [
+          8,
+          14
+        ],
+        "fractionAtLeastObserved": 0.3806193806193806,
+        "descriptiveBonferroniTwoControls": 0.7612387612387612
+      },
+      "days10": {
+        "observed": 1,
+        "nullMean": 1.515,
+        "nullCentral95": [
+          0,
+          4
+        ],
+        "fractionAtLeastObserved": 0.8111888111888111,
+        "descriptiveBonferroniTwoControls": 1
+      },
+      "meanMax": {
+        "observed": 8.928571428571429,
+        "nullMean": 8.893357142857141,
+        "nullCentral95": [
+          8.642857142857142,
+          9.142857142857142
+        ],
+        "fractionAtLeastObserved": 0.5194805194805194,
+        "descriptiveBonferroniTwoControls": 1
+      }
+    }
+  ],
+  "variantRates": [
+    {
+      "mode": "original",
+      "sevenRate": 0.22532142857142856,
+      "eightRate": 0.0189,
+      "meanQualifyingSeven": 0.25219285714285716
+    },
+    {
+      "mode": "half",
+      "sevenRate": 0.22436785714285715,
+      "eightRate": 0.018935714285714285,
+      "meanQualifyingSeven": 0.2528107142857143
+    },
+    {
+      "mode": "all",
+      "sevenRate": 0.2242357142857143,
+      "eightRate": 0.018942857142857143,
+      "meanQualifyingSeven": 0.25297857142857144
+    }
+  ],
+  "variantComparisons": [
+    {
+      "mode": "half",
+      "difference": -0.0009535714285714286,
+      "ci975": [
+        -0.002782135359340883,
+        0.0008749925021980256
+      ],
+      "positiveDates": 4,
+      "minDateDifference": -0.0046,
+      "maxDateDifference": 0.0047,
+      "passesExploratoryGate": false
+    },
+    {
+      "mode": "all",
+      "difference": -0.0010857142857142858,
+      "ci975": [
+        -0.003585672801013153,
+        0.0014142442295845816
+      ],
+      "positiveDates": 5,
+      "minDateDifference": -0.00765,
+      "maxDateDifference": 0.01075,
+      "passesExploratoryGate": false
+    }
+  ],
+  "variantDays": [
+    {
+      "date": "2026-11-04",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4533,
+          "eight": 380,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2150,
+            13317,
+            4153,
+            369,
+            11,
+            0
+          ],
+          "qualifyingSeven": 5091
+        },
+        {
+          "seven": 4493,
+          "eight": 384,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            2,
+            2479,
+            13026,
+            4109,
+            374,
+            10,
+            0
+          ],
+          "qualifyingSeven": 5079
+        },
+        {
+          "seven": 4489,
+          "eight": 376,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2485,
+            13026,
+            4113,
+            366,
+            10,
+            0
+          ],
+          "qualifyingSeven": 5108
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -40,
+          "squares": 3702
+        },
+        {
+          "sum": -44,
+          "squares": 6966
+        }
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4337,
+          "eight": 386,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2262,
+            13401,
+            3951,
+            375,
+            11,
+            0
+          ],
+          "qualifyingSeven": 4831
+        },
+        {
+          "seven": 4407,
+          "eight": 385,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2517,
+            13076,
+            4022,
+            371,
+            14,
+            0
+          ],
+          "qualifyingSeven": 4925
+        },
+        {
+          "seven": 4552,
+          "eight": 375,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2378,
+            13070,
+            4177,
+            362,
+            13,
+            0
+          ],
+          "qualifyingSeven": 5134
+        }
+      ],
+      "pairs": [
+        {
+          "sum": 70,
+          "squares": 3772
+        },
+        {
+          "sum": 215,
+          "squares": 6865
+        }
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4587,
+          "eight": 371,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2149,
+            13264,
+            4216,
+            354,
+            17,
+            0
+          ],
+          "qualifyingSeven": 5130
+        },
+        {
+          "seven": 4535,
+          "eight": 349,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2463,
+            13001,
+            4186,
+            330,
+            19,
+            0
+          ],
+          "qualifyingSeven": 5085
+        },
+        {
+          "seven": 4538,
+          "eight": 358,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2500,
+            12962,
+            4180,
+            346,
+            11,
+            1
+          ],
+          "qualifyingSeven": 5153
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -52,
+          "squares": 3676
+        },
+        {
+          "sum": -49,
+          "squares": 6959
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4655,
+          "eight": 395,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2160,
+            13185,
+            4260,
+            384,
+            11,
+            0
+          ],
+          "qualifyingSeven": 5193
+        },
+        {
+          "seven": 4620,
+          "eight": 402,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2519,
+            12861,
+            4218,
+            389,
+            13,
+            0
+          ],
+          "qualifyingSeven": 5245
+        },
+        {
+          "seven": 4502,
+          "eight": 383,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2492,
+            13005,
+            4119,
+            369,
+            14,
+            0
+          ],
+          "qualifyingSeven": 5019
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -35,
+          "squares": 3733
+        },
+        {
+          "sum": -153,
+          "squares": 7017
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4439,
+          "eight": 372,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2116,
+            13445,
+            4067,
+            357,
+            15,
+            0
+          ],
+          "qualifyingSeven": 4954
+        },
+        {
+          "seven": 4416,
+          "eight": 369,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2510,
+            13074,
+            4047,
+            359,
+            9,
+            1
+          ],
+          "qualifyingSeven": 4986
+        },
+        {
+          "seven": 4539,
+          "eight": 381,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2528,
+            12933,
+            4158,
+            369,
+            12,
+            0
+          ],
+          "qualifyingSeven": 5126
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -23,
+          "squares": 3675
+        },
+        {
+          "sum": 100,
+          "squares": 6902
+        }
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4519,
+          "eight": 393,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2178,
+            13303,
+            4126,
+            376,
+            17,
+            0
+          ],
+          "qualifyingSeven": 5057
+        },
+        {
+          "seven": 4427,
+          "eight": 357,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2393,
+            13180,
+            4070,
+            343,
+            14,
+            0
+          ],
+          "qualifyingSeven": 4972
+        },
+        {
+          "seven": 4458,
+          "eight": 383,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2473,
+            13069,
+            4075,
+            364,
+            19,
+            0
+          ],
+          "qualifyingSeven": 4991
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -92,
+          "squares": 3710
+        },
+        {
+          "sum": -61,
+          "squares": 7005
+        }
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4453,
+          "eight": 349,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2147,
+            13400,
+            4104,
+            335,
+            13,
+            1
+          ],
+          "qualifyingSeven": 4962
+        },
+        {
+          "seven": 4367,
+          "eight": 343,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2369,
+            13264,
+            4024,
+            331,
+            11,
+            1
+          ],
+          "qualifyingSeven": 4892
+        },
+        {
+          "seven": 4341,
+          "eight": 412,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2565,
+            13094,
+            3929,
+            394,
+            18,
+            0
+          ],
+          "qualifyingSeven": 4885
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -86,
+          "squares": 3712
+        },
+        {
+          "sum": -112,
+          "squares": 6902
+        }
+      ]
+    },
+    {
+      "date": "2026-11-11",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4517,
+          "eight": 374,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2245,
+            13237,
+            4143,
+            364,
+            10,
+            0
+          ],
+          "qualifyingSeven": 5041
+        },
+        {
+          "seven": 4512,
+          "eight": 406,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2486,
+            13002,
+            4106,
+            390,
+            16,
+            0
+          ],
+          "qualifyingSeven": 5092
+        },
+        {
+          "seven": 4430,
+          "eight": 357,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2526,
+            13044,
+            4073,
+            342,
+            15,
+            0
+          ],
+          "qualifyingSeven": 4995
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -5,
+          "squares": 3689
+        },
+        {
+          "sum": -87,
+          "squares": 7021
+        }
+      ]
+    },
+    {
+      "date": "2026-11-12",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4513,
+          "eight": 380,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2215,
+            13272,
+            4133,
+            359,
+            21,
+            0
+          ],
+          "qualifyingSeven": 5082
+        },
+        {
+          "seven": 4541,
+          "eight": 374,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2442,
+            13017,
+            4167,
+            356,
+            18,
+            0
+          ],
+          "qualifyingSeven": 5112
+        },
+        {
+          "seven": 4518,
+          "eight": 423,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2410,
+            13072,
+            4095,
+            403,
+            20,
+            0
+          ],
+          "qualifyingSeven": 5112
+        }
+      ],
+      "pairs": [
+        {
+          "sum": 28,
+          "squares": 3826
+        },
+        {
+          "sum": 5,
+          "squares": 7009
+        }
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4497,
+          "eight": 390,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2179,
+            13324,
+            4107,
+            375,
+            15,
+            0
+          ],
+          "qualifyingSeven": 5047
+        },
+        {
+          "seven": 4466,
+          "eight": 382,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2472,
+            13062,
+            4084,
+            367,
+            15,
+            0
+          ],
+          "qualifyingSeven": 5036
+        },
+        {
+          "seven": 4530,
+          "eight": 361,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2541,
+            12929,
+            4169,
+            349,
+            11,
+            1
+          ],
+          "qualifyingSeven": 5126
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -31,
+          "squares": 3673
+        },
+        {
+          "sum": 33,
+          "squares": 6965
+        }
+      ]
+    },
+    {
+      "date": "2026-11-14",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4472,
+          "eight": 379,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2269,
+            13259,
+            4093,
+            370,
+            8,
+            1
+          ],
+          "qualifyingSeven": 5019
+        },
+        {
+          "seven": 4566,
+          "eight": 402,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2486,
+            12948,
+            4164,
+            386,
+            16,
+            0
+          ],
+          "qualifyingSeven": 5147
+        },
+        {
+          "seven": 4481,
+          "eight": 395,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2585,
+            12933,
+            4086,
+            380,
+            15,
+            0
+          ],
+          "qualifyingSeven": 5046
+        }
+      ],
+      "pairs": [
+        {
+          "sum": 94,
+          "squares": 3812
+        },
+        {
+          "sum": 9,
+          "squares": 6915
+        }
+      ]
+    },
+    {
+      "date": "2026-11-15",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4517,
+          "eight": 391,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2124,
+            13359,
+            4126,
+            375,
+            15,
+            1
+          ],
+          "qualifyingSeven": 5050
+        },
+        {
+          "seven": 4425,
+          "eight": 386,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2496,
+            13079,
+            4039,
+            373,
+            12,
+            1
+          ],
+          "qualifyingSeven": 4992
+        },
+        {
+          "seven": 4511,
+          "eight": 391,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2389,
+            13100,
+            4120,
+            376,
+            15,
+            0
+          ],
+          "qualifyingSeven": 5086
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -92,
+          "squares": 3798
+        },
+        {
+          "sum": -6,
+          "squares": 7016
+        }
+      ]
+    },
+    {
+      "date": "2026-11-16",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4525,
+          "eight": 390,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2233,
+            13242,
+            4135,
+            372,
+            18,
+            0
+          ],
+          "qualifyingSeven": 5056
+        },
+        {
+          "seven": 4477,
+          "eight": 389,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2498,
+            13025,
+            4088,
+            369,
+            20,
+            0
+          ],
+          "qualifyingSeven": 5055
+        },
+        {
+          "seven": 4437,
+          "eight": 344,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2521,
+            13042,
+            4093,
+            333,
+            11,
+            0
+          ],
+          "qualifyingSeven": 5020
+        }
+      ],
+      "pairs": [
+        {
+          "sum": -48,
+          "squares": 3722
+        },
+        {
+          "sum": -88,
+          "squares": 6960
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "draws": 20000,
+      "counts": [
+        {
+          "seven": 4526,
+          "eight": 342,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2163,
+            13311,
+            4184,
+            324,
+            18,
+            0
+          ],
+          "qualifyingSeven": 5101
+        },
+        {
+          "seven": 4571,
+          "eight": 374,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2451,
+            12978,
+            4197,
+            358,
+            15,
+            1
+          ],
+          "qualifyingSeven": 5169
+        },
+        {
+          "seven": 4460,
+          "eight": 365,
+          "maxHistogram": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2574,
+            12966,
+            4095,
+            344,
+            21,
+            0
+          ],
+          "qualifyingSeven": 5033
+        }
+      ],
+      "pairs": [
+        {
+          "sum": 45,
+          "squares": 3679
+        },
+        {
+          "sum": -66,
+          "squares": 7030
+        }
+      ]
+    }
+  ],
+  "interpretation": "Historical post-hoc controls and separate uniform synthetic evaluation; no real future draw validation, no automatic adoption"
+}

@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     else if (kind === "quinielon-result") value = await readLaPrimeraResults();
     else if (kind === "loto-portfolio") value = (await readSavedPortfolios()).find(item => item.targetDate === date) ?? null;
     else {
-      const file = kind === "portfolio" ? `data/super-kino-portfolios/${date}.json` : `data/quinielon-assignments/${date}-${session}.json`;
+      const file = kind === "portfolio" ? `data/super-kino-portfolios/${date}.json` : kind === "neighbor-portfolio" ? `data/super-kino-neighbor-portfolios/${date}.json` : `data/quinielon-assignments/${date}-${session}.json`;
       let raw: string | null;
       if (isGitHubDataStoreEnabled()) raw = await readGitHubJsonFile(file);
       else {

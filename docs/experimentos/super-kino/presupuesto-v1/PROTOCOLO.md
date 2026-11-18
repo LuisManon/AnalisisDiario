@@ -1,0 +1,13 @@
+# Reducción de costo y exposición, V1
+
+Protocolo previo, 14 noviembre 2026. Se evalúan subconjuntos anidados de 20, 50, 100 y 200 jugadas del snapshot operativo del 14/11, sin reescribirlo. Costos modelados 500/1250/2500/5000 RD$, a RD$25/jugada y con la tabla guardada, sin certificación oficial ni retenciones.
+
+Dos órdenes congelados sobre las mismas 200 jugadas: referencia aleatoria reproducible y greedy de cobertura. La heurística minimiza, en cada incorporación, la suma añadida de probabilidades conjuntas exactas de dos jugadas alcanzando 7+ bajo uniforme 84/20/10; empates por menor incremento de exposición al cuadrado y luego orden aleatorio fijo. Semilla de ambos órdenes: `kino-budget-v1/subset`. No usa historia, ganadores ni entrenamiento. Este objetivo mejora una cota de cobertura; no demuestra optimalidad ni mejora real del evento.
+
+Se mantiene el mismo orden para cada presupuesto: los 20 están dentro de los 50, estos dentro de 100 y 200. A 200 las dos carteras contienen exactamente las mismas jugadas. No se supone que el orden guardado original priorice las mejores jugadas. Se compara contra un subconjunto aleatorio, no contra una muestra representativa de todos los subconjuntos o fechas.
+
+Evaluación: 100,000 sorteos uniformes compartidos, semilla nueva fija `kino-budget-v1/draws`. Métrica primaria: frecuencia de alguna jugada 7+ y cobertura retenida frente a las 200. Secundarias: 8+, probabilidad de no cubrir costo, premio cero, mediana de premio y pérdida neta percentil95, exposición máxima por número. Comparar reducción absoluta del costo y de la pérdida esperada; no presentar eso como mejora del ROI. No optimizar semillas después de resultados.
+
+Incertidumbre: Wilson95% para cada tasa y diferencias pareadas para 7+/8+ entre subconjunto y 200 y entre órdenes al mismo presupuesto. Error Monte Carlo condicionado al snapshot, no certeza física ni validación del generador. No se ordenan opciones por ROI simulado; la esperanza exacta usa la misma marginal hipergeométrica y es lineal en el número de jugadas. La probabilidad de pérdida no debe confundirse con el tamaño de la pérdida. El caso de no jugar tiene costo y neto cero, sin cobertura; es referencia fuera de las cuatro carteras.
+
+Parada: una corrida sin búsqueda posterior. Conservar los índices de jugadas, snapshot, semilla, hashes, tablas y limitaciones. Rechazar sobrescritura. Ninguna activación ni recomendación automática de presupuesto; el usuario aún no ha fijado un límite de pérdida aceptable. No se escriben datos operativos ni se llaman endpoints. Para extrapolar, harían falta otros snapshots y semillas prefijados en un protocolo posterior.
