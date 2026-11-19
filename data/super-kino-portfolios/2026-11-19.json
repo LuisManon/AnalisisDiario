@@ -1,0 +1,3933 @@
+{
+  "targetDate": "2026-11-19",
+  "generatedAt": "2026-11-19T01:13:20.474Z",
+  "analysisFrom": "2026-09-15",
+  "analysisTo": "2026-11-18",
+  "sampleSize": 65,
+  "algorithm": "kino-v13.3",
+  "coverageExposure": [
+    23,
+    23,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    23,
+    23,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    24,
+    24,
+    23,
+    24,
+    24,
+    24,
+    23,
+    24
+  ],
+  "hybridPlan": {
+    "diversified": 160,
+    "directed": 40,
+    "families": 8,
+    "familySize": 5
+  },
+  "excludedByDelay": [],
+  "plays": [
+    {
+      "id": 1,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        10,
+        27,
+        29,
+        31,
+        33,
+        34,
+        59,
+        60,
+        64
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 2,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        24,
+        36,
+        38,
+        42,
+        52,
+        53,
+        61,
+        80,
+        81
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 3,
+      "profile": "exploratoria",
+      "numbers": [
+        26,
+        30,
+        51,
+        54,
+        58,
+        61,
+        69,
+        70,
+        75,
+        82
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 4,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        8,
+        13,
+        37,
+        39,
+        51,
+        56,
+        63,
+        70,
+        71
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 5,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        12,
+        19,
+        23,
+        32,
+        40,
+        44,
+        48,
+        49,
+        84
+      ],
+      "hot": 7,
+      "middle": 3,
+      "cold": 0
+    },
+    {
+      "id": 6,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        4,
+        6,
+        10,
+        15,
+        16,
+        19,
+        33,
+        62,
+        77
+      ],
+      "hot": 5,
+      "middle": 2,
+      "cold": 3
+    },
+    {
+      "id": 7,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        12,
+        18,
+        43,
+        53,
+        57,
+        63,
+        65,
+        72,
+        75
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 8,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        27,
+        46,
+        48,
+        52,
+        55,
+        68,
+        69,
+        71,
+        72
+      ],
+      "hot": 6,
+      "middle": 2,
+      "cold": 2
+    },
+    {
+      "id": 9,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        35,
+        36,
+        45,
+        49,
+        62,
+        76,
+        81,
+        82,
+        83
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 10,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        7,
+        17,
+        22,
+        42,
+        50,
+        54,
+        63,
+        73,
+        84
+      ],
+      "hot": 5,
+      "middle": 2,
+      "cold": 3
+    },
+    {
+      "id": 11,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        10,
+        20,
+        30,
+        31,
+        32,
+        43,
+        55,
+        66,
+        79
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 12,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        3,
+        14,
+        17,
+        20,
+        24,
+        59,
+        68,
+        72,
+        75
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 13,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        9,
+        14,
+        16,
+        22,
+        36,
+        43,
+        58,
+        74,
+        78
+      ],
+      "hot": 4,
+      "middle": 5,
+      "cold": 1
+    },
+    {
+      "id": 14,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        2,
+        8,
+        18,
+        28,
+        64,
+        67,
+        74,
+        81,
+        82
+      ],
+      "hot": 5,
+      "middle": 2,
+      "cold": 3
+    },
+    {
+      "id": 15,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        18,
+        29,
+        32,
+        34,
+        47,
+        56,
+        70,
+        77,
+        81
+      ],
+      "hot": 0,
+      "middle": 4,
+      "cold": 6
+    },
+    {
+      "id": 16,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        15,
+        21,
+        26,
+        30,
+        33,
+        48,
+        65,
+        74,
+        83
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 17,
+      "profile": "exploratoria",
+      "numbers": [
+        15,
+        19,
+        25,
+        29,
+        35,
+        38,
+        47,
+        63,
+        66,
+        69
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 18,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        23,
+        24,
+        43,
+        45,
+        50,
+        54,
+        76,
+        77,
+        79
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 19,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        13,
+        17,
+        19,
+        28,
+        30,
+        67,
+        72,
+        80,
+        83
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 20,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        7,
+        8,
+        14,
+        29,
+        40,
+        44,
+        46,
+        57,
+        82
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 21,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        12,
+        24,
+        25,
+        26,
+        29,
+        49,
+        50,
+        56,
+        61
+      ],
+      "hot": 4,
+      "middle": 1,
+      "cold": 5
+    },
+    {
+      "id": 22,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        17,
+        27,
+        39,
+        41,
+        45,
+        54,
+        55,
+        60,
+        80
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 23,
+      "profile": "exploratoria",
+      "numbers": [
+        19,
+        21,
+        22,
+        36,
+        51,
+        56,
+        59,
+        66,
+        72,
+        79
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 24,
+      "profile": "exploratoria",
+      "numbers": [
+        21,
+        25,
+        32,
+        43,
+        56,
+        61,
+        62,
+        73,
+        80,
+        84
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 25,
+      "profile": "exploratoria",
+      "numbers": [
+        39,
+        49,
+        51,
+        53,
+        55,
+        64,
+        65,
+        66,
+        76,
+        77
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 26,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        6,
+        9,
+        11,
+        21,
+        31,
+        44,
+        60,
+        69,
+        70
+      ],
+      "hot": 4,
+      "middle": 5,
+      "cold": 1
+    },
+    {
+      "id": 27,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        13,
+        14,
+        23,
+        31,
+        37,
+        53,
+        62,
+        67,
+        68
+      ],
+      "hot": 1,
+      "middle": 6,
+      "cold": 3
+    },
+    {
+      "id": 28,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        11,
+        27,
+        36,
+        37,
+        48,
+        49,
+        61,
+        74,
+        80
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 29,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        5,
+        13,
+        34,
+        50,
+        52,
+        57,
+        68,
+        83,
+        84
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 30,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        16,
+        25,
+        41,
+        44,
+        61,
+        65,
+        67,
+        68,
+        76
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 31,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        6,
+        13,
+        16,
+        17,
+        28,
+        31,
+        48,
+        51,
+        57
+      ],
+      "hot": 5,
+      "middle": 4,
+      "cold": 1
+    },
+    {
+      "id": 32,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        11,
+        25,
+        26,
+        41,
+        42,
+        43,
+        45,
+        78,
+        81
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 33,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        12,
+        25,
+        35,
+        40,
+        42,
+        53,
+        59,
+        71,
+        77
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 34,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        11,
+        20,
+        30,
+        41,
+        46,
+        47,
+        52,
+        54,
+        73
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 35,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        13,
+        23,
+        44,
+        59,
+        60,
+        63,
+        73,
+        78,
+        80
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 36,
+      "profile": "exploratoria",
+      "numbers": [
+        10,
+        20,
+        26,
+        36,
+        47,
+        48,
+        54,
+        60,
+        68,
+        76
+      ],
+      "hot": 0,
+      "middle": 6,
+      "cold": 4
+    },
+    {
+      "id": 37,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        6,
+        26,
+        27,
+        33,
+        37,
+        43,
+        44,
+        47,
+        83
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 38,
+      "profile": "exploratoria",
+      "numbers": [
+        10,
+        16,
+        21,
+        24,
+        27,
+        40,
+        57,
+        64,
+        69,
+        81
+      ],
+      "hot": 6,
+      "middle": 2,
+      "cold": 2
+    },
+    {
+      "id": 39,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        22,
+        34,
+        35,
+        38,
+        43,
+        53,
+        58,
+        67,
+        79
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 40,
+      "profile": "exploratoria",
+      "numbers": [
+        16,
+        28,
+        34,
+        36,
+        42,
+        45,
+        50,
+        65,
+        71,
+        75
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 41,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        12,
+        18,
+        22,
+        24,
+        35,
+        37,
+        46,
+        74,
+        84
+      ],
+      "hot": 6,
+      "middle": 2,
+      "cold": 2
+    },
+    {
+      "id": 42,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        3,
+        4,
+        8,
+        20,
+        34,
+        35,
+        40,
+        61,
+        63
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 43,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        18,
+        23,
+        33,
+        38,
+        66,
+        71,
+        75,
+        78,
+        79
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 44,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        28,
+        29,
+        35,
+        46,
+        51,
+        53,
+        72,
+        78,
+        83
+      ],
+      "hot": 4,
+      "middle": 1,
+      "cold": 5
+    },
+    {
+      "id": 45,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        10,
+        11,
+        12,
+        20,
+        21,
+        23,
+        58,
+        80,
+        81
+      ],
+      "hot": 2,
+      "middle": 6,
+      "cold": 2
+    },
+    {
+      "id": 46,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        14,
+        17,
+        24,
+        28,
+        32,
+        33,
+        39,
+        57,
+        61
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 47,
+      "profile": "exploratoria",
+      "numbers": [
+        14,
+        21,
+        31,
+        38,
+        39,
+        41,
+        50,
+        70,
+        72,
+        76
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 48,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        14,
+        24,
+        32,
+        51,
+        63,
+        71,
+        74,
+        75,
+        81
+      ],
+      "hot": 5,
+      "middle": 5,
+      "cold": 0
+    },
+    {
+      "id": 49,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        10,
+        29,
+        38,
+        52,
+        64,
+        74,
+        76,
+        79,
+        83
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 50,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        33,
+        37,
+        60,
+        61,
+        64,
+        66,
+        75,
+        82,
+        84
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 51,
+      "profile": "exploratoria",
+      "numbers": [
+        15,
+        17,
+        21,
+        24,
+        34,
+        46,
+        63,
+        65,
+        67,
+        82
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 52,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        20,
+        36,
+        44,
+        47,
+        51,
+        56,
+        71,
+        73,
+        83
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 53,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        17,
+        19,
+        41,
+        53,
+        71,
+        73,
+        76,
+        78,
+        79
+      ],
+      "hot": 4,
+      "middle": 1,
+      "cold": 5
+    },
+    {
+      "id": 54,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        12,
+        27,
+        28,
+        32,
+        35,
+        41,
+        50,
+        71,
+        80
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 55,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        29,
+        39,
+        42,
+        45,
+        48,
+        58,
+        63,
+        66,
+        73
+      ],
+      "hot": 2,
+      "middle": 6,
+      "cold": 2
+    },
+    {
+      "id": 56,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        5,
+        7,
+        12,
+        27,
+        52,
+        55,
+        67,
+        77,
+        81
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 57,
+      "profile": "exploratoria",
+      "numbers": [
+        17,
+        19,
+        31,
+        43,
+        44,
+        45,
+        46,
+        52,
+        64,
+        75
+      ],
+      "hot": 6,
+      "middle": 3,
+      "cold": 1
+    },
+    {
+      "id": 58,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        7,
+        9,
+        24,
+        25,
+        34,
+        52,
+        60,
+        62,
+        70
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 59,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        23,
+        32,
+        57,
+        58,
+        59,
+        62,
+        69,
+        70,
+        76
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 60,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        10,
+        18,
+        22,
+        37,
+        48,
+        49,
+        53,
+        54,
+        81
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 61,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        15,
+        16,
+        26,
+        37,
+        46,
+        56,
+        59,
+        75,
+        76
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 62,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        8,
+        19,
+        24,
+        30,
+        38,
+        47,
+        55,
+        60,
+        77
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 63,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        17,
+        32,
+        33,
+        36,
+        40,
+        45,
+        59,
+        63,
+        82
+      ],
+      "hot": 3,
+      "middle": 7,
+      "cold": 0
+    },
+    {
+      "id": 64,
+      "profile": "exploratoria",
+      "numbers": [
+        16,
+        31,
+        38,
+        49,
+        56,
+        68,
+        75,
+        77,
+        78,
+        83
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 65,
+      "profile": "exploratoria",
+      "numbers": [
+        20,
+        24,
+        28,
+        41,
+        48,
+        51,
+        65,
+        70,
+        73,
+        79
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 66,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        6,
+        8,
+        9,
+        26,
+        29,
+        36,
+        68,
+        73,
+        75
+      ],
+      "hot": 1,
+      "middle": 6,
+      "cold": 3
+    },
+    {
+      "id": 67,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        30,
+        33,
+        35,
+        36,
+        39,
+        50,
+        68,
+        70,
+        80
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 68,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        10,
+        14,
+        18,
+        28,
+        48,
+        62,
+        80,
+        83,
+        84
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 69,
+      "profile": "exploratoria",
+      "numbers": [
+        15,
+        21,
+        27,
+        30,
+        35,
+        42,
+        44,
+        49,
+        59,
+        84
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 70,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        13,
+        18,
+        21,
+        22,
+        46,
+        47,
+        50,
+        60,
+        62
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 71,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        14,
+        22,
+        25,
+        33,
+        54,
+        59,
+        64,
+        73,
+        77
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 72,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        3,
+        4,
+        7,
+        12,
+        56,
+        66,
+        67,
+        69,
+        80
+      ],
+      "hot": 5,
+      "middle": 0,
+      "cold": 5
+    },
+    {
+      "id": 73,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        25,
+        32,
+        42,
+        44,
+        51,
+        52,
+        69,
+        74,
+        78
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 74,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        16,
+        32,
+        37,
+        45,
+        48,
+        49,
+        72,
+        79,
+        83
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 75,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        30,
+        31,
+        40,
+        56,
+        58,
+        62,
+        65,
+        71,
+        76
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 76,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        3,
+        19,
+        22,
+        23,
+        37,
+        38,
+        42,
+        57,
+        82
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 77,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        14,
+        18,
+        23,
+        26,
+        34,
+        36,
+        43,
+        53,
+        77
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 78,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        10,
+        24,
+        33,
+        41,
+        58,
+        62,
+        66,
+        67,
+        78
+      ],
+      "hot": 4,
+      "middle": 1,
+      "cold": 5
+    },
+    {
+      "id": 79,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        26,
+        40,
+        49,
+        52,
+        54,
+        62,
+        66,
+        79,
+        84
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 80,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        19,
+        27,
+        34,
+        42,
+        46,
+        54,
+        61,
+        64,
+        79
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 81,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        16,
+        38,
+        44,
+        50,
+        53,
+        58,
+        59,
+        73,
+        74
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 82,
+      "profile": "exploratoria",
+      "numbers": [
+        15,
+        20,
+        22,
+        39,
+        40,
+        47,
+        48,
+        53,
+        78,
+        81
+      ],
+      "hot": 1,
+      "middle": 7,
+      "cold": 2
+    },
+    {
+      "id": 83,
+      "profile": "exploratoria",
+      "numbers": [
+        10,
+        12,
+        24,
+        30,
+        34,
+        47,
+        49,
+        63,
+        69,
+        78
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 84,
+      "profile": "exploratoria",
+      "numbers": [
+        22,
+        23,
+        27,
+        34,
+        53,
+        60,
+        66,
+        68,
+        74,
+        82
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 85,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        3,
+        17,
+        29,
+        40,
+        50,
+        55,
+        67,
+        69,
+        84
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 86,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        10,
+        14,
+        17,
+        23,
+        25,
+        27,
+        49,
+        70,
+        72
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 87,
+      "profile": "exploratoria",
+      "numbers": [
+        16,
+        18,
+        19,
+        20,
+        21,
+        31,
+        54,
+        60,
+        71,
+        82
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 88,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        8,
+        13,
+        20,
+        22,
+        45,
+        62,
+        65,
+        75,
+        84
+      ],
+      "hot": 1,
+      "middle": 6,
+      "cold": 3
+    },
+    {
+      "id": 89,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        7,
+        13,
+        15,
+        24,
+        41,
+        43,
+        53,
+        74,
+        81
+      ],
+      "hot": 6,
+      "middle": 3,
+      "cold": 1
+    },
+    {
+      "id": 90,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        20,
+        21,
+        28,
+        33,
+        39,
+        52,
+        58,
+        60,
+        64
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 91,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        26,
+        31,
+        36,
+        41,
+        57,
+        59,
+        64,
+        65,
+        67
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 92,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        7,
+        26,
+        42,
+        46,
+        50,
+        60,
+        66,
+        77,
+        81
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 93,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        7,
+        8,
+        9,
+        21,
+        32,
+        39,
+        48,
+        56,
+        68
+      ],
+      "hot": 2,
+      "middle": 6,
+      "cold": 2
+    },
+    {
+      "id": 94,
+      "profile": "exploratoria",
+      "numbers": [
+        10,
+        35,
+        37,
+        57,
+        63,
+        65,
+        67,
+        70,
+        72,
+        77
+      ],
+      "hot": 0,
+      "middle": 3,
+      "cold": 7
+    },
+    {
+      "id": 95,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        10,
+        17,
+        22,
+        30,
+        43,
+        59,
+        65,
+        70,
+        71
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 96,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        4,
+        11,
+        16,
+        18,
+        25,
+        40,
+        55,
+        75,
+        79
+      ],
+      "hot": 6,
+      "middle": 2,
+      "cold": 2
+    },
+    {
+      "id": 97,
+      "profile": "exploratoria",
+      "numbers": [
+        28,
+        38,
+        39,
+        43,
+        44,
+        52,
+        54,
+        56,
+        57,
+        77
+      ],
+      "hot": 3,
+      "middle": 1,
+      "cold": 6
+    },
+    {
+      "id": 98,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        6,
+        15,
+        19,
+        23,
+        29,
+        61,
+        62,
+        72,
+        83
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 99,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        12,
+        13,
+        15,
+        31,
+        35,
+        43,
+        47,
+        54,
+        82
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 100,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        7,
+        18,
+        21,
+        26,
+        31,
+        45,
+        55,
+        68,
+        78
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 101,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        10,
+        13,
+        18,
+        24,
+        32,
+        42,
+        61,
+        69,
+        76
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 102,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        20,
+        27,
+        30,
+        37,
+        40,
+        51,
+        75,
+        77,
+        80
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 103,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        16,
+        17,
+        35,
+        47,
+        50,
+        51,
+        53,
+        79,
+        84
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 104,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        11,
+        14,
+        35,
+        37,
+        47,
+        55,
+        56,
+        68,
+        73
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 105,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        20,
+        33,
+        44,
+        46,
+        61,
+        70,
+        72,
+        74,
+        84
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 106,
+      "profile": "exploratoria",
+      "numbers": [
+        23,
+        33,
+        39,
+        40,
+        47,
+        51,
+        69,
+        72,
+        74,
+        80
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 107,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        20,
+        28,
+        38,
+        40,
+        43,
+        63,
+        64,
+        66,
+        68
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 108,
+      "profile": "exploratoria",
+      "numbers": [
+        27,
+        29,
+        37,
+        38,
+        45,
+        50,
+        58,
+        61,
+        68,
+        82
+      ],
+      "hot": 1,
+      "middle": 6,
+      "cold": 3
+    },
+    {
+      "id": 109,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        6,
+        30,
+        44,
+        57,
+        58,
+        64,
+        68,
+        81,
+        84
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 110,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        19,
+        25,
+        27,
+        36,
+        54,
+        56,
+        72,
+        74,
+        84
+      ],
+      "hot": 4,
+      "middle": 1,
+      "cold": 5
+    },
+    {
+      "id": 111,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        10,
+        12,
+        14,
+        22,
+        45,
+        46,
+        51,
+        67,
+        73
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 112,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        15,
+        42,
+        43,
+        50,
+        60,
+        66,
+        69,
+        78,
+        83
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 113,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        18,
+        28,
+        33,
+        43,
+        46,
+        49,
+        63,
+        66,
+        76
+      ],
+      "hot": 5,
+      "middle": 1,
+      "cold": 4
+    },
+    {
+      "id": 114,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        20,
+        31,
+        37,
+        42,
+        54,
+        57,
+        66,
+        73,
+        74
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 115,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        4,
+        11,
+        13,
+        14,
+        24,
+        44,
+        66,
+        72,
+        82
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 116,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        18,
+        19,
+        27,
+        39,
+        58,
+        59,
+        62,
+        75,
+        82
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 117,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        25,
+        28,
+        39,
+        47,
+        61,
+        65,
+        67,
+        75,
+        79
+      ],
+      "hot": 1,
+      "middle": 5,
+      "cold": 4
+    },
+    {
+      "id": 118,
+      "profile": "exploratoria",
+      "numbers": [
+        22,
+        24,
+        26,
+        32,
+        47,
+        54,
+        55,
+        64,
+        66,
+        80
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 119,
+      "profile": "exploratoria",
+      "numbers": [
+        25,
+        30,
+        36,
+        41,
+        44,
+        48,
+        57,
+        63,
+        70,
+        71
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 120,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        6,
+        23,
+        39,
+        45,
+        50,
+        55,
+        64,
+        70,
+        78
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 121,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        14,
+        16,
+        23,
+        29,
+        30,
+        33,
+        59,
+        61,
+        81
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 122,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        7,
+        16,
+        17,
+        26,
+        35,
+        39,
+        67,
+        73,
+        83
+      ],
+      "hot": 3,
+      "middle": 1,
+      "cold": 6
+    },
+    {
+      "id": 123,
+      "profile": "exploratoria",
+      "numbers": [
+        19,
+        20,
+        26,
+        32,
+        34,
+        41,
+        42,
+        53,
+        59,
+        69
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 124,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        15,
+        29,
+        31,
+        35,
+        36,
+        37,
+        51,
+        52,
+        64
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 125,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        6,
+        8,
+        21,
+        35,
+        41,
+        65,
+        66,
+        71,
+        84
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 126,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        12,
+        13,
+        15,
+        33,
+        36,
+        46,
+        69,
+        77,
+        79
+      ],
+      "hot": 5,
+      "middle": 4,
+      "cold": 1
+    },
+    {
+      "id": 127,
+      "profile": "exploratoria",
+      "numbers": [
+        7,
+        12,
+        24,
+        28,
+        31,
+        40,
+        59,
+        74,
+        76,
+        83
+      ],
+      "hot": 6,
+      "middle": 2,
+      "cold": 2
+    },
+    {
+      "id": 128,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        4,
+        5,
+        12,
+        16,
+        42,
+        47,
+        48,
+        75,
+        82
+      ],
+      "hot": 6,
+      "middle": 4,
+      "cold": 0
+    },
+    {
+      "id": 129,
+      "profile": "exploratoria",
+      "numbers": [
+        28,
+        33,
+        34,
+        41,
+        43,
+        48,
+        55,
+        56,
+        62,
+        72
+      ],
+      "hot": 5,
+      "middle": 1,
+      "cold": 4
+    },
+    {
+      "id": 130,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        14,
+        20,
+        29,
+        38,
+        49,
+        52,
+        56,
+        57,
+        76
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 131,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        9,
+        25,
+        31,
+        45,
+        47,
+        55,
+        58,
+        60,
+        83
+      ],
+      "hot": 2,
+      "middle": 6,
+      "cold": 2
+    },
+    {
+      "id": 132,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        19,
+        31,
+        34,
+        38,
+        48,
+        70,
+        77,
+        78,
+        80
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 133,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        8,
+        10,
+        17,
+        30,
+        42,
+        56,
+        60,
+        75,
+        79
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 134,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        7,
+        19,
+        21,
+        25,
+        37,
+        40,
+        64,
+        69,
+        83
+      ],
+      "hot": 5,
+      "middle": 2,
+      "cold": 3
+    },
+    {
+      "id": 135,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        15,
+        16,
+        18,
+        48,
+        57,
+        59,
+        61,
+        66,
+        80
+      ],
+      "hot": 1,
+      "middle": 4,
+      "cold": 5
+    },
+    {
+      "id": 136,
+      "profile": "exploratoria",
+      "numbers": [
+        31,
+        42,
+        46,
+        49,
+        53,
+        57,
+        62,
+        65,
+        68,
+        81
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 137,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        10,
+        11,
+        15,
+        34,
+        38,
+        40,
+        43,
+        71,
+        84
+      ],
+      "hot": 6,
+      "middle": 1,
+      "cold": 3
+    },
+    {
+      "id": 138,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        17,
+        18,
+        29,
+        44,
+        66,
+        67,
+        72,
+        75,
+        76
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 139,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        23,
+        39,
+        43,
+        58,
+        63,
+        73,
+        75,
+        76,
+        84
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 140,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        8,
+        9,
+        19,
+        25,
+        39,
+        50,
+        58,
+        65,
+        73
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 141,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        17,
+        23,
+        41,
+        52,
+        56,
+        58,
+        61,
+        67,
+        74
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 142,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        11,
+        21,
+        28,
+        47,
+        55,
+        59,
+        67,
+        77,
+        80
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 143,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        28,
+        30,
+        34,
+        36,
+        37,
+        52,
+        61,
+        72,
+        78
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 144,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        6,
+        12,
+        15,
+        27,
+        41,
+        50,
+        51,
+        52,
+        59
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 145,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        9,
+        33,
+        44,
+        48,
+        54,
+        55,
+        74,
+        75,
+        82
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 146,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        16,
+        21,
+        29,
+        33,
+        45,
+        49,
+        53,
+        67,
+        70
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 147,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        20,
+        22,
+        42,
+        45,
+        52,
+        56,
+        63,
+        69,
+        80
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 148,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        12,
+        14,
+        19,
+        40,
+        46,
+        55,
+        58,
+        65,
+        70
+      ],
+      "hot": 6,
+      "middle": 3,
+      "cold": 1
+    },
+    {
+      "id": 149,
+      "profile": "exploratoria",
+      "numbers": [
+        15,
+        30,
+        35,
+        52,
+        53,
+        57,
+        60,
+        69,
+        73,
+        76
+      ],
+      "hot": 1,
+      "middle": 2,
+      "cold": 7
+    },
+    {
+      "id": 150,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        10,
+        34,
+        39,
+        46,
+        49,
+        51,
+        59,
+        79,
+        82
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 151,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        19,
+        23,
+        32,
+        36,
+        54,
+        67,
+        72,
+        73,
+        83
+      ],
+      "hot": 2,
+      "middle": 3,
+      "cold": 5
+    },
+    {
+      "id": 152,
+      "profile": "exploratoria",
+      "numbers": [
+        14,
+        26,
+        47,
+        59,
+        63,
+        68,
+        70,
+        79,
+        81,
+        84
+      ],
+      "hot": 1,
+      "middle": 7,
+      "cold": 2
+    },
+    {
+      "id": 153,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        21,
+        25,
+        29,
+        36,
+        41,
+        45,
+        53,
+        74,
+        77
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 154,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        14,
+        25,
+        38,
+        42,
+        43,
+        48,
+        50,
+        64,
+        67
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 155,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        20,
+        23,
+        26,
+        37,
+        44,
+        55,
+        60,
+        61,
+        77
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 156,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        13,
+        25,
+        32,
+        65,
+        68,
+        78,
+        79,
+        80,
+        82
+      ],
+      "hot": 1,
+      "middle": 6,
+      "cold": 3
+    },
+    {
+      "id": 157,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        15,
+        37,
+        44,
+        45,
+        51,
+        54,
+        58,
+        72,
+        77
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 158,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        21,
+        22,
+        27,
+        30,
+        34,
+        62,
+        63,
+        69,
+        76
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 159,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        6,
+        13,
+        17,
+        49,
+        54,
+        58,
+        69,
+        71,
+        73
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 160,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        23,
+        35,
+        40,
+        44,
+        46,
+        56,
+        71,
+        78,
+        81
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 161,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        29,
+        49,
+        57,
+        62,
+        63,
+        66,
+        71,
+        74,
+        83
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 162,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        13,
+        14,
+        17,
+        30,
+        31,
+        32,
+        49,
+        56,
+        58
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 163,
+      "profile": "exploratoria",
+      "numbers": [
+        29,
+        49,
+        57,
+        60,
+        61,
+        62,
+        64,
+        71,
+        79,
+        83
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 164,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        7,
+        15,
+        23,
+        27,
+        42,
+        47,
+        55,
+        65,
+        73
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 165,
+      "profile": "exploratoria",
+      "numbers": [
+        31,
+        34,
+        35,
+        40,
+        50,
+        51,
+        54,
+        57,
+        65,
+        78
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 166,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        9,
+        28,
+        34,
+        40,
+        45,
+        50,
+        65,
+        69,
+        82
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 167,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        6,
+        11,
+        16,
+        39,
+        40,
+        45,
+        51,
+        74,
+        83
+      ],
+      "hot": 6,
+      "middle": 3,
+      "cold": 1
+    },
+    {
+      "id": 168,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        7,
+        22,
+        29,
+        37,
+        46,
+        76,
+        78,
+        80,
+        84
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 169,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        20,
+        21,
+        32,
+        38,
+        53,
+        63,
+        71,
+        75,
+        80
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 170,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        7,
+        15,
+        23,
+        41,
+        42,
+        47,
+        52,
+        64,
+        73
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 171,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        34,
+        36,
+        42,
+        44,
+        45,
+        65,
+        69,
+        82,
+        84
+      ],
+      "hot": 5,
+      "middle": 4,
+      "cold": 1
+    },
+    {
+      "id": 172,
+      "profile": "exploratoria",
+      "numbers": [
+        12,
+        18,
+        20,
+        21,
+        25,
+        32,
+        33,
+        44,
+        53,
+        75
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 173,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        7,
+        8,
+        15,
+        23,
+        27,
+        41,
+        52,
+        55,
+        65
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 174,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        16,
+        18,
+        26,
+        27,
+        35,
+        45,
+        61,
+        66,
+        79
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 175,
+      "profile": "exploratoria",
+      "numbers": [
+        11,
+        18,
+        22,
+        26,
+        27,
+        35,
+        51,
+        62,
+        68,
+        79
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 176,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        8,
+        10,
+        19,
+        39,
+        67,
+        70,
+        72,
+        76,
+        81
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 177,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        9,
+        60,
+        61,
+        62,
+        63,
+        64,
+        71,
+        72,
+        79
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 178,
+      "profile": "exploratoria",
+      "numbers": [
+        3,
+        14,
+        30,
+        31,
+        32,
+        33,
+        46,
+        50,
+        56,
+        64
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 179,
+      "profile": "exploratoria",
+      "numbers": [
+        10,
+        11,
+        12,
+        16,
+        18,
+        22,
+        24,
+        26,
+        27,
+        35
+      ],
+      "hot": 5,
+      "middle": 1,
+      "cold": 4
+    },
+    {
+      "id": 180,
+      "profile": "exploratoria",
+      "numbers": [
+        24,
+        28,
+        30,
+        31,
+        33,
+        34,
+        40,
+        50,
+        51,
+        57
+      ],
+      "hot": 5,
+      "middle": 1,
+      "cold": 4
+    },
+    {
+      "id": 181,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        6,
+        11,
+        16,
+        18,
+        22,
+        24,
+        35,
+        51,
+        83
+      ],
+      "hot": 5,
+      "middle": 2,
+      "cold": 3
+    },
+    {
+      "id": 182,
+      "profile": "exploratoria",
+      "numbers": [
+        38,
+        49,
+        60,
+        62,
+        63,
+        64,
+        66,
+        71,
+        72,
+        74
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 183,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        19,
+        43,
+        54,
+        67,
+        70,
+        77,
+        78,
+        82,
+        84
+      ],
+      "hot": 3,
+      "middle": 1,
+      "cold": 6
+    },
+    {
+      "id": 184,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        2,
+        9,
+        13,
+        15,
+        17,
+        36,
+        58,
+        60,
+        82
+      ],
+      "hot": 3,
+      "middle": 7,
+      "cold": 0
+    },
+    {
+      "id": 185,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        6,
+        7,
+        22,
+        38,
+        48,
+        68,
+        76,
+        80,
+        84
+      ],
+      "hot": 3,
+      "middle": 4,
+      "cold": 3
+    },
+    {
+      "id": 186,
+      "profile": "exploratoria",
+      "numbers": [
+        32,
+        56,
+        57,
+        60,
+        61,
+        62,
+        64,
+        71,
+        72,
+        78
+      ],
+      "hot": 2,
+      "middle": 2,
+      "cold": 6
+    },
+    {
+      "id": 187,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        8,
+        19,
+        20,
+        39,
+        41,
+        54,
+        76,
+        77,
+        81
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 188,
+      "profile": "exploratoria",
+      "numbers": [
+        20,
+        21,
+        32,
+        33,
+        38,
+        44,
+        47,
+        49,
+        63,
+        75
+      ],
+      "hot": 3,
+      "middle": 6,
+      "cold": 1
+    },
+    {
+      "id": 189,
+      "profile": "exploratoria",
+      "numbers": [
+        5,
+        7,
+        15,
+        23,
+        27,
+        37,
+        52,
+        74,
+        81,
+        83
+      ],
+      "hot": 4,
+      "middle": 4,
+      "cold": 2
+    },
+    {
+      "id": 190,
+      "profile": "exploratoria",
+      "numbers": [
+        9,
+        14,
+        36,
+        41,
+        42,
+        47,
+        55,
+        59,
+        65,
+        77
+      ],
+      "hot": 3,
+      "middle": 6,
+      "cold": 1
+    },
+    {
+      "id": 191,
+      "profile": "exploratoria",
+      "numbers": [
+        2,
+        16,
+        28,
+        38,
+        48,
+        55,
+        59,
+        68,
+        76,
+        80
+      ],
+      "hot": 4,
+      "middle": 3,
+      "cold": 3
+    },
+    {
+      "id": 192,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        14,
+        24,
+        25,
+        29,
+        38,
+        53,
+        71,
+        81,
+        82
+      ],
+      "hot": 2,
+      "middle": 5,
+      "cold": 3
+    },
+    {
+      "id": 193,
+      "profile": "exploratoria",
+      "numbers": [
+        6,
+        22,
+        29,
+        37,
+        46,
+        48,
+        52,
+        55,
+        74,
+        78
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 194,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        10,
+        19,
+        36,
+        39,
+        43,
+        54,
+        70,
+        81,
+        82
+      ],
+      "hot": 2,
+      "middle": 4,
+      "cold": 4
+    },
+    {
+      "id": 195,
+      "profile": "exploratoria",
+      "numbers": [
+        16,
+        22,
+        28,
+        29,
+        37,
+        48,
+        52,
+        55,
+        68,
+        80
+      ],
+      "hot": 3,
+      "middle": 5,
+      "cold": 2
+    },
+    {
+      "id": 196,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        2,
+        15,
+        17,
+        18,
+        26,
+        46,
+        49,
+        58,
+        60
+      ],
+      "hot": 5,
+      "middle": 3,
+      "cold": 2
+    },
+    {
+      "id": 197,
+      "profile": "exploratoria",
+      "numbers": [
+        8,
+        10,
+        28,
+        39,
+        43,
+        67,
+        70,
+        77,
+        81,
+        84
+      ],
+      "hot": 3,
+      "middle": 2,
+      "cold": 5
+    },
+    {
+      "id": 198,
+      "profile": "exploratoria",
+      "numbers": [
+        1,
+        13,
+        17,
+        18,
+        26,
+        30,
+        32,
+        46,
+        56,
+        58
+      ],
+      "hot": 3,
+      "middle": 3,
+      "cold": 4
+    },
+    {
+      "id": 199,
+      "profile": "exploratoria",
+      "numbers": [
+        4,
+        24,
+        31,
+        34,
+        40,
+        45,
+        50,
+        57,
+        69,
+        78
+      ],
+      "hot": 4,
+      "middle": 2,
+      "cold": 4
+    },
+    {
+      "id": 200,
+      "profile": "exploratoria",
+      "numbers": [
+        13,
+        14,
+        21,
+        25,
+        26,
+        30,
+        41,
+        53,
+        62,
+        73
+      ],
+      "hot": 1,
+      "middle": 3,
+      "cold": 6
+    }
+  ],
+  "prizes": [
+    {
+      "hits": 10,
+      "amount": 25000000
+    },
+    {
+      "hits": 9,
+      "amount": 200000
+    },
+    {
+      "hits": 8,
+      "amount": 10000
+    },
+    {
+      "hits": 7,
+      "amount": 1000
+    },
+    {
+      "hits": 6,
+      "amount": 300
+    },
+    {
+      "hits": 5,
+      "amount": 60
+    },
+    {
+      "hits": 0,
+      "amount": 80
+    }
+  ]
+}
