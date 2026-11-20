@@ -2,13 +2,15 @@ name: Prepare lottery portfolios
 
 on:
   schedule:
-    # Dominican time (UTC-4): 12 runs/day, independent of browser visits.
+    # Dominican time (UTC-4): 14 runs/day, independent of browser visits.
     - cron: "37 12 * * *" # 08:37: refresh and prepare all products
     - cron: "37 14 * * *" # 10:37: preparation retry and verification
     - cron: "17 16 * * *" # 12:17: Quinielon Dia, attempt 1
     - cron: "47 16 * * *" # 12:47: attempt 2
     - cron: "17 17 * * *" # 13:17: final attempt
-    - cron: "37 21 * * *" # 17:37: prepare Quinielon Noche
+    - cron: "37 17 * * *" # 13:37: prepare Quinielon Noche early
+    - cron: "37 19 * * *" # 15:37: preparation retry
+    - cron: "37 21 * * *" # 17:37: final preparation retry
     - cron: "17 23 * * *" # 19:17: Quinielon Noche, attempt 1
     - cron: "47 23 * * *" # 19:47: attempt 2
     - cron: "17 0 * * *"  # 20:17: final attempt (next UTC date)

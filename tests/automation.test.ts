@@ -95,7 +95,7 @@ test("a delayed job retains its scheduled operation rather than branching on the
   assert.equal(plan.operations[0].session, "dia");
   assert.equal(plan.date, "2026-11-08");
   assert.equal(automationPlan("17 16 * * *", local("2026-11-08", "16:00")).expired, false);
-  assert.ok(!automationPlan("37 14 * * *", local("2026-11-08", "12:10")).operations.some(op => op.expect === "assignment"));
+  assert.ok(automationPlan("37 14 * * *", local("2026-11-08", "12:10")).operations.some(op => op.expect === "saved-state" && op.session === "dia"));
 });
 
 test("UTC midnight still targets the Dominican draw date and Sunday does not update Loto", () => {
@@ -106,7 +106,7 @@ test("UTC midnight still targets the Dominican draw date and Sunday does not upd
   assert.ok(!sunday.operations.some(op => op.expect === "loto-result"));
 });
 
-test("workflow and planner match, with exactly twelve scheduled runs per Dominican day", () => {
+test("workflow and planner match, with exactly fourteen scheduled runs per Dominican day", () => {
   const workflow = readFileSync(new URL("../.github/workflows/prepare-portfolios.yml", import.meta.url), "utf8");
   const crons = [...workflow.matchAll(/- cron: "([^"]+)"/g)].map(match => match[1]);
   assert.deepEqual(crons, automationWindows.map(window => window.cron));
@@ -121,7 +121,7 @@ test("workflow and planner match, with exactly twelve scheduled runs per Dominic
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
   }
-  for (let day = 8; day <= 14; day++) assert.equal(counts.get(`2026-11-${String(day).padStart(2,"0")}`), 12);
+  for (let day = 8; day <= 14; day++) assert.equal(counts.get(`2026-11-${String(day).padStart(2,"0")}`), 14);
 });
 
 test("a provisional result or wrong-date portfolio does not count as success", () => {
@@ -155,7 +155,7 @@ test("a failed operation does not stop preparation of other products", async () 
 test("a preparation window that arrives after the draw is reported, never silently successful", async () => {
   const request = (async () => Response.json({ok:true,results:[]})) as typeof fetch;
   const result = await runAutomation({cron:"37 14 * * *",appUrl:"https://example.test",now:local("2026-11-08","12:10"),request});
-  assert.ok(result.report.some(item => item.label === "Ventana de preparación vencida" && item.state === "failed"));
+  assert.ok(result.report.some(item => item.label === "Reparto dia" && item.state === "failed"));
 });
 
 test("observed four-hour delays still recover the original Quinielón day result", async () => {
@@ -170,4 +170,67 @@ test("observed four-hour delays still recover the original Quinielón day result
     assert.equal(result.failed,false);
     assert.equal(result.report[0].state,"ready");
   }
+});
+
+test("observed late night trigger verifies the closed assignment without POST or false failure", async () => {
+  for (const ready of [true, false]) {
+    const calls: string[] = [];
+    const request = (async (url, init) => {
+      const target = new URL(String(url));
+      calls.push(target.pathname);
+      assert.equal(target.pathname, "/api/automation/status");
+      assert.equal(target.searchParams.get("kind"), "assignment");
+      assert.equal(target.searchParams.get("date"), "2026-11-18");
+      assert.equal(target.searchParams.get("session"), "noche");
+      assert.equal(init?.method, "GET");
+      return Response.json({ready,date:"2026-11-18",session:"noche"});
+    }) as typeof fetch;
+    const result = await runAutomation({cron:"37 21 * * *",appUrl:"https://example.test",now:new Date("2026-11-19T02:45:42Z"),request});
+    assert.equal(result.failed,!ready);
+    assert.equal(calls.length,1);
+  }
+});
+
+test("night retries reuse a saved assignment and never regenerate it", async () => {
+  for (const [cron,time] of [["37 17 * * *","13:37"],["37 19 * * *","15:37"],["37 21 * * *","17:37"]]) {
+    let calls=0;
+    const request = (async (url,init) => {
+      calls++;
+      assert.equal(new URL(String(url)).pathname,"/api/automation/status");
+      assert.equal(init?.body,undefined);
+      return Response.json({ready:true,date:"2026-11-19",session:"noche"});
+    }) as typeof fetch;
+    const result = await runAutomation({cron,appUrl:"https://example.test",now:local("2026-11-19",time),request});
+    assert.equal(result.failed,false);
+    assert.equal(calls,1);
+  }
+});
+
+test("crossing the deadline during the preflight never generates the following session", async () => {
+  let clockCalls=0, calls=0;
+  const request = (async (url,init) => {
+    calls++;
+    assert.equal(new URL(String(url)).pathname,"/api/automation/status");
+    assert.equal(init?.body,undefined);
+    return Response.json({ready:false,date:"2026-11-19",session:"noche"});
+  }) as typeof fetch;
+  const result = await runAutomation({cron:"37 21 * * *",appUrl:"https://example.test",request,
+    clock:()=>local("2026-11-19",clockCalls++ === 0 ? "18:59" : "19:00")});
+  assert.equal(result.failed,true);
+  assert.equal(calls,2);
+});
+
+test("a missing open assignment is generated only after a successful storage check", async () => {
+  const methods: string[]=[];
+  const request = (async (url,init) => {
+    const path = new URL(String(url)).pathname;
+    methods.push(init?.method ?? "GET");
+    if (path === "/api/automation/status") return Response.json({ready:false,date:"2026-11-19",session:"noche"});
+    assert.equal(path,"/api/quinielon/distributor");
+    assert.deepEqual(JSON.parse(String(init?.body)),{session:"noche"});
+    return Response.json({date:"2026-11-19",session:"noche",investors:[[],[],[],[]]});
+  }) as typeof fetch;
+  const result=await runAutomation({cron:"37 17 * * *",appUrl:"https://example.test",now:local("2026-11-19","13:37"),request});
+  assert.equal(result.failed,false);
+  assert.deepEqual(methods,["GET","POST"]);
 });

@@ -7,6 +7,8 @@ export const automationWindows = [
   { cron: "17 16 * * *", minute: 737, kind: "dia", final: false },
   { cron: "47 16 * * *", minute: 767, kind: "dia", final: false },
   { cron: "17 17 * * *", minute: 797, kind: "dia", final: true },
+  { cron: "37 17 * * *", minute: 817, kind: "prepare-night", final: false },
+  { cron: "37 19 * * *", minute: 937, kind: "prepare-night", final: false },
   { cron: "37 21 * * *", minute: 1057, kind: "prepare-night", final: true },
   { cron: "17 23 * * *", minute: 1157, kind: "noche", final: false },
   { cron: "47 23 * * *", minute: 1187, kind: "noche", final: false },
@@ -22,9 +24,9 @@ export const automationWindows = [
 export type AutomationOperation = {
   label: string; path: string; body?: { session: "dia" | "noche" } | { date: string };
   expect: "kino-result" | "loto-result" | "quinielon-result" | "portfolio" | "neighbor-portfolio" | "loto-portfolio" | "assignment" | "saved-state";
-  date: string; session?: "dia" | "noche";
+  date: string; session?: "dia" | "noche"; deadline?: number; verifyFirst?: boolean;
 };
-type AutomationPlan = { date: string; window: typeof automationWindows[number]; operations: AutomationOperation[]; missed: string[]; expired: boolean };
+type AutomationPlan = { date: string; window: typeof automationWindows[number]; operations: AutomationOperation[]; expired: boolean };
 export function automationPlan(cron: string, now = new Date()): AutomationPlan {
   const window = automationWindows.find(window => window.cron === cron);
   if (!window) throw new Error("Ventana de automatización desconocida.");
@@ -35,34 +37,32 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
     // Reconstruct the intended targets, not the current/next session. Never call
     // generation or update endpoints when the window has expired.
     const intended = automationPlan(cron, new Date(due));
-    return { ...intended, expired: true, operations: intended.operations.map(operation => ({
-      ...operation, expect: "saved-state" as const,
-      path: `/api/automation/status?kind=${operation.expect}&date=${operation.date}${operation.session ? `&session=${operation.session}` : ""}`,
-      body: undefined
-    })) };
+    return { ...intended, expired: true, operations: intended.operations.map(savedStateOperation) };
   }
   const operations: AutomationOperation[] = [];
-  const missed: string[] = [];
-  const add = (operation: AutomationOperation) => operations.push(operation);
+  const add = (operation: AutomationOperation) => {
+    // A late trigger must verify the original record, never move generation to
+    // another session or declare failure before checking persisted state.
+    operations.push(operation.deadline !== undefined && now.getTime() >= operation.deadline
+      ? savedStateOperation(operation) : operation);
+  };
   const prepareNeighbor = (target: string) => {
-    if (target >= KINO_NEIGHBOR_START) add({ label: "Cartera Super Kino TV ±1", path: "/api/super-kino-neighbor/portfolio", body: { date: target }, expect: "neighbor-portfolio", date: target });
+    if (target >= KINO_NEIGHBOR_START) add({ label: "Cartera Super Kino TV ±1", path: "/api/super-kino-neighbor/portfolio", body: { date: target }, expect: "neighbor-portfolio", date: target, verifyFirst: true, deadline: drawTimestamp(drawSlots("kino", target)[0]) });
   };
   const prepare = (product: "kino" | "loto" | "quinielon", session?: "dia" | "noche") => {
     if (product === "quinielon") {
       const slot = drawSlots(product, date).find(slot => slot.session === session)!;
-      if (now.getTime() >= drawTimestamp(slot)) { missed.push(`Preparación ${session}: la tanda ya cerró`); return; }
-      add({ label: `Reparto ${session}`, path: "/api/quinielon/distributor", body: { session: session! }, expect: "assignment", date, session });
+      add({ label: `Reparto ${session}`, path: "/api/quinielon/distributor", body: { session: session! }, expect: "assignment", date, session, verifyFirst: true, deadline: drawTimestamp(slot) });
     } else if (product === "kino") {
       const slot = drawSlots(product, date)[0];
       if (!slot) return;
-      if (now.getTime() >= drawTimestamp(slot) - 5 * 60_000) { missed.push("Preparación Kino: el sorteo ya cerró"); return; }
-      add({ label: "Cartera Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date });
+      add({ label: "Cartera Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date, verifyFirst: true, deadline: drawTimestamp(slot) - 5 * 60_000 });
       prepareNeighbor(date);
     } else {
       // Loto's application cutoff remains 17:00; prepare only its next open draw.
       let target = date;
       while (!drawSlots("loto", target).length || (target === clock.date && clock.minutes >= 1020)) target = shiftDrawDate(target, 1);
-      add({ label: "Cartera Loto Más", path: `/api/portfolio?drawDate=${target}`, expect: "loto-portfolio", date: target });
+      add({ label: "Cartera Loto Más", path: `/api/portfolio?drawDate=${target}`, expect: "loto-portfolio", date: target, verifyFirst: true, deadline: Date.parse(`${target}T17:00:00-04:00`) });
     }
   };
   if (window.kind === "prepare") {
@@ -82,7 +82,7 @@ export function automationPlan(cron: string, now = new Date()): AutomationPlan {
     add({ label: "Seguimiento Super Kino", path: "/api/super-kino/portfolio", expect: "portfolio", date: nextKinoDate });
     prepareNeighbor(nextKinoDate);
   }
-  return { date, window, operations, missed, expired: false };
+  return { date, window, operations, expired: false };
 }
 
 export function operationReady(operation: AutomationOperation, payload: Record<string, any>) {
@@ -96,4 +96,9 @@ export function operationReady(operation: AutomationOperation, payload: Record<s
   if (operation.expect === "assignment") return payload.date === operation.date && payload.session === operation.session && Array.isArray(payload.investors) && payload.investors.length === 4;
   return Array.isArray(payload.results) && payload.results.some((draw: {date: string; session?: string; verification?: string}) =>
     draw.date === operation.date && (!operation.session || draw.session === operation.session) && (operation.expect !== "quinielon-result" || draw.verification !== "provisional"));
+}
+
+export function savedStateOperation(operation: AutomationOperation): AutomationOperation {
+  return { ...operation, expect: "saved-state", body: undefined, verifyFirst: false,
+    path: `/api/automation/status?kind=${operation.expect}&date=${operation.date}${operation.session ? `&session=${operation.session}` : ""}` };
 }
