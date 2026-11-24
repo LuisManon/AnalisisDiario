@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { clientResources } from "../lib/client-resource-cache";
+import { usePolling } from "./usePolling";
+import { useResultsRefresh } from "./ResultsRefreshContext";
 import { useSavedSnapshot } from "./useSavedSnapshot";
 import type { KinoCalendarEntry } from "../lib/portfolio-view";
 import type { ReactNode } from "react";
 import { Ball } from "./Ball";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
-import { publicationWindow } from "../lib/draw-schedule";
 import {
   buildKinoPostgame, kinoRecordedDraw, evaluateKinoSnapshot, formatKinoPortfolioText, getKinoStaleNumbers, kinoAlgorithmForDate, kinoStats, kinoPrizes, kinoProfiles, kinoProfileLabels,
   KINO_OFFICIAL, KINO_ANALYSIS_START, type KinoDraw, type KinoSnapshot
@@ -33,10 +35,11 @@ function Balls({numbers, matches = []}: {numbers: number[]; matches?: number[]})
 function InfoTooltip({label,children,wide=false}:{label:string;children:ReactNode;wide?:boolean}) {
   return <span className={`kinoInfoTooltip ${wide?"wide":""}`} tabIndex={0} aria-label={label}><span className="kinoInfoIcon" aria-hidden="true">i</span><span className="kinoInfoContent" role="tooltip">{children}</span></span>;
 }
-type PortfolioData = {current: KinoSnapshot | null; latest: KinoSnapshot | null; snapshots: KinoCalendarEntry[]; waitingForResult?: boolean};
+type PortfolioData = {current: KinoSnapshot | null; latest: KinoSnapshot | null; snapshots: KinoCalendarEntry[]; waitingForResult?: boolean; sourceVersion: string};
 
 export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]}) {
-  const [results, setResults] = useState(initialResults);
+  const results = initialResults;
+  const { version, refresh: refreshResults } = useResultsRefresh();
   const [page, setPage] = useState(1);
   const [clock, setClock] = useState(() => kinoClock());
   const [expectedDate, setExpectedDate] = useState(() => kinoExpectedDate());
@@ -47,57 +50,30 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const [awardDate, setAwardDate] = useState("");
   const [showAwardPlays, setShowAwardPlays] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
-  const resultsRef = useRef(results);
-  const portfolioRef = useRef<PortfolioData | null>(null);
   const mounted = useRef(false);
-  const updating = useRef(false);
-  const loadingPortfolio = useRef(false);
 
-  const loadPortfolio = useCallback(async () => {
-    if (loadingPortfolio.current || document.hidden) return;
-    loadingPortfolio.current = true;
+  const loadPortfolio = useCallback(async (signal?: AbortSignal) => {
+    if (document.hidden) return true;
     try {
-      const response = await fetch("/api/super-kino/portfolio?view=compact", {cache: "no-store"});
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.message);
-      if (mounted.current) { setPortfolio(payload); portfolioRef.current = payload; setPortfolioError(""); }
+      const payload = await clientResources.read<PortfolioData>(`kino-view:${version}`, "/api/super-kino/portfolio?view=compact");
+      if (mounted.current && !signal?.aborted) { setPortfolio(payload); setPortfolioError(""); }
+      return true;
     } catch {
-      if (mounted.current) setPortfolioError("No se pudieron cargar las jugadas guardadas. Reintenta para consultar las combinaciones definitivas.");
-    } finally { loadingPortfolio.current = false; }
-  }, []);
+      if (mounted.current && !signal?.aborted) setPortfolioError("No se pudieron cargar las jugadas guardadas. Reintenta para consultar las combinaciones definitivas.");
+      return false;
+    }
+  }, [version]);
 
   const update = useCallback(async () => {
-    if (document.hidden || updating.current || publicationWindow("kino")) return;
-    updating.current = true;
-    try {
-      const response = await fetch("/api/super-kino/update", {cache: "no-store"});
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.message);
-      if (!mounted.current) return;
-      resultsRef.current = payload.results;
-      setResults(payload.results);
-      setExpectedDate(payload.expectedDate);
-      await loadPortfolio();
-    } catch {
-      // El historial local permanece visible y el temporizador reintenta automáticamente.
-    } finally {
-      updating.current = false;
-    }
-  }, [loadPortfolio]);
+    try { await refreshResults(); await loadPortfolio(); }
+    catch { setPortfolioError("No se pudieron actualizar los datos guardados."); }
+  }, [refreshResults, loadPortfolio]);
 
-  useEffect(() => {
-    mounted.current = true;
-    void loadPortfolio();
-    if (!resultsRef.current.some(d => d.date === kinoExpectedDate())) void update();
-    const timer = window.setInterval(() => {
-      const expected = kinoExpectedDate();
-      setClock(kinoClock());
-      setExpectedDate(expected);
-      if (!resultsRef.current.some(d => d.date === expected)) void update();
-      if (portfolioRef.current?.current?.targetDate !== kinoTargetDate()) void loadPortfolio();
-    }, 300_000);
-    return () => { mounted.current = false; window.clearInterval(timer); };
-  }, [loadPortfolio, update]);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  usePolling(`kino-portfolio:${version}`, async signal => {
+    setClock(kinoClock()); setExpectedDate(kinoExpectedDate());
+    if (!await loadPortfolio(signal)) throw new Error("Cartera pendiente de lectura.");
+  });
 
   const history = useMemo(() => results.filter(d => d.date >= KINO_ANALYSIS_START && d.date <= clock.date), [results, clock.date]);
   const missingCount = useMemo(() => {
@@ -139,7 +115,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const awardDates = [...new Set([expectedDate, ...(portfolio?.snapshots.filter(s => s.targetDate <= expectedDate).map(s => s.targetDate) ?? [])])].sort().reverse();
   const selectedAwardDate = awardDates.includes(awardDate) ? awardDate : awardDates[0];
   const { snapshot: savedAward, error: awardError } = useSavedSnapshot<KinoSnapshot>("/api/super-kino/portfolio", portfolio ? selectedAwardDate : undefined,
-    current?.targetDate === selectedAwardDate ? current : portfolio?.latest);
+    current?.targetDate === selectedAwardDate ? current : portfolio?.latest, portfolio?.sourceVersion);
   const awardDraw = results.find(d => d.date === selectedAwardDate);
   const recordedAwardDraw = awardDraw && savedAward?.prizeDrawNumbers ? {...awardDraw, numbers: savedAward.prizeDrawNumbers} : awardDraw;
   const awards = savedAward && recordedAwardDraw ? evaluateKinoSnapshot(savedAward, recordedAwardDraw) : null;
@@ -194,7 +170,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       <div><p className="eyebrow">LEIDSA · Sorteo diario</p><h1>Super Kino TV</h1><span className="kinoAlgorithmLabel">Algoritmo activo · {currentAlgorithmLabel} <InfoTooltip label={`Cómo funciona el algoritmo ${currentAlgorithmLabel}`}><strong>{currentAlgorithmLabel === "V13.3" ? "V13.3 · cartera híbrida 160/40" : currentAlgorithmLabel}</strong><span>{currentAlgorithmLabel === "V13.3"?"Construye 160 jugadas diversificadas y 40 dirigidas, organizadas en ocho familias de cinco. Equilibra la exposición entre los 84 números y utiliza simulaciones independientes para orientar la cobertura hacia 8–10 aciertos; el historial solo sirve para retrospectiva.":"El 100% de la exposición se distribuye uniformemente entre los 84 números y no se utiliza la señal de V10. Cada número aparece 23 o 24 veces en las 200 jugadas; además se reducen parejas repetidas y jugadas demasiado similares."}</span></InfoTooltip></span><p>84 números · 20 extraídos · 10 por jugada</p><p>{current ? `${current.plays.length} jugadas guardadas para ${current.targetDate}.` : "Cartera pendiente de confirmación."}</p></div>
       <div className="heroPanel kinoLatest"><span className="panelLabel">Último sorteo cargado · {latest?.date ?? "Sin datos"} <InfoTooltip wide label="Tabla de premios de Super Kino"><strong>Tabla de premios · jugada RD$25</strong>{kinoPrizes.map(prize=><span key={prize.hits}>{prize.hits} aciertos · {money(prize.amount)}</span>)}<span>1–4 aciertos · Sin premio</span><a href={KINO_OFFICIAL} target="_blank" rel="noreferrer">Ver tabla oficial</a></InfoTooltip></span>{latest ? <Balls numbers={latest.numbers} /> : <p>No hay resultados disponibles.</p>}</div>
     </section>
-<p className={`kinoPolling ${waiting ? "waiting" : ""}`}>{waiting ? `Esperando resultado del ${expectedDate} · revisión automática cada 60 segundos.` : `Resultado del ${expectedDate} cargado.`} Consulta desde las 9:00 p. m.; domingos, 4:00 p. m. (hora dominicana), mientras esta sección esté abierta.</p>
+<p className={`kinoPolling ${waiting ? "waiting" : ""}`}>{waiting ? `Esperando resultado del ${expectedDate} · revisión automática cada cinco minutos con la pestaña visible.` : `Resultado del ${expectedDate} cargado.`} Consulta desde las 9:00 p. m.; domingos, 4:00 p. m. (hora dominicana), mientras esta sección esté abierta.</p>
 <DrawPublicationStatus product="kino" results={results} />
 <AnalysisWorkspace panels={[
 { id: "analizar", label: "Analizar", description: "Revisa la cobertura de la cartera y consulta las frecuencias históricas.", content: <>

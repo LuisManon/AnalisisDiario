@@ -36,6 +36,11 @@ async function writeJsonFile(localPath: string, repoPath: string, content: strin
   await fs.writeFile(localPath, content, "utf8");
 }
 
+export async function readStoredResultsText(product: "kino" | "loto" | "quinielon") {
+  if (product === "kino") return readJsonFile(path.join(process.cwd(), "data", "super-kino-results.json"), "data/super-kino-results.json");
+  return product === "quinielon" ? readJsonFile(laPrimeraDataPath, laPrimeraRepoPath) : readJsonFile(dataPath, lotoMasRepoPath);
+}
+
 export async function readResults(): Promise<DrawResult[]> {
   const raw = await readJsonFile(dataPath, lotoMasRepoPath);
   const parsed = JSON.parse(raw);

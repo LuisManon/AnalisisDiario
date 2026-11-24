@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-23",
+  "windowMinutes": 5,
+  "environment": "all",
+  "source": "Vercel Observability > Functions, consulta realizada en esta sesión antes de optimizar las consultas condicionales",
+  "note": "Muestra corta, valores de CPU redondeados por la interfaz. Se usan los denominadores de cada fila; el gráfico superior mostraba 22 invocaciones y las filas sumaban 27, por lo que no se mezclan ambos agregados.",
+  "routes": [
+    { "route": "/api/results", "invocations": 7, "cpuMs": 1620 },
+    { "route": "/api/super-kino/portfolio", "invocations": 7, "cpuMs": 1060 },
+    { "route": "/api/quinielon/distributor", "invocations": 4, "cpuMs": 430 },
+    { "route": "/api/super-kino-neighbor/portfolio", "invocations": 8, "cpuMs": 410 },
+    { "route": "/api/portfolio", "invocations": 1, "cpuMs": 90 }
+  ]
+}

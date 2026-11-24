@@ -1,15 +1,18 @@
 "use client";
 
+import { clientResources } from "../lib/client-resource-cache";
+import { usePolling } from "./usePolling";
+import { useResultsRefresh } from "./ResultsRefreshContext";
 import { useSavedSnapshot } from "./useSavedSnapshot";
 import type { NeighborCalendarEntry } from "../lib/portfolio-view";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { Ball } from "./Ball";
 import { kinoClock, shiftKinoDate } from "../lib/super-kino-clock";
 import { evaluateNeighbor, neighborDayState, KINO_NEIGHBOR_START, type KinoNeighborSnapshot } from "../lib/super-kino-neighbor";
 import type { KinoDraw } from "../lib/super-kino";
 
-type Payload = { current: KinoNeighborSnapshot | null; snapshots: NeighborCalendarEntry[]; results: KinoDraw[]; expectedDate: string; startDate: string };
+type Payload = { current: KinoNeighborSnapshot | null; snapshots: NeighborCalendarEntry[]; expectedDate: string; startDate: string; sourceVersion: string };
 const money = (n: number) => `RD$${n.toLocaleString("en-US")}`;
 const shortDate = (date: string) => new Intl.DateTimeFormat("es-DO", { day: "2-digit", month: "short", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
 const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
@@ -19,25 +22,18 @@ function Balls({ numbers, matches = [] }: { numbers: number[]; matches?: number[
 export function SuperKinoNeighborDashboard({ initialResults }: { initialResults: KinoDraw[] }) {
   const [data, setData] = useState<Payload | null>(null), [error, setError] = useState(""), [reload, setReload] = useState(0);
   const [now, setNow] = useState(() => new Date()), [weekOffset, setWeekOffset] = useState(0), [page, setPage] = useState(0), [selected, setSelected] = useState("");
-  useEffect(() => {
-    let alive = true, pending = false;
-    const refresh = async () => {
-      if (pending || document.hidden) return; pending = true;
-      const currentTime = new Date();
-      try {
-        const response = await fetch("/api/super-kino-neighbor/portfolio?view=compact", { cache: "no-store" });
-        const payload: Payload & { message?: string } = await response.json();
-        if (!response.ok) throw new Error(payload.message ?? "No se pudieron cargar las carteras ±1.");
-        if (alive) { setData(payload); setNow(currentTime); }
-        if (alive) setError("");
-      } catch (failure) { if (alive) setError(failure instanceof Error ? failure.message : "No se pudo actualizar Super Kino TV ±1."); }
-      finally { pending = false; }
-    };
-    void refresh(); const timer = window.setInterval(() => void refresh(), 300_000);
-    return () => { alive = false; window.clearInterval(timer); };
-  }, [reload]);
+  const { version } = useResultsRefresh();
+  usePolling(`neighbor:${version}:${reload}`, async signal => {
+    try {
+      const payload = await clientResources.read<Payload>(`neighbor-view:${version}:${reload}`, "/api/super-kino-neighbor/portfolio?view=compact");
+      if (!signal.aborted) { setData(payload); setNow(new Date()); setError(""); }
+    } catch (failure) {
+      if (!signal.aborted) setError(failure instanceof Error ? failure.message : "No se pudo actualizar Super Kino TV ±1.");
+      throw failure;
+    }
+  });
   const clock = kinoClock(now), current = data?.current;
-  const snapshots = data?.snapshots ?? [], results = data?.results ?? initialResults;
+  const snapshots = data?.snapshots ?? [], results = initialResults;
   const weekStart = shiftKinoDate(monday(clock.date), weekOffset * 7), earliestWeek = monday(shiftKinoDate(KINO_NEIGHBOR_START, -2));
   const calendar = days.map((day, i) => {
     const date = shiftKinoDate(weekStart, i), snapshot = snapshots.find(s => s.targetDate === date);
@@ -46,7 +42,7 @@ export function SuperKinoNeighborDashboard({ initialResults }: { initialResults:
   });
   const dates = [...snapshots].sort((a, b) => b.targetDate.localeCompare(a.targetDate));
   const selectedDate = dates.some(s => s.targetDate === selected) ? selected : dates[0]?.targetDate ?? "";
-  const { snapshot: detail, error: detailError } = useSavedSnapshot<KinoNeighborSnapshot>("/api/super-kino-neighbor/portfolio", selectedDate, current);
+  const { snapshot: detail, error: detailError } = useSavedSnapshot<KinoNeighborSnapshot>("/api/super-kino-neighbor/portfolio", selectedDate, current, data?.sourceVersion);
   const evaluation = useMemo(() => detail?.prizeDrawNumbers ? evaluateNeighbor(detail, detail.prizeDrawNumbers) : null, [detail]);
   const corrected = Boolean(detail?.prizeDrawNumbers && results.find(r => r.date === detail.targetDate)?.numbers.some(n => !detail.prizeDrawNumbers!.includes(n)));
   const activePage = Math.min(page, Math.max(0, Math.ceil((current?.plays.length ?? 0) / 10) - 1));

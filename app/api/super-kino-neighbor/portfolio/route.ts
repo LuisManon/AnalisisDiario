@@ -1,3 +1,4 @@
+import { conditionalJson } from "../../../../lib/http-version";
 import { readPublicNeighborPortfolio } from "../../../../lib/public-portfolio-store";
 import { createReadCache } from "../../../../lib/read-cache";
 import { NextResponse } from "next/server";
@@ -17,14 +18,14 @@ export async function GET(request: Request) {
   const date = params.get("date");
   if (date && !z.iso.date().safeParse(date).success) return NextResponse.json({ message: "Fecha inválida." }, { status: 400, headers });
   try {
-    if (date) return NextResponse.json({ current: await readSavedNeighborSnapshot(date) }, { headers: readHeaders });
+    if (date) return conditionalJson(request, { current: await readSavedNeighborSnapshot(date) });
     const target = [KINO_NEIGHBOR_START, kinoTargetDate()].sort().at(-1)!;
     const compact = Boolean(process.env.VERCEL) || params.get("view") === "compact";
     const load = () => readPublicNeighborPortfolio();
     const [portfolio, results] = await Promise.all([
-      compact ? (process.env.VERCEL ? views.read(target, load) : load()) : readKinoNeighborPortfolio(target), readKinoResults()
+      compact ? (process.env.VERCEL ? views.read(target, load) : load()) : readKinoNeighborPortfolio(target), compact ? Promise.resolve(undefined) : readKinoResults()
     ]);
-    return NextResponse.json({ ...portfolio, results, expectedDate: kinoExpectedDate() }, { headers: readHeaders });
+    return NextResponse.json({ ...portfolio, ...(compact ? {} : { results }), expectedDate: kinoExpectedDate() }, { headers: readHeaders });
   } catch { return NextResponse.json({ message: "No se pudieron leer las carteras Super Kino TV ±1." }, { status: 503, headers }); }
 }
 export async function POST(request: Request) {

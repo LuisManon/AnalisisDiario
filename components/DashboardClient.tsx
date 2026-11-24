@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { usePolling } from "./usePolling";
+import { useResultsRefresh } from "./ResultsRefreshContext";
 import { Ball } from "./Ball";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
@@ -11,7 +13,7 @@ import { publicationWindow } from "../lib/draw-schedule";
 import { DrawBalls } from "./DrawBalls";
 import { NumberSearch } from "./NumberSearch";
 import { buildStats } from "../lib/stats";
-import { formatMoney, getDrawDay, getLatestExpectedDrawDate, getVirtualPrize } from "../lib/game";
+import { formatMoney, getDrawDay, getVirtualPrize } from "../lib/game";
 import type { DayFilter, DrawResult, PortfolioPlay, ThirtyPlayPortfolio, ThirtyPlayPrizeSummary } from "../lib/types";
 
 type ApiState = {
@@ -120,7 +122,9 @@ function formatShortDate(date: string) {
 
 export function DashboardClient({ initialData }: DashboardClientProps) {
   const [day, setDay] = useState<DayFilter>("todos");
-  const [data, setData] = useState<ApiState>(initialData);
+  const data = initialData;
+  const { version, refresh: refreshResults } = useResultsRefresh();
+  const [portfolioReload, setPortfolioReload] = useState(0);
   const [status, setStatus] = useState(`Datos listos: ${initialData.results.length} sorteos cargados.`);
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSeconds, setUpdateSeconds] = useState(0);
@@ -138,7 +142,6 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const [previousPortfolio, setPreviousPortfolio] = useState<(ThirtyPlayPortfolio & { draw: DrawResult }) | null>(null);
   const [portfolioCalendar, setPortfolioCalendar] = useState<PortfolioCalendarEntry[]>([]);
   const [portfolioMessage, setPortfolioMessage] = useState("Cargando las jugadas guardadas.");
-  const automaticUpdateStarted = useRef(false);
 
   const loadPortfolioData = useCallback(async (signal?: AbortSignal) => {
     setPortfolioMessage("Cargando la cartera guardada de este sorteo…");
@@ -151,21 +154,14 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
       setPreviousPortfolio(payload.previous ?? null);
       setPortfolioCalendar(payload.calendar ?? []);
       setPortfolioMessage("");
+      return true;
     } catch {
       if (signal?.aborted) return;
       setPortfolioMessage("No se pudieron cargar las jugadas guardadas.");
+      return false;
     }
   }, [portfolioTargetDate]);
 
-  useEffect(() => {
-    const expectedDate = getLatestExpectedDrawDate();
-    if (expectedDate && (!initialData.results[0]?.date || initialData.results[0].date < expectedDate)) {
-      if (!automaticUpdateStarted.current) {
-        automaticUpdateStarted.current = true;
-        void checkUpdate();
-      }
-    }
-  }, []);
 
   const stats = useMemo(() => buildStats(data.results, day), [data.results, day]);
   const latest = stats.latest;
@@ -186,32 +182,10 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const activePageSize = defaultHistoryPageSize;
   const historyPageCount = Math.max(1, Math.ceil(filteredHistory.length / activePageSize));
   const paginatedHistory = filteredHistory.slice((historyPage - 1) * activePageSize, historyPage * activePageSize);
-  useEffect(() => {
-    const controller = new AbortController();
-    void loadPortfolioData(controller.signal);
-    return () => controller.abort();
-  }, [loadPortfolioData, data.results[0]?.date]);
-
-  useEffect(() => {
-    let mounted = true;
-    let busy = false;
-    const timer = window.setInterval(async () => {
-      setPortfolioClock(Date.now());
-      if (document.hidden || busy || publicationWindow("loto")) return;
-      busy = true;
-      try {
-        // Read the scheduler's saved results; do not refetch external sources from every open tab.
-        const response = await fetch("/api/results", { cache: "no-store" });
-        if (!response.ok) return;
-        const payload = await response.json();
-        if (mounted && Array.isArray(payload.results)) {
-          setData({ results: payload.results });
-        }
-      } catch { /* Keep the last valid local results visible. */ }
-      finally { busy = false; }
-    }, 300_000);
-    return () => { mounted = false; window.clearInterval(timer); };
-  }, []);
+  usePolling(`loto-portfolio:${version}:${portfolioTargetDate}:${portfolioReload}`, async signal => {
+    setPortfolioClock(Date.now());
+    if (!await loadPortfolioData(signal)) throw new Error("No se pudo consultar la cartera guardada.");
+  });
 
   useEffect(() => {
     if (!isUpdating) return;
@@ -231,16 +205,11 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     setUpdateSeconds(0);
     setStatus("Revisando data disponible...");
     try {
-      const response = await fetch("/api/update");
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.message);
-      if (Array.isArray(payload.results)) setData({ results: payload.results });
-      if (!Array.isArray(payload.results) || lotoPortfolioDisplayDate(payload.results) === portfolioTargetDate) {
-        await loadPortfolioData();
-      }
-      setStatus(`${payload.message} Total: ${payload.total}. Ultimo sorteo: ${payload.latest?.date ?? "N/D"}.`);
+      const payload = await refreshResults();
+      setPortfolioReload(n => n + 1);
+      setStatus(`Resultados guardados actualizados. Total: ${payload.results.length}. Último sorteo: ${payload.results[0]?.date ?? "N/D"}.`);
     } catch {
-      setStatus("No se pudo consultar la fuente remota. La data local permanece disponible.");
+      setStatus("No se pudieron consultar los resultados guardados. Los datos anteriores permanecen disponibles.");
     } finally {
       setIsUpdating(false);
     }

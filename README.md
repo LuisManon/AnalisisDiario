@@ -112,6 +112,32 @@ Actions publica al terminar cada ejecución los índices derivados `data/public-
 
 Se retiraron los endpoints antiguos `/api/virtual-ticket` y `/api/simulate`, sus almacenes sin consumidores y el esquema exclusivo de la petición de simulación. Se conservan los datos históricos y las funciones de dominio utilizadas por premios y pruebas.
 
+## Consultas y despliegues de datos
+
+`vercel.json` configura `node scripts/ignore-data-deployment.mjs` como Ignored Build Step. Solo omite builds de producción cuando todos los cambios desde el último despliegue correcto son resultados, carteras, asignaciones o índices leídos en GitHub y la persistencia remota está configurada. Un cambio de código, configuración, `data/super-kino-no-draws.json` (importado al compilar), una eliminación o una base Git no disponible exige build. En clones poco profundos puede faltar esa base: el script conserva el build como opción segura. Referencias: [ignoreCommand](https://vercel.com/docs/project-configuration/vercel-json#ignorecommand), [variable del despliegue previo](https://vercel.com/docs/environment-variables/system-environment-variables#vercel_git_previous_sha).
+
+La consulta de `/api/results` calcula un ETag del texto guardado antes de validar el histórico. Si `If-None-Match` coincide, responde 304 sin cuerpo ni validación completa. `?version=1` permite consultar únicamente la versión; una corrección del resultado también la cambia aunque la fecha y cantidad de sorteos permanezcan iguales. El contenedor mantiene una sola copia de resultados por producto y comparte peticiones concurrentes; los dashboards no vuelven a consultar los endpoints de importación. El coordinador común suspende consultas ocultas, actualiza al volver a una vista desactualizada, evita solapamientos y reintenta con espera creciente. Las carteras se consultan por separado porque pueden guardarse después del resultado sin que el histórico cambie.
+
+Los detalles históricos se conservan en memoria del navegador por fecha y versión del índice; elegir otra fecha y volver no repite la descarga. Una nueva versión invalida esa copia. Las carteras inexistentes se vuelven a comprobar después de un minuto, sin guardarse indefinidamente. Esta memoria está limitada y no utiliza almacenamiento persistente del navegador.
+
+## Medición de rendimiento
+
+La CPU facturable se mide en Vercel Usage/Observability. `Server-Timing: results` y los eventos JSON `results-read` registran **tiempo transcurrido**, producto, estado 200/304 y versión: no representan CPU facturable. Los 304 permiten comprobar cuántas descargas completas se evitaron. No se registran resultados, credenciales ni datos personales.
+
+La muestra observada antes de este cambio está en `docs/performance/baseline-2026-11-23.json`. Su período es de cinco minutos y no demuestra ahorro mensual. Para medir CPU por ruta y por día, guardar lecturas reales de Vercel con `date` en America/Santo_Domingo, `windowMinutes: 1440`, el mismo `environment` y filas `{route, invocations, cpuMs}`. Comparar dos días completos de duración y entorno iguales con:
+
+```bash
+node --experimental-strip-types scripts/compare-performance-samples.ts antes.json despues.json
+```
+
+En Hobby, el panel observado permite ventanas de hasta 12 horas por función. Para obtener un día sin contratar más retención, se pueden guardar dos ventanas exactas de 12 horas (o más ventanas menores) con `from`, `to` en ISO y `complete: true` solo después de capturar todas las filas. El agregador valida que cubran las 00:00–24:00 de America/Santo_Domingo sin huecos ni solapamientos:
+
+```bash
+node --experimental-strip-types scripts/aggregate-performance-day.ts 2026-11-23 manana.json tarde.json
+```
+
+La comparación usa CPU / invocaciones por ruta, informa datos ausentes y rechaza ventanas incompatibles. No proyecta una muestra corta a todo el mes ni atribuye causalidad a diferencias de tráfico. No se ha creado una automatización ni contratado observabilidad adicional.
+
 ## Funciones incluidas
 
 - Dashboard con ultimo sorteo.

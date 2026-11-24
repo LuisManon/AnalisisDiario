@@ -9,7 +9,6 @@ import { NumberDistributor } from "./NumberDistributor";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { DrawPublicationStatus } from "./DrawPublicationStatus";
 import { QuinielonHistory } from "./QuinielonHistory";
-import { publicationWindow } from "../lib/draw-schedule";
 import { createPortal } from "react-dom";
 import {
   buildLaPrimeraExclusiveRankings,
@@ -193,38 +192,9 @@ function QuinielonBall({ number, tone = "red", winner = false }: { number: numbe
 }
 
 export function LaPrimeraDashboard({ initialData }: Props) {
-  const [results, setResults] = useState(initialData.results);
-  const [status, setStatus] = useState(`Datos listos: ${initialData.results.length} sorteos cargados.`);
-  const [statusTone, setStatusTone] = useState<"ready" | "warning">("ready");
-  const resultsRef = useRef(initialData.results);
-  useEffect(() => {
-    let mounted = true;
-    let updating = false;
-    async function updateResults() {
-      if (document.hidden || updating || publicationWindow("quinielon")) return;
-      updating = true;
-      try {
-        const { expectedSessionDate } = getExpectedLaPrimeraDraw();
-        const response = await fetch(`/api/la-primera/update?date=${expectedSessionDate}`, { cache: "no-store" });
-        const payload = await response.json();
-        if (!response.ok) throw new Error(payload.message);
-        if (!mounted) return;
-        if (Array.isArray(payload.results)) {
-          resultsRef.current = payload.results;
-          setResults(payload.results);
-        }
-        setStatus(`${payload.message} Total: ${payload.total}.`);
-        setStatusTone(payload.provisional || payload.waiting ? "warning" : "ready");
-      } catch {
-        if (mounted) { setStatus("La fuente oficial está tardando. Puede seguir consultando los datos guardados."); setStatusTone("warning"); }
-      } finally { updating = false; }
-    }
-    if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
-    const interval = window.setInterval(() => {
-      if (!document.hidden && !isQuinielonCurrent(resultsRef.current)) void updateResults();
-    }, 300_000);
-    return () => { mounted = false; window.clearInterval(interval); };
-  }, []);
+  const results = initialData.results;
+  const status = `Datos listos: ${results.length} sorteos guardados.`;
+  const statusTone = isQuinielonCurrent(results) ? "ready" : "warning";
   return <LaPrimeraQuinielonV2View variant="quinielon-v2" results={results} status={status} statusTone={statusTone} />;
 }
 

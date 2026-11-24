@@ -1,4 +1,5 @@
 "use client";
+import { usePolling } from "./usePolling";
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { historicalWager, assignmentInvestment, tierLabels, formatInvestment, investorNames, selectedAssignmentSlot, type AssignmentSessionChoice, type Assignment, type AssignmentNumber } from "../lib/quinielon-distributor";
@@ -56,14 +57,18 @@ export function NumberDistributor({renderNumber}: Props) {
       const data=await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el reparto.");
       if (id===sequence.current) {setAssignment(data);slotRef.current=`${data.date}-${data.session}`;}
-    } catch(e) {if(id===sequence.current) setError(e instanceof Error ? e.message : "No se pudo cargar el reparto.");}
+      return true;
+    } catch(e) {if(id===sequence.current) setError(e instanceof Error ? e.message : "No se pudo cargar el reparto."); return false;}
     finally { pending.current--; if(id===sequence.current) setBusy(false); }
   }
-  useEffect(() => {
-    void load();
-    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(!document.hidden && pending.current === 0 && slotRef.current!==key) {setAssignment(null);void load();}},60_000);
-    return ()=>{window.clearInterval(timer);sequence.current++;};
-  },[]);
+  usePolling("quinielon-assignment", async () => {
+    const slot=selectedAssignmentSlot(choiceRef.current), key=`${slot.date}-${slot.session}`;
+    if (pending.current === 0 && slotRef.current !== key) {
+      setAssignment(null);
+      if (!await load()) throw new Error("El reparto aún no está disponible.");
+    }
+  }, 60_000);
+  useEffect(() => () => { sequence.current++; }, []);
   useEffect(() => {
     if (copyFeedback?.state !== "success") return;
     const timer = window.setTimeout(() => setCopyFeedback(null), 4000);
