@@ -1,8 +1,41 @@
 {
   "version": 1,
-  "sourceVersion": "2b72e2ca83e606b5d089bf4acf5a8f14d1e4510c45cdcf8fc03c6a1a8aa785b7",
-  "latestDate": "2026-11-22",
+  "sourceVersion": "1b73da916f49636c7a30ccdbcd5e3796812a11babfcd43a259dbf8b790e5bedc",
+  "latestDate": "2026-11-23",
   "snapshots": [
+    {
+      "targetDate": "2026-11-24",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ]
+    },
     {
       "targetDate": "2026-11-23",
       "prizes": [
@@ -34,7 +67,28 @@
           "hits": 0,
           "amount": 80
         }
-      ]
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 12,
+            "total": 960
+          },
+          {
+            "amount": 60,
+            "count": 7,
+            "total": 420
+          }
+        ],
+        "winningPlays": 20,
+        "total": 1680
+      }
     },
     {
       "targetDate": "2026-11-22",
