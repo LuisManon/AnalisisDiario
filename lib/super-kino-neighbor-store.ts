@@ -16,8 +16,15 @@ type Storage = { read: (file: string) => Promise<string | null>; write: (file: s
 export function createKinoNeighborStore(storage: Storage) {
   let queue: Promise<unknown> = Promise.resolve();
   const readIndex = async () => { const raw = await storage.read(indexFile); return { raw, dates: indexSchema.parse(raw === null ? [] : JSON.parse(raw)) }; };
+  const parsedRecords = new Map<string, { raw: string; snapshot: KinoNeighborSnapshot }>();
   const readOne = async (date: string) => {
-    const file = fileFor(date), raw = await storage.read(file), snapshot = raw === null ? null : kinoNeighborSchema.parse(JSON.parse(raw));
+    const file = fileFor(date), raw = await storage.read(file);
+    const cached = parsedRecords.get(file);
+    const snapshot = raw === null ? null : cached?.raw === raw ? cached.snapshot : kinoNeighborSchema.parse(JSON.parse(raw));
+    if (snapshot && raw !== null && cached?.raw !== raw) {
+      if (parsedRecords.size >= 128) parsedRecords.delete(parsedRecords.keys().next().value!);
+      parsedRecords.set(file, { raw, snapshot });
+    }
     if (snapshot && snapshot.targetDate !== date) throw new Error("La cartera ±1 no corresponde a su fecha.");
     return { file, raw, snapshot };
   };
@@ -70,7 +77,7 @@ export function createKinoNeighborStore(storage: Storage) {
     });
     queue = task.catch(() => undefined); return task;
   };
-  return { view, sync };
+  return { view, sync, read: async (date: string) => (await readOne(date)).snapshot };
 }
 async function localRead(file: string) {
   try { return await fs.readFile(localPath(file), "utf8"); }
@@ -90,4 +97,5 @@ const store = createKinoNeighborStore({
   }
 });
 export const readKinoNeighborPortfolio = store.view;
+export const readSavedNeighborSnapshot = store.read;
 export const syncKinoNeighborPortfolio = store.sync;

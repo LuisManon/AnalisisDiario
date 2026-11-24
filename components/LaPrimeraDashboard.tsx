@@ -201,7 +201,7 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     let mounted = true;
     let updating = false;
     async function updateResults() {
-      if (updating || publicationWindow("quinielon")) return;
+      if (document.hidden || updating || publicationWindow("quinielon")) return;
       updating = true;
       try {
         const { expectedSessionDate } = getExpectedLaPrimeraDraw();
@@ -221,8 +221,8 @@ export function LaPrimeraDashboard({ initialData }: Props) {
     }
     if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
     const interval = window.setInterval(() => {
-      if (!isQuinielonCurrent(resultsRef.current)) void updateResults();
-    }, 60_000);
+      if (!document.hidden && !isQuinielonCurrent(resultsRef.current)) void updateResults();
+    }, 300_000);
     return () => { mounted = false; window.clearInterval(interval); };
   }, []);
   return <LaPrimeraQuinielonV2View variant="quinielon-v2" results={results} status={status} statusTone={statusTone} />;

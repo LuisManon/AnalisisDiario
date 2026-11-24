@@ -14,12 +14,6 @@ export const playSchema = z.object({
   plus: z.number().int().min(1).max(12)
 });
 
-export const simulationRequestSchema = z.object({
-  drawDate: z.string().optional(),
-  manualDraw: drawSchema.optional(),
-  plays: z.array(playSchema).min(5)
-});
-
 export const laPrimeraDrawSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   session: z.enum(["dia", "noche"]),

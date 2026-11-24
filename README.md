@@ -102,7 +102,11 @@ El plan usa `github.event.schedule`, no la hora de arranque, y convierte ventana
 
 Para activarlo hay que publicar el workflow en la rama predeterminada, desplegar los endpoints y tener configurada la persistencia GitHub en Vercel. El workflow instala y compila la aplicación y levanta un servidor temporal en `127.0.0.1:3000` dentro de GitHub Actions: generación, importaciones y congelación de premios consumen CPU del runner, sin llamar a Vercel. Usa el `GITHUB_TOKEN` del workflow con permiso `contents: write` para persistir en la rama predeterminada; el checkout no se usa para sobrescribir datos remotos. No necesita `APP_URL` ni un token personal adicional. Los commits de datos realizados con ese token no disparan otros workflows de GitHub Actions.
 
-En Vercel (`VERCEL`), Super Kino y Loto Más consultan carteras guardadas y los endpoints de actualización consultan resultados guardados, sin importar fuentes ni generar carteras. La vista ±1 solo consulta registros; sus evaluaciones y guardados ocurren en Actions. Las lecturas remotas se comparten durante 60 segundos por instancia, y la consulta de carteras Kino admite caché de CDN de 60 segundos. Las carteras Kino ya validadas se reutilizan si el contenido no cambió. El reparto Quinielón existente se devuelve sin reconstruir rankings; los cambios explícitos de modo mantienen su flujo manual. Las consultas automáticas Kino se espacian a cinco minutos y se omiten cuando la pestaña está oculta. Una pausa de Vercel por cuota ya acumulada requiere que Vercel restablezca el servicio: este cambio reduce consumo futuro, no borra el uso previo. La ejecución manual solicita el cron exacto de la ventana que se desea reintentar; tampoco ejecuta todos los intentos del día. GitHub puede retrasar u omitir cron bajo alta carga: los horarios son objetivos de ejecución, no una garantía de puntualidad. Consulta [la documentación de GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+En Vercel (`VERCEL`), Super Kino y Loto Más consultan carteras guardadas y los endpoints de actualización consultan resultados guardados, sin importar fuentes ni generar carteras. La vista ±1 solo consulta registros; sus evaluaciones y guardados ocurren en Actions. Las lecturas remotas se comparten durante 60 segundos por instancia, y la consulta de carteras Kino admite caché de CDN de 60 segundos. Las carteras Kino ya validadas se reutilizan si el contenido no cambió. El reparto Quinielón existente se devuelve sin reconstruir rankings y Vercel rechaza cambios de modo que requieran generarlo. Las consultas automáticas de Kino, Loto y Quinielón se espacian a cinco minutos y se omiten cuando la pestaña está oculta. Una pausa de Vercel por cuota ya acumulada requiere que Vercel restablezca el servicio: este cambio reduce consumo futuro, no borra el uso previo. La ejecución manual solicita el cron exacto de la ventana que se desea reintentar; tampoco ejecuta todos los intentos del día. GitHub puede retrasar u omitir cron bajo alta carga: los horarios son objetivos de ejecución, no una garantía de puntualidad. Consulta [la documentación de GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+La página principal se genera estáticamente: cada producto carga su histórico al abrirse mediante `/api/results?product=kino|loto|quinielon`, sin recalcular estadísticas en ese endpoint. Las vistas públicas de carteras (`?view=compact`, también predeterminadas en Vercel) devuelven la cartera actual y resúmenes del calendario; Kino incluye además la última cartera evaluable para su postgame. El detalle histórico se consulta con `?date=YYYY-MM-DD`, leyendo exclusivamente el archivo de esa fecha. Los resúmenes respetan premios congelados; estas lecturas no crean ni modifican carteras. Las validaciones ±1 se reutilizan mientras no cambie el contenido y las vistas públicas se comparten durante 60 segundos por instancia.
+
+Se retiraron los endpoints antiguos `/api/virtual-ticket` y `/api/simulate`, sus almacenes sin consumidores y el esquema exclusivo de la petición de simulación. Se conservan los datos históricos y las funciones de dominio utilizadas por premios y pruebas.
 
 ## Funciones incluidas
 
@@ -111,7 +115,6 @@ En Vercel (`VERCEL`), Super Kino y Loto Más consultan carteras guardadas y los 
 - Top 5 por posicion.
 - Top 5 del numero Mas.
 - Historial visual con bolitas.
-- Simulador de minimo 5 jugadas.
 - Menú directo para Super Kino TV, El Quinielón 2.0 y Loto Más.
 - API para resultados, simulacion, actualizacion y persistencia.
 
@@ -135,7 +138,7 @@ npm run evaluate:kino-v11
 
 Desde el 01/11/2026, Kino V12 genera 200 jugadas con cobertura global 100/0: los 84 números aparecen 23 o 24 veces y no se utiliza la señal de V10. Ningún número se excluye; el constructor equilibra cuotas, parejas repetidas y similitud entre jugadas. La comparación retrospectiva de pesos se reproduce con `npm run evaluate:kino-v12`.
 
-Con la sección abierta, se consulta cada 60 segundos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
+Con la sección abierta y visible, se consulta cada cinco minutos si falta el sorteo esperado: desde las 21:00 de lunes a sábado y las 16:00 los domingos, hora dominicana. El cierre de generación es cinco minutos antes. Si el resultado sigue pendiente, se conservan sus jugadas y no se generan las del siguiente sorteo hasta recibirlo.
 
 ### Rotación inteligente de Quinielón 2.0
 

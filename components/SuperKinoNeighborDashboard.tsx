@@ -1,5 +1,7 @@
 "use client";
 
+import { useSavedSnapshot } from "./useSavedSnapshot";
+import type { NeighborCalendarEntry } from "../lib/portfolio-view";
 import { useEffect, useMemo, useState } from "react";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { Ball } from "./Ball";
@@ -7,7 +9,7 @@ import { kinoClock, shiftKinoDate } from "../lib/super-kino-clock";
 import { evaluateNeighbor, neighborDayState, KINO_NEIGHBOR_START, type KinoNeighborSnapshot } from "../lib/super-kino-neighbor";
 import type { KinoDraw } from "../lib/super-kino";
 
-type Payload = { current: KinoNeighborSnapshot | null; snapshots: KinoNeighborSnapshot[]; results: KinoDraw[]; expectedDate: string; startDate: string };
+type Payload = { current: KinoNeighborSnapshot | null; snapshots: NeighborCalendarEntry[]; results: KinoDraw[]; expectedDate: string; startDate: string };
 const money = (n: number) => `RD$${n.toLocaleString("en-US")}`;
 const shortDate = (date: string) => new Intl.DateTimeFormat("es-DO", { day: "2-digit", month: "short", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
 const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
@@ -23,7 +25,7 @@ export function SuperKinoNeighborDashboard({ initialResults }: { initialResults:
       if (pending || document.hidden) return; pending = true;
       const currentTime = new Date();
       try {
-        const response = await fetch("/api/super-kino-neighbor/portfolio", { cache: "no-store" });
+        const response = await fetch("/api/super-kino-neighbor/portfolio?view=compact", { cache: "no-store" });
         const payload: Payload & { message?: string } = await response.json();
         if (!response.ok) throw new Error(payload.message ?? "No se pudieron cargar las carteras ±1.");
         if (alive) { setData(payload); setNow(currentTime); }
@@ -44,7 +46,7 @@ export function SuperKinoNeighborDashboard({ initialResults }: { initialResults:
   });
   const dates = [...snapshots].sort((a, b) => b.targetDate.localeCompare(a.targetDate));
   const selectedDate = dates.some(s => s.targetDate === selected) ? selected : dates[0]?.targetDate ?? "";
-  const detail = snapshots.find(s => s.targetDate === selectedDate);
+  const { snapshot: detail, error: detailError } = useSavedSnapshot<KinoNeighborSnapshot>("/api/super-kino-neighbor/portfolio", selectedDate, current);
   const evaluation = useMemo(() => detail?.prizeDrawNumbers ? evaluateNeighbor(detail, detail.prizeDrawNumbers) : null, [detail]);
   const corrected = Boolean(detail?.prizeDrawNumbers && results.find(r => r.date === detail.targetDate)?.numbers.some(n => !detail.prizeDrawNumbers!.includes(n)));
   const activePage = Math.min(page, Math.max(0, Math.ceil((current?.plays.length ?? 0) / 10) - 1));
@@ -56,15 +58,16 @@ export function SuperKinoNeighborDashboard({ initialResults }: { initialResults:
   };
   return <main className="lotoTheme analysisDashboard kinoTheme kinoNeighborTheme">
     <section className="hero"><div><p className="eyebrow">LEIDSA · Cartera paralela</p><h1>Super Kino TV ±1</h1><p>200 jugadas nuevas a partir de Super Kino TV. Cada número se desplaza −1 o +1 y la cartera queda fija antes del sorteo.</p><span className="kinoAlgorithmLabel">Inicio · 18 de noviembre de 2026</span></div><div className="heroPanel"><span className="panelLabel">Evaluación de resultados</span><strong>Solo aciertos exactos</strong><p>Los vecinos no cuentan como ganadores. Esta variante no garantiza mejores resultados.</p></div></section>
+    {detailError ? <p className="card" role="alert">{detailError}</p> : null}
     {error ? <div className="card kinoNeighborError" role="alert">{error} <button onClick={() => setReload(n => n + 1)}>Reintentar</button></div> : null}
     <AnalysisWorkspace panels={[
       { id: "resultados", label: "Resultados", description: "Calendario de premios de las carteras ±1 guardadas.", content: <>
         <section className="card kinoWeekAwards"><div className="kinoSectionHead"><div><p className="eyebrow">Lunes a domingo</p><h2>Calendario Super Kino TV ±1</h2></div><div className="kinoWeekNavigation"><button disabled={weekStart <= earliestWeek} onClick={() => setWeekOffset(n => n - 1)}>← Anterior</button><button disabled={weekOffset === 0} onClick={() => setWeekOffset(0)}>Actual</button><small>{shortDate(calendar[0].date)} – {shortDate(calendar[6].date)}</small><button disabled={weekOffset === 0} onClick={() => setWeekOffset(n => Math.min(0, n + 1))}>Siguiente →</button></div></div>
-          <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal Super Kino TV ±1; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{calendar.map(item => <article key={item.date} className={item.date === clock.date ? "today" : ""}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.snapshot?.prizeSummary ? <><div className="kinoWeekPrizeGroups">{item.snapshot.prizeSummary.groups.length ? item.snapshot.prizeSummary.groups.map(g => <p key={g.hits}><strong>{g.count} {g.count === 1 ? "jugada" : "jugadas"} · {g.hits} aciertos</strong><span>{money(g.amount)} c/u</span></p>) : <p>Sin premios</p>}</div><footer>Total calculado <strong>{money(item.snapshot.prizeSummary.total)}</strong><button className="kinoNeighborDetailButton" onClick={() => setSelected(item.date)}>Ver jugadas</button></footer></> : <p className={`kinoWeekStatus neighborStatus-${item.state.kind}`}>{item.state.label}{item.snapshot ? <small>Cartera guardada · {item.snapshot.plays.length} jugadas</small> : null}</p>}</article>)}</div></div>
+          <div className="kinoWeekScroll" tabIndex={0} aria-label="Calendario semanal Super Kino TV ±1; desplaza horizontalmente en pantallas pequeñas"><div className="kinoWeekGrid">{calendar.map(item => <article key={item.date} className={item.date === clock.date ? "today" : ""}><header><strong>{item.day}</strong><span>{shortDate(item.date)}</span></header>{item.snapshot?.prizeSummary ? <><div className="kinoWeekPrizeGroups">{item.snapshot.prizeSummary.groups.length ? item.snapshot.prizeSummary.groups.map(g => <p key={g.hits}><strong>{g.count} {g.count === 1 ? "jugada" : "jugadas"} · {g.hits} aciertos</strong><span>{money(g.amount)} c/u</span></p>) : <p>Sin premios</p>}</div><footer>Total calculado <strong>{money(item.snapshot.prizeSummary.total)}</strong><button className="kinoNeighborDetailButton" onClick={() => setSelected(item.date)}>Ver jugadas</button></footer></> : <p className={`kinoWeekStatus neighborStatus-${item.state.kind}`}>{item.state.label}{item.snapshot ? <small>Cartera guardada · {item.snapshot.playCount} jugadas</small> : null}</p>}</article>)}</div></div>
           <p className="muted">El 16 y 17 de noviembre no tienen resultados programados para esta variante. El calendario comienza el 18; los premios se registran al llegar el resultado y se conservan después.</p>
         </section>
         <section className="card"><div className="kinoSectionHead"><h2>Detalle del sorteo</h2><label>Fecha <select aria-label="Fecha evaluada de Super Kino TV ±1" disabled={!dates.length} value={selectedDate} onChange={e => setSelected(e.target.value)}>{dates.length ? dates.map(s => <option key={s.targetDate} value={s.targetDate}>{s.targetDate}</option>) : <option value="">Desde el 18 de noviembre</option>}</select></label></div>
-          {!detail ? <p>Sin Resultados Programados antes del 18 de noviembre. Las nuevas carteras aparecerán cuando se guarde su origen en Super Kino TV.</p> : !evaluation ? <p>La cartera del {detail.targetDate} tiene 200 jugadas guardadas. Esperando el resultado para calcular premios.</p> : <>
+          {!detail ? <p>{selectedDate ? "Cargando cartera guardada…" : "Sin carteras guardadas. Las nuevas carteras aparecerán cuando se guarde su origen en Super Kino TV."}</p> : !evaluation ? <p>La cartera del {detail.targetDate} tiene 200 jugadas guardadas. Esperando el resultado para calcular premios.</p> : <>
             {corrected ? <p className="kinoPostgameNotice" role="status">La fuente cambió este resultado. Se conserva el resultado congelado usado en esta cartera.</p> : null}
             <Balls numbers={detail.prizeDrawNumbers!} /><div className="kinoPostgameMetrics"><article><span>Máximo exacto</span><strong>{detail.prizeSummary!.maxHits}/10</strong></article><article><span>Jugadas premiadas</span><strong>{detail.prizeSummary!.winningPlays}</strong></article><article><span>Premio calculado</span><strong>{money(detail.prizeSummary!.total)}</strong></article><article><span>Balance modelado</span><strong>{money(detail.prizeSummary!.total - 5000)}</strong></article></div>
             <details><summary>Aciertos y premios por jugada</summary><div className="kinoNeighborPlayGrid">{evaluation.plays.map(p => <article className="kinoNeighborPlay" key={p.id}><strong>#{String(p.id).padStart(3, "0")} · {p.hits} aciertos · {money(p.prize)}</strong><Balls numbers={p.numbers} matches={p.matches} /></article>)}</div></details>

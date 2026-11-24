@@ -91,7 +91,7 @@ export async function readKinoSnapshots() {
 }
 
 let queue: Promise<unknown> = Promise.resolve();
-export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
+export async function getKinoPortfolio(results: KinoDraw[], now = new Date(), readOnly = false) {
   const run = queue.then(async () => {
     let targetDate = kinoTargetDate(now);
     if (results.some(d => d.date === targetDate)) targetDate = shiftKinoDate(targetDate, 1);
@@ -99,12 +99,12 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
     let snapshots = await readKinoSnapshots();
     const targetStored = await readSnapshot(targetDate);
     if (targetStored.snapshot && !snapshots.some(snapshot => snapshot.targetDate === targetDate)) {
-      if (!process.env.VERCEL) await ensureIndexed(targetDate);
+      if (!process.env.VERCEL && !readOnly) await ensureIndexed(targetDate);
       snapshots = [targetStored.snapshot, ...snapshots].sort((a, b) => b.targetDate.localeCompare(a.targetDate));
     }
 
     // Hosted requests only display records produced by the scheduled worker.
-    if (process.env.VERCEL) {
+    if (process.env.VERCEL || readOnly) {
       const clock = kinoClock(now);
       const pendingDate = !isKinoNoDraw(clock.date) && clock.minutes >= kinoDrawMinutes(clock.date) - 5 ? clock.date : kinoExpectedDate(now);
       const waitingForResult = !results.some(d => d.date === pendingDate);

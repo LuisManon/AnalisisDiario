@@ -76,7 +76,7 @@ export function freezeNeighborResult(snapshot: KinoNeighborSnapshot, results: Ki
   kinoDrawSchema.parse(result);
   return kinoNeighborSchema.parse({ ...snapshot, prizeDrawNumbers: [...result.numbers], prizeSummary: evaluateNeighbor(snapshot, result.numbers).summary });
 }
-export function neighborDayState(date: string, snapshot: KinoNeighborSnapshot | undefined, now = new Date()) {
+export function neighborDayState(date: string, snapshot: Pick<KinoNeighborSnapshot, "prizeSummary"> | undefined, now = new Date()) {
   if (!neighborScheduled(date)) return { kind: "not-scheduled" as const, label: "Sin Resultados Programados" };
   if (snapshot?.prizeSummary) return { kind: "complete" as const, label: snapshot.prizeSummary.total > 0 ? "Resultado registrado" : "Sin premios" };
   const clock = kinoClock(now);

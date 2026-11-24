@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WorkspaceNavigationTarget } from "./WorkspaceNavigation";
 import { PwaRuntime } from "./PwaRuntime";
 import { SuperKinoDashboard } from "./SuperKinoDashboard";
@@ -10,19 +10,31 @@ import { DashboardClient } from "./DashboardClient";
 import { LaPrimeraDashboard } from "./LaPrimeraDashboard";
 import type { DrawResult, LaPrimeraDraw } from "../lib/types";
 
-type AppShellProps = {
-  kinoResults: KinoDraw[];
-  lotoResults: DrawResult[];
-  laPrimeraResults: LaPrimeraDraw[];
-};
-
 type ActiveTab = "kino" | "kino-neighbor" | "quinielon" | "loto";
 
-export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShellProps) {
+export function AppShell() {
+  const [saved, setSaved] = useState<{ kino?: KinoDraw[]; loto?: DrawResult[]; quinielon?: LaPrimeraDraw[] }>({});
+  const [loadError, setLoadError] = useState("");
+  const [retry, setRetry] = useState(0);
   const [activeTab, setActiveTab] = useState<ActiveTab>("kino");
 
   const [navigationTarget, setNavigationTarget] = useState<HTMLDivElement | null>(null);
   const workspace = useRef<HTMLDivElement>(null);
+  const product = activeTab === "kino-neighbor" ? "kino" : activeTab;
+  const ready = saved[product] !== undefined;
+  useEffect(() => {
+    if (ready) return;
+    const controller = new AbortController();
+    setLoadError("");
+    fetch(`/api/results?product=${product}`, { signal: controller.signal })
+      .then(async response => {
+        const payload = await response.json();
+        if (!response.ok || !Array.isArray(payload.results)) throw new Error("No se pudieron cargar los resultados guardados.");
+        if (!controller.signal.aborted) setSaved(previous => ({ ...previous, [product]: payload.results }));
+      }).catch(error => { if (!controller.signal.aborted) setLoadError(error.message); });
+    return () => controller.abort();
+  }, [product, ready, retry]);
+
 
   function changeTab(tab: ActiveTab) {
     setActiveTab(tab);
@@ -44,14 +56,14 @@ export function AppShell({ kinoResults, lotoResults, laPrimeraResults }: AppShel
         <button aria-pressed={activeTab === "loto"} className={activeTab === "loto" ? "active" : ""} onClick={() => changeTab("loto")}><span className="appTabIcon" aria-hidden="true">✦</span><span>Loto Más</span></button>
       </nav>
       <div className="appWorkspace" ref={workspace} id="app-workspace" tabIndex={-1}>
-      {activeTab === "kino" ? (
-        <SuperKinoDashboard initialResults={kinoResults} />
+      {!ready ? <section className="card" role="status">{loadError ? <>{loadError} <button onClick={() => setRetry(n => n + 1)}>Reintentar</button></> : "Cargando resultados guardados…"}</section> : activeTab === "kino" ? (
+        <SuperKinoDashboard initialResults={saved.kino!} />
       ) : activeTab === "kino-neighbor" ? (
-        <SuperKinoNeighborDashboard initialResults={kinoResults} />
+        <SuperKinoNeighborDashboard initialResults={saved.kino!} />
       ) : activeTab === "loto" ? (
-        <DashboardClient initialData={{ results: lotoResults }} />
+        <DashboardClient initialData={{ results: saved.loto! }} />
       ) : (
-        <LaPrimeraDashboard initialData={{ results: laPrimeraResults }} />
+        <LaPrimeraDashboard initialData={{ results: saved.quinielon! }} />
       )}
       </div>
       <div className="mobileWorkspaceNavigation" ref={setNavigationTarget} />

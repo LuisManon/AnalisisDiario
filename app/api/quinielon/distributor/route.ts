@@ -24,8 +24,9 @@ export async function POST(request: Request) {
   try {
     const slot = selectedAssignmentSlot(body?.session ?? "auto");
     const existing = await read(slot);
-    if (process.env.VERCEL && (body?.smart === undefined || body.smart === existing?.smart)) {
+    if (process.env.VERCEL) {
       if (!existing) return NextResponse.json({ error: "El reparto todavía no está guardado. Se preparará en la próxima ventana automática." }, { status: 409 });
+      if (body?.smart !== undefined && body.smart !== existing.smart) return NextResponse.json({ error: "El reparto guardado conserva su modo de generación." }, { status: 409 });
       const error = validateAssignment(existing);
       if (error) throw new Error(`Reparto pendiente de revisión: ${error}.`);
       return NextResponse.json(existing);

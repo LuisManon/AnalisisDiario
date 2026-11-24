@@ -141,7 +141,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
   const automaticUpdateStarted = useRef(false);
 
   const loadPortfolioData = useCallback(async (signal?: AbortSignal) => {
-    setPortfolioMessage("Cargando o creando la fotografía de este sorteo…");
+    setPortfolioMessage("Cargando la cartera guardada de este sorteo…");
     try {
       const response = await fetch(`/api/portfolio?drawDate=${portfolioTargetDate}`, { signal });
       if (!response.ok) throw new Error("No se pudo cargar el portafolio.");
@@ -197,7 +197,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
     let busy = false;
     const timer = window.setInterval(async () => {
       setPortfolioClock(Date.now());
-      if (busy || publicationWindow("loto")) return;
+      if (document.hidden || busy || publicationWindow("loto")) return;
       busy = true;
       try {
         // Read the scheduler's saved results; do not refetch external sources from every open tab.
@@ -209,7 +209,7 @@ export function DashboardClient({ initialData }: DashboardClientProps) {
         }
       } catch { /* Keep the last valid local results visible. */ }
       finally { busy = false; }
-    }, 60_000);
+    }, 300_000);
     return () => { mounted = false; window.clearInterval(timer); };
   }, []);
 
