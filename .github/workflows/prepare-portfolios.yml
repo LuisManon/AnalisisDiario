@@ -31,7 +31,7 @@ on:
         default: "37 12 * * *"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: prepare-lottery-portfolios
@@ -46,8 +46,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - run: npm ci
+      - run: npm run build
       - name: Update and verify scheduled products
         env:
-          APP_URL: ${{ vars.APP_URL || 'https://analisis-diario.vercel.app' }}
+          APP_URL: http://127.0.0.1:3000
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_BRANCH: ${{ github.event.repository.default_branch }}
           AUTOMATION_SCHEDULE: ${{ github.event.schedule || inputs.schedule }}
-        run: node --experimental-strip-types scripts/automate-portfolios.ts
+        run: |
+          npm start > /tmp/analisis-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..60}; do
+            if curl --silent --fail http://127.0.0.1:3000/api/results > /dev/null; then
+              node --experimental-strip-types scripts/automate-portfolios.ts
+              exit $?
+            fi
+            sleep 1
+          done
+          cat /tmp/analisis-server.log
+          exit 1

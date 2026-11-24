@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
   const targetDate = requestedDate && /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : null;
   try {
     const existing = await readLaPrimeraResults();
+    if (process.env.VERCEL) return NextResponse.json({ ok: true, product: "quinielon", results: existing, total: existing.length, latest: existing[0] ?? null, added: 0, message: "Resultados guardados; la actualización automática se ejecuta en las ventanas programadas." });
     const window = publicationWindow("quinielon");
     if (window) return NextResponse.json({ ok: true, results: existing, total: existing.length, latest: existing[0] ?? null, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` });
     const latestDate = existing[0]?.date ?? "2025-07-01";

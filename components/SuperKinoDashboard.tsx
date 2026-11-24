@@ -52,7 +52,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   const loadingPortfolio = useRef(false);
 
   const loadPortfolio = useCallback(async () => {
-    if (loadingPortfolio.current) return;
+    if (loadingPortfolio.current || document.hidden) return;
     loadingPortfolio.current = true;
     try {
       const response = await fetch("/api/super-kino/portfolio", {cache: "no-store"});
@@ -65,7 +65,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
   }, []);
 
   const update = useCallback(async () => {
-    if (updating.current || publicationWindow("kino")) return;
+    if (document.hidden || updating.current || publicationWindow("kino")) return;
     updating.current = true;
     try {
       const response = await fetch("/api/super-kino/update", {cache: "no-store"});
@@ -93,7 +93,7 @@ export function SuperKinoDashboard({initialResults}: {initialResults: KinoDraw[]
       setExpectedDate(expected);
       if (!resultsRef.current.some(d => d.date === expected)) void update();
       if (portfolioRef.current?.current?.targetDate !== kinoTargetDate()) void loadPortfolio();
-    }, 60_000);
+    }, 300_000);
     return () => { mounted.current = false; window.clearInterval(timer); };
   }, [loadPortfolio, update]);
 

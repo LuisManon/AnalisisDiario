@@ -36,6 +36,7 @@ async function writePortfolios(portfolios: ThirtyPlayPortfolio[]) {
 export async function getOrCreatePortfolio(targetDate: string, results: DrawResult[]) {
   const portfolios = await readPortfolios();
   const existing = portfolios.find((portfolio) => portfolio.targetDate === targetDate);
+  if (process.env.VERCEL) return existing ?? null;
   const latestResultDate = results[0]?.date ?? "";
   const canGenerate = canGenerateLotoPortfolio(targetDate) && !results.some(draw => draw.date === targetDate);
   const shouldRegenerate = canGenerate && existing && targetDate > latestResultDate && existing.algorithmVersion !== thirtyPlayAlgorithmVersion;

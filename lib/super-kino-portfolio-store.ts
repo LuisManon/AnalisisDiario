@@ -32,10 +32,16 @@ async function writeRaw(file: string, content: string, previousRaw: string | nul
   return content;
 }
 
+const parsedSnapshots = new Map<string, { raw: string; snapshot: KinoSnapshot }>();
+
 function parseSnapshot(raw: string | null, file: string) {
   if (raw === null) return null;
+  const cached = parsedSnapshots.get(file);
+  if (cached?.raw === raw) return cached.snapshot;
   const snapshot = kinoSnapshotSchema.parse(JSON.parse(raw));
   if (snapshotFile(snapshot.targetDate) !== file) throw new Error(`La cartera Kino no corresponde a ${file}.`);
+  if (parsedSnapshots.size >= 128) parsedSnapshots.delete(parsedSnapshots.keys().next().value!);
+  parsedSnapshots.set(file, { raw, snapshot });
   return snapshot;
 }
 
@@ -93,8 +99,16 @@ export async function getKinoPortfolio(results: KinoDraw[], now = new Date()) {
     let snapshots = await readKinoSnapshots();
     const targetStored = await readSnapshot(targetDate);
     if (targetStored.snapshot && !snapshots.some(snapshot => snapshot.targetDate === targetDate)) {
-      await ensureIndexed(targetDate);
+      if (!process.env.VERCEL) await ensureIndexed(targetDate);
       snapshots = [targetStored.snapshot, ...snapshots].sort((a, b) => b.targetDate.localeCompare(a.targetDate));
+    }
+
+    // Hosted requests only display records produced by the scheduled worker.
+    if (process.env.VERCEL) {
+      const clock = kinoClock(now);
+      const pendingDate = !isKinoNoDraw(clock.date) && clock.minutes >= kinoDrawMinutes(clock.date) - 5 ? clock.date : kinoExpectedDate(now);
+      const waitingForResult = !results.some(d => d.date === pendingDate);
+      return { current: snapshots.find(s => s.targetDate === (waitingForResult ? pendingDate : targetDate)) ?? null, snapshots, waitingForResult };
     }
 
     const frozenSnapshots = freezeKinoPrizeSummaries(snapshots, results);

@@ -81,7 +81,7 @@ Despues de guardar las variables, redeploya el proyecto en Vercel.
 
 ## Generación automática
 
-El flujo `.github/workflows/prepare-portfolios.yml` ejecuta `scripts/automate-portfolios.ts` sin depender de visitas a la web. Hay 12 ejecuciones programadas por día en hora dominicana:
+El flujo `.github/workflows/prepare-portfolios.yml` ejecuta `scripts/automate-portfolios.ts` sin depender de visitas a la web. Hay 14 ejecuciones programadas por día en hora dominicana:
 
 - los repartos Día y Noche de Quinielón 2.0;
 - las carteras de Super Kino TV según su versión activa;
@@ -91,16 +91,18 @@ El flujo `.github/workflows/prepare-portfolios.yml` ejecuta `scripts/automate-po
 | --- | --- |
 | Recuperar ganadores anteriores y preparar carteras de los tres productos | 08:37 y 10:37 |
 | Consultar ganador Quinielón Día | 12:17, 12:47, 13:17 |
-| Verificar/preparar reparto Quinielón Noche | 17:37 |
+| Verificar/preparar reparto Quinielón Noche | 13:37, 15:37 y 17:37 |
 | Consultar ganador Quinielón Noche | 19:17, 19:47, 20:17 |
 | Consultar Super Kino y Loto Más (Loto solo miércoles/sábado) | 21:17, 21:47, 22:17 de lunes a sábado |
 | Consultar Super Kino el domingo, en lugar del bloque nocturno | 16:17, 16:47, 17:17 |
 
 Durante los primeros 15 minutos posteriores al sorteo, la web muestra **Sorteo en curso** con minutos restantes y los endpoints no consultan fuentes externas. La primera ventana programada queda después de ese margen. Un resultado no publicado se registra como pendiente en los primeros intentos; en el último se señala como incidencia. Cada llamada tiene un límite de 180 segundos y no hay reintentos HTTP internos; los productos restantes continúan aunque otro falle. El resumen queda en GitHub Actions.
 
-El plan usa `github.event.schedule`, no la hora de arranque, y rechaza ventanas con más de tres horas de retraso. Los cron contemplan el cambio de fecha UTC para las consultas nocturnas. Loto Más conserva el cierre de generación a las 17:00; no se crean carteras retrospectivas para un sorteo cerrado.
+El plan usa `github.event.schedule`, no la hora de arranque, y convierte ventanas con más de seis horas de retraso en verificaciones de registros guardados. Los cron contemplan el cambio de fecha UTC para las consultas nocturnas. Loto Más conserva el cierre de generación a las 17:00; no se crean carteras retrospectivas para un sorteo cerrado.
 
-Para activarlo hay que publicar el workflow en la rama predeterminada, desplegar los endpoints y tener configurada la persistencia GitHub en Vercel. Opcionalmente configura la variable de repositorio `APP_URL`. La ejecución manual solicita el cron exacto de la ventana que se desea reintentar; tampoco ejecuta todos los intentos del día. GitHub puede retrasar u omitir cron bajo alta carga: los horarios son objetivos de ejecución, no una garantía de puntualidad. Consulta [la documentación de GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+Para activarlo hay que publicar el workflow en la rama predeterminada, desplegar los endpoints y tener configurada la persistencia GitHub en Vercel. El workflow instala y compila la aplicación y levanta un servidor temporal en `127.0.0.1:3000` dentro de GitHub Actions: generación, importaciones y congelación de premios consumen CPU del runner, sin llamar a Vercel. Usa el `GITHUB_TOKEN` del workflow con permiso `contents: write` para persistir en la rama predeterminada; el checkout no se usa para sobrescribir datos remotos. No necesita `APP_URL` ni un token personal adicional. Los commits de datos realizados con ese token no disparan otros workflows de GitHub Actions.
+
+En Vercel (`VERCEL`), Super Kino y Loto Más consultan carteras guardadas y los endpoints de actualización consultan resultados guardados, sin importar fuentes ni generar carteras. La vista ±1 solo consulta registros; sus evaluaciones y guardados ocurren en Actions. Las lecturas remotas se comparten durante 60 segundos por instancia, y la consulta de carteras Kino admite caché de CDN de 60 segundos. Las carteras Kino ya validadas se reutilizan si el contenido no cambió. El reparto Quinielón existente se devuelve sin reconstruir rankings; los cambios explícitos de modo mantienen su flujo manual. Las consultas automáticas Kino se espacian a cinco minutos y se omiten cuando la pestaña está oculta. Una pausa de Vercel por cuota ya acumulada requiere que Vercel restablezca el servicio: este cambio reduce consumo futuro, no borra el uso previo. La ejecución manual solicita el cron exacto de la ventana que se desea reintentar; tampoco ejecuta todos los intentos del día. GitHub puede retrasar u omitir cron bajo alta carga: los horarios son objetivos de ejecución, no una garantía de puntualidad. Consulta [la documentación de GitHub](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
 ## Funciones incluidas
 

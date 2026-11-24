@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const results = await readKinoResults();
     const portfolio = await getKinoPortfolio(results);
-    return NextResponse.json({...portfolio,expectedDate:kinoExpectedDate()});
+    return NextResponse.json({...portfolio,expectedDate:kinoExpectedDate()}, { headers: { "Vercel-CDN-Cache-Control": "public, s-maxage=60" } });
   } catch (error) {
     return NextResponse.json({message: error instanceof Error ? error.message : "No se pudieron guardar las jugadas."}, {status: 503});
   }

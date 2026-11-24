@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnalysisWorkspace } from "./AnalysisWorkspace";
 import { Ball } from "./Ball";
-import { publicationWindow } from "../lib/draw-schedule";
-import { kinoClock, kinoExpectedDate, kinoTargetDate, shiftKinoDate } from "../lib/super-kino-clock";
+import { kinoClock, shiftKinoDate } from "../lib/super-kino-clock";
 import { evaluateNeighbor, neighborDayState, KINO_NEIGHBOR_START, type KinoNeighborSnapshot } from "../lib/super-kino-neighbor";
 import type { KinoDraw } from "../lib/super-kino";
 
@@ -21,28 +20,18 @@ export function SuperKinoNeighborDashboard({ initialResults }: { initialResults:
   useEffect(() => {
     let alive = true, pending = false;
     const refresh = async () => {
-      if (pending) return; pending = true;
+      if (pending || document.hidden) return; pending = true;
       const currentTime = new Date();
       try {
         const response = await fetch("/api/super-kino-neighbor/portfolio", { cache: "no-store" });
-        let payload: Payload & { message?: string } = await response.json();
+        const payload: Payload & { message?: string } = await response.json();
         if (!response.ok) throw new Error(payload.message ?? "No se pudieron cargar las carteras ±1.");
         if (alive) { setData(payload); setNow(currentTime); }
-        const expected = kinoExpectedDate(currentTime);
-        let sourceWarning = "";
-        if (expected >= KINO_NEIGHBOR_START && !payload.results.some(r => r.date === expected) && !publicationWindow("kino", currentTime)) {
-          const update = await fetch("/api/super-kino/update", { cache: "no-store" });
-          if (!update.ok) sourceWarning = "La fuente de resultados no respondió. Conservamos los datos guardados y volveremos a intentar.";
-        }
-        const target = [KINO_NEIGHBOR_START, kinoTargetDate(currentTime)].sort().at(-1)!;
-        const prepared = await fetch("/api/super-kino-neighbor/portfolio", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: target }), cache: "no-store" });
-        payload = await prepared.json();
-        if (!prepared.ok) throw new Error(payload.message ?? "No se pudo confirmar el guardado de la cartera ±1.");
-        if (alive) { setData(payload); setError(sourceWarning); setNow(new Date()); }
+        if (alive) setError("");
       } catch (failure) { if (alive) setError(failure instanceof Error ? failure.message : "No se pudo actualizar Super Kino TV ±1."); }
       finally { pending = false; }
     };
-    void refresh(); const timer = window.setInterval(() => void refresh(), 60_000);
+    void refresh(); const timer = window.setInterval(() => void refresh(), 300_000);
     return () => { alive = false; window.clearInterval(timer); };
   }, [reload]);
   const clock = kinoClock(now), current = data?.current;

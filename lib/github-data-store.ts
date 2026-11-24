@@ -1,3 +1,7 @@
+import { createReadCache } from "./read-cache.ts";
+
+const hostedReads = createReadCache<string | null>(60_000);
+
 const githubApiBase = "https://api.github.com";
 
 type GitHubContentResponse = {
@@ -47,6 +51,13 @@ function fromBase64(value: string) {
 export async function readGitHubJsonFile(filePath: string) {
   const config = getConfig();
   if (!config) return null;
+  if (!process.env.VERCEL) return readGitHubJsonFileUncached(filePath);
+  return hostedReads.read(`${config.repository}:${config.branch}:${filePath}`, () => readGitHubJsonFileUncached(filePath));
+}
+
+async function readGitHubJsonFileUncached(filePath: string) {
+  const config = getConfig();
+  if (!config) return null;
 
   const url = `${githubApiBase}/repos/${config.repository}/contents/${filePath}?ref=${encodeURIComponent(config.branch)}`;
   const response = await fetch(url, {
@@ -85,7 +96,7 @@ export async function writeGitHubJsonFile(filePath: string, content: string, com
   const config = getConfig();
   if (!config) return false;
 
-  const current = await readGitHubJsonFile(filePath);
+  const current = await readGitHubJsonFileUncached(filePath);
   if (current?.trim() === content.trim()) return true;
 
   const sha = await getCurrentFileSha(filePath, config.token, config.repository, config.branch);
@@ -108,6 +119,7 @@ export async function writeGitHubJsonFile(filePath: string, content: string, com
   });
 
   if (!response.ok) throw new Error(`GitHub no pudo guardar ${filePath}: HTTP ${response.status}.`);
+  hostedReads.clear();
   return true;
 }
 
@@ -127,4 +139,5 @@ export async function writeGitHubSnapshot(filePath: string, content: string, exp
     content: toBase64(content), message: commitMessage, ...(payload?.sha ? {sha:payload.sha} : {})
   }) });
   if (!response.ok) throw new Error("No se pudo guardar el reparto o fue actualizado en otra sesión. Pulsa Reintentar.");
+  hostedReads.clear();
 }

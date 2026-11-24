@@ -9,6 +9,7 @@ let pending: Promise<unknown> | null = null;
 async function update() {
   const existing = await readKinoResults();
   const expectedDate = kinoExpectedDate();
+  if (process.env.VERCEL) return { results: existing, expectedDate, waiting: !existing.some(d => d.date === expectedDate), message: "Resultados guardados; la actualización automática se ejecuta en las ventanas programadas." };
   const window = publicationWindow("kino");
   if (window) return { results: existing, expectedDate, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` };
   const remote = await fetchLatestKinoResults(expectedDate);

@@ -2,6 +2,14 @@ import { appendFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { automationPlan, operationReady, savedStateOperation } from "../lib/automation-schedule.ts";
 
+export function automationWorkerUrl(value = "http://127.0.0.1:3000") {
+  const url = new URL(value);
+  if (url.protocol !== "http:" || !["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) || url.username || url.password) {
+    throw new Error("La automatización debe ejecutarse contra el servidor local del runner, nunca contra Vercel.");
+  }
+  return url.origin;
+}
+
 export async function runAutomation({ cron, appUrl, now, request = fetch, clock = () => new Date() }: {
   cron: string; appUrl: string; now?: Date; request?: typeof fetch; clock?: () => Date;
 }) {
@@ -49,7 +57,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   // Manual dispatch runs only the most recent applicable window, never a full day's retries.
   const cron = process.env.AUTOMATION_SCHEDULE;
   if (!cron) throw new Error("Falta AUTOMATION_SCHEDULE.");
-  const result = await runAutomation({ cron, appUrl: process.env.APP_URL ?? "https://analisis-diario.vercel.app" });
+  const result = await runAutomation({ cron, appUrl: automationWorkerUrl(process.env.APP_URL) });
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY,
     `## Automatización ${result.date}\n\n| Operación | Estado | Detalle |\n| --- | --- | --- |\n${result.report.map(item => `| ${item.label} | ${item.state} | ${item.detail.replace(/[|\r\n]/g, " ")} |`).join("\n")}\n`);

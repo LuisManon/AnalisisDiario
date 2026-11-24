@@ -3,10 +3,18 @@ import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import { automationPlan, automationWindows, operationReady } from "../lib/automation-schedule.ts";
 import { canGenerateLotoPortfolio, latestPublishedSlot, publicationWindow } from "../lib/draw-schedule.ts";
-import { runAutomation } from "../scripts/automate-portfolios.ts";
+import { automationWorkerUrl, runAutomation } from "../scripts/automate-portfolios.ts";
 import { savedStateReady } from "../lib/automation-status.ts";
 
 const local = (date: string, time: string) => new Date(`${date}T${time}:00-04:00`);
+
+test("scheduled CLI only accepts a local worker and cannot send generation back to Vercel", () => {
+  assert.equal(automationWorkerUrl(), "http://127.0.0.1:3000");
+  assert.equal(automationWorkerUrl("http://localhost:3010"), "http://localhost:3010");
+  for (const url of ["https://analisis-diario.vercel.app", "http://127.0.0.1.example.com", "http://user:secret@localhost:3000"]) {
+    assert.throws(() => automationWorkerUrl(url));
+  }
+});
 
 test("expired preparation becomes read-only verification of the original targets", async () => {
   const now = new Date("2026-11-08T21:59:55Z");

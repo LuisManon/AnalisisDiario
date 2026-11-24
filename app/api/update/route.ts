@@ -25,6 +25,7 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const existing = await readResults();
+    if (process.env.VERCEL) return NextResponse.json({ ok: true, results: existing, total: existing.length, latest: existing[0] ?? null, added: 0, message: "Resultados guardados; la actualización automática se ejecuta en las ventanas programadas." });
     const window = publicationWindow("loto");
     if (window) return NextResponse.json({ ok: true, results: existing, total: existing.length, latest: existing[0] ?? null, waiting: true, remainingMinutes: window.remainingMinutes, message: `Sorteo en curso. Debe esperar ${window.remainingMinutes} minutos.` });
     const remote = await fetchRemoteResults();

@@ -8,11 +8,12 @@ import { kinoExpectedDate, kinoTargetDate } from "../../../../lib/super-kino-clo
 export const dynamic = "force-dynamic";
 export const maxDuration = 180;
 const headers = { "Cache-Control": "no-store" };
+const readHeaders = { ...headers, "Vercel-CDN-Cache-Control": "public, s-maxage=60" };
 export async function GET() {
   try {
     const target = [KINO_NEIGHBOR_START, kinoTargetDate()].sort().at(-1)!;
     const [portfolio, results] = await Promise.all([readKinoNeighborPortfolio(target), readKinoResults()]);
-    return NextResponse.json({ ...portfolio, results, expectedDate: kinoExpectedDate() }, { headers });
+    return NextResponse.json({ ...portfolio, results, expectedDate: kinoExpectedDate() }, { headers: readHeaders });
   } catch { return NextResponse.json({ message: "No se pudieron leer las carteras Super Kino TV ±1." }, { status: 503, headers }); }
 }
 export async function POST(request: Request) {
@@ -20,6 +21,10 @@ export async function POST(request: Request) {
   try { date = z.object({ date: z.iso.date() }).parse(await request.json()).date; }
   catch { return NextResponse.json({ message: "Fecha de cartera inválida." }, { status: 400, headers }); }
   try {
+    if (process.env.VERCEL) {
+      const [portfolio, results] = await Promise.all([readKinoNeighborPortfolio(date), readKinoResults()]);
+      return NextResponse.json({ ...portfolio, results, expectedDate: kinoExpectedDate() }, { headers });
+    }
     let [source, results] = await Promise.all([readSavedKinoSnapshot(date), readKinoResults()]);
     if (!source && date >= KINO_NEIGHBOR_START && date === kinoTargetDate()) {
       const original = await getKinoPortfolio(results);
