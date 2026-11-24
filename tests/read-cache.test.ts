@@ -23,3 +23,15 @@ test("failures are retried and the cache bounds the number of retained files", a
   await cache.read("c", async () => 3);
   assert.equal(await cache.read("a", async () => 4), 4);
 });
+
+test("nested layers share expiry instead of extending a stale value for another full minute", async () => {
+  let now = 0, current = "old";
+  const files = createReadCache<string>(60_000, 2, () => now);
+  const views = createReadCache<string>(60_000, 2, () => now);
+  const file = () => files.read("file", async () => current);
+  const view = () => views.read("view", file);
+  await file();
+  now = 1_000; current = "new";
+  now = 59_000; assert.equal(await view(), "old");
+  now = 60_000; assert.equal(await view(), "new");
+});

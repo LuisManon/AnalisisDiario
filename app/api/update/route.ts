@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 180;
 
 export async function POST(request: Request) {
+  if (process.env.VERCEL) return NextResponse.json({ error: "La importación de resultados solo está disponible en el trabajador automático." }, { status: 405, headers: { Allow: "GET" } });
   const body = await request.json();
   const incoming = drawSchema.array().parse(Array.isArray(body) ? body : [body]);
   const existing = await readResults();

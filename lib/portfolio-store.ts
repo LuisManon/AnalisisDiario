@@ -33,8 +33,8 @@ async function writePortfolios(portfolios: ThirtyPlayPortfolio[]) {
   await fs.writeFile(portfolioPath, content, "utf8");
 }
 
-export async function getOrCreatePortfolio(targetDate: string, results: DrawResult[]) {
-  const portfolios = await readPortfolios();
+export async function getOrCreatePortfolio(targetDate: string, results: DrawResult[], saved?: ThirtyPlayPortfolio[]) {
+  const portfolios = saved ?? await readPortfolios();
   const existing = portfolios.find((portfolio) => portfolio.targetDate === targetDate);
   if (process.env.VERCEL) return existing ?? null;
   const latestResultDate = results[0]?.date ?? "";

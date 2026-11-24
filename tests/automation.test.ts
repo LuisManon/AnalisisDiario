@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import { automationPlan, automationWindows, operationReady } from "../lib/automation-schedule.ts";
 import { canGenerateLotoPortfolio, latestPublishedSlot, publicationWindow } from "../lib/draw-schedule.ts";
-import { automationWorkerUrl, runAutomation } from "../scripts/automate-portfolios.ts";
+import { automationWorkerUrl, publishAutomationViews, runAutomation } from "../scripts/automate-portfolios.ts";
 import { savedStateReady } from "../lib/automation-status.ts";
 
 const local = (date: string, time: string) => new Date(`${date}T${time}:00-04:00`);
@@ -241,4 +241,19 @@ test("a missing open assignment is generated only after a successful storage che
   const result=await runAutomation({cron:"37 17 * * *",appUrl:"https://example.test",now:local("2026-11-19","13:37"),request});
   assert.equal(result.failed,false);
   assert.deepEqual(methods,["GET","POST"]);
+});
+
+
+test("index publication uses the local worker and reports publication failures", async () => {
+  let calls = 0;
+  const request = (async (url, init) => {
+    calls++;
+    assert.equal(String(url), "http://127.0.0.1:3000/api/automation/publish");
+    assert.equal(init?.method, "POST");
+    return Response.json({ ok: true });
+  }) as typeof fetch;
+  await publishAutomationViews("http://127.0.0.1:3000", request);
+  assert.equal(calls, 1);
+  await assert.rejects(publishAutomationViews("https://example.test", request));
+  await assert.rejects(publishAutomationViews("http://127.0.0.1:3000", (async () => Response.json({error:"storage unavailable"},{status:503})) as typeof fetch), /storage unavailable/);
 });

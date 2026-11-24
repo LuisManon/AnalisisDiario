@@ -1,0 +1,2518 @@
+{
+  "version": 1,
+  "sourceVersion": "2b72e2ca83e606b5d089bf4acf5a8f14d1e4510c45cdcf8fc03c6a1a8aa785b7",
+  "latestDate": "2026-11-22",
+  "snapshots": [
+    {
+      "targetDate": "2026-11-23",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ]
+    },
+    {
+      "targetDate": "2026-11-22",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 7,
+            "total": 560
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 13,
+        "total": 920
+      }
+    },
+    {
+      "targetDate": "2026-11-21",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 4,
+            "total": 1200
+          },
+          {
+            "amount": 80,
+            "count": 7,
+            "total": 560
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 17,
+        "total": 2120
+      }
+    },
+    {
+      "targetDate": "2026-11-20",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 8,
+            "total": 640
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 16,
+        "total": 1600
+      }
+    },
+    {
+      "targetDate": "2026-11-19",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 8,
+            "total": 480
+          }
+        ],
+        "winningPlays": 19,
+        "total": 1360
+      }
+    },
+    {
+      "targetDate": "2026-11-18",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 1,
+            "total": 1000
+          },
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 15,
+            "total": 1200
+          },
+          {
+            "amount": 60,
+            "count": 4,
+            "total": 240
+          }
+        ],
+        "winningPlays": 21,
+        "total": 2740
+      }
+    },
+    {
+      "targetDate": "2026-11-17",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 10,
+            "total": 600
+          }
+        ],
+        "winningPlays": 23,
+        "total": 2080
+      }
+    },
+    {
+      "targetDate": "2026-11-16",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 6,
+            "total": 480
+          },
+          {
+            "amount": 60,
+            "count": 13,
+            "total": 780
+          }
+        ],
+        "winningPlays": 19,
+        "total": 1260
+      }
+    },
+    {
+      "targetDate": "2026-11-15",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 4,
+            "total": 1200
+          },
+          {
+            "amount": 80,
+            "count": 10,
+            "total": 800
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 20,
+        "total": 2360
+      }
+    },
+    {
+      "targetDate": "2026-11-14",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 14,
+            "total": 1120
+          },
+          {
+            "amount": 60,
+            "count": 8,
+            "total": 480
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2200
+      }
+    },
+    {
+      "targetDate": "2026-11-13",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 3,
+            "total": 900
+          },
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          },
+          {
+            "amount": 60,
+            "count": 9,
+            "total": 540
+          }
+        ],
+        "winningPlays": 21,
+        "total": 2160
+      }
+    },
+    {
+      "targetDate": "2026-11-12",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 8,
+            "total": 640
+          },
+          {
+            "amount": 60,
+            "count": 5,
+            "total": 300
+          }
+        ],
+        "winningPlays": 13,
+        "total": 940
+      }
+    },
+    {
+      "targetDate": "2026-11-11",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 8,
+            "total": 640
+          },
+          {
+            "amount": 60,
+            "count": 10,
+            "total": 600
+          }
+        ],
+        "winningPlays": 19,
+        "total": 1540
+      }
+    },
+    {
+      "targetDate": "2026-11-10",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 13,
+            "total": 1040
+          },
+          {
+            "amount": 60,
+            "count": 8,
+            "total": 480
+          }
+        ],
+        "winningPlays": 23,
+        "total": 2120
+      }
+    },
+    {
+      "targetDate": "2026-11-09",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 1,
+            "total": 1000
+          },
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 14,
+            "total": 1120
+          },
+          {
+            "amount": 60,
+            "count": 8,
+            "total": 480
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2900
+      }
+    },
+    {
+      "targetDate": "2026-11-08",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 12,
+            "total": 960
+          },
+          {
+            "amount": 60,
+            "count": 10,
+            "total": 600
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2160
+      }
+    },
+    {
+      "targetDate": "2026-11-07",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 17,
+        "total": 1680
+      }
+    },
+    {
+      "targetDate": "2026-11-06",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 7,
+            "total": 560
+          },
+          {
+            "amount": 60,
+            "count": 7,
+            "total": 420
+          }
+        ],
+        "winningPlays": 15,
+        "total": 1280
+      }
+    },
+    {
+      "targetDate": "2026-11-05",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 3,
+            "total": 900
+          },
+          {
+            "amount": 80,
+            "count": 12,
+            "total": 960
+          },
+          {
+            "amount": 60,
+            "count": 9,
+            "total": 540
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2400
+      }
+    },
+    {
+      "targetDate": "2026-11-04",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 1,
+            "total": 60
+          }
+        ],
+        "winningPlays": 14,
+        "total": 1540
+      }
+    },
+    {
+      "targetDate": "2026-11-03",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 15,
+            "total": 1200
+          },
+          {
+            "amount": 60,
+            "count": 7,
+            "total": 420
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2220
+      }
+    },
+    {
+      "targetDate": "2026-11-02",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          },
+          {
+            "amount": 60,
+            "count": 12,
+            "total": 720
+          }
+        ],
+        "winningPlays": 21,
+        "total": 1440
+      }
+    },
+    {
+      "targetDate": "2026-11-01",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 13,
+            "total": 1040
+          },
+          {
+            "amount": 60,
+            "count": 10,
+            "total": 600
+          }
+        ],
+        "winningPlays": 24,
+        "total": 1940
+      }
+    },
+    {
+      "targetDate": "2026-10-31",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 24,
+            "total": 1920
+          },
+          {
+            "amount": 60,
+            "count": 4,
+            "total": 240
+          }
+        ],
+        "winningPlays": 28,
+        "total": 2160
+      }
+    },
+    {
+      "targetDate": "2026-10-30",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 10,
+            "total": 600
+          }
+        ],
+        "winningPlays": 22,
+        "total": 1780
+      }
+    },
+    {
+      "targetDate": "2026-10-29",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 1,
+            "total": 1000
+          },
+          {
+            "amount": 300,
+            "count": 3,
+            "total": 900
+          },
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          },
+          {
+            "amount": 60,
+            "count": 21,
+            "total": 1260
+          }
+        ],
+        "winningPlays": 34,
+        "total": 3880
+      }
+    },
+    {
+      "targetDate": "2026-10-28",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 18,
+            "total": 1440
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 24,
+        "total": 1800
+      }
+    },
+    {
+      "targetDate": "2026-10-27",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 2,
+            "total": 2000
+          },
+          {
+            "amount": 80,
+            "count": 5,
+            "total": 400
+          },
+          {
+            "amount": 60,
+            "count": 18,
+            "total": 1080
+          }
+        ],
+        "winningPlays": 25,
+        "total": 3480
+      },
+      "simulation": {
+        "kind": "retrospective",
+        "reconstructedAt": "2026-10-28T16:50:14.921Z",
+        "reason": "Reconstrucción solicitada después del fallo operativo que impidió generar la cartera antes del sorteo."
+      }
+    },
+    {
+      "targetDate": "2026-10-26",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 11,
+            "total": 660
+          }
+        ],
+        "winningPlays": 22,
+        "total": 1540
+      }
+    },
+    {
+      "targetDate": "2026-10-25",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 2,
+            "total": 160
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 8,
+        "total": 520
+      }
+    },
+    {
+      "targetDate": "2026-10-24",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 2,
+            "total": 2000
+          },
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 3,
+            "total": 240
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 13,
+        "total": 3200
+      }
+    },
+    {
+      "targetDate": "2026-10-23",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 1000,
+            "count": 2,
+            "total": 2000
+          },
+          {
+            "amount": 300,
+            "count": 6,
+            "total": 1800
+          },
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          },
+          {
+            "amount": 60,
+            "count": 7,
+            "total": 420
+          }
+        ],
+        "winningPlays": 24,
+        "total": 4940
+      }
+    },
+    {
+      "targetDate": "2026-10-22",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 8,
+            "total": 640
+          },
+          {
+            "amount": 60,
+            "count": 2,
+            "total": 120
+          }
+        ],
+        "winningPlays": 10,
+        "total": 760
+      }
+    },
+    {
+      "targetDate": "2026-10-20",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 4,
+            "total": 320
+          },
+          {
+            "amount": 60,
+            "count": 2,
+            "total": 120
+          }
+        ],
+        "winningPlays": 6,
+        "total": 440
+      }
+    },
+    {
+      "targetDate": "2026-10-19",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 13,
+            "total": 1040
+          },
+          {
+            "amount": 60,
+            "count": 5,
+            "total": 300
+          }
+        ],
+        "winningPlays": 18,
+        "total": 1340
+      }
+    },
+    {
+      "targetDate": "2026-10-18",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 6,
+            "total": 480
+          },
+          {
+            "amount": 60,
+            "count": 8,
+            "total": 480
+          }
+        ],
+        "winningPlays": 16,
+        "total": 1560
+      }
+    },
+    {
+      "targetDate": "2026-10-17",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 5,
+            "total": 400
+          },
+          {
+            "amount": 60,
+            "count": 3,
+            "total": 180
+          }
+        ],
+        "winningPlays": 8,
+        "total": 580
+      }
+    },
+    {
+      "targetDate": "2026-10-16",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 6,
+            "total": 480
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 12,
+        "total": 840
+      }
+    },
+    {
+      "targetDate": "2026-10-15",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 11,
+            "total": 880
+          },
+          {
+            "amount": 60,
+            "count": 12,
+            "total": 720
+          }
+        ],
+        "winningPlays": 25,
+        "total": 2200
+      }
+    },
+    {
+      "targetDate": "2026-10-14",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 9,
+            "total": 720
+          }
+        ],
+        "winningPlays": 9,
+        "total": 720
+      }
+    },
+    {
+      "targetDate": "2026-10-13",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 5,
+            "total": 400
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 12,
+        "total": 1060
+      }
+    },
+    {
+      "targetDate": "2026-10-12",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 10,
+            "total": 800
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 18,
+        "total": 1760
+      }
+    },
+    {
+      "targetDate": "2026-10-11",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 4,
+            "total": 320
+          },
+          {
+            "amount": 60,
+            "count": 3,
+            "total": 180
+          }
+        ],
+        "winningPlays": 9,
+        "total": 1100
+      }
+    },
+    {
+      "targetDate": "2026-10-10",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 17,
+            "total": 1360
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 24,
+        "total": 2020
+      }
+    },
+    {
+      "targetDate": "2026-10-09",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 10,
+            "total": 800
+          },
+          {
+            "amount": 60,
+            "count": 6,
+            "total": 360
+          }
+        ],
+        "winningPlays": 18,
+        "total": 1760
+      }
+    },
+    {
+      "targetDate": "2026-10-08",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 2,
+            "total": 600
+          },
+          {
+            "amount": 80,
+            "count": 4,
+            "total": 320
+          },
+          {
+            "amount": 60,
+            "count": 3,
+            "total": 180
+          }
+        ],
+        "winningPlays": 9,
+        "total": 1100
+      }
+    },
+    {
+      "targetDate": "2026-10-07",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 300,
+            "count": 1,
+            "total": 300
+          },
+          {
+            "amount": 80,
+            "count": 3,
+            "total": 240
+          },
+          {
+            "amount": 60,
+            "count": 2,
+            "total": 120
+          }
+        ],
+        "winningPlays": 6,
+        "total": 660
+      }
+    },
+    {
+      "targetDate": "2026-10-06",
+      "prizes": [
+        {
+          "hits": 10,
+          "amount": 25000000
+        },
+        {
+          "hits": 9,
+          "amount": 200000
+        },
+        {
+          "hits": 8,
+          "amount": 10000
+        },
+        {
+          "hits": 7,
+          "amount": 1000
+        },
+        {
+          "hits": 6,
+          "amount": 300
+        },
+        {
+          "hits": 5,
+          "amount": 60
+        },
+        {
+          "hits": 0,
+          "amount": 80
+        }
+      ],
+      "prizeSummary": {
+        "groups": [
+          {
+            "amount": 80,
+            "count": 3,
+            "total": 240
+          }
+        ],
+        "winningPlays": 3,
+        "total": 240
+      }
+    }
+  ]
+}

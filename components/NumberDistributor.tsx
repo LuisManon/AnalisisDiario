@@ -46,19 +46,22 @@ export function NumberDistributor({renderNumber}: Props) {
   const [fallback,setFallback] = useState("");
   const sequence = useRef(0);
   const slotRef = useRef("");
-  async function load(smart?:boolean) {
+  const pending = useRef(0);
+  async function load() {
+    if (document.hidden) return;
+    pending.current++;
     const id=++sequence.current; setBusy(true);setError("");setCopyFeedback(null);copySequence.current++;setFallback("");
     try {
-      const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current, ...(smart === undefined ? {} : {smart})})});
+      const response=await fetch("/api/quinielon/distributor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session:choiceRef.current})});
       const data=await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el reparto.");
       if (id===sequence.current) {setAssignment(data);slotRef.current=`${data.date}-${data.session}`;}
     } catch(e) {if(id===sequence.current) setError(e instanceof Error ? e.message : "No se pudo cargar el reparto.");}
-    finally {if(id===sequence.current) setBusy(false);}
+    finally { pending.current--; if(id===sequence.current) setBusy(false); }
   }
   useEffect(() => {
     void load();
-    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(slotRef.current && slotRef.current!==key) {slotRef.current=key;setAssignment(null);void load();}},60_000);
+    const timer=window.setInterval(()=>{const slot=selectedAssignmentSlot(choiceRef.current); const key=`${slot.date}-${slot.session}`;if(!document.hidden && pending.current === 0 && slotRef.current!==key) {setAssignment(null);void load();}},60_000);
     return ()=>{window.clearInterval(timer);sequence.current++;};
   },[]);
   useEffect(() => {
@@ -138,9 +141,9 @@ export function NumberDistributor({renderNumber}: Props) {
       {assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showGroupColors} onChange={e=>setShowGroupColors(e.target.checked)} /> Colores de Casa / Respaldo</label>{showGroupColors ? <small className="distributorSourceLegend"><span><i className="distributorSourceBall-casa" /> Casa · top 40</span><span><i className="distributorSourceBall-respaldo" /> Respaldo</span></small> : null}</div> : null}
       {!assignment?.smart ? <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={showSymbols} onChange={e=>setShowSymbols(e.target.checked)} /> Mostrar símbolos y detalles del asignador</label></div> : null}
     </div>
-    <div className="v2SymbolControls"><label><input type="checkbox" role="switch" checked={assignment?.smart??false} disabled={busy} onChange={e=>void load(e.target.checked)} /> Repartidor inteligente</label><small>{assignment?.smart ? `${assignment.excluded} con enfriamiento, cristal o bloque de hielo excluidos · reparto equilibrado` : "Bloques completos: 1–20 → 41–60 → 21–40 → 61–80 · cambia cada tanda"}</small></div>
-    {busy ? <p role="status">Guardando el reparto de la tanda…</p> : null}
-    {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button>{!assignment?.smart ? <button type="button" onClick={()=>void load(true)}>Usar reparto inteligente</button> : null}</p> : null}
+    <div className="v2SymbolControls"><strong>{assignment?.smart ? "Repartidor inteligente · guardado" : "Reparto por bloques · guardado"}</strong><small>{assignment?.smart ? `${assignment.excluded} con enfriamiento, cristal o bloque de hielo excluidos · reparto equilibrado` : "Bloques completos: 1–20 → 41–60 → 21–40 → 61–80 · cambia cada tanda"}</small></div>
+    {busy ? <p role="status">Cargando el reparto guardado de la tanda…</p> : null}
+    {error ? <p role="alert" className="distributorError">{error} <button type="button" onClick={()=>void load()}>Reintentar</button></p> : null}
     {assignment ? <>
       {allocationWarning ? <p role="status" className="distributorNote">{allocationWarning}</p> : null}
       {assignment.smart ? <p className="distributorNote">Rotación por tanda: caliente ganador → restante; intermedio → caliente; restante → intermedio. Si gana un intermedio, pasa a restante y un restante ocupa su lugar. El ganador sigue incluido con RD$500.</p> : null}

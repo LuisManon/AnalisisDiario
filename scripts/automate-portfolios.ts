@@ -10,6 +10,14 @@ export function automationWorkerUrl(value = "http://127.0.0.1:3000") {
   return url.origin;
 }
 
+export async function publishAutomationViews(appUrl: string, request = fetch) {
+  const local = automationWorkerUrl(appUrl);
+  const response = await request(new URL("/api/automation/publish", local), { method: "POST", signal: AbortSignal.timeout(180_000) });
+  const payload = await response.json();
+  if (!response.ok || payload.ok !== true) throw new Error(payload.error ?? "No se pudieron publicar los índices de carteras.");
+  return payload;
+}
+
 export async function runAutomation({ cron, appUrl, now, request = fetch, clock = () => new Date() }: {
   cron: string; appUrl: string; now?: Date; request?: typeof fetch; clock?: () => Date;
 }) {
@@ -58,6 +66,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const cron = process.env.AUTOMATION_SCHEDULE;
   if (!cron) throw new Error("Falta AUTOMATION_SCHEDULE.");
   const result = await runAutomation({ cron, appUrl: automationWorkerUrl(process.env.APP_URL) });
+  try {
+    await publishAutomationViews(automationWorkerUrl(process.env.APP_URL));
+    result.report.push({ label: "Índices públicos", state: "ready", detail: "Resúmenes publicados sin regenerar carteras." });
+  } catch (error) {
+    result.failed = true;
+    result.report.push({ label: "Índices públicos", state: "failed", detail: error instanceof Error ? error.message : "Error de publicación" });
+  }
   console.log(JSON.stringify(result, null, 2));
   if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY,
     `## Automatización ${result.date}\n\n| Operación | Estado | Detalle |\n| --- | --- | --- |\n${result.report.map(item => `| ${item.label} | ${item.state} | ${item.detail.replace(/[|\r\n]/g, " ")} |`).join("\n")}\n`);

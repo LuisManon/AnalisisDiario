@@ -13,6 +13,6 @@ export async function GET(request: Request) {
   try {
     const load = () => product === "kino" ? readKinoResults() : product === "quinielon" ? readLaPrimeraResults() : readResults();
     const results = process.env.VERCEL ? await cached.read(product, load) : await load();
-    return NextResponse.json({ results }, { headers: { "Vercel-CDN-Cache-Control": "public, s-maxage=60", "Cache-Control": "no-cache" } });
+    return NextResponse.json({ results }, { headers: { "Vercel-CDN-Cache-Control": "no-store", "Cache-Control": "no-store" } });
   } catch { return NextResponse.json({ error: "No se pudieron consultar los resultados guardados." }, { status: 503 }); }
 }
