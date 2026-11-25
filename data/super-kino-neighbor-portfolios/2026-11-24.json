@@ -7839,5 +7839,71 @@
       "hits": 0,
       "amount": 80
     }
-  ]
+  ],
+  "prizeDrawNumbers": [
+    2,
+    7,
+    9,
+    13,
+    21,
+    22,
+    25,
+    27,
+    29,
+    35,
+    36,
+    38,
+    44,
+    49,
+    58,
+    72,
+    75,
+    79,
+    80,
+    83
+  ],
+  "prizeSummary": {
+    "groups": [
+      {
+        "hits": 7,
+        "amount": 1000,
+        "count": 1,
+        "total": 1000
+      },
+      {
+        "hits": 6,
+        "amount": 300,
+        "count": 4,
+        "total": 1200
+      },
+      {
+        "hits": 5,
+        "amount": 60,
+        "count": 8,
+        "total": 480
+      },
+      {
+        "hits": 0,
+        "amount": 80,
+        "count": 11,
+        "total": 880
+      }
+    ],
+    "total": 3560,
+    "winningPlays": 24,
+    "maxHits": 7,
+    "histogram": [
+      11,
+      28,
+      56,
+      55,
+      37,
+      8,
+      4,
+      1,
+      0,
+      0,
+      0
+    ]
+  }
 }
